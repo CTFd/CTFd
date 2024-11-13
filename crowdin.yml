@@ -1,0 +1,6 @@
+files: [
+ {
+  "source" : "messages.pot",
+  "translation" : "/CTFd/translations/%two_letters_code%/LC_MESSAGES/messages.po",
+ }
+]

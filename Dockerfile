@@ -1,4 +1,4 @@
-FROM python:3.9-slim-buster as build
+FROM python:3.11-slim-bookworm AS build
 
 WORKDIR /opt/CTFd
 
@@ -25,14 +25,14 @@ RUN pip install --no-cache-dir -r requirements.txt \
     done;
 
 
-FROM python:3.9-slim-buster as release
+FROM python:3.11-slim-bookworm AS release
 WORKDIR /opt/CTFd
 
 # hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        libffi6 \
-        libssl1.1 \
+        libffi8 \
+        libssl3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -44,10 +44,10 @@ RUN useradd \
     -u 1001 \
     ctfd \
     && mkdir -p /var/log/CTFd /var/uploads \
-    && chown -R 1001:1001 /var/log/CTFd /var/uploads \
+    && chown -R 1001:1001 /var/log/CTFd /var/uploads /opt/CTFd \
     && chmod +x /opt/CTFd/docker-entrypoint.sh
 
-COPY --from=build /opt/venv /opt/venv
+COPY --chown=1001:1001 --from=build /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 USER 1001

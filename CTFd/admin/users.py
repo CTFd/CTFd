@@ -27,13 +27,13 @@ def users_listing():
             Users.query.join(Tracking, Users.id == Tracking.user_id)
             .filter(Tracking.ip.like("%{}%".format(q)))
             .order_by(Users.id.asc())
-            .paginate(page=page, per_page=50)
+            .paginate(page=page, per_page=50, error_out=False)
         )
     else:
         users = (
             Users.query.filter(*filters)
             .order_by(Users.id.asc())
-            .paginate(page=page, per_page=50)
+            .paginate(page=page, per_page=50, error_out=False)
         )
 
     args = dict(request.args)

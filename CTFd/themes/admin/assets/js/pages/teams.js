@@ -1,10 +1,11 @@
 import "./main";
-import CTFd from "core/CTFd";
+import CTFd from "../compat/CTFd";
 import $ from "jquery";
-import { ezAlert, ezQuery } from "core/ezq";
+import "../compat/json";
+import { ezAlert, ezQuery } from "../compat/ezq";
 
 function deleteSelectedTeams(_event) {
-  let teamIDs = $("input[data-team-id]:checked").map(function() {
+  let teamIDs = $("input[data-team-id]:checked").map(function () {
     return $(this).data("team-id");
   });
   let target = teamIDs.length === 1 ? "team" : "teams";
@@ -12,24 +13,24 @@ function deleteSelectedTeams(_event) {
   ezQuery({
     title: "Delete Teams",
     body: `Are you sure you want to delete ${teamIDs.length} ${target}?`,
-    success: function() {
+    success: function () {
       const reqs = [];
       for (var teamID of teamIDs) {
         reqs.push(
           CTFd.fetch(`/api/v1/teams/${teamID}`, {
-            method: "DELETE"
-          })
+            method: "DELETE",
+          }),
         );
       }
-      Promise.all(reqs).then(_responses => {
+      Promise.all(reqs).then((_responses) => {
         window.location.reload();
       });
-    }
+    },
   });
 }
 
 function bulkEditTeams(_event) {
-  let teamIDs = $("input[data-team-id]:checked").map(function() {
+  let teamIDs = $("input[data-team-id]:checked").map(function () {
     return $(this).data("team-id");
   });
 
@@ -56,21 +57,21 @@ function bulkEditTeams(_event) {
     </form>
     `),
     button: "Submit",
-    success: function() {
+    success: function () {
       let data = $("#teams-bulk-edit").serializeJSON(true);
       const reqs = [];
       for (var teamID of teamIDs) {
         reqs.push(
           CTFd.fetch(`/api/v1/teams/${teamID}`, {
             method: "PATCH",
-            body: JSON.stringify(data)
-          })
+            body: JSON.stringify(data),
+          }),
         );
       }
-      Promise.all(reqs).then(_responses => {
+      Promise.all(reqs).then((_responses) => {
         window.location.reload();
       });
-    }
+    },
   });
 }
 

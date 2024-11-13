@@ -29,7 +29,7 @@ def listing():
         Users.query.filter_by(banned=False, hidden=False)
         .filter(*filters)
         .order_by(Users.id.asc())
-        .paginate(per_page=50)
+        .paginate(per_page=50, error_out=False)
     )
 
     args = dict(request.args)

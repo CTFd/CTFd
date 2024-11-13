@@ -25,40 +25,40 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
+import CTFd from "../../../compat/CTFd";
 import Field from "./Field.vue";
 
 export default {
   name: "FieldList",
   components: {
-    Field
+    Field,
   },
   props: {
-    type: String
+    type: String,
   },
-  data: function() {
+  data: function () {
     return {
-      fields: []
+      fields: [],
     };
   },
   methods: {
-    loadFields: function() {
+    loadFields: function () {
       CTFd.fetch(`/api/v1/configs/fields?type=${this.type}`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           this.fields = response.data;
         });
     },
-    addField: function() {
+    addField: function () {
       this.fields.push({
         id: Math.random(),
         type: this.type,
@@ -67,16 +67,16 @@ export default {
         description: "",
         editable: false,
         required: false,
-        public: false
+        public: false,
       });
     },
-    removeField: function(index) {
+    removeField: function (index) {
       this.fields.splice(index, 1);
       console.log(this.fields);
-    }
+    },
   },
   created() {
     this.loadFields();
-  }
+  },
 };
 </script>

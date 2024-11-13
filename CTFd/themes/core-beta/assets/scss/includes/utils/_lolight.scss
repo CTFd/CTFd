@@ -1,0 +1,53 @@
+.ll-nam {
+  /* words */
+  color: #24292f;
+}
+.ll-num {
+  /* numbers */
+  color: #005cc5;
+}
+.ll-str {
+  /* strings */
+  color: #0a3069;
+}
+.ll-rex {
+  /* regular expressions */
+  color: #032f62;
+}
+.ll-pct {
+  /* operators, punctuation */
+  color: #24292f;
+}
+.ll-key {
+  /* keywords */
+  color: #d73a49;
+}
+.ll-com {
+  /* comments */
+  color: #6a737d;
+  font-style: italic;
+}
+
+[data-bs-theme="dark"] {
+  .ll-nam {
+    color: #c9d1d9;
+  }
+  .ll-num {
+    color: #79c0ff;
+  }
+  .ll-str {
+    color: #a5d6ff;
+  }
+  .ll-rex {
+    color: #96cefb;
+  }
+  .ll-pct {
+    color: #c9d1d9;
+  }
+  .ll-key {
+    color: #ff7b72;
+  }
+  .ll-com {
+    color: #8b949e;
+  }
+}

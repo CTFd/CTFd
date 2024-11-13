@@ -2,7 +2,7 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 
 from CTFd.cache import clear_team_session, clear_user_session
 from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
-from CTFd.models import TeamFieldEntries, TeamFields, Teams, db
+from CTFd.models import Brackets, TeamFieldEntries, TeamFields, Teams, db
 from CTFd.utils import config, get_config, validators
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import authed_only, ratelimit, registered_only
@@ -14,6 +14,7 @@ from CTFd.utils.decorators.visibility import (
 from CTFd.utils.helpers import get_errors, get_infos
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.user import get_current_user, get_current_user_attrs
+from CTFd.utils.validators import ValidationError
 
 teams = Blueprint("teams", __name__)
 
@@ -36,7 +37,7 @@ def listing():
         Teams.query.filter_by(hidden=False, banned=False)
         .filter(*filters)
         .order_by(Teams.id.asc())
-        .paginate(per_page=50)
+        .paginate(per_page=50, error_out=False)
     )
 
     args = dict(request.args)
@@ -226,6 +227,8 @@ def new():
 
         website = request.form.get("website")
         affiliation = request.form.get("affiliation")
+        country = request.form.get("country")
+        bracket_id = request.form.get("bracket_id", None)
 
         user = get_current_user()
 
@@ -247,14 +250,6 @@ def new():
                 errors.append("Please provide all required fields")
                 break
 
-            # Handle special casing of existing profile fields
-            if field.name.lower() == "affiliation":
-                affiliation = value
-                break
-            elif field.name.lower() == "website":
-                website = value
-                break
-
             if field.field_type == "boolean":
                 entries[field_id] = bool(value)
             else:
@@ -270,10 +265,33 @@ def new():
         else:
             valid_affiliation = True
 
+        if bracket_id:
+            valid_bracket = bool(
+                Brackets.query.filter_by(id=bracket_id, type="teams").first()
+            )
+        else:
+            if Brackets.query.filter_by(type="teams").count():
+                valid_bracket = False
+            else:
+                valid_bracket = True
+
+        if country:
+            try:
+                validators.validate_country_code(country)
+                valid_country = True
+            except ValidationError:
+                valid_country = False
+        else:
+            valid_country = True
+
         if valid_website is False:
             errors.append("Websites must be a proper URL starting with http or https")
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
+        if valid_country is False:
+            errors.append("Invalid country")
+        if valid_bracket is False:
+            errors.append("Please provide a valid bracket")
 
         if errors:
             return render_template("teams/new_team.html", errors=errors), 403
@@ -284,13 +302,19 @@ def new():
             hidden = True
 
         team = Teams(
-            name=teamname, password=passphrase, captain_id=user.id, hidden=hidden
+            name=teamname,
+            password=passphrase,
+            captain_id=user.id,
+            hidden=hidden,
+            bracket_id=bracket_id,
         )
 
         if website:
             team.website = website
         if affiliation:
             team.affiliation = affiliation
+        if country:
+            team.country = country
 
         db.session.add(team)
         db.session.commit()
@@ -327,7 +351,7 @@ def private():
     awards = team.get_awards()
 
     place = team.place
-    score = team.score
+    score = team.get_score(admin=True)
 
     if config.is_scoreboard_frozen():
         infos.append("Scoreboard has been frozen")

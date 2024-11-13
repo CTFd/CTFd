@@ -1,11 +1,19 @@
-import os
+import os  # noqa: I001
 
 from flask import Blueprint, abort
 from flask import current_app as app
-from flask import redirect, render_template, request, send_file, session, url_for
-from flask.helpers import safe_join
+from flask import (
+    make_response,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    session,
+    url_for,
+)
 from jinja2.exceptions import TemplateNotFound
 from sqlalchemy.exc import IntegrityError
+from werkzeug.utils import safe_join
 
 from CTFd.cache import cache
 from CTFd.constants.config import (
@@ -57,7 +65,7 @@ from CTFd.utils.security.signing import (
     unserialize,
 )
 from CTFd.utils.uploads import get_uploader, upload_file
-from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
+from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip, is_admin
 
 views = Blueprint("views", __name__)
 
@@ -76,6 +84,31 @@ def setup():
             set_config("ctf_name", ctf_name)
             set_config("ctf_description", ctf_description)
             set_config("user_mode", user_mode)
+
+            # Settings
+            challenge_visibility = ChallengeVisibilityTypes(
+                request.form.get(
+                    "challenge_visibility", default=ChallengeVisibilityTypes.PRIVATE
+                )
+            )
+            account_visibility = AccountVisibilityTypes(
+                request.form.get(
+                    "account_visibility", default=AccountVisibilityTypes.PUBLIC
+                )
+            )
+            score_visibility = ScoreVisibilityTypes(
+                request.form.get(
+                    "score_visibility", default=ScoreVisibilityTypes.PUBLIC
+                )
+            )
+            registration_visibility = RegistrationVisibilityTypes(
+                request.form.get(
+                    "registration_visibility",
+                    default=RegistrationVisibilityTypes.PUBLIC,
+                )
+            )
+            verify_emails = request.form.get("verify_emails")
+            team_size = request.form.get("team_size")
 
             # Style
             ctf_logo = request.files.get("ctf_logo")
@@ -116,9 +149,15 @@ def setup():
             password = request.form["password"]
 
             name_len = len(name) == 0
-            names = Users.query.add_columns("name", "id").filter_by(name=name).first()
+            names = (
+                Users.query.add_columns(Users.name, Users.id)
+                .filter_by(name=name)
+                .first()
+            )
             emails = (
-                Users.query.add_columns("email", "id").filter_by(email=email).first()
+                Users.query.add_columns(Users.email, Users.id)
+                .filter_by(email=email)
+                .first()
             )
             pass_short = len(password) == 0
             pass_long = len(password) > 128
@@ -155,7 +194,7 @@ def setup():
             )
 
             # Create an empty index page
-            page = Pages(title=None, route="index", content="", draft=False)
+            page = Pages(title=ctf_name, route="index", content="", draft=False)
 
             # Upload banner
             default_ctf_banner_location = url_for("views.themes", path="img/logo.png")
@@ -163,6 +202,7 @@ def setup():
             if ctf_banner:
                 f = upload_file(file=ctf_banner, page_id=page.id)
                 default_ctf_banner_location = url_for("views.files", path=f.location)
+                set_config("ctf_banner", f.location)
 
             # Splice in our banner
             index = f"""<div class="row">
@@ -184,17 +224,16 @@ def setup():
             page.content = index
 
             # Visibility
-            set_config(
-                ConfigTypes.CHALLENGE_VISIBILITY, ChallengeVisibilityTypes.PRIVATE
-            )
-            set_config(
-                ConfigTypes.REGISTRATION_VISIBILITY, RegistrationVisibilityTypes.PUBLIC
-            )
-            set_config(ConfigTypes.SCORE_VISIBILITY, ScoreVisibilityTypes.PUBLIC)
-            set_config(ConfigTypes.ACCOUNT_VISIBILITY, AccountVisibilityTypes.PUBLIC)
+            set_config(ConfigTypes.CHALLENGE_VISIBILITY, challenge_visibility)
+            set_config(ConfigTypes.REGISTRATION_VISIBILITY, registration_visibility)
+            set_config(ConfigTypes.SCORE_VISIBILITY, score_visibility)
+            set_config(ConfigTypes.ACCOUNT_VISIBILITY, account_visibility)
 
             # Verify emails
-            set_config("verify_emails", None)
+            set_config("verify_emails", verify_emails)
+
+            # Team Size
+            set_config("team_size", team_size)
 
             set_config("mail_server", None)
             set_config("mail_port", None)
@@ -308,11 +347,6 @@ def settings():
     errors = get_errors()
 
     user = get_current_user()
-    name = user.name
-    email = user.email
-    website = user.website
-    affiliation = user.affiliation
-    country = user.country
 
     if is_teams_mode() and get_current_team() is None:
         team_url = url_for("teams.private")
@@ -338,11 +372,12 @@ def settings():
 
     return render_template(
         "settings.html",
-        name=name,
-        email=email,
-        website=website,
-        affiliation=affiliation,
-        country=country,
+        name=user.name,
+        email=user.email,
+        language=user.language,
+        website=user.website,
+        affiliation=user.affiliation,
+        country=user.country,
         tokens=tokens,
         prevent_name_change=prevent_name_change,
         infos=infos,
@@ -482,8 +517,11 @@ def themes(theme, path):
         # admin pages, so we check that first
         for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
+        # Handle werkzeug behavior of returning None on malicious paths
+        if cand_path is None:
+            abort(404)
         if os.path.isfile(cand_path):
-            return send_file(cand_path)
+            return send_file(cand_path, max_age=3600)
     abort(404)
 
 
@@ -502,8 +540,11 @@ def themes_beta(theme, path):
         # admin pages, so we check that first
         for cand_theme in (theme, *config.ctf_theme_candidates())
     ):
+        # Handle werkzeug behavior of returning None on malicious paths
+        if cand_path is None:
+            abort(404)
         if os.path.isfile(cand_path):
-            return send_file(cand_path)
+            return send_file(cand_path, max_age=3600)
     abort(404)
 
 
@@ -514,3 +555,28 @@ def healthcheck():
     if check_config() is False:
         return "ERR", 500
     return "OK", 200
+
+
+@views.route("/debug")
+def debug():
+    if app.config.get("SAFE_MODE") is True:
+        ip = get_ip()
+        headers = dict(request.headers)
+        # Remove Cookie item
+        headers.pop("Cookie", None)
+        resp = ""
+        resp += f"IP: {ip}\n"
+        for k, v in headers.items():
+            resp += f"{k}: {v}\n"
+        r = make_response(resp)
+        r.mimetype = "text/plain"
+        return r
+    abort(404)
+
+
+@views.route("/robots.txt")
+def robots():
+    text = get_config("robots_txt", "User-agent: *\nDisallow: /admin\n")
+    r = make_response(text, 200)
+    r.mimetype = "text/plain"
+    return r

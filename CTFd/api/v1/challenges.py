@@ -1,4 +1,4 @@
-from typing import List
+from typing import List  # noqa: I001
 
 from flask import abort, render_template, request, url_for
 from flask_restx import Namespace, Resource
@@ -38,9 +38,11 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.decorators.visibility import (
+    check_account_visibility,
     check_challenge_visibility,
     check_score_visibility,
 )
+from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.logging import log
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import (
@@ -496,7 +498,7 @@ class ChallengeAttempt(Resource):
         if authed() is False:
             return {"success": True, "data": {"status": "authentication_required"}}, 403
 
-        if request.content_type != "application/json":
+        if not request.is_json:
             request_data = request.form
         else:
             request_data = request.get_json()
@@ -659,9 +661,7 @@ class ChallengeAttempt(Resource):
                 if max_tries:
                     # Off by one since fails has changed since it was gotten
                     attempts_left = max_tries - fails - 1
-                    tries_str = "tries"
-                    if attempts_left == 1:
-                        tries_str = "try"
+                    tries_str = pluralize(attempts_left, singular="try", plural="tries")
                     # Add a punctuation mark if there isn't one
                     if message[-1] not in "!().;?[]{}":
                         message = message + "."
@@ -702,6 +702,7 @@ class ChallengeAttempt(Resource):
 @challenges_namespace.route("/<challenge_id>/solves")
 class ChallengeSolves(Resource):
     @check_challenge_visibility
+    @check_account_visibility
     @check_score_visibility
     @during_ctf_time_only
     @require_verified_emails

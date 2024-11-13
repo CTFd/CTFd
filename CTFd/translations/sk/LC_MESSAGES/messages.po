@@ -1,0 +1,776 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CTFd\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-10-07 03:17-0400\n"
+"PO-Revision-Date: 2024-04-01 05:30\n"
+"Last-Translator: \n"
+"Language-Team: Slovak\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
+"X-Crowdin-Project: CTFd\n"
+"X-Crowdin-Project-ID: 659064\n"
+"X-Crowdin-Language: sk\n"
+"X-Crowdin-File: /master/messages.pot\n"
+"X-Crowdin-File-ID: 188\n"
+"Language: sk_SK\n"
+
+#: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
+#: CTFd/themes/core-beta/templates/teams/private.html:319
+#: CTFd/themes/core-beta/templates/teams/public.html:85
+msgid "User Name"
+msgstr "Používateľské meno"
+
+#: CTFd/forms/auth.py:21 CTFd/forms/auth.py:53 CTFd/forms/self.py:17
+#: CTFd/forms/teams.py:203
+msgid "Email"
+msgstr "Email"
+
+#: CTFd/forms/auth.py:22 CTFd/forms/auth.py:43 CTFd/forms/auth.py:60
+#: CTFd/forms/self.py:19 CTFd/forms/teams.py:204
+msgid "Password"
+msgstr "Heslo"
+
+#: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
+#: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
+#: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147
+msgid "Submit"
+msgstr "Odoslať"
+
+#: CTFd/forms/auth.py:39
+msgid "User Name or Email"
+msgstr "Používateľské meno alebo email"
+
+#: CTFd/forms/auth.py:48
+msgid "Resend Confirmation Email"
+msgstr "Znova odoslať potvrdzovací e-mail"
+
+#: CTFd/forms/self.py:18 CTFd/forms/users.py:155
+msgid "Language"
+msgstr "Jazyk"
+
+#: CTFd/forms/self.py:20
+msgid "Current Password"
+msgstr "Aktuálne heslo"
+
+#: CTFd/forms/self.py:21 CTFd/forms/teams.py:113 CTFd/forms/teams.py:191
+#: CTFd/forms/teams.py:206 CTFd/forms/users.py:138
+#: CTFd/themes/core-beta/templates/teams/teams.html:51
+#: CTFd/themes/core-beta/templates/users/users.html:48
+msgid "Affiliation"
+msgstr "Afiliácia"
+
+#: CTFd/forms/self.py:22 CTFd/forms/teams.py:119 CTFd/forms/teams.py:192
+#: CTFd/forms/teams.py:205 CTFd/forms/users.py:139
+#: CTFd/themes/core-beta/templates/teams/teams.html:50
+#: CTFd/themes/core-beta/templates/users/users.html:47
+msgid "Website"
+msgstr "Webstránka"
+
+#: CTFd/forms/self.py:23 CTFd/forms/teams.py:123 CTFd/forms/teams.py:207
+#: CTFd/themes/core-beta/templates/teams/teams.html:52
+#: CTFd/themes/core-beta/templates/users/users.html:49
+msgid "Country"
+msgstr "Krajina"
+
+#: CTFd/forms/self.py:52 CTFd/themes/core-beta/templates/settings.html:225
+msgid "Expiration"
+msgstr "Expirácia"
+
+#: CTFd/forms/self.py:54
+msgid "Generate"
+msgstr "Generovať"
+
+#: CTFd/forms/setup.py:29
+msgid "Event Name"
+msgstr "Názov udalosti"
+
+#: CTFd/forms/setup.py:29
+msgid "The name of your CTF event/workshop"
+msgstr "Názov vášho podujatia/workshopu CTF"
+
+#: CTFd/forms/setup.py:32
+msgid "Event Description"
+msgstr "Popis udalosti"
+
+#: CTFd/forms/setup.py:32
+msgid "Description for the CTF"
+msgstr "Popis CTF"
+
+#: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
+msgid "User Mode"
+msgstr "Používateľský režim"
+
+#: CTFd/forms/setup.py:36
+msgid "Team Mode"
+msgstr "Tímový režim"
+
+#: CTFd/forms/setup.py:38
+msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
+msgstr "Ovláda, či sa používatelia spoja v tímoch, aby hrali (Tímový režim) alebo za seba (Používateľský režim)"
+
+#: CTFd/forms/setup.py:45
+msgid "Admin Username"
+msgstr "Používateľské meno správcu"
+
+#: CTFd/forms/setup.py:46
+msgid "Your username for the administration account"
+msgstr "Vaše používateľské meno pre administrátorský účet"
+
+#: CTFd/forms/setup.py:50
+msgid "Admin Email"
+msgstr "E-mail správcu"
+
+#: CTFd/forms/setup.py:51
+msgid "Your email address for the administration account"
+msgstr "Vaša e-mailová adresa pre administrátorský účet"
+
+#: CTFd/forms/setup.py:55
+msgid "Admin Password"
+msgstr "Heslo správcu"
+
+#: CTFd/forms/setup.py:56
+msgid "Your password for the administration account"
+msgstr "Vaše heslo pre administrátorský účet"
+
+#: CTFd/forms/setup.py:61
+msgid "Logo"
+msgstr "Logo"
+
+#: CTFd/forms/setup.py:62
+msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
+msgstr "Logo, ktoré sa má použiť pre webovú stránku namiesto názvu CTF. Používa sa ako tlačidlo domovskej stránky. Voliteľné."
+
+#: CTFd/forms/setup.py:67
+msgid "Banner"
+msgstr "Banner"
+
+#: CTFd/forms/setup.py:67
+msgid "Banner to use for the homepage. Optional."
+msgstr "Banner na použitie na domovskej stránke. Voliteľné."
+
+#: CTFd/forms/setup.py:70
+msgid "Small Icon"
+msgstr "Malá ikona"
+
+#: CTFd/forms/setup.py:71
+msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
+msgstr "favicon používaná v prehliadačoch používateľov. Akceptované sú iba súbory PNG. Musí mať veľkosť 32 x 32 pixelov. Voliteľné."
+
+#: CTFd/forms/setup.py:76
+msgid "Theme"
+msgstr "Téma"
+
+#: CTFd/forms/setup.py:77
+msgid "CTFd Theme to use. Can be changed later."
+msgstr "Téma CTFd. Dá sa neskôr zmeniť."
+
+#: CTFd/forms/setup.py:84
+msgid "Theme Color"
+msgstr "Farba témy"
+
+#: CTFd/forms/setup.py:85
+msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
+msgstr "Farba používaná témou na kontrolu estetiky. Vyžaduje si podporu témy. Voliteľné."
+
+#: CTFd/forms/setup.py:91
+msgid "Verify Emails"
+msgstr "Overiť e-maily"
+
+#: CTFd/forms/setup.py:143
+msgid "Start Time"
+msgstr "Doba spustenia"
+
+#: CTFd/forms/setup.py:144
+msgid "Time when your CTF is scheduled to start. Optional."
+msgstr "Čas, kedy je naplánovaný začiatok vášho CTF. Voliteľné."
+
+#: CTFd/forms/setup.py:147
+msgid "End Time"
+msgstr "Čas ukončenia"
+
+#: CTFd/forms/setup.py:148
+msgid "Time when your CTF is scheduled to end. Optional."
+msgstr "Čas, kedy je naplánované ukončenie vášho CTF. Voliteľné."
+
+#: CTFd/forms/setup.py:150
+msgid "Finish"
+msgstr "Skončiť"
+
+#: CTFd/forms/teams.py:76 CTFd/forms/teams.py:83 CTFd/forms/teams.py:100
+#: CTFd/forms/teams.py:202
+msgid "Team Name"
+msgstr "Meno tímu"
+
+#: CTFd/forms/teams.py:77 CTFd/forms/teams.py:84
+msgid "Team Password"
+msgstr "Heslo tímu"
+
+#: CTFd/forms/teams.py:78 CTFd/forms/teams.py:258
+msgid "Join"
+msgstr "Pripojte sa"
+
+#: CTFd/forms/teams.py:85
+msgid "Create"
+msgstr "Vytvorte"
+
+#: CTFd/forms/teams.py:101
+msgid "Your team's public name shown to other competitors"
+msgstr "Verejný názov vášho tímu zobrazovaný ostatným súťažiacim"
+
+#: CTFd/forms/teams.py:104
+msgid "New Team Password"
+msgstr "Nové tímové heslo"
+
+#: CTFd/forms/teams.py:104
+msgid "Set a new team join password"
+msgstr "Nastavte nové heslo na pripojenie k tímu"
+
+#: CTFd/forms/teams.py:107
+msgid "Confirm Current Team Password"
+msgstr "Potvrďte aktuálne heslo tímu"
+
+#: CTFd/forms/teams.py:108
+msgid "Provide your current team password (or your password) to update your team's password"
+msgstr "Ak chcete aktualizovať heslo svojho tímu, zadajte svoje aktuálne heslo tímu (alebo heslo)."
+
+#: CTFd/forms/teams.py:114
+msgid "Your team's affiliation publicly shown to other competitors"
+msgstr "Príslušnosť vášho tímu verejne zobrazená ostatným konkurentom"
+
+#: CTFd/forms/teams.py:120
+msgid "Your team's website publicly shown to other competitors"
+msgstr "Webová stránka vášho tímu verejne zobrazená ostatným konkurentom"
+
+#: CTFd/forms/teams.py:125
+msgid "Your team's country publicly shown to other competitors"
+msgstr "Krajina vášho tímu verejne zobrazená ostatným súťažiacim"
+
+#: CTFd/forms/teams.py:165
+msgid "Team Captain"
+msgstr "Kapitán tímu"
+
+#: CTFd/forms/teams.py:188 CTFd/forms/users.py:135
+msgid "Search Field"
+msgstr "Vyhľadávacie pole"
+
+#: CTFd/forms/teams.py:190 CTFd/forms/users.py:137
+#: CTFd/themes/core-beta/templates/challenge.html:183
+msgid "Name"
+msgstr "Názov"
+
+#: CTFd/forms/teams.py:197 CTFd/forms/users.py:145
+msgid "Parameter"
+msgstr "Parameter"
+
+#: CTFd/forms/teams.py:198 CTFd/forms/users.py:149
+msgid "Search"
+msgstr "Vyhľadávanie"
+
+#: CTFd/forms/teams.py:208
+msgid "Hidden"
+msgstr "Skryté"
+
+#: CTFd/forms/teams.py:209
+msgid "Banned"
+msgstr "Zakázaný"
+
+#: CTFd/forms/teams.py:254
+msgid "Invite Link"
+msgstr "Pozvánka"
+
+#: CTFd/forms/users.py:146
+msgid "Search for matching users"
+msgstr "Vyhľadajte zodpovedajúcich používateľov"
+
+#: CTFd/themes/core-beta/templates/base.html:49
+msgid "Powered by CTFd"
+msgstr "Beží na CTFd"
+
+#: CTFd/themes/core-beta/templates/challenge.html:11
+#: CTFd/themes/core-beta/templates/teams/private.html:375
+#: CTFd/themes/core-beta/templates/teams/public.html:141
+#: CTFd/themes/core-beta/templates/users/private.html:114
+#: CTFd/themes/core-beta/templates/users/public.html:113
+msgid "Challenge"
+msgstr "Úloha"
+
+#: CTFd/themes/core-beta/templates/challenge.html:19
+#, python-format
+msgid "%(num)d Solve"
+msgid_plural "%(num)d Solves"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: CTFd/themes/core-beta/templates/challenge.html:73
+msgid "View Hint"
+msgstr "Zobraziť nápovedu"
+
+#: CTFd/themes/core-beta/templates/challenge.html:135
+msgid "Flag"
+msgstr "Vlajka"
+
+#: CTFd/themes/core-beta/templates/challenge.html:167
+msgid "Next Challenge"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/core-beta/templates/challenge.html:186
+#: CTFd/themes/core-beta/templates/setup.html:305
+#: CTFd/themes/core-beta/templates/setup.html:326
+msgid "Date"
+msgstr "Dátum"
+
+#: CTFd/themes/core-beta/templates/challenges.html:7
+#: CTFd/themes/core-beta/templates/components/navbar.html:57
+msgid "Challenges"
+msgstr "Úlohy"
+
+#: CTFd/themes/core-beta/templates/confirm.html:7
+msgid "Confirm"
+msgstr "Potvrďte"
+
+#: CTFd/themes/core-beta/templates/confirm.html:18
+msgid "We've sent a confirmation email to your email address."
+msgstr "Na vašu e-mailovú adresu sme poslali potvrdzujúci e-mail."
+
+#: CTFd/themes/core-beta/templates/confirm.html:24
+msgid "Please click the link in that email to confirm your account."
+msgstr "Kliknutím na odkaz v tomto e-maile potvrďte svoj účet."
+
+#: CTFd/themes/core-beta/templates/confirm.html:30
+msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
+msgstr "Ak e-mail neprišiel, skontrolujte priečinok so spamom alebo kontaktujte správcu, aby manuálne overil váš účet."
+
+#: CTFd/themes/core-beta/templates/confirm.html:43
+msgid "Change Email Address"
+msgstr "Zmeň emailovú adresu"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:178
+#: CTFd/themes/core-beta/templates/login.html:7
+msgid "Login"
+msgstr "Prihlásiť sa"
+
+#: CTFd/themes/core-beta/templates/login.html:40
+msgid "Forgot your password?"
+msgstr "zabudol si heslo?"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:97
+#: CTFd/themes/core-beta/templates/notifications.html:7
+msgid "Notifications"
+msgstr "Upozornenia"
+
+#: CTFd/themes/core-beta/templates/notifications.html:14
+msgid "There are no notifications yet"
+msgstr "Zatiaľ nie sú žiadne upozornenia"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:165
+#: CTFd/themes/core-beta/templates/register.html:7
+msgid "Register"
+msgstr "Registrovať"
+
+#: CTFd/themes/core-beta/templates/register.html:35
+msgid "Your username on the site"
+msgstr "Vaše používateľské meno na stránke"
+
+#: CTFd/themes/core-beta/templates/register.html:43
+msgid "Never shown to the public"
+msgstr "Nikdy nezverejnené"
+
+#: CTFd/themes/core-beta/templates/register.html:51
+msgid "Password used to log into your account"
+msgstr "Heslo používané na prihlásenie do vášho účtu"
+
+#: CTFd/themes/core-beta/templates/reset_password.html:7
+msgid "Reset Password"
+msgstr "Obnoviť heslo"
+
+#: CTFd/themes/core-beta/templates/reset_password.html:21
+msgid "You can now reset the password for your account and log in. Please enter in a new password below."
+msgstr "Teraz môžete obnoviť heslo svojho účtu a prihlásiť sa. Nižšie zadajte nové heslo."
+
+#: CTFd/themes/core-beta/templates/reset_password.html:44
+msgid "Please provide the email address associated with your account below."
+msgstr "Nižšie uveďte e-mailovú adresu priradenú k vášmu účtu."
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:135
+#: CTFd/themes/core-beta/templates/settings.html:8
+#: CTFd/themes/core-beta/templates/setup.html:50
+msgid "Settings"
+msgstr "Nastavenia"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:123
+#: CTFd/themes/core-beta/templates/settings.html:21
+msgid "Profile"
+msgstr "Profil"
+
+#: CTFd/themes/core-beta/templates/settings.html:26
+msgid "Access Tokens"
+msgstr "Prístupové tokeny"
+
+#: CTFd/themes/core-beta/templates/settings.html:95
+msgid "Your profile has been updated"
+msgstr "Váš profil bol aktualizovaný"
+
+#: CTFd/themes/core-beta/templates/settings.html:103
+#: CTFd/themes/core-beta/templates/teams/private.html:83
+#: CTFd/themes/core-beta/templates/teams/private.html:198
+msgid "Error:"
+msgstr "Chyba:"
+
+#: CTFd/themes/core-beta/templates/settings.html:129
+msgid "API Key Generated"
+msgstr "Vygenerovaný kľúč API"
+
+#: CTFd/themes/core-beta/templates/settings.html:137
+msgid "Please copy your API Key, it won't be shown again!"
+msgstr "Skopírujte si svoj kľúč API, už sa nebude zobrazovať!"
+
+#: CTFd/themes/core-beta/templates/settings.html:183
+msgid "Active Tokens"
+msgstr "Aktívne tokeny"
+
+#: CTFd/themes/core-beta/templates/settings.html:195
+msgid "Delete Token"
+msgstr "Odstrániť token"
+
+#: CTFd/themes/core-beta/templates/settings.html:204
+msgid "Are you sure you want to delete this token?"
+msgstr "Naozaj chcete odstrániť tento token?"
+
+#: CTFd/themes/core-beta/templates/settings.html:224
+msgid "Created"
+msgstr "Vytvorené"
+
+#: CTFd/themes/core-beta/templates/settings.html:226
+msgid "Description"
+msgstr "Popis"
+
+#: CTFd/themes/core-beta/templates/settings.html:227
+msgid "Delete"
+msgstr "Odstrániť"
+
+#: CTFd/themes/core-beta/templates/setup.html:24
+msgid "Setup"
+msgstr "Nastaviť"
+
+#: CTFd/themes/core-beta/templates/setup.html:44
+msgid "General"
+msgstr "generál"
+
+#: CTFd/themes/core-beta/templates/setup.html:47
+msgid "Mode"
+msgstr "Režim"
+
+#: CTFd/themes/core-beta/templates/setup.html:53
+msgid "Administration"
+msgstr "Administrácia"
+
+#: CTFd/themes/core-beta/templates/setup.html:56
+msgid "Style"
+msgstr "Štýl"
+
+#: CTFd/themes/core-beta/templates/setup.html:59
+msgid "Date &amp; Time"
+msgstr "Dátum &amp; čas"
+
+#: CTFd/themes/core-beta/templates/setup.html:62
+msgid "Integrations"
+msgstr "Integrácie"
+
+#: CTFd/themes/core-beta/templates/setup.html:86
+#: CTFd/themes/core-beta/templates/setup.html:138
+#: CTFd/themes/core-beta/templates/setup.html:202
+#: CTFd/themes/core-beta/templates/setup.html:238
+#: CTFd/themes/core-beta/templates/setup.html:296
+#: CTFd/themes/core-beta/templates/setup.html:345
+msgid "Next"
+msgstr "Ďalšie"
+
+#: CTFd/themes/core-beta/templates/setup.html:112
+msgid "Participants register accounts and form teams"
+msgstr "Účastníci sa registrujú a vytvárajú tímy"
+
+#: CTFd/themes/core-beta/templates/setup.html:113
+msgid "If a team member solves a challenge, the entire team receives credit"
+msgstr "Ak člen tímu vyrieši úlohu, kredit získa celý tím"
+
+#: CTFd/themes/core-beta/templates/setup.html:115
+msgid "Easier to see which team member solved a challenge"
+msgstr "Ľahšie uvidíte, ktorý člen tímu vyriešil úlohu"
+
+#: CTFd/themes/core-beta/templates/setup.html:116
+msgid "May be slightly more difficult to administer"
+msgstr "Správa môže byť o niečo náročnejšia"
+
+#: CTFd/themes/core-beta/templates/setup.html:120
+msgid "Participants only register an individual account"
+msgstr "Účastníci si zaregistrujú iba individuálny účet"
+
+#: CTFd/themes/core-beta/templates/setup.html:121
+msgid "Players can share accounts to form pseudo-teams"
+msgstr "Hráči môžu zdieľať účty a vytvárať pseudotímy"
+
+#: CTFd/themes/core-beta/templates/setup.html:123
+msgid "Easier to organize"
+msgstr "Jednoduchšie na organizáciu"
+
+#: CTFd/themes/core-beta/templates/setup.html:124
+msgid "Difficult to attribute solutions to individual team members"
+msgstr "Je ťažké prisúdiť riešenia jednotlivým členom tímu"
+
+#: CTFd/themes/core-beta/templates/setup.html:143
+msgid "Visibility Settings"
+msgstr "Nastavenia viditeľnosti"
+
+#: CTFd/themes/core-beta/templates/setup.html:146
+msgid "Control the visibility of different sections of CTFd"
+msgstr "Ovládajte viditeľnosť rôznych sekcií CTFd"
+
+#: CTFd/themes/core-beta/templates/setup.html:232
+msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
+msgstr "Prihláste sa na odber noviniek na e-mailovú adresu CTFd LLC"
+
+#: CTFd/themes/core-beta/templates/setup.html:309
+#: CTFd/themes/core-beta/templates/setup.html:330
+#: CTFd/themes/core-beta/templates/teams/private.html:378
+#: CTFd/themes/core-beta/templates/teams/public.html:144
+#: CTFd/themes/core-beta/templates/users/private.html:117
+#: CTFd/themes/core-beta/templates/users/public.html:116
+msgid "Time"
+msgstr "čas"
+
+#: CTFd/themes/core-beta/templates/setup.html:334
+msgid "UTC Preview"
+msgstr "Náhľad UTC"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:34
+#: CTFd/themes/core-beta/templates/users/users.html:6
+msgid "Users"
+msgstr "Používatelia"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:41
+#: CTFd/themes/core-beta/templates/teams/teams.html:6
+msgid "Teams"
+msgstr "Tímy"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:50
+msgid "Scoreboard"
+msgstr "Tabuľka"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:80
+msgid "Admin Panel"
+msgstr "Panel správcu"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:110
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
+#: CTFd/themes/core-beta/templates/teams/teams.html:49
+msgid "Team"
+msgstr "Tím"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:147
+msgid "Logout"
+msgstr "Odhlásiť sa"
+
+#: CTFd/themes/core-beta/templates/errors/403.html:9
+msgid "Forbidden"
+msgstr "Zakázané"
+
+#: CTFd/themes/core-beta/templates/errors/404.html:11
+msgid "File not found"
+msgstr "Súbor nenájdený"
+
+#: CTFd/themes/core-beta/templates/errors/404.html:12
+msgid "Sorry about that"
+msgstr "Ospravedlňujeme sa za to"
+
+#: CTFd/themes/core-beta/templates/errors/429.html:11
+msgid "Too many requests"
+msgstr "Príliš veľa žiadostí"
+
+#: CTFd/themes/core-beta/templates/errors/429.html:12
+msgid "Please slow down!"
+msgstr "Prosím spomaľ!"
+
+#: CTFd/themes/core-beta/templates/errors/502.html:11
+msgid "Bad Gateway"
+msgstr "Zlá brána"
+
+#: CTFd/themes/core-beta/templates/macros/forms.html:13
+#: CTFd/themes/core-beta/templates/macros/forms.html:36
+msgid "(Optional)"
+msgstr "(Voliteľné)"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:6
+#: CTFd/themes/core-beta/templates/teams/join_team.html:6
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
+msgid "Join Team"
+msgstr "Pripojte sa k tímu"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:15
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
+msgid "Welcome to"
+msgstr "Vitajte v"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:19
+msgid "Click the button below to join the team!"
+msgstr "Kliknite na tlačidlo nižšie a pridajte sa k tímu!"
+
+#: CTFd/themes/core-beta/templates/teams/new_team.html:6
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
+msgid "Create Team"
+msgstr "Vytvoriť tím"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:8
+msgid "Edit Team"
+msgstr "Upraviť tím"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:76
+msgid "Your team's profile has been updated"
+msgstr "Profil vášho tímu bol aktualizovaný"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:104
+msgid "Choose Captain"
+msgstr "Zvoľte kapitána"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:127
+msgid "Your captain rights have been transferred"
+msgstr "Vaše kapitánske práva boli prevedené"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:152
+msgid "Invite Users"
+msgstr "Pozvať používateľov"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:171
+msgid "Share this link with your team members for them to join your team"
+msgstr "Zdieľajte tento odkaz s členmi svojho tímu, aby sa mohli pripojiť k vášmu tímu"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:174
+msgid "Invite links can be re-used and expire after 1 day"
+msgstr "Pozvánky možno znova použiť a ich platnosť vyprší po 1 dni"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:188
+msgid "Disband Team"
+msgstr "Rozpustiť tím"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:193
+msgid "Are you sure you want to disband your team?"
+msgstr "Ste si istý, že chcete rozpustiť svoj tím?"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:206
+msgid "No"
+msgstr "Nie"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:207
+msgid "Yes"
+msgstr "Áno"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:218
+#: CTFd/themes/core-beta/templates/teams/public.html:10
+#: CTFd/themes/core-beta/templates/users/private.html:21
+#: CTFd/themes/core-beta/templates/users/public.html:21
+#: CTFd/themes/core-beta/templates/users/users.html:66
+msgid "Official"
+msgstr "Oficiálny"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:250
+msgid "place"
+msgstr "miesto"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:258
+msgid "points"
+msgstr "body"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:315
+#: CTFd/themes/core-beta/templates/teams/public.html:81
+msgid "Members"
+msgstr "členovia"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:320
+#: CTFd/themes/core-beta/templates/teams/public.html:86
+msgid "Score"
+msgstr "Skóre"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:332
+msgid "Captain"
+msgstr "Kapitán"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:348
+#: CTFd/themes/core-beta/templates/teams/public.html:109
+#: CTFd/themes/core-beta/templates/users/private.html:88
+#: CTFd/themes/core-beta/templates/users/public.html:88
+msgid "Awards"
+msgstr "Ocenenia"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:371
+#: CTFd/themes/core-beta/templates/teams/public.html:137
+#: CTFd/themes/core-beta/templates/users/private.html:110
+msgid "Solves"
+msgstr "Riešenia"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:376
+#: CTFd/themes/core-beta/templates/teams/public.html:142
+#: CTFd/themes/core-beta/templates/users/private.html:115
+#: CTFd/themes/core-beta/templates/users/public.html:114
+msgid "Category"
+msgstr "Kategória"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:377
+#: CTFd/themes/core-beta/templates/teams/public.html:143
+#: CTFd/themes/core-beta/templates/users/private.html:116
+#: CTFd/themes/core-beta/templates/users/public.html:115
+msgid "Value"
+msgstr "Hodnota"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:468
+#: CTFd/themes/core-beta/templates/teams/public.html:232
+#: CTFd/themes/core-beta/templates/users/private.html:203
+#: CTFd/themes/core-beta/templates/users/public.html:204
+msgid "No solves yet"
+msgstr "Zatiaľ žiadne riešenia"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
+msgid "In order to participate you must either join or create a team."
+msgstr "Ak sa chcete zúčastniť, musíte sa pripojiť k tímu alebo vytvoriť nový."
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
+msgid "Play with Official Team"
+msgstr "Hrajte s oficiálnym tímom"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
+msgid "Join Unofficial Team"
+msgstr "Pripojte sa k neoficiálnemu tímu"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
+msgid "Create Unofficial Team"
+msgstr "Vytvorte neoficiálny tím"
+
+#: CTFd/themes/core-beta/templates/teams/teams.html:124
+#: CTFd/themes/core-beta/templates/users/users.html:114
+msgid "Page"
+msgstr "Stránka"
+
+#: CTFd/themes/core-beta/templates/users/users.html:46
+msgid "User"
+msgstr "Používateľ"
+
+#: CTFd/utils/modes/__init__.py:35
+msgid "user"
+msgid_plural "users"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: CTFd/utils/modes/__init__.py:37
+msgid "team"
+msgid_plural "teams"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+

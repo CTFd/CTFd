@@ -84,6 +84,7 @@ class TeamList(Resource):
                         "country": "country",
                         "bracket": "bracket",
                         "affiliation": "affiliation",
+                        "email": "email",
                     },
                 ),
                 None,
@@ -94,19 +95,27 @@ class TeamList(Resource):
     def get(self, query_args):
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
+
+        if field == "email":
+            if is_admin() is False:
+                return {
+                    "success": False,
+                    "errors": {"field": "Emails can only be queried by admins"},
+                }, 400
+
         filters = build_model_filters(model=Teams, query=q, field=field)
 
         if is_admin() and request.args.get("view") == "admin":
             teams = (
                 Teams.query.filter_by(**query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
         else:
             teams = (
                 Teams.query.filter_by(hidden=False, banned=False, **query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
 
         user_type = get_current_user_type(fallback="user")
@@ -281,8 +290,11 @@ class TeamPrivate(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        # A team can always calculate their score regardless of any setting because they can simply sum all of their challenges
+        # Therefore a team requesting their private data should be able to get their own current score
+        # However place is not something that a team can ascertain on their own so it is always gated behind freeze time
         response.data["place"] = team.place
-        response.data["score"] = team.score
+        response.data["score"] = team.get_score(admin=True)
         return {"success": True, "data": response.data}
 
     @authed_only

@@ -3,7 +3,7 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 from sqlalchemy.orm import load_only
 
-from CTFd.models import TeamFieldEntries, TeamFields, Teams, Users, ma
+from CTFd.models import Brackets, TeamFieldEntries, TeamFields, Teams, Users, ma
 from CTFd.schemas.fields import TeamFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
@@ -48,6 +48,7 @@ class TeamSchema(ma.ModelSchema):
         ],
     )
     country = field_for(Teams, "country", validate=[validate_country_code])
+    bracket_id = field_for(Teams, "bracket_id")
     fields = Nested(
         TeamFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
@@ -143,6 +144,9 @@ class TeamSchema(ma.ModelSchema):
                     field_names=["captain_id"],
                 )
 
+            if current_team.password is None:
+                return
+
             if password and (bool(confirm) is False):
                 raise ValidationError(
                     "Please confirm your current password", field_names=["confirm"]
@@ -198,6 +202,37 @@ class TeamSchema(ma.ModelSchema):
                 raise ValidationError(
                     "Only the captain can change team captain",
                     field_names=["captain_id"],
+                )
+
+    @pre_load
+    def validate_bracket_id(self, data):
+        bracket_id = data.get("bracket_id")
+        if is_admin():
+            bracket = Brackets.query.filter_by(id=bracket_id).first()
+            if bracket is None:
+                ValidationError(
+                    "Please provide a valid bracket id", field_names=["bracket_id"]
+                )
+        else:
+            current_team = get_current_team()
+            # Teams are not allowed to switch their bracket
+            if bracket_id is None:
+                # Remove bracket_id and short circuit processing
+                data.pop("bracket_id", None)
+                return
+            if (
+                current_team.bracket_id == int(bracket_id)
+                or current_team.bracket_id is None
+            ):
+                bracket = Brackets.query.filter_by(id=bracket_id, type="teams").first()
+                if bracket is None:
+                    ValidationError(
+                        "Please provide a valid bracket id", field_names=["bracket_id"]
+                    )
+            else:
+                raise ValidationError(
+                    "Please contact an admin to change your bracket",
+                    field_names=["bracket_id"],
                 )
 
     @pre_load
@@ -329,7 +364,7 @@ class TeamSchema(ma.ModelSchema):
             "name",
             "country",
             "affiliation",
-            "bracket",
+            "bracket_id",
             "members",
             "id",
             "oauth_id",
@@ -342,7 +377,7 @@ class TeamSchema(ma.ModelSchema):
             "email",
             "country",
             "affiliation",
-            "bracket",
+            "bracket_id",
             "members",
             "id",
             "oauth_id",
@@ -359,7 +394,7 @@ class TeamSchema(ma.ModelSchema):
             "email",
             "affiliation",
             "secret",
-            "bracket",
+            "bracket_id",
             "members",
             "hidden",
             "id",

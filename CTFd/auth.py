@@ -1,4 +1,4 @@
-import base64
+import base64  # noqa: I001
 
 import requests
 from flask import Blueprint, abort
@@ -7,7 +7,7 @@ from flask import redirect, render_template, request, session, url_for
 from itsdangerous.exc import BadSignature, BadTimeSignature, SignatureExpired
 
 from CTFd.cache import clear_team_session, clear_user_session
-from CTFd.models import Teams, UserFieldEntries, UserFields, Users, db
+from CTFd.models import Brackets, Teams, UserFieldEntries, UserFields, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
@@ -189,6 +189,14 @@ def register():
     if current_user.authed():
         return redirect(url_for("challenges.listing"))
 
+    num_users_limit = int(get_config("num_users", default=0))
+    num_users = Users.query.filter_by(banned=False, hidden=False).count()
+    if num_users_limit and num_users >= num_users_limit:
+        abort(
+            403,
+            description=f"Reached the maximum number of users ({num_users_limit}).",
+        )
+
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         email_address = request.form.get("email", "").strip().lower()
@@ -198,11 +206,14 @@ def register():
         affiliation = request.form.get("affiliation")
         country = request.form.get("country")
         registration_code = str(request.form.get("registration_code", ""))
+        bracket_id = request.form.get("bracket_id", None)
 
         name_len = len(name) == 0
-        names = Users.query.add_columns("name", "id").filter_by(name=name).first()
+        names = (
+            Users.query.add_columns(Users.name, Users.id).filter_by(name=name).first()
+        )
         emails = (
-            Users.query.add_columns("email", "id")
+            Users.query.add_columns(Users.email, Users.id)
             .filter_by(email=email_address)
             .first()
         )
@@ -230,14 +241,6 @@ def register():
                 errors.append("Please provide all required fields")
                 break
 
-            # Handle special casing of existing profile fields
-            if field.name.lower() == "affiliation":
-                affiliation = value
-                break
-            elif field.name.lower() == "website":
-                website = value
-                break
-
             if field.field_type == "boolean":
                 entries[field_id] = bool(value)
             else:
@@ -262,14 +265,20 @@ def register():
         else:
             valid_affiliation = True
 
+        if bracket_id:
+            valid_bracket = bool(
+                Brackets.query.filter_by(id=bracket_id, type="users").first()
+            )
+        else:
+            if Brackets.query.filter_by(type="users").count():
+                valid_bracket = False
+            else:
+                valid_bracket = True
+
         if not valid_email:
             errors.append("Please enter a valid email address")
         if email.check_email_is_whitelisted(email_address) is False:
-            errors.append(
-                "Only email addresses under {domains} may register".format(
-                    domains=get_config("domain_whitelist")
-                )
-            )
+            errors.append("Your email address is not from an allowed domain")
         if names:
             errors.append("That user name is already taken")
         if team_name_email_check is True:
@@ -288,6 +297,8 @@ def register():
             errors.append("Invalid country")
         if valid_affiliation is False:
             errors.append("Please provide a shorter affiliation")
+        if valid_bracket is False:
+            errors.append("Please provide a valid bracket")
 
         if len(errors) > 0:
             return render_template(
@@ -299,7 +310,12 @@ def register():
             )
         else:
             with app.app_context():
-                user = Users(name=name, email=email_address, password=password)
+                user = Users(
+                    name=name,
+                    email=email_address,
+                    password=password,
+                    bracket_id=bracket_id,
+                )
 
                 if website:
                     user.website = website
@@ -494,6 +510,15 @@ def oauth_redirect():
 
             user = Users.query.filter_by(email=user_email).first()
             if user is None:
+                # Respect the user count limit
+                num_users_limit = int(get_config("num_users", default=0))
+                num_users = Users.query.filter_by(banned=False, hidden=False).count()
+                if num_users_limit and num_users >= num_users_limit:
+                    abort(
+                        403,
+                        description=f"Reached the maximum number of users ({num_users_limit}).",
+                    )
+
                 # Check if we are allowing registration before creating users
                 if registration_visible() or mlc_registration():
                     user = Users(

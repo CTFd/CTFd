@@ -84,23 +84,58 @@ class FilesList(Resource):
                 "APISimpleErrorResponse",
             ),
         },
+        params={
+            "file": {
+                "in": "formData",
+                "type": "file",
+                "required": True,
+                "description": "The file to upload",
+            }
+        },
     )
-    def post(self):
+    @validate_args(
+        {
+            "challenge_id": (int, None),
+            "challenge": (int, None),
+            "page_id": (int, None),
+            "page": (int, None),
+            "type": (str, None),
+            "location": (str, None),
+        },
+        location="form",
+    )
+    def post(self, form_args):
         files = request.files.getlist("file")
+        location = form_args.get("location")
         # challenge_id
         # page_id
+
+        # Handle situation where users attempt to upload multiple files with a single location
+        if len(files) > 1 and location:
+            return {
+                "success": False,
+                "errors": {
+                    "location": ["Location cannot be specified with multiple files"]
+                },
+            }, 400
 
         objs = []
         for f in files:
             # uploads.upload_file(file=f, chalid=req.get('challenge'))
-            obj = uploads.upload_file(file=f, **request.form.to_dict())
+            try:
+                obj = uploads.upload_file(file=f, **form_args)
+            except ValueError as e:
+                return {
+                    "success": False,
+                    "errors": {"location": [str(e)]},
+                }, 400
             objs.append(obj)
 
         schema = FileSchema(many=True)
         response = schema.dump(objs)
 
         if response.errors:
-            return {"success": False, "errors": response.errorss}, 400
+            return {"success": False, "errors": response.errors}, 400
 
         return {"success": True, "data": response.data}
 

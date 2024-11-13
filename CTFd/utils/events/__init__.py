@@ -58,12 +58,10 @@ class EventManager(object):
             # or else some reverse proxies will incorrectly buffer SSE
             yield ServerSentEvent(data="ping", type="ping")
             while True:
-                try:
-                    with Timeout(5):
-                        message = q[channel].get()
-                        yield ServerSentEvent(**message)
-                except Timeout:
-                    yield ServerSentEvent(data="ping", type="ping")
+                with Timeout(5, False):
+                    message = q[channel].get()
+                    yield ServerSentEvent(**message)
+                yield ServerSentEvent(data="ping", type="ping")
         finally:
             del self.clients[id(q)]
             del q
@@ -109,12 +107,10 @@ class RedisEventManager(EventManager):
             # or else some reverse proxies will incorrectly buffer SSE
             yield ServerSentEvent(data="ping", type="ping")
             while True:
-                try:
-                    with Timeout(5):
-                        message = q[channel].get()
-                        yield ServerSentEvent(**message)
-                except Timeout:
-                    yield ServerSentEvent(data="ping", type="ping")
+                with Timeout(5, False):
+                    message = q[channel].get()
+                    yield ServerSentEvent(**message)
+                yield ServerSentEvent(data="ping", type="ping")
         finally:
             del self.clients[id(q)]
             del q

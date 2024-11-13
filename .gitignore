@@ -44,8 +44,8 @@ nosetests.xml
 coverage.xml
 
 # Translations
-*.mo
-*.pot
+# TODO: CTFd 4.0 We should consider generating .mo files in a Docker image instead of saving them in git
+# *.mo
 
 # Django stuff:
 *.log

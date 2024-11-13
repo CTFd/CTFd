@@ -96,6 +96,9 @@
 							<a href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 								{{ user.name | truncate(32) }}
 							</a>
+							{% if user.bracket_id %}
+								<span class="badge badge-secondary">{{ user.bracket.name }}</span>
+							{% endif %}
 							{% if user.oauth_id %}
 								<a href="https://majorleaguecyber.org/u/{{ user.name }}">
 									<span class="badge badge-primary">Official</span>
@@ -173,5 +176,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/users.js') }}"></script>
+	{{ Assets.js("assets/js/pages/users.js", theme="admin") }}
 {% endblock %}

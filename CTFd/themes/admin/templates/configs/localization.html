@@ -1,0 +1,19 @@
+<div role="tabpanel" class="tab-pane config-section" id="localization">
+	{% 
+		with form = Forms.config.LocalizationForm(
+			default_locale=default_locale
+		) 
+	%}
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			{{ form.default_locale.label }}
+			{{ form.default_locale(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.default_locale.description }}
+			</small>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+	{% endwith %}
+</div>

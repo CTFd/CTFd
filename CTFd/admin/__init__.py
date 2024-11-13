@@ -1,4 +1,4 @@
-import csv
+import csv  # noqa: I001
 import datetime
 import os
 from io import StringIO
@@ -18,16 +18,18 @@ from flask import (
 admin = Blueprint("admin", __name__)
 
 # isort:imports-firstparty
-from CTFd.admin import challenges  # noqa: F401
-from CTFd.admin import notifications  # noqa: F401
-from CTFd.admin import pages  # noqa: F401
-from CTFd.admin import scoreboard  # noqa: F401
-from CTFd.admin import statistics  # noqa: F401
-from CTFd.admin import submissions  # noqa: F401
-from CTFd.admin import teams  # noqa: F401
-from CTFd.admin import users  # noqa: F401
+from CTFd.admin import challenges  # noqa: F401,I001
+from CTFd.admin import notifications  # noqa: F401,I001
+from CTFd.admin import pages  # noqa: F401,I001
+from CTFd.admin import scoreboard  # noqa: F401,I001
+from CTFd.admin import statistics  # noqa: F401,I001
+from CTFd.admin import submissions  # noqa: F401,I001
+from CTFd.admin import teams  # noqa: F401,I001
+from CTFd.admin import users  # noqa: F401,I001
 from CTFd.cache import (
     cache,
+    clear_all_team_sessions,
+    clear_all_user_sessions,
     clear_challenges,
     clear_config,
     clear_pages,
@@ -48,7 +50,7 @@ from CTFd.models import (
     db,
 )
 from CTFd.utils import config as ctf_config
-from CTFd.utils import get_config, set_config
+from CTFd.utils import get_app_config, get_config, set_config
 from CTFd.utils.csv import dump_csv, load_challenges_csv, load_teams_csv, load_users_csv
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.exports import background_import_ctf
@@ -120,7 +122,7 @@ def export_ctf():
     backup = export_ctf_util()
     ctf_name = ctf_config.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d_%T")
-    full_name = u"{}.{}.zip".format(ctf_name, day)
+    full_name = "{}.{}.zip".format(ctf_name, day)
     return send_file(
         backup, cache_timeout=-1, as_attachment=True, attachment_filename=full_name
     )
@@ -166,8 +168,8 @@ def export_csv():
     return send_file(
         output,
         as_attachment=True,
-        cache_timeout=-1,
-        attachment_filename="{name}-{table}.csv".format(
+        max_age=-1,
+        download_name="{name}-{table}.csv".format(
             name=ctf_config.ctf_name(), table=table
         ),
     )
@@ -190,7 +192,14 @@ def config():
     except ValueError:
         pass
 
-    return render_template("admin/config.html", themes=themes, **configs)
+    force_html_sanitization = get_app_config("HTML_SANITIZATION")
+
+    return render_template(
+        "admin/config.html",
+        themes=themes,
+        **configs,
+        force_html_sanitization=force_html_sanitization
+    )
 
 
 @admin.route("/admin/reset", methods=["GET", "POST"])
@@ -233,6 +242,13 @@ def reset():
             Awards.query.delete()
             Unlocks.query.delete()
             Tracking.query.delete()
+
+        if data.get("user_mode") == "users":
+            db.session.query(Users).update({Users.team_id: None})
+            Teams.query.delete()
+
+            clear_all_user_sessions()
+            clear_all_team_sessions()
 
         if require_setup:
             set_config("setup", False)

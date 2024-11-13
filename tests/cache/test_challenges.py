@@ -60,9 +60,9 @@ def test_deleting_challenge_clears_cache_solves():
             data = req.get_json()["data"]
             challenge = data[0]
             assert challenge["solves"] == 1
-            from CTFd.utils.challenges import (
-                get_solves_for_challenge_id,
+            from CTFd.utils.challenges import (  # noqa: I001
                 get_solve_counts_for_challenges,
+                get_solves_for_challenge_id,
             )
 
             solves = get_solves_for_challenge_id(1)
@@ -100,9 +100,9 @@ def test_deleting_solve_clears_cache():
             data = req.get_json()["data"]
             challenge = data[0]
             assert challenge["solves"] == 1
-            from CTFd.utils.challenges import (
-                get_solves_for_challenge_id,
+            from CTFd.utils.challenges import (  # noqa: I001
                 get_solve_counts_for_challenges,
+                get_solves_for_challenge_id,
             )
 
             solves = get_solves_for_challenge_id(1)

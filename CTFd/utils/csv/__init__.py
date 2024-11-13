@@ -286,15 +286,13 @@ def dump_database_table(tablename):
     temp = StringIO()
     writer = csv.writer(temp)
 
-    header = [column.name for column in model.__mapper__.columns]
+    header = model.__mapper__.column_attrs.keys()
     writer.writerow(header)
 
     responses = model.query.all()
 
     for curr in responses:
-        writer.writerow(
-            [getattr(curr, column.name) for column in model.__mapper__.columns]
-        )
+        writer.writerow([getattr(curr, column) for column in header])
 
     temp.seek(0)
 
@@ -366,25 +364,76 @@ def load_challenges_csv(dict_reader):
         db.session.commit()
 
         if flags:
-            flags = [flag.strip() for flag in flags.split(",")]
-            for flag in flags:
-                f = Flags(type="static", challenge_id=challenge.id, content=flag,)
-                db.session.add(f)
-                db.session.commit()
+            try:
+                # Allow for column to contain JSON for more flexible data entry
+                json_flags = json.loads(flags)
+                if isinstance(json_flags, list) and all(
+                    isinstance(f, dict) for f in json_flags
+                ):
+                    for flag in json_flags:
+                        type = flag.get("type", "static")
+                        content = flag.get("content", "")
+                        data = flag.get("data", None)
+                        f = Flags(
+                            challenge_id=challenge.id,
+                            type=type,
+                            content=content,
+                            data=data,
+                        )
+                        db.session.add(f)
+                        db.session.commit()
+                else:
+                    raise TypeError("Processing flags as strings instead of JSON")
+
+            except (json.JSONDecodeError, TypeError):
+                string_flags = [flag.strip() for flag in flags.split(",")]
+                for flag in string_flags:
+                    f = Flags(
+                        type="static",
+                        challenge_id=challenge.id,
+                        content=flag,
+                    )
+                    db.session.add(f)
+                    db.session.commit()
 
         if tags:
             tags = [tag.strip() for tag in tags.split(",")]
             for tag in tags:
-                t = Tags(challenge_id=challenge.id, value=tag,)
+                t = Tags(
+                    challenge_id=challenge.id,
+                    value=tag,
+                )
                 db.session.add(t)
                 db.session.commit()
 
         if hints:
-            hints = [hint.strip() for hint in hints.split(",")]
-            for hint in hints:
-                h = Hints(challenge_id=challenge.id, content=hint,)
-                db.session.add(h)
-                db.session.commit()
+            try:
+                # Allow for column to contain JSON for more flexible data entry
+                json_hints = json.loads(hints)
+                if isinstance(json_hints, list) and all(
+                    isinstance(h, dict) for h in json_hints
+                ):
+                    for hint in json_hints:
+                        content = hint.get("content", "")
+                        cost = hint.get("cost", 0)
+                        h = Hints(
+                            challenge_id=challenge.id,
+                            content=content,
+                            cost=cost,
+                        )
+                        db.session.add(h)
+                        db.session.commit()
+                else:
+                    raise TypeError("Processing hints as strings instead of JSON")
+            except (json.JSONDecodeError, TypeError):
+                string_hints = [hint.strip() for hint in hints.split(",")]
+                for hint in string_hints:
+                    h = Hints(
+                        challenge_id=challenge.id,
+                        content=hint,
+                    )
+                    db.session.add(h)
+                    db.session.commit()
     if errors:
         return errors
     return True

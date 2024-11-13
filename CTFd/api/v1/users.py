@@ -87,6 +87,7 @@ class UserList(Resource):
                         "country": "country",
                         "bracket": "bracket",
                         "affiliation": "affiliation",
+                        "email": "email",
                     },
                 ),
                 None,
@@ -97,19 +98,27 @@ class UserList(Resource):
     def get(self, query_args):
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
+
+        if field == "email":
+            if is_admin() is False:
+                return {
+                    "success": False,
+                    "errors": {"field": "Emails can only be queried by admins"},
+                }, 400
+
         filters = build_model_filters(model=Users, query=q, field=field)
 
         if is_admin() and request.args.get("view") == "admin":
             users = (
                 Users.query.filter_by(**query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
         else:
             users = (
                 Users.query.filter_by(banned=False, hidden=False, **query_args)
                 .filter(*filters)
-                .paginate(per_page=50, max_per_page=100)
+                .paginate(per_page=50, max_per_page=100, error_out=False)
             )
 
         response = UserSchema(view="user", many=True).dump(users.items)
@@ -293,8 +302,13 @@ class UserPrivate(Resource):
     def get(self):
         user = get_current_user()
         response = UserSchema("self").dump(user).data
+
+        # A user can always calculate their score regardless of any setting because they can simply sum all of their challenges
+        # Therefore a user requesting their private data should be able to get their own current score
+        # However place is not something that a user can ascertain on their own so it is always gated behind freeze time
         response["place"] = user.place
-        response["score"] = user.score
+        response["score"] = user.get_score(admin=True)
+
         return {"success": True, "data": response}
 
     @authed_only

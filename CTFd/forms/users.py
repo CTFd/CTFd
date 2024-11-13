@@ -1,11 +1,13 @@
+from flask_babel import lazy_gettext as _l
 from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 
 from CTFd.constants.config import Configs
+from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import UserFieldEntries, UserFields
+from CTFd.models import Brackets, UserFieldEntries, UserFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 
 
@@ -14,7 +16,7 @@ def build_custom_user_fields(
     include_entries=False,
     fields_kwargs=None,
     field_entries_kwargs=None,
-    blacklisted_items=("affiliation", "website"),
+    blacklisted_items=(),
 ):
     """
     Function used to reinject values back into forms for accessing by themes
@@ -86,7 +88,7 @@ def build_registration_code_field(form_cls):
     Add field_type so Jinja knows how to render it.
     """
     if Configs.registration_code:
-        field = getattr(form_cls, "registration_code")  # noqa B009
+        field = getattr(form_cls, "registration_code", None)  # noqa B009
         field.field_type = "text"
         return [field]
     else:
@@ -110,6 +112,32 @@ def attach_registration_code_field(form_cls):
         )
 
 
+def build_user_bracket_field(form_cls, value=None):
+    field = getattr(form_cls, "bracket_id", None)  # noqa B009
+    if field:
+        field.field_type = "select"
+        field.process_data(value)
+        return [field]
+    else:
+        return []
+
+
+def attach_user_bracket_field(form_cls):
+    brackets = Brackets.query.filter_by(type="users").all()
+    if brackets:
+        choices = [("", "")] + [
+            (bracket.id, f"{bracket.name} - {bracket.description}")
+            for bracket in brackets
+        ]
+        select_field = SelectField(
+            "Bracket",
+            description="Competition bracket for your user",
+            choices=choices,
+            validators=[InputRequired()],
+        )
+        setattr(form_cls, "bracket_id", select_field)  # noqa B010
+
+
 class UserSearchForm(BaseForm):
     field = SelectField(
         "Search Field",
@@ -130,22 +158,27 @@ class UserSearchForm(BaseForm):
 
 class PublicUserSearchForm(BaseForm):
     field = SelectField(
-        "Search Field",
+        _l("Search Field"),
         choices=[
-            ("name", "Name"),
-            ("affiliation", "Affiliation"),
-            ("website", "Website"),
+            ("name", _l("Name")),
+            ("affiliation", _l("Affiliation")),
+            ("website", _l("Website")),
         ],
         default="name",
         validators=[InputRequired()],
     )
-    q = StringField("Parameter", validators=[InputRequired()])
-    submit = SubmitField("Search")
+    q = StringField(
+        _l("Parameter"),
+        description=_l("Search for matching users"),
+        validators=[InputRequired()],
+    )
+    submit = SubmitField(_l("Search"))
 
 
 class UserBaseForm(BaseForm):
     name = StringField("User Name", validators=[InputRequired()])
     email = EmailField("Email", validators=[InputRequired()])
+    language = SelectField(_l("Language"), choices=SELECT_LANGUAGE_LIST)
     password = PasswordField("Password")
     website = StringField("Website")
     affiliation = StringField("Affiliation")
@@ -168,7 +201,7 @@ def UserEditForm(*args, **kwargs):
                 include_entries=True,
                 fields_kwargs=None,
                 field_entries_kwargs={"user_id": self.obj.id},
-            )
+            ) + build_user_bracket_field(self, value=self.obj.bracket_id)
 
         def __init__(self, *args, **kwargs):
             """
@@ -180,6 +213,7 @@ def UserEditForm(*args, **kwargs):
                 self.obj = obj
 
     attach_custom_user_fields(_UserEditForm)
+    attach_user_bracket_field(_UserEditForm)
 
     return _UserEditForm(*args, **kwargs)
 
@@ -190,8 +224,11 @@ def UserCreateForm(*args, **kwargs):
 
         @property
         def extra(self):
-            return build_custom_user_fields(self, include_entries=False)
+            return build_custom_user_fields(
+                self, include_entries=False
+            ) + build_user_bracket_field(self)
 
     attach_custom_user_fields(_UserCreateForm)
+    attach_user_bracket_field(_UserCreateForm)
 
     return _UserCreateForm(*args, **kwargs)

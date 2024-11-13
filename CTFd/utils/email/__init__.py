@@ -137,8 +137,26 @@ def user_created_notification(addr, name, password):
 def check_email_is_whitelisted(email_address):
     local_id, _, domain = email_address.partition("@")
     domain_whitelist = get_config("domain_whitelist")
+
     if domain_whitelist:
         domain_whitelist = [d.strip() for d in domain_whitelist.split(",")]
-        if domain not in domain_whitelist:
-            return False
+
+        for allowed_domain in domain_whitelist:
+            if allowed_domain.startswith("*."):
+                # domains should never container the "*" char
+                if "*" in domain:
+                    return False
+
+                # Handle wildcard domain case
+                suffix = allowed_domain[1:]  # Remove the "*" prefix
+                if domain.endswith(suffix):
+                    return True
+
+            elif domain == allowed_domain:
+                return True
+
+        # whitelist is specified but the email doesn't match any domains
+        return False
+
+    # whitelist is not specified - allow all emails
     return True

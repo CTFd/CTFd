@@ -1,7 +1,13 @@
 ---
 name: CTFd Postgres CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
@@ -29,7 +35,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.9']
+        python-version: ['3.11']
 
     name: Python ${{ matrix.python-version }}
     steps:
@@ -55,7 +61,7 @@ jobs:
             TESTING_DATABASE_URL: postgres://postgres:password@localhost:${{ job.services.postgres.ports[5432] }}/ctfd
 
       - name: Codecov
-        uses: codecov/codecov-action@v1.0.11
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage.xml
 

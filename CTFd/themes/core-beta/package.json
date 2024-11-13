@@ -1,0 +1,33 @@
+{
+  "name": "core-beta",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "format": "prettier --write assets/",
+    "lint": "prettier --check assets/",
+    "verify": "vite build; git diff --quiet --exit-code"
+  },
+  "dependencies": {
+    "@ctfdio/ctfd-js": "^0.0.14",
+    "@fontsource/lato": "^4.5.3",
+    "@fontsource/raleway": "^4.5.3",
+    "@fortawesome/fontawesome-free": "6.5.1",
+    "@popperjs/core": "^2.11.4",
+    "alpinejs": "^3.9.1",
+    "bootstrap": "^5.3.3",
+    "bootstrap-multimodal": "~1.0.4",
+    "dayjs": "^1.11.0",
+    "echarts": "^5.3.2",
+    "lolight": "^1.4.0",
+    "vue": "^3.2.25"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.0.1",
+    "prettier": "^3.2.5",
+    "rollup-plugin-copy": "^3.4.0",
+    "sass": "^1.49.7",
+    "vite": "^3.0.5"
+  }
+}

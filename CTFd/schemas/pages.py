@@ -16,7 +16,9 @@ class PageSchema(ma.ModelSchema):
         "title",
         validate=[
             validate.Length(
-                min=0, max=80, error="Page could not be saved. Your title is too long.",
+                min=0,
+                max=80,
+                error="Page could not be saved. Your title is too long.",
             )
         ],
     )
@@ -43,6 +45,18 @@ class PageSchema(ma.ModelSchema):
                 min=0,
                 max=65535,
                 error="Page could not be saved. Your content is too long.",
+            )
+        ],
+    )
+
+    link_target = field_for(
+        Pages,
+        "link_target",
+        allow_none=True,
+        validate=[
+            validate.OneOf(
+                choices=[None, "_self", "_blank"],
+                error="Invalid link target",
             )
         ],
     )

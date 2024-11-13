@@ -8,6 +8,7 @@ from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
     gen_award,
+    gen_bracket,
     gen_challenge,
     gen_flag,
     gen_solve,
@@ -84,9 +85,11 @@ def test_top_10():
     """Make sure top10 returns correct information"""
     app = create_ctfd()
     with app.app_context():
-        register_user(app, name="user1", email="user1@examplectf.com")
-        register_user(app, name="user2", email="user2@examplectf.com")
-        register_user(app)
+        gen_bracket(app.db, name="players1")
+        gen_bracket(app.db, name="players2")
+        register_user(app, name="user1", email="user1@examplectf.com", bracket_id=1)
+        register_user(app, name="user2", email="user2@examplectf.com", bracket_id=2)
+        register_user(app, bracket_id=1)
 
         chal1 = gen_challenge(app.db)
         gen_flag(app.db, challenge_id=chal1.id, content="flag")
@@ -114,6 +117,11 @@ def test_top_10():
         saved = {
             "1": {
                 "id": 2,
+                "account_url": "/users/2",
+                "name": "user1",
+                "score": 200,
+                "bracket_id": 1,
+                "bracket_name": "players1",
                 "solves": [
                     {
                         "date": "2017-10-03T03:21:34Z",
@@ -132,10 +140,14 @@ def test_top_10():
                         "value": 100,
                     },
                 ],
-                "name": "user1",
             },
             "2": {
                 "id": 3,
+                "account_url": "/users/3",
+                "name": "user2",
+                "score": 100,
+                "bracket_id": 2,
+                "bracket_name": "players2",
                 "solves": [
                     {
                         "date": "2017-10-03T03:21:34Z",
@@ -146,7 +158,30 @@ def test_top_10():
                         "value": 100,
                     }
                 ],
+            },
+        }
+        assert saved == response
+
+        r = client.get("/api/v1/scoreboard/top/10?bracket_id=2")
+        response = r.get_json()["data"]
+        saved = {
+            "1": {
+                "id": 3,
+                "account_url": "/users/3",
                 "name": "user2",
+                "score": 100,
+                "bracket_id": 2,
+                "bracket_name": "players2",
+                "solves": [
+                    {
+                        "date": "2017-10-03T03:21:34Z",
+                        "challenge_id": 1,
+                        "account_id": 3,
+                        "user_id": 3,
+                        "team_id": None,
+                        "value": 100,
+                    }
+                ],
             },
         }
         assert saved == response

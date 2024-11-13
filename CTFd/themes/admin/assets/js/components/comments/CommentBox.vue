@@ -118,8 +118,8 @@
 </template>
 
 <script>
-import CTFd from "core/CTFd";
-import { default as helpers } from "core/helpers";
+import CTFd from "../../compat/CTFd";
+import { default as helpers } from "../../compat/helpers";
 import dayjs from "dayjs";
 import hljs from "highlight.js";
 export default {
@@ -127,9 +127,9 @@ export default {
     // These props are passed to the api via query string.
     // See this.getArgs()
     type: String,
-    id: Number
+    id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       page: 1,
       pages: null,
@@ -138,32 +138,32 @@ export default {
       total: null,
       comment: "",
       comments: [],
-      urlRoot: CTFd.config.urlRoot
+      urlRoot: CTFd.config.urlRoot,
     };
   },
   methods: {
     toLocalTime(date) {
       return dayjs(date).format("MMMM Do, h:mm:ss A");
     },
-    nextPage: function() {
+    nextPage: function () {
       this.page++;
       this.loadComments();
     },
-    prevPage: function() {
+    prevPage: function () {
       this.page--;
       this.loadComments();
     },
-    getArgs: function() {
+    getArgs: function () {
       let args = {};
       args[`${this.$props.type}_id`] = this.$props.id;
       return args;
     },
-    loadComments: function() {
+    loadComments: function () {
       let apiArgs = this.getArgs();
       apiArgs[`page`] = this.page;
       apiArgs[`per_page`] = 10;
 
-      helpers.comments.get_comments(apiArgs).then(response => {
+      helpers.comments.get_comments(apiArgs).then((response) => {
         this.page = response.meta.pagination.page;
         this.pages = response.meta.pagination.pages;
         this.next = response.meta.pagination.next;
@@ -173,7 +173,7 @@ export default {
         return this.comments;
       });
     },
-    submitComment: function() {
+    submitComment: function () {
       let comment = this.comment.trim();
       if (comment.length > 0) {
         helpers.comments.add_comment(
@@ -182,14 +182,14 @@ export default {
           this.getArgs(),
           () => {
             this.loadComments();
-          }
+          },
         );
       }
       this.comment = "";
     },
-    deleteComment: function(commentId) {
+    deleteComment: function (commentId) {
       if (confirm("Are you sure you'd like to delete this comment?")) {
-        helpers.comments.delete_comment(commentId).then(response => {
+        helpers.comments.delete_comment(commentId).then((response) => {
           if (response.success === true) {
             for (let i = this.comments.length - 1; i >= 0; --i) {
               if (this.comments[i].id == commentId) {
@@ -199,16 +199,16 @@ export default {
           }
         });
       }
-    }
+    },
   },
   created() {
     this.loadComments();
   },
   updated() {
-    this.$el.querySelectorAll("pre code").forEach(block => {
+    this.$el.querySelectorAll("pre code").forEach((block) => {
       hljs.highlightBlock(block);
     });
-  }
+  },
 };
 </script>
 

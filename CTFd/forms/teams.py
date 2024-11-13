@@ -1,12 +1,39 @@
+from flask_babel import lazy_gettext as _l
 from wtforms import BooleanField, PasswordField, SelectField, StringField
 from wtforms.fields.html5 import EmailField, URLField
 from wtforms.validators import InputRequired
 
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
-from CTFd.models import TeamFieldEntries, TeamFields
+from CTFd.models import Brackets, TeamFieldEntries, TeamFields
 from CTFd.utils.countries import SELECT_COUNTRIES_LIST
 from CTFd.utils.user import get_current_team
+
+
+def build_team_bracket_field(form_cls, value=None):
+    field = getattr(form_cls, "bracket_id", None)  # noqa B009
+    if field:
+        field.field_type = "select"
+        field.process_data(value)
+        return [field]
+    else:
+        return []
+
+
+def attach_team_bracket_field(form_cls):
+    brackets = Brackets.query.filter_by(type="teams").all()
+    if brackets:
+        choices = [("", "")] + [
+            (bracket.id, f"{bracket.name} - {bracket.description}")
+            for bracket in brackets
+        ]
+        select_field = SelectField(
+            "Bracket",
+            description="Competition bracket for your team",
+            choices=choices,
+            validators=[InputRequired()],
+        )
+        setattr(form_cls, "bracket_id", select_field)  # noqa B010
 
 
 def build_custom_team_fields(
@@ -14,7 +41,7 @@ def build_custom_team_fields(
     include_entries=False,
     fields_kwargs=None,
     field_entries_kwargs=None,
-    blacklisted_items=("affiliation", "website"),
+    blacklisted_items=(),
 ):
     if fields_kwargs is None:
         fields_kwargs = {}
@@ -72,54 +99,59 @@ def attach_custom_team_fields(form_cls, **kwargs):
 
 
 class TeamJoinForm(BaseForm):
-    name = StringField("Team Name", validators=[InputRequired()])
-    password = PasswordField("Team Password", validators=[InputRequired()])
-    submit = SubmitField("Join")
+    name = StringField(_l("Team Name"), validators=[InputRequired()])
+    password = PasswordField(_l("Team Password"), validators=[InputRequired()])
+    submit = SubmitField(_l("Join"))
 
 
 def TeamRegisterForm(*args, **kwargs):
     class _TeamRegisterForm(BaseForm):
-        name = StringField("Team Name", validators=[InputRequired()])
-        password = PasswordField("Team Password", validators=[InputRequired()])
-        submit = SubmitField("Create")
+        name = StringField(_l("Team Name"), validators=[InputRequired()])
+        password = PasswordField(_l("Team Password"), validators=[InputRequired()])
+        submit = SubmitField(_l("Create"))
 
         @property
         def extra(self):
             return build_custom_team_fields(
                 self, include_entries=False, blacklisted_items=()
-            )
+            ) + build_team_bracket_field(self)
 
     attach_custom_team_fields(_TeamRegisterForm)
+    attach_team_bracket_field(_TeamRegisterForm)
     return _TeamRegisterForm(*args, **kwargs)
 
 
 def TeamSettingsForm(*args, **kwargs):
     class _TeamSettingsForm(BaseForm):
         name = StringField(
-            "Team Name",
-            description="Your team's public name shown to other competitors",
+            _l("Team Name"),
+            description=_l("Your team's public name shown to other competitors"),
         )
         password = PasswordField(
-            "New Team Password", description="Set a new team join password"
+            _l("New Team Password"), description=_l("Set a new team join password")
         )
         confirm = PasswordField(
-            "Confirm Password",
-            description="Provide your current team password (or your password) to update your team's password",
+            _l("Confirm Current Team Password"),
+            description=_l(
+                "Provide your current team password (or your password) to update your team's password"
+            ),
         )
         affiliation = StringField(
-            "Affiliation",
-            description="Your team's affiliation publicly shown to other competitors",
+            _l("Affiliation"),
+            description=_l(
+                "Your team's affiliation publicly shown to other competitors"
+            ),
         )
         website = URLField(
-            "Website",
-            description="Your team's website publicly shown to other competitors",
+            _l("Website"),
+            description=_l("Your team's website publicly shown to other competitors"),
         )
         country = SelectField(
-            "Country",
+            _l("Country"),
             choices=SELECT_COUNTRIES_LIST,
-            description="Your team's country publicly shown to other competitors",
+            description=_l("Your team's country publicly shown to other competitors"),
         )
-        submit = SubmitField("Submit")
+        submit = SubmitField(_l("Submit"))
 
         @property
         def extra(self):
@@ -156,7 +188,9 @@ def TeamSettingsForm(*args, **kwargs):
 
 class TeamCaptainForm(BaseForm):
     # Choices are populated dynamically at form creation time
-    captain_id = SelectField("Team Captain", choices=[], validators=[InputRequired()])
+    captain_id = SelectField(
+        _l("Team Captain"), choices=[], validators=[InputRequired()]
+    )
     submit = SubmitField("Submit")
 
 
@@ -178,29 +212,29 @@ class TeamSearchForm(BaseForm):
 
 class PublicTeamSearchForm(BaseForm):
     field = SelectField(
-        "Search Field",
+        _l("Search Field"),
         choices=[
-            ("name", "Name"),
-            ("affiliation", "Affiliation"),
-            ("website", "Website"),
+            ("name", _l("Name")),
+            ("affiliation", _l("Affiliation")),
+            ("website", _l("Website")),
         ],
         default="name",
         validators=[InputRequired()],
     )
-    q = StringField("Parameter", validators=[InputRequired()])
-    submit = SubmitField("Search")
+    q = StringField(_l("Parameter"), validators=[InputRequired()])
+    submit = SubmitField(_l("Search"))
 
 
 class TeamBaseForm(BaseForm):
-    name = StringField("Team Name", validators=[InputRequired()])
-    email = EmailField("Email")
-    password = PasswordField("Password")
-    website = URLField("Website")
-    affiliation = StringField("Affiliation")
-    country = SelectField("Country", choices=SELECT_COUNTRIES_LIST)
-    hidden = BooleanField("Hidden")
-    banned = BooleanField("Banned")
-    submit = SubmitField("Submit")
+    name = StringField(_l("Team Name"), validators=[InputRequired()])
+    email = EmailField(_l("Email"))
+    password = PasswordField(_l("Password"))
+    website = URLField(_l("Website"))
+    affiliation = StringField(_l("Affiliation"))
+    country = SelectField(_l("Country"), choices=SELECT_COUNTRIES_LIST)
+    hidden = BooleanField(_l("Hidden"))
+    banned = BooleanField(_l("Banned"))
+    submit = SubmitField(_l("Submit"))
 
 
 def TeamCreateForm(*args, **kwargs):
@@ -209,9 +243,12 @@ def TeamCreateForm(*args, **kwargs):
 
         @property
         def extra(self):
-            return build_custom_team_fields(self, include_entries=False)
+            return build_custom_team_fields(
+                self, include_entries=False
+            ) + build_team_bracket_field(self)
 
     attach_custom_team_fields(_TeamCreateForm)
+    attach_team_bracket_field(_TeamCreateForm)
 
     return _TeamCreateForm(*args, **kwargs)
 
@@ -227,7 +264,7 @@ def TeamEditForm(*args, **kwargs):
                 include_entries=True,
                 fields_kwargs=None,
                 field_entries_kwargs={"team_id": self.obj.id},
-            )
+            ) + build_team_bracket_field(self, value=self.obj.bracket_id)
 
         def __init__(self, *args, **kwargs):
             """
@@ -239,13 +276,14 @@ def TeamEditForm(*args, **kwargs):
                 self.obj = obj
 
     attach_custom_team_fields(_TeamEditForm)
+    attach_team_bracket_field(_TeamEditForm)
 
     return _TeamEditForm(*args, **kwargs)
 
 
 class TeamInviteForm(BaseForm):
-    link = URLField("Invite Link")
+    link = URLField(_l("Invite Link"))
 
 
 class TeamInviteJoinForm(BaseForm):
-    submit = SubmitField("Join")
+    submit = SubmitField(_l("Join"))

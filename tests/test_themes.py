@@ -108,9 +108,9 @@ def test_that_ctfd_can_be_deployed_in_subdir():
             assert r.location == "http://localhost/ctf/"
 
             c = Client(app)
-            app_iter, status, headers = c.get("/")
-            headers = dict(headers)
-            assert status == "302 FOUND"
+            response = c.get("/")
+            headers = dict(response.headers)
+            assert response.status == "302 FOUND"
             assert headers["Location"] == "http://localhost/ctf/"
 
             r = client.get("/challenges")

@@ -1,0 +1,767 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CTFd\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-10-07 03:17-0400\n"
+"PO-Revision-Date: 2024-03-21 23:53\n"
+"Last-Translator: \n"
+"Language-Team: Korean\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: CTFd\n"
+"X-Crowdin-Project-ID: 659064\n"
+"X-Crowdin-Language: ko\n"
+"X-Crowdin-File: /master/messages.pot\n"
+"X-Crowdin-File-ID: 188\n"
+"Language: ko_KR\n"
+
+#: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
+#: CTFd/themes/core-beta/templates/teams/private.html:319
+#: CTFd/themes/core-beta/templates/teams/public.html:85
+msgid "User Name"
+msgstr "이름"
+
+#: CTFd/forms/auth.py:21 CTFd/forms/auth.py:53 CTFd/forms/self.py:17
+#: CTFd/forms/teams.py:203
+msgid "Email"
+msgstr "이메일"
+
+#: CTFd/forms/auth.py:22 CTFd/forms/auth.py:43 CTFd/forms/auth.py:60
+#: CTFd/forms/self.py:19 CTFd/forms/teams.py:204
+msgid "Password"
+msgstr "비밀번호"
+
+#: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
+#: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
+#: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147
+msgid "Submit"
+msgstr "제출"
+
+#: CTFd/forms/auth.py:39
+msgid "User Name or Email"
+msgstr "이름 혹은 이메일"
+
+#: CTFd/forms/auth.py:48
+msgid "Resend Confirmation Email"
+msgstr "확인 메일 다시 보내기"
+
+#: CTFd/forms/self.py:18 CTFd/forms/users.py:155
+msgid "Language"
+msgstr "언어"
+
+#: CTFd/forms/self.py:20
+msgid "Current Password"
+msgstr "현재 비밀번호"
+
+#: CTFd/forms/self.py:21 CTFd/forms/teams.py:113 CTFd/forms/teams.py:191
+#: CTFd/forms/teams.py:206 CTFd/forms/users.py:138
+#: CTFd/themes/core-beta/templates/teams/teams.html:51
+#: CTFd/themes/core-beta/templates/users/users.html:48
+msgid "Affiliation"
+msgstr "소속"
+
+#: CTFd/forms/self.py:22 CTFd/forms/teams.py:119 CTFd/forms/teams.py:192
+#: CTFd/forms/teams.py:205 CTFd/forms/users.py:139
+#: CTFd/themes/core-beta/templates/teams/teams.html:50
+#: CTFd/themes/core-beta/templates/users/users.html:47
+msgid "Website"
+msgstr "웹사이트"
+
+#: CTFd/forms/self.py:23 CTFd/forms/teams.py:123 CTFd/forms/teams.py:207
+#: CTFd/themes/core-beta/templates/teams/teams.html:52
+#: CTFd/themes/core-beta/templates/users/users.html:49
+msgid "Country"
+msgstr "국가"
+
+#: CTFd/forms/self.py:52 CTFd/themes/core-beta/templates/settings.html:225
+msgid "Expiration"
+msgstr "만료"
+
+#: CTFd/forms/self.py:54
+msgid "Generate"
+msgstr "생성"
+
+#: CTFd/forms/setup.py:29
+msgid "Event Name"
+msgstr "이벤트 이름"
+
+#: CTFd/forms/setup.py:29
+msgid "The name of your CTF event/workshop"
+msgstr "CTF 이름/워크샵 이름"
+
+#: CTFd/forms/setup.py:32
+msgid "Event Description"
+msgstr "이벤트 설명"
+
+#: CTFd/forms/setup.py:32
+msgid "Description for the CTF"
+msgstr "CTF 설명"
+
+#: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
+msgid "User Mode"
+msgstr "유저 모드"
+
+#: CTFd/forms/setup.py:36
+msgid "Team Mode"
+msgstr "팀 모드"
+
+#: CTFd/forms/setup.py:38
+msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
+msgstr "사용자가 팀으로 가입해 플레이 할 것인지(팀 모드) 각자 플레이 할 것인지 (유저 모드) 지정합니다."
+
+#: CTFd/forms/setup.py:45
+msgid "Admin Username"
+msgstr "관리자 이름"
+
+#: CTFd/forms/setup.py:46
+msgid "Your username for the administration account"
+msgstr "관리자 계정에 사용될 이름입니다."
+
+#: CTFd/forms/setup.py:50
+msgid "Admin Email"
+msgstr "관리자 이메일"
+
+#: CTFd/forms/setup.py:51
+msgid "Your email address for the administration account"
+msgstr "관리자 계정에 사용될 이메일입니다."
+
+#: CTFd/forms/setup.py:55
+msgid "Admin Password"
+msgstr "관리자 비밀번호"
+
+#: CTFd/forms/setup.py:56
+msgid "Your password for the administration account"
+msgstr "관리자 계정에 사용될 비밀번호입니다."
+
+#: CTFd/forms/setup.py:61
+msgid "Logo"
+msgstr "로고"
+
+#: CTFd/forms/setup.py:62
+msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
+msgstr "CTF 이름 대신 사용될 웹사이트 로고. 홈페이지 버튼 등에 사용됩니다. (선택사항)"
+
+#: CTFd/forms/setup.py:67
+msgid "Banner"
+msgstr "배너"
+
+#: CTFd/forms/setup.py:67
+msgid "Banner to use for the homepage. Optional."
+msgstr "홈페이지 배너를 지정합니다. (선택 사항)"
+
+#: CTFd/forms/setup.py:70
+msgid "Small Icon"
+msgstr "아이콘"
+
+#: CTFd/forms/setup.py:71
+msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
+msgstr "유저 브라우저의 favicon으로 사용됩니다. PNG만 허용되고, 32x32px만 가능합니다. (선택 사항)"
+
+#: CTFd/forms/setup.py:76
+msgid "Theme"
+msgstr "테마"
+
+#: CTFd/forms/setup.py:77
+msgid "CTFd Theme to use. Can be changed later."
+msgstr "CTFd에 테마를 사용합니다. 나중에 변경할 수 있습니다."
+
+#: CTFd/forms/setup.py:84
+msgid "Theme Color"
+msgstr "테마 색"
+
+#: CTFd/forms/setup.py:85
+msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
+msgstr "테마와 스타일을 지정할 때 사용되는 색상입니다. 테마 지원 기능이 필요합니다. (선택 사항)"
+
+#: CTFd/forms/setup.py:91
+msgid "Verify Emails"
+msgstr "이메일 확인"
+
+#: CTFd/forms/setup.py:143
+msgid "Start Time"
+msgstr "시작 시간"
+
+#: CTFd/forms/setup.py:144
+msgid "Time when your CTF is scheduled to start. Optional."
+msgstr "CTF가 시작될 시간입니다. (선택 사항)"
+
+#: CTFd/forms/setup.py:147
+msgid "End Time"
+msgstr "종료 시간"
+
+#: CTFd/forms/setup.py:148
+msgid "Time when your CTF is scheduled to end. Optional."
+msgstr "CTF가 종료될 시간입니다. (선택 사항)"
+
+#: CTFd/forms/setup.py:150
+msgid "Finish"
+msgstr "완료"
+
+#: CTFd/forms/teams.py:76 CTFd/forms/teams.py:83 CTFd/forms/teams.py:100
+#: CTFd/forms/teams.py:202
+msgid "Team Name"
+msgstr "팀 이름"
+
+#: CTFd/forms/teams.py:77 CTFd/forms/teams.py:84
+msgid "Team Password"
+msgstr "팀 비밀번호"
+
+#: CTFd/forms/teams.py:78 CTFd/forms/teams.py:258
+msgid "Join"
+msgstr "가입"
+
+#: CTFd/forms/teams.py:85
+msgid "Create"
+msgstr "생성"
+
+#: CTFd/forms/teams.py:101
+msgid "Your team's public name shown to other competitors"
+msgstr "팀 이름이 타 사용자에게 공개적으로 표시됩니다"
+
+#: CTFd/forms/teams.py:104
+msgid "New Team Password"
+msgstr "새 팀 비밀번호"
+
+#: CTFd/forms/teams.py:104
+msgid "Set a new team join password"
+msgstr "새 팀 가입 비밀번호 지정"
+
+#: CTFd/forms/teams.py:107
+msgid "Confirm Current Team Password"
+msgstr "팀 비밀번호 확인"
+
+#: CTFd/forms/teams.py:108
+msgid "Provide your current team password (or your password) to update your team's password"
+msgstr "비밀번호를 업데이트 하기 위해서 기존 팀 비밀번호 (혹은 당신의 비밀번호)를 입력하세요"
+
+#: CTFd/forms/teams.py:114
+msgid "Your team's affiliation publicly shown to other competitors"
+msgstr "팀 소속이 타 사용자에게 공개적으로 표시됩니다"
+
+#: CTFd/forms/teams.py:120
+msgid "Your team's website publicly shown to other competitors"
+msgstr "팀 웹사이트가 타 사용자에게 공개적으로 표시됩니다"
+
+#: CTFd/forms/teams.py:125
+msgid "Your team's country publicly shown to other competitors"
+msgstr "팀 국가가 타 사용자에게 공개적으로 표시됩니다"
+
+#: CTFd/forms/teams.py:165
+msgid "Team Captain"
+msgstr "팀장"
+
+#: CTFd/forms/teams.py:188 CTFd/forms/users.py:135
+msgid "Search Field"
+msgstr "검색 필드"
+
+#: CTFd/forms/teams.py:190 CTFd/forms/users.py:137
+#: CTFd/themes/core-beta/templates/challenge.html:183
+msgid "Name"
+msgstr "이름"
+
+#: CTFd/forms/teams.py:197 CTFd/forms/users.py:145
+msgid "Parameter"
+msgstr "파라미터"
+
+#: CTFd/forms/teams.py:198 CTFd/forms/users.py:149
+msgid "Search"
+msgstr "검색"
+
+#: CTFd/forms/teams.py:208
+msgid "Hidden"
+msgstr "숨겨짐"
+
+#: CTFd/forms/teams.py:209
+msgid "Banned"
+msgstr "정지됨"
+
+#: CTFd/forms/teams.py:254
+msgid "Invite Link"
+msgstr "초대 링크"
+
+#: CTFd/forms/users.py:146
+msgid "Search for matching users"
+msgstr "일치하는 유저 검색"
+
+#: CTFd/themes/core-beta/templates/base.html:49
+msgid "Powered by CTFd"
+msgstr "Powered by CTFd"
+
+#: CTFd/themes/core-beta/templates/challenge.html:11
+#: CTFd/themes/core-beta/templates/teams/private.html:375
+#: CTFd/themes/core-beta/templates/teams/public.html:141
+#: CTFd/themes/core-beta/templates/users/private.html:114
+#: CTFd/themes/core-beta/templates/users/public.html:113
+msgid "Challenge"
+msgstr "챌린지"
+
+#: CTFd/themes/core-beta/templates/challenge.html:19
+#, python-format
+msgid "%(num)d Solve"
+msgid_plural "%(num)d Solves"
+msgstr[0] "%(num)d명 해결함"
+
+#: CTFd/themes/core-beta/templates/challenge.html:73
+msgid "View Hint"
+msgstr "힌트 확인"
+
+#: CTFd/themes/core-beta/templates/challenge.html:135
+msgid "Flag"
+msgstr "플래그"
+
+#: CTFd/themes/core-beta/templates/challenge.html:167
+msgid "Next Challenge"
+msgstr "다음 챌린지"
+
+#: CTFd/themes/core-beta/templates/challenge.html:186
+#: CTFd/themes/core-beta/templates/setup.html:305
+#: CTFd/themes/core-beta/templates/setup.html:326
+msgid "Date"
+msgstr "날짜"
+
+#: CTFd/themes/core-beta/templates/challenges.html:7
+#: CTFd/themes/core-beta/templates/components/navbar.html:57
+msgid "Challenges"
+msgstr "챌린지"
+
+#: CTFd/themes/core-beta/templates/confirm.html:7
+msgid "Confirm"
+msgstr "확인"
+
+#: CTFd/themes/core-beta/templates/confirm.html:18
+msgid "We've sent a confirmation email to your email address."
+msgstr "메일 주소로 확인 메일을 보냈습니다."
+
+#: CTFd/themes/core-beta/templates/confirm.html:24
+msgid "Please click the link in that email to confirm your account."
+msgstr "계정을 승인하기 위해서 이메일 내 링크를 클릭해 주세요."
+
+#: CTFd/themes/core-beta/templates/confirm.html:30
+msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
+msgstr "이메일이 도착하지 않았다면, 스팸 메일함을 확인하거나 관리자에게 연락하여 수동으로 계정을 승인하세요."
+
+#: CTFd/themes/core-beta/templates/confirm.html:43
+msgid "Change Email Address"
+msgstr "이메일 주소 변경"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:178
+#: CTFd/themes/core-beta/templates/login.html:7
+msgid "Login"
+msgstr "로그인"
+
+#: CTFd/themes/core-beta/templates/login.html:40
+msgid "Forgot your password?"
+msgstr "비밀번호 찾기"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:97
+#: CTFd/themes/core-beta/templates/notifications.html:7
+msgid "Notifications"
+msgstr "알림"
+
+#: CTFd/themes/core-beta/templates/notifications.html:14
+msgid "There are no notifications yet"
+msgstr "알림이 없습니다."
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:165
+#: CTFd/themes/core-beta/templates/register.html:7
+msgid "Register"
+msgstr "회원 가입"
+
+#: CTFd/themes/core-beta/templates/register.html:35
+msgid "Your username on the site"
+msgstr "사이트에서 사용할 이름"
+
+#: CTFd/themes/core-beta/templates/register.html:43
+msgid "Never shown to the public"
+msgstr "타인에게 공개되지 않습니다"
+
+#: CTFd/themes/core-beta/templates/register.html:51
+msgid "Password used to log into your account"
+msgstr "계정에 로그인할 때 사용할 비밀번호"
+
+#: CTFd/themes/core-beta/templates/reset_password.html:7
+msgid "Reset Password"
+msgstr "비밀번호 초기화"
+
+#: CTFd/themes/core-beta/templates/reset_password.html:21
+msgid "You can now reset the password for your account and log in. Please enter in a new password below."
+msgstr "계정 비밀번호를 초기화하고 로그인할 수 있습니다. 새 비밀번호를 입력해 주세요."
+
+#: CTFd/themes/core-beta/templates/reset_password.html:44
+msgid "Please provide the email address associated with your account below."
+msgstr "계정과 연결되어 있는 이메일 주소를 입력해 주세요."
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:135
+#: CTFd/themes/core-beta/templates/settings.html:8
+#: CTFd/themes/core-beta/templates/setup.html:50
+msgid "Settings"
+msgstr "설정"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:123
+#: CTFd/themes/core-beta/templates/settings.html:21
+msgid "Profile"
+msgstr "프로필"
+
+#: CTFd/themes/core-beta/templates/settings.html:26
+msgid "Access Tokens"
+msgstr "접속 토큰"
+
+#: CTFd/themes/core-beta/templates/settings.html:95
+msgid "Your profile has been updated"
+msgstr "프로필이 업데이트 되었습니다"
+
+#: CTFd/themes/core-beta/templates/settings.html:103
+#: CTFd/themes/core-beta/templates/teams/private.html:83
+#: CTFd/themes/core-beta/templates/teams/private.html:198
+msgid "Error:"
+msgstr "에러:"
+
+#: CTFd/themes/core-beta/templates/settings.html:129
+msgid "API Key Generated"
+msgstr "API 키 생성됨"
+
+#: CTFd/themes/core-beta/templates/settings.html:137
+msgid "Please copy your API Key, it won't be shown again!"
+msgstr "API키를 복사해 주세요, 이후에는 확인할 수 없습니다!"
+
+#: CTFd/themes/core-beta/templates/settings.html:183
+msgid "Active Tokens"
+msgstr "활성화 된 토큰"
+
+#: CTFd/themes/core-beta/templates/settings.html:195
+msgid "Delete Token"
+msgstr "토큰 삭제"
+
+#: CTFd/themes/core-beta/templates/settings.html:204
+msgid "Are you sure you want to delete this token?"
+msgstr "이 토큰을 삭제하시겠습니까?"
+
+#: CTFd/themes/core-beta/templates/settings.html:224
+msgid "Created"
+msgstr "생성됨"
+
+#: CTFd/themes/core-beta/templates/settings.html:226
+msgid "Description"
+msgstr "설명"
+
+#: CTFd/themes/core-beta/templates/settings.html:227
+msgid "Delete"
+msgstr "삭제"
+
+#: CTFd/themes/core-beta/templates/setup.html:24
+msgid "Setup"
+msgstr "만들기"
+
+#: CTFd/themes/core-beta/templates/setup.html:44
+msgid "General"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/setup.html:47
+msgid "Mode"
+msgstr "모드"
+
+#: CTFd/themes/core-beta/templates/setup.html:53
+msgid "Administration"
+msgstr "관리"
+
+#: CTFd/themes/core-beta/templates/setup.html:56
+msgid "Style"
+msgstr "스타일"
+
+#: CTFd/themes/core-beta/templates/setup.html:59
+msgid "Date &amp; Time"
+msgstr "날짜 &amp; 시간"
+
+#: CTFd/themes/core-beta/templates/setup.html:62
+msgid "Integrations"
+msgstr "통합"
+
+#: CTFd/themes/core-beta/templates/setup.html:86
+#: CTFd/themes/core-beta/templates/setup.html:138
+#: CTFd/themes/core-beta/templates/setup.html:202
+#: CTFd/themes/core-beta/templates/setup.html:238
+#: CTFd/themes/core-beta/templates/setup.html:296
+#: CTFd/themes/core-beta/templates/setup.html:345
+msgid "Next"
+msgstr "다음"
+
+#: CTFd/themes/core-beta/templates/setup.html:112
+msgid "Participants register accounts and form teams"
+msgstr "참가자들은 회원가입 후 팀을 형성해야 합니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:113
+msgid "If a team member solves a challenge, the entire team receives credit"
+msgstr "팀 멤버가 문제를 해결하면, 전체 팀이 크레딧을 받습니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:115
+msgid "Easier to see which team member solved a challenge"
+msgstr "어떤 팀 멤버가 문제를 해결하였는지 확인하기 쉽습니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:116
+msgid "May be slightly more difficult to administer"
+msgstr "관리하기 조금 어려울 수 있습니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:120
+msgid "Participants only register an individual account"
+msgstr "참가자들은 개인 계정으로만 대회를 참가합니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:121
+msgid "Players can share accounts to form pseudo-teams"
+msgstr "참가자들은 계정을 공유하며 가상의 팀을 만들수도 있습니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:123
+msgid "Easier to organize"
+msgstr "관리하기 쉽습니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:124
+msgid "Difficult to attribute solutions to individual team members"
+msgstr "개별 팀 구성원에게 솔루션을 부여하기가 어렵습니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:143
+msgid "Visibility Settings"
+msgstr "가시성 설정"
+
+#: CTFd/themes/core-beta/templates/setup.html:146
+msgid "Control the visibility of different sections of CTFd"
+msgstr "CTFd의 다양한 섹션에 대한 가시성을 제어합니다."
+
+#: CTFd/themes/core-beta/templates/setup.html:232
+msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
+msgstr "CTFd LLC 뉴스레터를 구독해 뉴스와 업데이트를 확인하세요."
+
+#: CTFd/themes/core-beta/templates/setup.html:309
+#: CTFd/themes/core-beta/templates/setup.html:330
+#: CTFd/themes/core-beta/templates/teams/private.html:378
+#: CTFd/themes/core-beta/templates/teams/public.html:144
+#: CTFd/themes/core-beta/templates/users/private.html:117
+#: CTFd/themes/core-beta/templates/users/public.html:116
+msgid "Time"
+msgstr "시간"
+
+#: CTFd/themes/core-beta/templates/setup.html:334
+msgid "UTC Preview"
+msgstr "UTC 미리 보기"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:34
+#: CTFd/themes/core-beta/templates/users/users.html:6
+msgid "Users"
+msgstr "유저"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:41
+#: CTFd/themes/core-beta/templates/teams/teams.html:6
+msgid "Teams"
+msgstr "팀"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:50
+msgid "Scoreboard"
+msgstr "점수"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:80
+msgid "Admin Panel"
+msgstr "관리자 패널"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:110
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
+#: CTFd/themes/core-beta/templates/teams/teams.html:49
+msgid "Team"
+msgstr "팀"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:147
+msgid "Logout"
+msgstr "로그아웃"
+
+#: CTFd/themes/core-beta/templates/errors/403.html:9
+msgid "Forbidden"
+msgstr "금지됨"
+
+#: CTFd/themes/core-beta/templates/errors/404.html:11
+msgid "File not found"
+msgstr "파일 존재하지 않음"
+
+#: CTFd/themes/core-beta/templates/errors/404.html:12
+msgid "Sorry about that"
+msgstr "죄송합니다"
+
+#: CTFd/themes/core-beta/templates/errors/429.html:11
+msgid "Too many requests"
+msgstr "요청이 너무 많습니다"
+
+#: CTFd/themes/core-beta/templates/errors/429.html:12
+msgid "Please slow down!"
+msgstr "천천히 시도해주세요!"
+
+#: CTFd/themes/core-beta/templates/errors/502.html:11
+msgid "Bad Gateway"
+msgstr "Bad Gateway"
+
+#: CTFd/themes/core-beta/templates/macros/forms.html:13
+#: CTFd/themes/core-beta/templates/macros/forms.html:36
+msgid "(Optional)"
+msgstr "(선택사항)"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:6
+#: CTFd/themes/core-beta/templates/teams/join_team.html:6
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
+msgid "Join Team"
+msgstr "팀 가입하기"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:15
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
+msgid "Welcome to"
+msgstr "Welcome to"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:19
+msgid "Click the button below to join the team!"
+msgstr "팀에 가입할려면 아래 버튼을 클릭하세요!"
+
+#: CTFd/themes/core-beta/templates/teams/new_team.html:6
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
+msgid "Create Team"
+msgstr "팀 만들기"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:8
+msgid "Edit Team"
+msgstr "팀 편집"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:76
+msgid "Your team's profile has been updated"
+msgstr "팀 프로필이 업데이트되었습니다."
+
+#: CTFd/themes/core-beta/templates/teams/private.html:104
+msgid "Choose Captain"
+msgstr "선장을 선택하세요"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:127
+msgid "Your captain rights have been transferred"
+msgstr "귀하의 주장 권한이 이전되었습니다"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:152
+msgid "Invite Users"
+msgstr "사용자 초대"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:171
+msgid "Share this link with your team members for them to join your team"
+msgstr "팀원이 팀에 합류할 수 있도록 이 링크를 팀원과 공유하세요."
+
+#: CTFd/themes/core-beta/templates/teams/private.html:174
+msgid "Invite links can be re-used and expire after 1 day"
+msgstr "초대 링크는 재사용 가능하며 1일 후에 만료됩니다."
+
+#: CTFd/themes/core-beta/templates/teams/private.html:188
+msgid "Disband Team"
+msgstr "팀해체"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:193
+msgid "Are you sure you want to disband your team?"
+msgstr "정말로 팀을 해체하시겠습니까?"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:206
+msgid "No"
+msgstr "아니요"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:207
+msgid "Yes"
+msgstr "예"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:218
+#: CTFd/themes/core-beta/templates/teams/public.html:10
+#: CTFd/themes/core-beta/templates/users/private.html:21
+#: CTFd/themes/core-beta/templates/users/public.html:21
+#: CTFd/themes/core-beta/templates/users/users.html:66
+msgid "Official"
+msgstr "공식"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:250
+msgid "place"
+msgstr "장소"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:258
+msgid "points"
+msgstr "포인트들"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:315
+#: CTFd/themes/core-beta/templates/teams/public.html:81
+msgid "Members"
+msgstr "회원"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:320
+#: CTFd/themes/core-beta/templates/teams/public.html:86
+msgid "Score"
+msgstr "점수"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:332
+msgid "Captain"
+msgstr "선장"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:348
+#: CTFd/themes/core-beta/templates/teams/public.html:109
+#: CTFd/themes/core-beta/templates/users/private.html:88
+#: CTFd/themes/core-beta/templates/users/public.html:88
+msgid "Awards"
+msgstr "수상"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:371
+#: CTFd/themes/core-beta/templates/teams/public.html:137
+#: CTFd/themes/core-beta/templates/users/private.html:110
+msgid "Solves"
+msgstr "푼 문제"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:376
+#: CTFd/themes/core-beta/templates/teams/public.html:142
+#: CTFd/themes/core-beta/templates/users/private.html:115
+#: CTFd/themes/core-beta/templates/users/public.html:114
+msgid "Category"
+msgstr "카테고리"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:377
+#: CTFd/themes/core-beta/templates/teams/public.html:143
+#: CTFd/themes/core-beta/templates/users/private.html:116
+#: CTFd/themes/core-beta/templates/users/public.html:115
+msgid "Value"
+msgstr "값"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:468
+#: CTFd/themes/core-beta/templates/teams/public.html:232
+#: CTFd/themes/core-beta/templates/users/private.html:203
+#: CTFd/themes/core-beta/templates/users/public.html:204
+msgid "No solves yet"
+msgstr "아무도 풀지 않음"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
+msgid "In order to participate you must either join or create a team."
+msgstr "참가하기 위해선 팀을 만들거나 가입해야 합니다."
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
+msgid "Play with Official Team"
+msgstr "공식 팀으로 참가하기"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
+msgid "Join Unofficial Team"
+msgstr "비공식 팀 가입하기"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
+msgid "Create Unofficial Team"
+msgstr "비공식 팀 만들기"
+
+#: CTFd/themes/core-beta/templates/teams/teams.html:124
+#: CTFd/themes/core-beta/templates/users/users.html:114
+msgid "Page"
+msgstr "페이지"
+
+#: CTFd/themes/core-beta/templates/users/users.html:46
+msgid "User"
+msgstr "유저"
+
+#: CTFd/utils/modes/__init__.py:35
+msgid "user"
+msgid_plural "users"
+msgstr[0] "유저"
+
+#: CTFd/utils/modes/__init__.py:37
+msgid "team"
+msgid_plural "teams"
+msgstr[0] "팀"
+

@@ -10,7 +10,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from CTFd.cache import clear_user_recent_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.models import Tracking, db
-from CTFd.utils import config, get_config, import_in_progress, markdown
+from CTFd.utils import config, get_app_config, get_config, import_in_progress, markdown
 from CTFd.utils.config import (
     can_send_mail,
     ctf_logo,
@@ -20,12 +20,13 @@ from CTFd.utils.config import (
     is_setup,
 )
 from CTFd.utils.config.pages import get_pages
-from CTFd.utils.dates import isoformat, unix_time, unix_time_millis
+from CTFd.utils.dates import isoformat, unix_time, unix_time_millis, unix_time_to_utc
 from CTFd.utils.events import EventManager, RedisEventManager
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.modes import generate_account_url, get_mode_as_word
 from CTFd.utils.plugins import (
     get_configurable_plugins,
+    get_menubar_plugins,
     get_registered_admin_scripts,
     get_registered_admin_stylesheets,
     get_registered_scripts,
@@ -43,23 +44,30 @@ from CTFd.utils.user import (
 )
 
 
+def init_cli(app):
+    from CTFd.cli import _cli
+
+    app.register_blueprint(_cli, cli_group=None)
+
+
 def init_template_filters(app):
     app.jinja_env.filters["markdown"] = markdown
     app.jinja_env.filters["unix_time"] = unix_time
     app.jinja_env.filters["unix_time_millis"] = unix_time_millis
+    app.jinja_env.filters["unix_time_to_utc"] = unix_time_to_utc
     app.jinja_env.filters["isoformat"] = isoformat
     app.jinja_env.filters["pluralize"] = pluralize
 
 
 def init_template_globals(app):
-    from CTFd.constants import JINJA_ENUMS
+    from CTFd.constants import JINJA_ENUMS  # noqa: I001
     from CTFd.constants.assets import Assets
     from CTFd.constants.config import Configs
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
     from CTFd.constants.static import Static
-    from CTFd.constants.users import User
     from CTFd.constants.teams import Team
+    from CTFd.constants.users import User
     from CTFd.forms import Forms
     from CTFd.utils.config.visibility import (
         accounts_visible,
@@ -76,6 +84,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_ctf_name=ctf_name)
     app.jinja_env.globals.update(get_ctf_logo=ctf_logo)
     app.jinja_env.globals.update(get_ctf_theme=ctf_theme)
+    app.jinja_env.globals.update(get_menubar_plugins=get_menubar_plugins)
     app.jinja_env.globals.update(get_configurable_plugins=get_configurable_plugins)
     app.jinja_env.globals.update(get_registered_scripts=get_registered_scripts)
     app.jinja_env.globals.update(get_registered_stylesheets=get_registered_stylesheets)
@@ -204,6 +213,7 @@ def init_request_processors(app):
                 "views.themes",
                 "views.files",
                 "views.healthcheck",
+                "views.robots",
             ):
                 return
             else:
@@ -275,7 +285,15 @@ def init_request_processors(app):
     @app.before_request
     def tokens():
         token = request.headers.get("Authorization")
-        if token and request.content_type == "application/json":
+        if token and (
+            request.mimetype == "application/json"
+            # Specially allow multipart/form-data for file uploads
+            or (
+                request.endpoint == "api.files_files_list"
+                and request.method == "POST"
+                and request.mimetype == "multipart/form-data"
+            )
+        ):
             try:
                 token_type, token = token.split(" ", 1)
                 user = lookup_user_token(token)
@@ -307,6 +325,13 @@ def init_request_processors(app):
             if request.content_type != "application/json":
                 if session["nonce"] != request.form.get("nonce"):
                     abort(403)
+
+    @app.after_request
+    def response_headers(response):
+        response.headers["Cross-Origin-Opener-Policy"] = get_app_config(
+            "CROSS_ORIGIN_OPENER_POLICY", default="same-origin-allow-popups"
+        )
+        return response
 
     application_root = app.config.get("APPLICATION_ROOT")
     if application_root != "/":

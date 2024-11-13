@@ -63,38 +63,38 @@
 
 <script>
 import $ from "jquery";
-import CTFd from "core/CTFd";
+import CTFd from "../../compat/CTFd";
 import FlagCreationForm from "./FlagCreationForm.vue";
 import FlagEditForm from "./FlagEditForm.vue";
 
 export default {
   components: {
     FlagCreationForm,
-    FlagEditForm
+    FlagEditForm,
   },
   props: {
-    challenge_id: Number
+    challenge_id: Number,
   },
-  data: function() {
+  data: function () {
     return {
       flags: [],
-      editing_flag_id: null
+      editing_flag_id: null,
     };
   },
   methods: {
-    loadFlags: function() {
+    loadFlags: function () {
       CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/flags`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             this.flags = response.data;
           }
@@ -116,34 +116,34 @@ export default {
           break;
       }
     },
-    addFlag: function() {
+    addFlag: function () {
       let modal = this.$refs.FlagCreationForm.$el;
       $(modal).modal();
     },
-    editFlag: function(flag_id) {
+    editFlag: function (flag_id) {
       this.editing_flag_id = flag_id;
       let modal = this.$refs.FlagEditForm.$el;
       $(modal).modal();
     },
-    deleteFlag: function(flag_id) {
+    deleteFlag: function (flag_id) {
       if (confirm("Are you sure you'd like to delete this flag?")) {
         CTFd.fetch(`/api/v1/flags/${flag_id}`, {
-          method: "DELETE"
+          method: "DELETE",
         })
-          .then(response => {
+          .then((response) => {
             return response.json();
           })
-          .then(response => {
+          .then((response) => {
             if (response.success) {
               this.loadFlags();
             }
           });
       }
-    }
+    },
   },
   created() {
     this.loadFlags();
-  }
+  },
 };
 </script>
 

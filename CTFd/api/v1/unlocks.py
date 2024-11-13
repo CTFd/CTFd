@@ -109,7 +109,8 @@ class UnlockList(Resource):
 
         # We should use the team's score if in teams mode
         # user.account gives the appropriate account based on team mode
-        if target.cost > user.account.score:
+        # Use get_score with admin to get the account's full score value
+        if target.cost > user.account.get_score(admin=True):
             return (
                 {
                     "success": False,
@@ -137,7 +138,7 @@ class UnlockList(Resource):
             return (
                 {
                     "success": False,
-                    "errors": {"target": "You've already unlocked this this target"},
+                    "errors": {"target": "You've already unlocked this target"},
                 },
                 400,
             )

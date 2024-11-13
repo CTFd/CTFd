@@ -1,0 +1,25 @@
+<div role="tabpanel" class="tab-pane config-section active" id="general">
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			<label for="ctf_name">
+				Event Name
+				<small class="form-text text-muted">When no logo is specified, the CTF's name is used instead.</small>
+			</label>
+			<input class="form-control" id='ctf_name' name='ctf_name' type='text' placeholder="CTF Name"
+				{% if ctf_name is defined and ctf_name != None %}value="{{ ctf_name }}"{% endif %}>
+		</div>
+
+		<div class="form-group">
+			<label>
+				Event Description<br>
+				<!-- TODO: Clarify WHERE this description is used. -->
+				<small class="form-text text-muted">
+					Description of your CTF. Available for use on your custom pages and emails as <code>{ctf_description}</code>.
+				</small>
+			</label>
+			<textarea class="form-control" type="text" id="ctf_description" name="ctf_description" rows="5">{{ ctf_description }}</textarea>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+</div>

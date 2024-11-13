@@ -3,13 +3,13 @@ from marshmallow.fields import Nested
 from marshmallow_sqlalchemy import field_for
 from sqlalchemy.orm import load_only
 
-from CTFd.models import UserFieldEntries, UserFields, Users, ma
+from CTFd.models import Brackets, UserFieldEntries, UserFields, Users, ma
 from CTFd.schemas.fields import UserFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import check_email_is_whitelisted
 from CTFd.utils.user import get_current_user, is_admin
-from CTFd.utils.validators import validate_country_code
+from CTFd.utils.validators import validate_country_code, validate_language
 
 
 class UserSchema(ma.ModelSchema):
@@ -50,8 +50,10 @@ class UserSchema(ma.ModelSchema):
             else True
         ],
     )
+    language = field_for(Users, "language", validate=[validate_language])
     country = field_for(Users, "country", validate=[validate_country_code])
     password = field_for(Users, "password", required=True, allow_none=False)
+    bracket_id = field_for(Users, "bracket_id")
     fields = Nested(
         UserFieldEntriesSchema, partial=True, many=True, attribute="field_entries"
     )
@@ -150,9 +152,7 @@ class UserSchema(ma.ModelSchema):
                     )
                 if check_email_is_whitelisted(email) is False:
                     raise ValidationError(
-                        "Only email addresses under {domains} may register".format(
-                            domains=get_config("domain_whitelist")
-                        ),
+                        "Email address is not from an allowed domain",
                         field_names=["email"],
                     )
                 if get_config("verify_emails"):
@@ -167,6 +167,10 @@ class UserSchema(ma.ModelSchema):
         if is_admin():
             pass
         else:
+            # If the user has no password set, allow them to set their password
+            if target_user.password is None:
+                return
+
             if password and (bool(confirm) is False):
                 raise ValidationError(
                     "Please confirm your current password", field_names=["confirm"]
@@ -185,6 +189,37 @@ class UserSchema(ma.ModelSchema):
             else:
                 data.pop("password", None)
                 data.pop("confirm", None)
+
+    @pre_load
+    def validate_bracket_id(self, data):
+        bracket_id = data.get("bracket_id")
+        if is_admin():
+            bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
+            if bracket is None:
+                ValidationError(
+                    "Please provide a valid bracket id", field_names=["bracket_id"]
+                )
+        else:
+            current_user = get_current_user()
+            # Users are not allowed to switch their bracket
+            if bracket_id is None:
+                # Remove bracket_id and short circuit processing
+                data.pop("bracket_id", None)
+                return
+            if (
+                current_user.bracket_id == int(bracket_id)
+                or current_user.bracket_id is None
+            ):
+                bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
+                if bracket is None:
+                    ValidationError(
+                        "Please provide a valid bracket id", field_names=["bracket_id"]
+                    )
+            else:
+                raise ValidationError(
+                    "Please contact an admin to change your bracket",
+                    field_names=["bracket_id"],
+                )
 
     @pre_load
     def validate_fields(self, data):
@@ -315,7 +350,7 @@ class UserSchema(ma.ModelSchema):
             "name",
             "country",
             "affiliation",
-            "bracket",
+            "bracket_id",
             "id",
             "oauth_id",
             "fields",
@@ -325,9 +360,10 @@ class UserSchema(ma.ModelSchema):
             "website",
             "name",
             "email",
+            "language",
             "country",
             "affiliation",
-            "bracket",
+            "bracket_id",
             "id",
             "oauth_id",
             "password",
@@ -341,9 +377,10 @@ class UserSchema(ma.ModelSchema):
             "country",
             "banned",
             "email",
+            "language",
             "affiliation",
             "secret",
-            "bracket",
+            "bracket_id",
             "hidden",
             "id",
             "oauth_id",

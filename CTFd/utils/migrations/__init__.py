@@ -17,10 +17,10 @@ migrations = Migrate()
 def create_database():
     url = make_url(app.config["SQLALCHEMY_DATABASE_URI"])
     if url.drivername == "postgres":
-        url.drivername = "postgresql"
+        url = url.set(drivername="postgresql")
 
     if url.drivername.startswith("mysql"):
-        url.query["charset"] = "utf8mb4"
+        url = url.update_query_dict({"charset": "utf8mb4"})
 
     # Creates database if the database database does not exist
     if not database_exists_util(url):
@@ -34,7 +34,7 @@ def create_database():
 def drop_database():
     url = make_url(app.config["SQLALCHEMY_DATABASE_URI"])
     if url.drivername == "postgres":
-        url.drivername = "postgresql"
+        url = url.set(drivername="postgresql")
     drop_database_util(url)
 
 

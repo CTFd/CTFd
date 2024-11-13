@@ -1,6 +1,6 @@
 import io
 
-from CTFd.models import Challenges, Teams, Users
+from CTFd.models import Challenges, Flags, Hints, Teams, Users
 from CTFd.utils.crypto import verify_password
 from tests.helpers import create_ctfd, destroy_ctfd, gen_challenge, login_as_user
 
@@ -30,8 +30,8 @@ user2,user2@examplectf.com,password"""
 team1,team1@examplectf.com,password
 team2,team2@examplectf.com,password"""
 
-    CHALLENGES_CSV = b"""name,category,description,value,flags,tags,hints
-challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint1,hint2,hint3"""
+    CHALLENGES_CSV = b'''name,category,description,value,flags,tags,hints
+challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint1,hint2,hint3"'''
 
     app = create_ctfd()
     with app.app_context():
@@ -89,5 +89,55 @@ challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint
         assert len(challenge.flags) == 3
         assert len(challenge.tags) == 3
         assert len(challenge.hints) == 3
+
+    destroy_ctfd(app)
+
+
+def test_import_challenge_csv_with_json():
+
+    CHALLENGES_CSV = b'''name,category,description,value,flags,tags,hints
+challenge1,category1,description1,100,"[{""type"": ""static"", ""content"": ""flag1"", ""data"": ""case_insensitive""}, {""type"": ""regex"", ""content"": ""(.*)"", ""data"": ""case_insensitive""}, {""type"": ""static"", ""content"": ""flag3""}]","tag1,tag2,tag3","[{""content"": ""hint1"", ""cost"": 10}, {""content"": ""hint2"", ""cost"": 20}, {""content"": ""hint3"", ""cost"": 30}]"'''
+
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                "csv_type": "challenges",
+                "csv_file": (io.BytesIO(CHALLENGES_CSV), "challenges.csv"),
+                "nonce": sess.get("nonce"),
+            }
+
+        client.post("/admin/import/csv", data=data, content_type="multipart/form-data")
+        assert Challenges.query.count() == 1
+        challenge = Challenges.query.filter_by(id=1).first()
+        assert challenge.name == "challenge1"
+        assert challenge.category == "category1"
+        assert challenge.description == "description1"
+        assert challenge.value == 100
+        assert len(challenge.flags) == 3
+        assert len(challenge.tags) == 3
+        assert len(challenge.hints) == 3
+
+        for i in range(1, 4):
+            h = Hints.query.filter_by(id=i).first()
+            assert h.cost == i * 10
+            assert h.content == f"hint{i}"
+
+        f = Flags.query.filter_by(id=1).first()
+        assert f.type == "static"
+        assert f.content == "flag1"
+        assert f.data == "case_insensitive"
+
+        f = Flags.query.filter_by(id=2).first()
+        assert f.type == "regex"
+        assert f.content == "(.*)"
+        assert f.data == "case_insensitive"
+
+        f = Flags.query.filter_by(id=3).first()
+        assert f.type == "static"
+        assert f.content == "flag3"
+        assert f.data is None
 
     destroy_ctfd(app)

@@ -1,4 +1,5 @@
 from flask import url_for
+from flask_babel import ngettext
 
 from CTFd.models import Teams, Users
 from CTFd.utils import get_config
@@ -29,13 +30,12 @@ def get_model():
 
 
 def get_mode_as_word(plural=False, capitalize=False):
+    count = 2 if plural else 1
     if get_config("user_mode") == USERS_MODE:
-        word = "user"
+        word = ngettext("user", "users", count)
     else:
-        word = "team"
+        word = ngettext("team", "teams", count)
 
-    if plural:
-        word += "s"
     if capitalize:
         word = word.title()
     return word

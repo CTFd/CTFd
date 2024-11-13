@@ -1,0 +1,228 @@
+<div :class="getStyles()" role="document" x-data="Challenge" x-init="id = {{ challenge.id }}; max_attempts = {{ max_attempts }}; attempts = {{ attempts }}">
+  <div class="modal-content">
+    <div class="modal-body py-4 px-4 px-sm-5">
+
+      <div>
+        <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <button class="nav-link active" data-bs-target="#challenge" @click="showChallenge()">
+              {% trans %}Challenge{% endtrans %}
+            </button>
+          </li>
+
+          {% block solves %}
+            <li class="nav-item">
+              <button class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
+                {% if solves != None %}
+                  {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
+                {% endif %}
+              </button>
+            </li>
+          {% endblock %}
+        </ul>
+      </div>
+
+      <div>
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane fade show active" id="challenge">
+            <h2 class="challenge-name text-center pt-3">
+              {{ challenge.name }}
+            </h2>
+            <h3 class="challenge-value text-center">
+              {{ challenge.value }}
+            </h3>
+
+
+            {% if tags %}
+              <div class="challenge-tags text-center pt-2 pb-3">
+                {% block tags %}
+                  {% for tag in tags %}
+                    <span class="challenge-tag badge bg-info">{{ tag }}</span>
+                  {% endfor %}
+                {% endblock %}
+              </div>
+            {% endif %}
+
+            <small class="challenge-attribution text-center text-muted">
+              {% block attribution %}{{ challenge.byline }}{% endblock %}
+            </small>
+
+            <span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
+
+            {% if challenge.connection_info %}
+              <div class="mb-2">
+                <span class="challenge-connection-info">
+                  {% block connection_info %}
+                    {% set conn = challenge.connection_info %}
+                    {% if not conn %}
+                    {% elif conn.startswith("http") %}
+                      {{ conn | urlize(target="_blank") }}
+                    {% else %}
+                      <code>{{ conn }}</code>
+                    {% endif %}
+                  {% endblock %}
+                </span>
+              </div>
+            {% endif %}
+
+            {% if hints %}
+              <div class="challenge-hints hint-row row">
+                <div class="col-12 mb-3">
+                {% for hint in hints | sort(attribute="cost") %}
+                  <div x-data="Hint" x-init="id = {{ hint.id }}">
+                    {% if hint.content %}
+                    <details>
+                      <summary>{% trans %}View Hint{% endtrans %}</summary>
+                      <div>{{ hint.html | safe }}</div>
+                    </details>
+                    {% else %}
+                    <details @toggle="showHint(event)">
+                      <summary>Unlock Hint for {{ hint.cost }} point{{ hint.cost|pluralize }}</summary>
+                      <div x-html="html"></div>
+                    </details>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if files %}
+              <div class="row challenge-files text-center pb-3">
+                {% for file in files %}
+                  <div class="col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block">
+                    {% set segments = file.split('/') %}
+                    {% set token = file.split('?') | last %}
+                    {% if token %}
+                      {% set filename = segments | last | replace("?" + token, "") %}
+                    {% else %}
+                      {% set filename = segments | last %}
+                    {% endif %}
+                    <a
+                        class="btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate"
+                        href="{{ file }}"
+                        title="{{ filename }}"
+                    >
+                      <i class="fas fa-download"></i>
+                      <small>
+                        {{ filename }}
+                      </small>
+                    </a>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <template x-if="max_attempts > 0">
+              <p class="text-center">
+                <span x-text="attempts"></span>/<span x-text="max_attempts"></span> {% trans c=max_attempts %}attempt{% pluralize %}attempts{% endtrans %}
+              </p>
+            </template>
+
+            <div class="row submit-row">
+              <div class="col-12 col-sm-8">
+                {% block input %}
+                  <input
+                      id="challenge-id" class="challenge-id" type="hidden"
+                      value="{{ challenge.id }}"
+                  >
+                  <input
+                      id="challenge-input" class="challenge-input form-control"
+                      type="text" name="submission"
+                      @keyup.enter="submitChallenge()"
+                      placeholder="{% trans %}Flag{% endtrans %}" x-model="submission"
+                  >
+                {% endblock %}
+              </div>
+
+              <div class="col-12 col-sm-4 mt-3 mt-sm-0 key-submit">
+                {% block submit %}
+                  <button
+                      id="challenge-submit"
+                      class="challenge-submit btn btn-outline-secondary w-100 h-100" type="submit"
+                      @click.debounce.500ms="submitChallenge()"
+                  >
+                    {% trans %}Submit{% endtrans %}
+                  </button>
+                {% endblock %}
+              </div>
+            </div>
+
+            <div class="row notification-row">
+              <div class="col-12">
+                <template x-if="response">
+                  {# This alert is re-used for all alerts, so it's important not to make it dismissible #}
+                  <div class="alert text-center w-100 mt-3"
+                      :class="{
+                        'alert-success': response.data.status == 'correct',
+                        'alert-info': response.data.status == 'already_solved',
+                        'alert-danger': response.data.status == 'incorrect',
+                        'alert-warning': response.data.status == 'paused',
+                      }" role="alert"
+                  >
+                    <strong x-text="response.data.message"></strong>
+                    <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')">
+                      <div x-show="getNextId()">
+                        <button @click="nextChallenge()" class="btn btn-info mt-3">
+                          {% trans %}Next Challenge{% endtrans %}
+                        </button>
+                      </div>
+                      {% if Configs.social_shares %}
+                      <div>
+                        <button x-show="!share_url" @click="getShareUrl()" class="btn btn-sm btn-outline-info mt-3">
+                          {% trans %}Share{% endtrans %}
+                        </button>
+                        <div class="btn-group mt-3" role="group" x-show="share_url">
+                          <button type="button" class="btn btn-sm btn-outline-secondary" @click="copyShareUrl()" data-bs-toggle="tooltip" data-bs-title="Copied!">
+                            <i class="fa-solid fa-copy"></i>
+                          </button>
+                          <a :href="'https://twitter.com/intent/tweet?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <i class="fa-brands fa-twitter"></i>
+                          </a>
+                          <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <i class="fa-brands fa-facebook-f"></i>
+                          </a>
+                          <a :href="'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                          </a>
+                        </div>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" id="solves">
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table table-striped align-middle text-center">
+                  <thead>
+                  <tr>
+                    <th>{% trans %}Name{% endtrans %}</th>
+                    <th>{% trans %}Date{% endtrans %}</th>
+                  </tr>
+                  </thead>
+                  <tbody id="challenge-solves-names">
+                  <template x-for="solve in solves">
+                    <tr>
+                      <td>
+                        <a :href="solve.account_url" x-text="solve.name"></a>
+                      </td>
+                      <td x-text="solve.date"></td>
+                    </tr>
+                  </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

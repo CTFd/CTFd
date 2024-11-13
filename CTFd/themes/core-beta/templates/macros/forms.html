@@ -1,0 +1,82 @@
+{% macro render_extra_fields(fields, show_labels=True, show_optionals=True, show_descriptions=True) -%}
+  {% for field in fields %}
+    {% if field.field_type == "text" %}
+
+      <div class="mb-3">
+        {% if show_labels %}
+          <b>{{ field.label(class="form-label") }}</b>
+        {% endif %}
+
+        {% if show_optionals %}
+          {% if field.flags.required is false %}
+            <small class="ms-1 text-muted">
+              {% trans %}(Optional){% endtrans %}
+            </small>
+          {% endif %}
+        {% endif %}
+
+        {{ field(class="form-control") }}
+
+        {% if show_descriptions %}
+          {% if field.description %}
+            <small class="form-text text-muted">
+              {{ field.description }}
+            </small>
+          {% endif %}
+        {% endif %}
+      </div>
+
+    {% elif field.field_type == "boolean" %}
+
+      <div>
+        {{ field.label(class="form-label") }}
+        {% if show_optionals %}
+          {% if field.flags.required is false %}
+            <small class="ms-1 text-muted">
+              {% trans %}(Optional){% endtrans %}
+            </small>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="mb-3 border border-1 p-3">
+        <div class="form-check">
+          {{ field(class="form-check-input") }}
+          {{ field.label(class="form-check-label") }}
+        </div>
+
+        {% if show_descriptions %}
+          {% if field.description %}
+            <small class="form-text text-muted">
+              {{ field.description }}
+            </small>
+          {% endif %}
+
+        {% endif %}
+      </div>
+
+    {% elif field.field_type == "select" %}
+
+      <div>
+        <b>{{ field.label(class="form-label") }}</b>
+        {% if show_optionals %}
+          {% if field.flags.required is false %}
+            <small class="ms-1 text-muted">
+              {% trans %}(Optional){% endtrans %}
+            </small>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      {{ field(class="form-select") }}
+
+      {% if show_descriptions %}
+        {% if field.description %}
+          <small class="form-text text-muted">
+            {{ field.description }}
+          </small>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{%- endmacro %}
