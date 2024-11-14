@@ -11,7 +11,7 @@
     "verify": "vite build; git diff --quiet --exit-code"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.0.1",
+    "@vitejs/plugin-vue": "^5.1.4",
     "@vue/compiler-sfc": "^3.3.13",
     "eslint": "^8.56.0",
     "prettier": "^3.2.5",
