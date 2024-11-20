@@ -328,3 +328,7 @@ def create_app(config="CTFd.config.Config"):
         init_cli(app)
 
         return app
+#for development
+if __name__ == "__main__":
+    create_app().run()
+print (__name__)

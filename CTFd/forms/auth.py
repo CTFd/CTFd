@@ -40,6 +40,22 @@ def RegistrationForm(*args, **kwargs):
 
     return _RegistrationForm(*args, **kwargs)
 
+def RegistrationConfirmForm(*args, **kwargs):
+    class _RegistrationConfirmForm(BaseForm):
+        username = StringField(
+            _l("Username"), validators=[InputRequired()], render_kw={"autofocus": True}
+        )
+        code = StringField(
+            _l("Confirmation Code"), validators=[InputRequired()], render_kw={"autofocus": True}
+        )
+        submit = SubmitField(_l("Submit"))
+
+        @property
+        def extra(self):
+            return 
+
+    return _RegistrationConfirmForm(*args, **kwargs)
+
 
 class LoginForm(BaseForm):
     name = StringField(

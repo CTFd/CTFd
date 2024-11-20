@@ -14,14 +14,6 @@
       <div class="col-md-8 col offset-md-2 col-lg-6 offset-lg-3">
         {% include "components/errors.html" %}
 
-        {% if integrations.mlc() %}
-          <a class="btn btn-secondary btn-lg btn-block w-100" href="{{ url_for('auth.oauth_login') }}">
-            Login with Major League Cyber
-          </a>
-
-          <hr>
-        {% endif %}
-
         {% with form = Forms.auth.LoginForm() %}
           <form method="post" accept-charset="utf-8" autocomplete="off">
             <div class="mb-3">

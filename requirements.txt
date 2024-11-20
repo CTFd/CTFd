@@ -187,3 +187,4 @@ zope-interface==5.2.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+python-jose==3.3.0

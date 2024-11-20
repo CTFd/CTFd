@@ -219,42 +219,42 @@ def init_request_processors(app):
             else:
                 return redirect(url_for("views.setup"))
 
-    @app.before_request
-    def tracker():
-        if request.endpoint == "views.themes":
-            return
+    # @app.before_request
+    # def tracker():
+    #     if request.endpoint == "views.themes":
+    #         return
 
-        if import_in_progress():
-            if request.endpoint == "admin.import_ctf":
-                return
-            else:
-                return "Import currently in progress", 403
+    #     if import_in_progress():
+    #         if request.endpoint == "admin.import_ctf":
+    #             return
+    #         else:
+    #             return "Import currently in progress", 403
 
-        if authed():
-            user_ips = get_current_user_recent_ips()
-            ip = get_ip()
+    #     if authed():
+    #         user_ips = get_current_user_recent_ips()
+    #         ip = get_ip()
 
-            track = None
-            if (ip not in user_ips) or (request.method != "GET"):
-                track = Tracking.query.filter_by(
-                    ip=get_ip(), user_id=session["id"]
-                ).first()
+    #         track = None
+    #         if (ip not in user_ips) or (request.method != "GET"):
+    #             track = Tracking.query.filter_by(
+    #                 ip=get_ip(), user_id=session["id"]
+    #             ).first()
 
-                if track:
-                    track.date = datetime.datetime.utcnow()
-                else:
-                    track = Tracking(ip=get_ip(), user_id=session["id"])
-                    db.session.add(track)
+    #             if track:
+    #                 track.date = datetime.datetime.utcnow()
+    #             else:
+    #                 track = Tracking(ip=get_ip(), user_id=session["id"])
+    #                 db.session.add(track)
 
-            if track:
-                try:
-                    db.session.commit()
-                except (InvalidRequestError, IntegrityError):
-                    db.session.rollback()
-                    db.session.close()
-                    logout_user()
-                else:
-                    clear_user_recent_ips(user_id=session["id"])
+    #         if track:
+    #             try:
+    #                 db.session.commit()
+    #             except (InvalidRequestError, IntegrityError):
+    #                 db.session.rollback()
+    #                 db.session.close()
+    #                 logout_user()
+    #             else:
+    #                 clear_user_recent_ips(user_id=session["id"])
 
     @app.before_request
     def banned():
