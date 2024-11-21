@@ -3,7 +3,7 @@ Script for checking that a database server is available.
 Essentially a cross-platform, database agnostic mysqladmin.
 """
 import time
-import sqlalchemy
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import make_url
 
@@ -26,12 +26,9 @@ while True:
     try:
         engine.raw_connection()
         break
-    except sqlalchemy.exc.OperationalError as e:
-        if "Access denied" in str(e):
-            print("Incorrect database password")
-            exit(1)
     except Exception as e:
-        print(".", end="", flush=True)
+        print(e)
+        print("Waiting 1s for database connection")
         time.sleep(1)
 
 print(f"{url.host} is ready")
