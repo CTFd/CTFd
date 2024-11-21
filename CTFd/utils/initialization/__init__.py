@@ -237,7 +237,6 @@ def init_request_processors(app):
             track = None
             if ip not in user_ips or request.method in (
                 "POST",
-                "PUT",
                 "PATCH",
                 "DELETE",
             ):
