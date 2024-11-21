@@ -235,13 +235,17 @@ def init_request_processors(app):
             ip = get_ip()
 
             track = None
-            if (ip not in user_ips) or (request.method != "GET"):
+            if ip not in user_ips or request.method in (
+                "POST",
+                "PATCH",
+                "DELETE",
+            ):
                 track = Tracking.query.filter_by(
                     ip=get_ip(), user_id=session["id"]
                 ).first()
 
                 if track:
-                    track.date = datetime.datetime.utcnow()
+                    track.date = datetime.datetime.now(datetime.UTC)
                 else:
                     track = Tracking(ip=get_ip(), user_id=session["id"])
                     db.session.add(track)
