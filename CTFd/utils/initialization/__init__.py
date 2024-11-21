@@ -245,7 +245,7 @@ def init_request_processors(app):
                 ).first()
 
                 if track:
-                    track.date = datetime.datetime.now(datetime.UTC)
+                    track.date = datetime.datetime.utcnow()
                 else:
                     track = Tracking(ip=get_ip(), user_id=session["id"])
                     db.session.add(track)

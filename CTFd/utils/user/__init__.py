@@ -203,7 +203,7 @@ def get_current_user_recent_ips():
 
 @cache.memoize(timeout=300)
 def get_user_recent_ips(user_id):
-    hour_ago = datetime.datetime.now(datetime.UTC) - datetime.timedelta(hours=1)
+    hour_ago = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
     addrs = (
         Tracking.query.with_entities(Tracking.ip.distinct())
         .filter(Tracking.user_id == user_id, Tracking.date >= hour_ago)
