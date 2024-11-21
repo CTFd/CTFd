@@ -12,7 +12,7 @@ requests==2.32.3
 PyMySQL[rsa]==1.0.2
 gunicorn==20.1.0
 dataset==1.6.2
-cmarkgfm==2022.10.27
+cmarkgfm==2024.1.14
 redis==4.5.5
 gevent==23.9.1
 python-dotenv==0.13.0
@@ -30,3 +30,6 @@ pybluemonday==0.0.14
 freezegun==1.2.2
 Flask-Babel==2.0.0
 Pillow==10.1.0
+cffi==1.17.1
+six==1.16.0
+urllib3==1.26.20
