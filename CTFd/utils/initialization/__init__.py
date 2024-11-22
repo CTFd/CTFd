@@ -40,7 +40,6 @@ from CTFd.utils.user import (
     get_current_user_attrs,
     get_current_user_recent_ips,
     get_ip,
-    get_locale,
     is_admin,
 )
 
@@ -112,7 +111,6 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_current_user_attrs=get_current_user_attrs)
     app.jinja_env.globals.update(get_current_team_attrs=get_current_team_attrs)
     app.jinja_env.globals.update(get_ip=get_ip)
-    app.jinja_env.globals.update(get_locale=get_locale)
     app.jinja_env.globals.update(Assets=Assets)
     app.jinja_env.globals.update(Configs=Configs)
     app.jinja_env.globals.update(Plugins=Plugins)
