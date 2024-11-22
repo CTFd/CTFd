@@ -5,9 +5,6 @@ from CTFd.forms import BaseForm
 
 
 class LanguageForm(BaseForm):
-    """Language form
-
-    Used in core-beta theme navbar.
-    """
+    """Language form for only switching langauge without rendering all profile settings"""
 
     language = RadioField("", choices=LANGUAGE_NAMES.items())
