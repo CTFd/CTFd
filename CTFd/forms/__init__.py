@@ -29,7 +29,7 @@ from CTFd.forms import setup  # noqa: I001 isort:skip
 from CTFd.forms import submissions  # noqa: I001 isort:skip
 from CTFd.forms import users  # noqa: I001 isort:skip
 from CTFd.forms import challenges  # noqa: I001 isort:skip
-from CTFd.forms import lang  # noqa: I001 isort:skip
+from CTFd.forms import language  # noqa: I001 isort:skip
 from CTFd.forms import notifications  # noqa: I001 isort:skip
 from CTFd.forms import config  # noqa: I001 isort:skip
 from CTFd.forms import pages  # noqa: I001 isort:skip
@@ -43,7 +43,7 @@ Forms.setup = setup
 Forms.submissions = submissions
 Forms.users = users
 Forms.challenges = challenges
-Forms.lang = lang
+Forms.language = language
 Forms.notifications = notifications
 Forms.config = config
 Forms.pages = pages

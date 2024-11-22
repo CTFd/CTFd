@@ -5,6 +5,9 @@ from CTFd.forms import BaseForm
 
 
 class LanguageForm(BaseForm):
-    """Language form used in navbar"""
+    """Language form
+
+    Used in core-beta theme navbar.
+    """
 
     language = RadioField("", choices=LANGUAGE_NAMES.items())
