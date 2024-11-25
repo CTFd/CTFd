@@ -276,14 +276,14 @@ export default {
       if (editor.hasOwnProperty("codemirror")) {
         editor = editor.codemirror;
       }
-      let doc = editor.getDoc();
-      let cursor = doc.getCursor();
+      const doc = editor.getDoc();
+      const cursor = doc.getCursor();
 
-      let url = this.buildSelectedFileUrl();
-      let img =
+      const url = this.buildSelectedFileUrl();
+      const img =
         this.getIconClass(this.selectedFile.location) === "far fa-file-image";
-      let filename = url.split("/").pop();
-      link = "[{0}]({1})".format(filename, url);
+      const filename = url.split("/").pop();
+      let link = "[{0}]({1})".format(filename, url);
       if (img) {
         link = "!" + link;
       }
