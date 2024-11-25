@@ -254,7 +254,7 @@ export default {
       return CTFd.config.urlRoot + "/files/" + this.selectedFile.location;
     },
     deleteSelectedFile: function () {
-      var file_id = this.selectedFile.id;
+      const file_id = this.selectedFile.id;
 
       if (confirm("Are you sure you want to delete this file?")) {
         CTFd.fetch("/api/v1/files/" + file_id, {
@@ -291,11 +291,11 @@ export default {
       doc.replaceRange(link, cursor);
     },
     downloadSelectedFile: function () {
-      var link = this.buildSelectedFileUrl();
+      const link = this.buildSelectedFileUrl();
       window.open(link, "_blank");
     },
     getIconClass: function (filename) {
-      var mapping = {
+      const mapping = {
         // Image Files
         png: "far fa-file-image",
         jpg: "far fa-file-image",
@@ -340,7 +340,7 @@ export default {
         go: "far fa-file-code",
       };
 
-      var ext = filename.split(".").pop();
+      const ext = filename.split(".").pop();
       return mapping[ext] || "far fa-file";
     },
   },
