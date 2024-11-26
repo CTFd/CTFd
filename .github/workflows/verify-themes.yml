@@ -18,6 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
       - name: Verify admin theme
