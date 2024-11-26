@@ -1,0 +1,30 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+.footer {
+  position: absolute;
+
+  /* prevent scrollbars from showing on pages that don't use the full page height */
+  bottom: 1px;
+
+  width: 100%;
+
+  /* Set the fixed height of the footer here */
+  height: 60px;
+
+  /* Override line-height from core because we have two lines in the admin panel */
+  line-height: normal !important;
+
+  /* Avoid covering things */
+  z-index: -20;
+
+  /*background-color: #f5f5f5;*/
+}

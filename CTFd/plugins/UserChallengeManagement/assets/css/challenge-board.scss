@@ -1,0 +1,68 @@
+.chal-desc {
+  padding-left: 30px;
+  padding-right: 30px;
+  font-size: 14px;
+}
+
+.chal-desc img {
+  max-width: 100%;
+  height: auto;
+}
+
+.modal-content {
+  border-radius: 0px;
+  max-width: 1000px;
+  padding: 1em;
+  margin: 0 auto;
+}
+
+.btn-info {
+  background-color: #5b7290 !important;
+}
+
+.badge-info {
+  background-color: #5b7290 !important;
+}
+
+.challenge-button {
+  box-shadow: 3px 3px 3px grey;
+}
+
+.solved-challenge {
+  background-color: #37d63e !important;
+  opacity: 0.4;
+  border: none;
+}
+
+.corner-button-check {
+  margin-top: -10px;
+  margin-right: 25px;
+  position: absolute;
+  right: 0;
+}
+
+.key-submit .btn {
+  height: 51px;
+}
+
+#challenge-window .form-control {
+  position: relative;
+  display: block;
+  padding: 0.8em;
+  border-radius: 0;
+  background: #f0f0f0;
+  color: #aaa;
+  font-weight: 400;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-appearance: none;
+  height: auto !important;
+}
+
+#challenge-window .form-control:focus {
+  background-color: transparent;
+  border-color: #a3d39c;
+  box-shadow: 0 0 0 0.1rem #a3d39c;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}

@@ -1,4 +1,4 @@
 {
     "name": "UserChallengeManagement",
-    "route": "/user/challenges"
+    "route": "/admin/UserChallenges"
 }
