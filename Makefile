@@ -3,7 +3,7 @@ lint:
 	isort --profile=black --check-only --skip=CTFd/uploads --skip-glob **/node_modules CTFd/ tests/
 	yarn --cwd CTFd/themes/admin lint
 	black --check --diff --exclude=CTFd/uploads --exclude=node_modules .
-	prettier --check 'CTFd/themes/**/assets/**/*'
+	prettier --check 'CTFd/themes/*/assets/**/*'
 	prettier --check '**/*.md'
 
 format:
