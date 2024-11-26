@@ -1,0 +1,27 @@
+---
+name: Theme Verification
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    name: Theme Verification
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies admin theme
+        run: |
+            sudo yarn --cwd CTFd/themes/admin install --non-interactive
+
+      - name: Verify
+        run: yarn --cwd CTFd/themes/admin verify 
+
+      # TODO: Replace in 4.0 with deprecation of previous core theme
+      - name: Install dependencies core-beta
+        run: |
+            sudo yarn --cwd CTFd/themes/core-beta install --non-interactive
+
+      - name: Verify
+        run: yarn --cwd CTFd/themes/core-beta verify
