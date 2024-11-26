@@ -11,21 +11,15 @@ jobs:
     name: Theme Verification
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies admin theme
-        working-directory: CTFd/themes/admin
+      - name: Verify admin theme
         run: |
+            cd CTFd/themes/admin
             yarn install --non-interactive
-
-      - name: Verify
-        working-directory: CTFd/themes/admin
-        run: yarn verify 
+            yarn verify 
 
       # TODO: Replace in 4.0 with deprecation of previous core theme
-      - name: Install dependencies core-beta
-        working-directory: CTFd/themes/core-beta
+      - name: Verify core-beta theme
         run: |
+            cd CTFd/themes/core-beta
             yarn install --non-interactive
-
-      - name: Verify
-        working-directory: CTFd/themes/core-beta
-        run: yarn verify
+            yarn verify
