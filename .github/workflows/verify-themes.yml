@@ -12,16 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies admin theme
+        working-directory: CTFd/themes/admin
         run: |
-            yarn --cwd CTFd/themes/admin install --non-interactive
+            yarn install --non-interactive
 
       - name: Verify
-        run: yarn --cwd CTFd/themes/admin verify 
+        working-directory: CTFd/themes/admin
+        run: yarn verify 
 
       # TODO: Replace in 4.0 with deprecation of previous core theme
       - name: Install dependencies core-beta
+        working-directory: CTFd/themes/core-beta
         run: |
-            yarn --cwd CTFd/themes/core-beta install --non-interactive
+            yarn install --non-interactive
 
       - name: Verify
-        run: yarn --cwd CTFd/themes/core-beta verify
+        working-directory: CTFd/themes/core-beta
+        run: yarn verify
