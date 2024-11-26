@@ -13,13 +13,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Verify admin theme
         run: |
-            cd CTFd/themes/admin
+            pwd
             yarn install --non-interactive
             yarn verify 
+        working-directory: ./CTFd/themes/admin
 
       # TODO: Replace in 4.0 with deprecation of previous core theme
       - name: Verify core-beta theme
         run: |
-            cd CTFd/themes/core-beta
+            pwd
             yarn install --non-interactive
             yarn verify
+        working-directory: ./CTFd/themes/core-beta
