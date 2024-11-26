@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies admin theme
         run: |
-            sudo yarn --cwd CTFd/themes/admin install --non-interactive
+            yarn --cwd CTFd/themes/admin install --non-interactive
 
       - name: Verify
         run: yarn --cwd CTFd/themes/admin verify 
@@ -21,7 +21,7 @@ jobs:
       # TODO: Replace in 4.0 with deprecation of previous core theme
       - name: Install dependencies core-beta
         run: |
-            sudo yarn --cwd CTFd/themes/core-beta install --non-interactive
+            yarn --cwd CTFd/themes/core-beta install --non-interactive
 
       - name: Verify
         run: yarn --cwd CTFd/themes/core-beta verify
