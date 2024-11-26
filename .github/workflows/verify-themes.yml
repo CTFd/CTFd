@@ -1,7 +1,13 @@
 ---
 name: Theme Verification
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
@@ -11,17 +17,22 @@ jobs:
     name: Theme Verification
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies admin theme
-        run: |
-            sudo yarn --cwd CTFd/themes/admin install --non-interactive
 
-      - name: Verify
-        run: yarn --cwd CTFd/themes/admin verify 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify admin theme
+        run: |
+            pwd
+            yarn install --non-interactive
+            yarn verify 
+        working-directory: ./CTFd/themes/admin
 
       # TODO: Replace in 4.0 with deprecation of previous core theme
-      - name: Install dependencies core-beta
+      - name: Verify core-beta theme
         run: |
-            sudo yarn --cwd CTFd/themes/core-beta install --non-interactive
-
-      - name: Verify
-        run: yarn --cwd CTFd/themes/core-beta verify
+            pwd
+            yarn install --non-interactive
+            yarn verify
+        working-directory: ./CTFd/themes/core-beta
