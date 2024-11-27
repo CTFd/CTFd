@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{ title or Configs.ctf_name }}</title>	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="{{ url_for('views.themes', theme='admin', path='img/favicon.ico') }}" type="image/x-icon">
+	<link rel="icon" href="{{ url_for('views.themes', theme='admin', path='img/favicon.ico') }}" type="image/x-icon">
+	{{ Assets.css("assets/css/main.scss", theme="admin") }}
+	{{ Assets.css("assets/css/fonts.scss", theme="admin") }}
+	{{ Assets.css("assets/css/admin.scss", theme="admin") }}
+	{{ Assets.css("assets/css/codemirror.scss", theme="admin") }}
+	<script type="text/javascript">
+		var init = {
+			'urlRoot': "{{ request.script_root }}",
+			'csrfNonce': "{{ Session.nonce }}",
+			'userMode': "{{ Configs.user_mode }}",
+			'userId': {{ Session.id }},
+			'userName': {{ User.name | tojson }},
+			'userEmail': {{ User.email | tojson }},
+			'teamId': {{ Team.id | tojson }}, 
+			'teamName': {{ Team.name | tojson }},
+			'start': {{ Configs.start | tojson }},
+			'end': {{ Configs.end | tojson }}
+		}
+	</script>
+	{% block stylesheets %} {% endblock %}
+	{% for stylesheet in get_registered_admin_stylesheets() %}
+		{% if stylesheet.startswith('http') %}
+			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% elif request.script_root %}
+			<link rel="stylesheet" type="text/css" href="{{ request.script_root }}/{{ stylesheet }}">
+		{% else %}
+			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
+		{% endif %}
+	{% endfor %}
+</head>
+
+<body>
+	{% include "components/userNavbar.html" %}
+	<main role="main">
+		{% block content %}
+		{% endblock %}
+	</main>
+
+	<footer class="footer pt-2">
+		<div class="container text-center">
+			<a href="https://ctfd.io" class="text-secondary">
+				<small class="text-muted">
+					Powered by CTFd
+				</small>
+			</a>
+			<span>
+				<small class="text-muted"><br> Version {{ get_config('ctf_version') }}</small>
+			</span>
+		</div>
+	</footer>
+
+	{% block entrypoint %}
+		{{ Assets.js("assets/js/pages/main.js", theme="admin") }}
+	{% endblock %}
+
+	{% block scripts %} {% endblock %}
+
+	{% for script in get_registered_admin_scripts() %}
+		{% if script.startswith('http') %}
+			<script defer src="{{ script }}"></script>
+		{% elif request.script_root %}
+			<script defer src="{{ request.script_root }}/{{ script }}"></script>
+		{% else %}
+			<script defer src="{{ script }}"></script>
+		{% endif %}
+	{% endfor %}
+</body>
+
+</html>

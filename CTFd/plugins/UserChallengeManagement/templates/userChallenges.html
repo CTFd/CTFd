@@ -1,7 +1,8 @@
-{% extends "base.html" %}
+{% extends "userBase.html" %}
+
 
 {% block stylesheets %}
-	{{ Assets.css("assets/css/challenge-board.scss", theme="userChallenge" )}}
+
 {% endblock %}
 
 
@@ -10,7 +11,7 @@
 	
 	<div class="container">
 		<h1>Challenges
-			<a class="no-decoration" href="/user/challenges/new">
+			<a class="no-decoration" href="/userChallenge/challenges/new">
 				<span role="button" data-toggle="tooltip" title="Create Challenge">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</span>
@@ -115,5 +116,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	{{ Assets.js("assets/js/pages/challenges.js", theme="userChallenge")}}
+	{#{{ Assets.js("assets/js/challenges.js")}}#}
 {% endblock %}

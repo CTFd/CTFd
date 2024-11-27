@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "userBase.html" %}
 
 {% block stylesheets %}
 {% endblock %}
@@ -110,5 +110,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	{{ Assets.js("assets/js/challenge.js", theme="userChallenge" )}}
+	{{ Assets.js("assets/js/challenges/challenge.js")}}
 {% endblock %}
