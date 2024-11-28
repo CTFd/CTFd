@@ -1,23 +1,22 @@
 from flask import render_template,request,Blueprint, url_for, abort
 from pathlib import Path
 from CTFd.utils.plugins import override_template
-from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins import register_plugin_asset
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.utils.user import get_current_user
-from CTFd.models import Challenges, Solves, Flags
+from CTFd.models import Challenges, Solves, Flags, db
 from CTFd.utils.decorators import authed_only
 
 
 
 def load(app):
 
-    Challenges
+    app.db.create_all()
 
-
-    userChallenge = Blueprint('userChallenge',__name__,template_folder='templates')
+    userChallenge = Blueprint('userChallenge',__name__,template_folder='templates',static_folder ='static',static_url_path='userChallenge/static')
     app.register_blueprint(userChallenge,url_prefix='/userChallenge')
 
-    #register_plugin_assets_directory(app, base_path ='/plugins/UserChallengeManagement/assets/')
+    register_plugin_asset(app, base_path ='plugins/UserChallengeManagement/templates/assets/js/challenge.js')
 
     registerTemplate('users/private.html','newUserPage.html')
 
@@ -36,8 +35,11 @@ def load(app):
         q = request.args.get("q")
         field = request.args.get("field")    
         
-        query = Challenges.query.filter(Challenges.user == get_current_user().id).order_by(Challenges.id.asc())
-        challenges = query.all()
+        query = UserChallenges.query.filter(UserChallenges.user == get_current_user().id).order_by(UserChallenges.id.asc())
+        challenge_ids = query.all()
+        
+        challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
+        
         total = query.count()
 
     #    return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
@@ -50,7 +52,7 @@ def load(app):
         types = CHALLENGE_CLASSES.keys()
         return render_template('createUserChallenge.html',types=types)
         
-    @app.route('userChallenge/challenges/<int:challenge_id>')
+    @app.route('/userChallenge/challenges/<int:challenge_id>')
     def updateChallenge(challenge_id):
         #TODO: update logic to work with plugin   
         challenges = dict(
@@ -95,4 +97,18 @@ def registerTemplate(old_path, new_path):
     template_path = dir_path/'templates'/new_path
     override_template(old_path,open(template_path).read())
 
+def add_User_Link(challenge_id):
+    userChallenge  = UserChallenges(get_current_user().id,challenge_id)
+    db.session.add(userChallenge)
+
+class UserChallenges(db.Model):
+    __tablename__ = "UserChallenges"
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.Integer,db.ForeignKey('users.id'))
+    challenge = db.Column(db.Integer,db.ForeignKey('challenges.id'))
+
+
+    def __init__(self,user,challenge):
+        self.user = user
+        self.challenge = challenge
 

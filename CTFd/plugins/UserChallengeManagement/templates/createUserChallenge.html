@@ -107,8 +107,11 @@
 {% endblock %}
 
 {% block scripts %}
+	
 {% endblock %}
 
 {% block entrypoint %}
-	{{ Assets.js("assets/js/challenges/challenge.js")}}
+	{#{ Assets.js("assets/js/userChallenge.js") }#}
+	{#<script type="text/javascript" src="{{url_for('static',filename='assets/js/userChallenge.js')}}"></script>#}
+	<script type="text/javascript" src="{{ url_for('.static', filename='js/userChallenge.js') }}"></script>
 {% endblock %}
