@@ -13,10 +13,10 @@ def load(app):
 
     app.db.create_all()
 
-    userChallenge = Blueprint('userChallenge',__name__,template_folder='templates',static_folder ='static',static_url_path='userChallenge/static')
+    userChallenge = Blueprint('userChallenge',__name__,template_folder='templates',static_folder ='static')
     app.register_blueprint(userChallenge,url_prefix='/userChallenge')
 
-    register_plugin_asset(app, base_path ='plugins/UserChallengeManagement/templates/assets/js/challenge.js')
+    #register_plugin_asset(app, base_path ='plugins/UserChallengeManagement/static/js/userChallenge.js')
 
     registerTemplate('users/private.html','newUserPage.html')
 
