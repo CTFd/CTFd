@@ -1,0 +1,24 @@
+<table class="table table-striped text-center">
+	<thead>
+		<tr>
+			<td><b>Name</b></td>
+			<td><b>Date</b></td>
+		</tr>
+	</thead>
+	<tbody id="challenge-solves-body">
+		{% if solves is defined %}
+			{% for solve in solves %}
+				<tr data-href="{{ generate_account_url(solve.account_id, admin=True) }}">
+					<td>
+						<a href="{{ generate_account_url(solve.account_id, admin=True) }}">
+							{{ solve.account.name }}
+						</a>
+					</td>
+					<td>
+						<span data-time="{{ solve.date | isoformat }}"></span>
+					</td>
+				</tr>
+			{% endfor %}
+		{% endif %}
+	</tbody>
+</table>
