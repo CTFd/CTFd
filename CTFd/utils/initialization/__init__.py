@@ -40,6 +40,7 @@ from CTFd.utils.user import (
     get_current_user_attrs,
     get_current_user_recent_ips,
     get_ip,
+    get_locale,
     is_admin,
 )
 
@@ -63,6 +64,7 @@ def init_template_globals(app):
     from CTFd.constants import JINJA_ENUMS  # noqa: I001
     from CTFd.constants.assets import Assets
     from CTFd.constants.config import Configs
+    from CTFd.constants.languages import Languages
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
     from CTFd.constants.static import Static
@@ -111,6 +113,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(get_current_user_attrs=get_current_user_attrs)
     app.jinja_env.globals.update(get_current_team_attrs=get_current_team_attrs)
     app.jinja_env.globals.update(get_ip=get_ip)
+    app.jinja_env.globals.update(get_locale=get_locale)
     app.jinja_env.globals.update(Assets=Assets)
     app.jinja_env.globals.update(Configs=Configs)
     app.jinja_env.globals.update(Plugins=Plugins)
@@ -119,6 +122,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(Forms=Forms)
     app.jinja_env.globals.update(User=User)
     app.jinja_env.globals.update(Team=Team)
+    app.jinja_env.globals.update(Languages=Languages)
 
     # Add in JinjaEnums
     # The reason this exists is that on double import, JinjaEnums are not reinitialized
@@ -235,7 +239,11 @@ def init_request_processors(app):
             ip = get_ip()
 
             track = None
-            if (ip not in user_ips) or (request.method != "GET"):
+            if ip not in user_ips or request.method in (
+                "POST",
+                "PATCH",
+                "DELETE",
+            ):
                 track = Tracking.query.filter_by(
                     ip=get_ip(), user_id=session["id"]
                 ).first()
