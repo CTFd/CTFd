@@ -1,21 +1,21 @@
 import "./main";
 import $ from "jquery";
-import "../compat/json";
+import "./compat/json";
 import "bootstrap/js/dist/tab";
-import CTFd from "../compat/CTFd";
+import CTFd from "./compat/CTFd";
 import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
-import { ezQuery, ezAlert, ezToast } from "../compat/ezq";
-import { default as helpers } from "../compat/helpers";
-import { bindMarkdownEditors } from "../styles";
+import { ezQuery, ezAlert, ezToast } from "./compat/ezq";
+import { default as helpers } from "./compat/helpers";
+import { bindMarkdownEditors } from "./styles";
 import Vue from "vue";
-import CommentBox from "../components/comments/CommentBox.vue";
-import FlagList from "../components/flags/FlagList.vue";
-import Requirements from "../components/requirements/Requirements.vue";
-import TopicsList from "../components/topics/TopicsList.vue";
-import TagsList from "../components/tags/TagsList.vue";
-import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
-import HintsList from "../components/hints/HintsList.vue";
-import NextChallenge from "../components/next/NextChallenge.vue";
+import CommentBox from "./components/comments/CommentBox.vue";
+import FlagList from "./components/flags/FlagList.vue";
+import Requirements from "./components/requirements/Requirements.vue";
+import TopicsList from "./components/topics/TopicsList.vue";
+import TagsList from "./components/tags/TagsList.vue";
+import ChallengeFilesList from "./components/files/ChallengeFilesList.vue";
+import HintsList from "./components/hints/HintsList.vue";
+import NextChallenge from "./components/next/NextChallenge.vue";
 
 function loadChalTemplate(challenge) {
   CTFd._internal.challenge = {};
@@ -28,7 +28,7 @@ function loadChalTemplate(challenge) {
       $("#create-chal-entry-div form").submit(function (event) {
         event.preventDefault();
         const params = $("#create-chal-entry-div form").serializeJSON();
-        CTFd.fetch("/api/challenges", {
+        CTFd.fetch("/userchallenge/api/challenges/", {
           method: "POST",
           credentials: "same-origin",
           headers: {
@@ -76,7 +76,7 @@ function handleChallengeOptions(event) {
   };
   // Define a save_challenge function
   let save_challenge = function () {
-    CTFd.fetch("/api/challenges/" + params.challenge_id, {
+    CTFd.fetch("/userchallenge/api/challenges/" + params.challenge_id, {
       method: "PATCH",
       credentials: "same-origin",
       headers: {
@@ -94,7 +94,7 @@ function handleChallengeOptions(event) {
         if (data.success) {
           setTimeout(function () {
             window.location =
-              CTFd.config.urlRoot + "/userChallenge/challenges/" + params.challenge_id;
+              CTFd.config.urlRoot + "/userchallenge/challenges/" + params.challenge_id;
           }, 700);
         }
       });
@@ -107,7 +107,7 @@ function handleChallengeOptions(event) {
         resolve();
         return;
       }
-      CTFd.fetch("/api/flags", {
+      CTFd.fetch("/userchallenge/api/flags", {
         method: "POST",
         credentials: "same-origin",
         headers: {
@@ -150,33 +150,11 @@ $(() => {
     $("#challenge-comments-window").modal();
   });
 
-  $(".delete-challenge").click(function (_e) {
-    ezQuery({
-      title: "Delete Challenge",
-      body: `Are you sure you want to delete <strong>${htmlEntities(
-        window.CHALLENGE_NAME,
-      )}</strong>`,
-      success: function () {
-        CTFd.fetch("/api/challenges/" + window.CHALLENGE_ID, {
-          method: "DELETE",
-        })
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (response) {
-            if (response.success) {
-              window.location = CTFd.config.urlRoot + "/userChallenge/challenges";
-            }
-          });
-      },
-    });
-  });
-
   $("#challenge-update-container > form").submit(function (e) {
     e.preventDefault();
     var params = $(e.target).serializeJSON(true);
 
-    CTFd.fetch("/api/challenges/" + window.CHALLENGE_ID + "/flags", {
+    CTFd.fetch("/userchallenge/api/challenges/" + window.CHALLENGE_ID + "/flags", {
       method: "GET",
       credentials: "same-origin",
       headers: {
@@ -189,7 +167,7 @@ $(() => {
       })
       .then(function (response) {
         let update_challenge = function () {
-          CTFd.fetch("/api/challenges/" + window.CHALLENGE_ID, {
+          CTFd.fetch("/userchallenge/api/challenges/" + window.CHALLENGE_ID, {
             method: "PATCH",
             credentials: "same-origin",
             headers: {
@@ -334,8 +312,9 @@ $(() => {
     }).$mount(vueContainer);
   }
 
-  $.get(CTFd.config.urlRoot + "/api/challenges/types", function (response) {
-    const data = response.data;
+  $.get("/userchallenge/api/challenges/types", function (res) {
+    console.log(res)
+    const data = res.data;
     loadChalTemplate(data["standard"]);
 
     $("#create-chals-select input[name=type]").change(function () {

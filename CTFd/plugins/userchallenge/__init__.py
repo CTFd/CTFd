@@ -1,21 +1,79 @@
 from flask import render_template,request,Blueprint, url_for, abort
+from sqlalchemy.sql import and_
 from pathlib import Path
 from CTFd.utils.plugins import override_template
-from CTFd.plugins import register_plugin_assets_directory
+from CTFd.utils.helpers.models import build_model_filters
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
-from CTFd.utils.user import get_current_user
-from CTFd.models import Challenges, Solves, Flags, db, Configs
+from CTFd.utils.user import get_current_user,is_admin, authed,get_current_team_attrs,get_current_user_attrs,get_current_team
+from CTFd.models import Challenges, Solves, Flags, db, Configs,Hints,HintUnlocks,Flags,Submissions
 from CTFd.utils.decorators import authed_only, admins_only
+from CTFd.schemas.flags import FlagSchema
+from CTFd.schemas.hints import HintSchema
+from CTFd.schemas.tags import TagSchema
+from CTFd.schemas.challenges import ChallengeSchema
+from CTFd.cache import clear_challenges,clear_standings
+from CTFd.utils import config, get_config
+from CTFd.utils.dates import ctf_ended
+from CTFd.utils.challenges import (
+    get_all_challenges,
+    get_solve_counts_for_challenges,
+    get_solve_ids_for_user_id,
+    get_solves_for_challenge_id
+)
+from CTFd.utils.config.visibility import (
+    accounts_visible,
+    challenges_visible,
+    scores_visible
+)
+
+import CTFd.plugins.userchallenge.apiModding as apiModding
 
 
+class UserChallenges(db.Model):
+    __tablename__ = "UserChallenges"
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.Integer,db.ForeignKey('users.id'))
+    challenge = db.Column(db.Integer,db.ForeignKey('challenges.id'))
+
+
+    def __init__(self,user,challenge):
+        self.user = user
+        self.challenge = challenge
+
+def add_User_Link(challenge_id):
+    userChallenge  = UserChallenges(get_current_user().id,challenge_id)
+    db.session.add(userChallenge)
+def registerTemplate(old_path, new_path):
+    dir_path = Path(__file__).parent.resolve()
+    template_path = dir_path/'templates'/new_path
+    override_template(old_path,open(template_path).read())
+def update_allow_challenges():
+    config = Configs.query.filter(Configs.key == "allowUserChallenges").all()
+    if config:
+        if config.value == "true":
+            config.value == "false"
+        else:
+            config.value == "true"
+    else:
+        config = Configs("allowUserChallenges","false")
+        db.session.add(config)
+def get_allow_challenges():
+    config = Configs.query.filter(Configs.key == "allowUserChallenges").all()
+    if config:
+        if config.value == "true":
+            return True
+        else:
+            return False
+    else:
+        return False
 
 def load(app):
 
-
     app.db.create_all()
 
-    userChallenge = Blueprint('userChallenge',__name__,template_folder='templates',static_folder ='staticAssets')
-    app.register_blueprint(userChallenge,url_prefix='/userChallenge')
+    userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',static_folder ='staticAssets')
+    app.register_blueprint(userChallenge,url_prefix='/userchallenge')
+    app.register_blueprint(apiModding.api)
 
     #register_plugin_assets_directory(app, base_path ='/plugins/UserChallengeManagement/assets/')
 
@@ -39,7 +97,7 @@ def load(app):
                 
         return render_template('userConfig.html',action = action,enabled = enabled)
 
-    @app.route('/userChallenge/challenges',methods=['GET'])
+    @app.route('/userchallenge/challenges',methods=['GET'])
     @authed_only
     def view_challenges():
         
@@ -47,8 +105,7 @@ def load(app):
         #      change methods to check for rights and only display challenges by user
         #      add custom html to change challenge editing to be available to users
         #
-        #      add other plugin to modify challenge creation?        
-            
+        #      add other plugin to modify challenge creation?                    
 
         q = request.args.get("q")
         field = request.args.get("field") 
@@ -61,16 +118,15 @@ def load(app):
         total = query.count()
 
     #    return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
-        return render_template('userChallenges.html',challenges=challenges,total = total)
+        return render_template('userChallenges.html',challenges=challenges,total = total)    
     
-    
-    @app.route('/userChallenge/challenges/new',methods=['GET'])
+    @app.route('/userchallenge/challenges/new',methods=['GET'])
     @authed_only
     def view_newChallenge():
         types = CHALLENGE_CLASSES.keys()
         return render_template('createUserChallenge.html',types=types)
         
-    @app.route('/userChallenge/challenges/<int:challenge_id>')
+    @app.route('/userchallenge/challenges/<int:challenge_id>',methods=['GET'])
     @authed_only
     def updateChallenge(challenge_id):
         #TODO: update logic to work with plugin   
@@ -94,11 +150,11 @@ def load(app):
             )
 
         update_j2 = render_template(
-            challenge_class.templates["update"].lstrip("/"), challenge=challenge
+            challenge_class.templates["update"].lstrip("/admin/challenges/"), challenge=challenge
         )
 
         update_script = url_for(
-            "views.static_html", route=challenge_class.scripts["update"].lstrip("/")
+            "views.static_html", route=challenge_class.scripts["update"].lstrip("/admin/challenges/")
         )
         return render_template(
             "editUserChallenge.html",
@@ -109,37 +165,255 @@ def load(app):
             solves=solves,
             flags=flags,
         )
+    
+    # api rerouting
+    ## challenges
+    @app.route('/userchallenge/api/challenges/',methods=['POST'])
+    def challengepost():
+        data = request.form or request.get_json()
 
+        # Load data through schema for validation but not for insertion
+        schema = ChallengeSchema()
+        response = schema.load(data)
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
 
-def registerTemplate(old_path, new_path):
-    dir_path = Path(__file__).parent.resolve()
-    template_path = dir_path/'templates'/new_path
-    override_template(old_path,open(template_path).read())
+        challenge_type = data["type"]
+        challenge_class = get_chal_class(challenge_type)
+        challenge = challenge_class.create(request)
 
-def add_User_Link(challenge_id):
-    userChallenge  = UserChallenges(get_current_user().id,challenge_id)
-    db.session.add(userChallenge)
+        add_User_Link(challenge.id)
 
-def update_allow_challenges():
-    config = Configs.query.filter(Configs.key == "allowUserChallenges").all()
-    if config:
-        if config.value == "true":
-            config.value == "false"
+        response = challenge_class.read(challenge)
+
+        clear_challenges()
+
+        return {"success": True, "data": response}
+
+    ## singular challenge
+    @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['PATCH'])
+    def idchallpatch(challenge_id):
+        data = request.get_json()
+
+        # Load data through schema for validation but not for insertion
+        schema = ChallengeSchema()
+        response = schema.load(data)
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        challenge_class = get_chal_class(challenge.type)
+        challenge = challenge_class.update(challenge, request)
+        response = challenge_class.read(challenge)
+
+        clear_standings()
+        clear_challenges()
+
+        return {"success": True, "data": response}
+    @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['GET'])
+    def idchallget(challenge_id):
+        if is_admin():
+            chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
         else:
-            config.value == "true"
-    else:
-        config = Configs("allowUserChallenges","false")
-        db.session.add(config)
-        
+            chal = Challenges.query.filter(
+                Challenges.id == challenge_id,
+                and_(Challenges.state != "hidden", Challenges.state != "locked"),
+            ).first_or_404()
 
-class UserChallenges(db.Model):
-    __tablename__ = "UserChallenges"
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.Integer,db.ForeignKey('users.id'))
-    challenge = db.Column(db.Integer,db.ForeignKey('challenges.id'))
+        try:
+            chal_class = get_chal_class(chal.type)
+        except KeyError:
+            abort(
+                500,
+                f"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.",
+            )
+
+        if chal.requirements:
+            requirements = chal.requirements.get("prerequisites", [])
+            anonymize = chal.requirements.get("anonymize")
+            # Gather all challenge IDs so that we can determine invalid challenge prereqs
+            all_challenge_ids = {
+                c.id for c in Challenges.query.with_entities(Challenges.id).all()
+            }
+            if challenges_visible():
+                user = get_current_user()
+                if user:
+                    solve_ids = (
+                        Solves.query.with_entities(Solves.challenge_id)
+                        .filter_by(account_id=user.account_id)
+                        .order_by(Solves.challenge_id.asc())
+                        .all()
+                    )
+                else:
+                    # We need to handle the case where a user is viewing challenges anonymously
+                    solve_ids = []
+                solve_ids = {value for value, in solve_ids}
+                prereqs = set(requirements).intersection(all_challenge_ids)
+                if solve_ids >= prereqs or is_admin():
+                    pass
+                else:
+                    if anonymize:
+                        return {
+                            "success": True,
+                            "data": {
+                                "id": chal.id,
+                                "type": "hidden",
+                                "name": "???",
+                                "value": 0,
+                                "solves": None,
+                                "solved_by_me": False,
+                                "category": "???",
+                                "tags": [],
+                                "template": "",
+                                "script": "",
+                            },
+                        }
+                    abort(403)
+            else:
+                abort(403)
+
+        tags = [
+            tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
+        ]
+
+        unlocked_hints = set()
+        hints = []
+        if authed():
+            user = get_current_user()
+            team = get_current_team()
+
+            # TODO: Convert this into a re-useable decorator
+            if is_admin():
+                pass
+            else:
+                if config.is_teams_mode() and team is None:
+                    abort(403)
+
+            unlocked_hints = {
+                u.target
+                for u in HintUnlocks.query.filter_by(
+                    type="hints", account_id=user.account_id
+                )
+            }
+            files = []
+            for f in chal.files:
+                token = {
+                    "user_id": user.id,
+                    "team_id": team.id if team else None,
+                    "file_id": f.id,
+                }
+                files.append(
+                    url_for("views.files", path=f.location, token=serialize(token))
+                )
+        else:
+            files = [url_for("views.files", path=f.location) for f in chal.files]
+
+        for hint in Hints.query.filter_by(challenge_id=chal.id).all():
+            if hint.id in unlocked_hints or ctf_ended():
+                hints.append(
+                    {"id": hint.id, "cost": hint.cost, "content": hint.content}
+                )
+            else:
+                hints.append({"id": hint.id, "cost": hint.cost})
+
+        response = chal_class.read(challenge=chal)
+
+        # Get list of solve_ids for current user
+        if authed():
+            user = get_current_user()
+            user_solves = get_solve_ids_for_user_id(user_id=user.id)
+        else:
+            user_solves = []
+
+        solves_count = get_solve_counts_for_challenges(challenge_id=chal.id)
+        if solves_count:
+            challenge_id = chal.id
+            solve_count = solves_count.get(chal.id)
+            solved_by_user = challenge_id in user_solves
+        else:
+            solve_count, solved_by_user = 0, False
+
+        # Hide solve counts if we are hiding solves/accounts
+        if scores_visible() is False or accounts_visible() is False:
+            solve_count = None
+
+        if authed():
+            # Get current attempts for the user
+            attempts = Submissions.query.filter_by(
+                account_id=user.account_id, challenge_id=challenge_id
+            ).count()
+        else:
+            attempts = 0
+
+        response["solves"] = solve_count
+        response["solved_by_me"] = solved_by_user
+        response["attempts"] = attempts
+        response["files"] = files
+        response["tags"] = tags
+        response["hints"] = hints
+
+        response["view"] = render_template(
+            chal_class.templates["view"].lstrip("/"),
+            solves=solve_count,
+            solved_by_me=solved_by_user,
+            files=files,
+            tags=tags,
+            hints=[Hints(**h) for h in hints],
+            max_attempts=chal.max_attempts,
+            attempts=attempts,
+            challenge=chal,
+        )
+
+        db.session.close()
+        return {"success": True, "data": response}
+    
+    ## types
+    @app.route('/userchallenge/api/challenges/types')
+    def typeget():
+        response = {}
+
+        for class_id in CHALLENGE_CLASSES:
+            challenge_class = CHALLENGE_CLASSES.get(class_id)
+            response[challenge_class.id] = {
+                "id": challenge_class.id,
+                "name": challenge_class.name,
+                "templates": challenge_class.templates,
+                "scripts": challenge_class.scripts,
+                "create": render_template(
+                    challenge_class.templates["create"].lstrip("/")
+                ),
+            }
+
+        return {"success": True, "data": response}
+    ## flag saving
+    @app.route('/userchallenge/api/challenges/<challenge_id>/flags',methods=['GET'])
+    def flagget(challenge_id):
+        flags = Flags.query.filter_by(challenge_id=challenge_id).all()
+        schema = FlagSchema(many=True)
+        response = schema.dump(flags)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+    
+    ## flag posting
+    @app.route('/userchallenge/api/flags',methods=['POST'])
+    def flagpost():
+        req = request.get_json()
+        schema = FlagSchema()
+        response = schema.load(req, session=db.session)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        db.session.add(response.data)
+        db.session.commit()
+
+        response = schema.dump(response.data)
+        db.session.close()
+
+        return {"success": True, "data": response.data}
 
 
-    def __init__(self,user,challenge):
-        self.user = user
-        self.challenge = challenge
 

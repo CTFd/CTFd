@@ -56,7 +56,7 @@ from CTFd.utils.user import (
 )
 
 challenges_namespace = Namespace(
-    "challenges", description="Endpoint to retrieve Challenges"
+    "userchallenge/challenges", description="Endpoint to retrieve Challenges"
 )
 
 ChallengeModel = sqlalchemy_to_pydantic(
@@ -161,7 +161,7 @@ class ChallengeList(Resource):
             # `None` for the solve count if visiblity checks fail
             solve_count_dfl = None
 
-        chal_q = get_all_challenges(admin=admin_view, field=field, q=q, **query_args)
+        chal_q = get_all_challenges(admin=True, field=field, q=q, **query_args)
 
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
@@ -272,6 +272,7 @@ class ChallengeTypes(Resource):
                     challenge_class.templates["create"].lstrip("/")
                 ),
             }
+
         return {"success": True, "data": response}
 
 

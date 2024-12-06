@@ -28,8 +28,8 @@ from CTFd.api.v1.topics import topics_namespace
 from CTFd.api.v1.unlocks import unlocks_namespace
 from CTFd.api.v1.users import users_namespace
 
-api = Blueprint("userChallengeApi", __name__, url_prefix="/userChallenge/apiModding")
-CTFd_API_v1 = Api(
+api = Blueprint("userChallengeApi", __name__, url_prefix="/apiModding")
+User_API_v1 = Api(
     api,
     version="v1",
     doc=current_app.config.get("SWAGGER_UI_ENDPOINT"),
@@ -44,11 +44,11 @@ CTFd_API_v1 = Api(
     security=["AccessToken"],
 )
 
-CTFd_API_v1.schema_model("APISimpleErrorResponse", APISimpleErrorResponse.schema())
-CTFd_API_v1.schema_model(
+User_API_v1.schema_model("APISimpleErrorResponse", APISimpleErrorResponse.schema())
+User_API_v1.schema_model(
     "APIDetailedSuccessResponse", APIDetailedSuccessResponse.schema()
 )
-CTFd_API_v1.schema_model("APISimpleSuccessResponse", APISimpleSuccessResponse.schema())
+User_API_v1.schema_model("APISimpleSuccessResponse", APISimpleSuccessResponse.schema())
 
-CTFd_API_v1.add_namespace(challenges_namespace, "/challenges")
-CTFd_API_v1.add_namespace(flags_namespace, "/flags")
+User_API_v1.add_namespace(challenges_namespace, "/challenges")
+User_API_v1.add_namespace(flags_namespace, "/flags")

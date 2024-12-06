@@ -70,11 +70,7 @@
 				<a class="comments-challenge">
 					<i class="btn-fa fas fa-comments fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Comments"></i>
-				</a>
-				<a class="delete-challenge">
-					<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
-					   title="Delete Challenge"></i>
-				</a>
+				</a>			
 			</div>
 		</div>
 	</div>
@@ -165,10 +161,9 @@
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>
-	<script defer src="{{ request.script_root }}{{ update_script }}"></script>
 {% endblock %}
 
 
 {% block entrypoint %}
-	{{ Assets.js("assets/js/pages/challenge.js", theme="admin") }}
+	<script type="module" src="{{url_for('userchallenge.static',filename='assets/js/userChallenge-C1aYXj9s.js')}}"></script>
 {% endblock %}
