@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     loadFlag: function () {
-      CTFd.fetch(`/api/v1/flags/${this.$props.flag_id}`, {
+      CTFd.fetch(`/userchallenge/api/flags/${this.$props.flag_id}`, {
         method: "GET",
       })
         .then((response) => {
@@ -91,7 +91,7 @@ export default {
       let form = $(event.target);
       let params = form.serializeJSON(true);
 
-      CTFd.fetch(`/api/v1/flags/${this.$props.flag_id}`, {
+      CTFd.fetch(`/userchallenge/api/flags/${this.$props.flag_id}`, {
         method: "PATCH",
         credentials: "same-origin",
         headers: {

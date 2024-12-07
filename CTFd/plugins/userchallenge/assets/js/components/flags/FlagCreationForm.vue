@@ -102,7 +102,7 @@ export default {
       });
     },
     loadTypes: function () {
-      CTFd.fetch("/api/v1/flags/types", {
+      CTFd.fetch("/userchallenge/api/flags/types", {
         method: "GET",
       })
         .then((response) => {
@@ -117,7 +117,7 @@ export default {
       let params = form.serializeJSON(true);
       params["challenge"] = this.$props.challenge_id;
 
-      CTFd.fetch("/api/v1/flags", {
+      CTFd.fetch("/userchallenge/api/flags", {
         method: "POST",
         credentials: "same-origin",
         headers: {

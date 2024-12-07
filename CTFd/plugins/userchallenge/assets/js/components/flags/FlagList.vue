@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     loadFlags: function () {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/flags`, {
+      CTFd.fetch(`/userchallenge/api/challenges/${this.$props.challenge_id}/flags`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -127,7 +127,7 @@ export default {
     },
     deleteFlag: function (flag_id) {
       if (confirm("Are you sure you'd like to delete this flag?")) {
-        CTFd.fetch(`/api/v1/flags/${flag_id}`, {
+        CTFd.fetch(`/userchallenge/api/flags/${flag_id}`, {
           method: "DELETE",
         })
           .then((response) => {
