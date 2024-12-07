@@ -77,15 +77,19 @@ def confirm(data=None):
     if data is None:
         if request.method == "POST":
             # User wants to resend their confirmation email
-            email.verify_email_address(user.email)
-            log(
-                "registrations",
-                format="[{date}] {ip} - {name} initiated a confirmation email resend",
-                name=user.name,
-            )
-            return render_template(
-                "confirm.html", infos=[f"Confirmation email sent to {user.email}!"]
-            )
+            # This addition will help in troubleshooting failed SMTP configurations.
+            response = email.verify_email_address(user.email)
+            if response[0] == True:
+                log(
+                    "registrations",
+                    format="[{date}] {ip} - {name} initiated a confirmation email resend",
+                    name=user.name,
+                )
+                return render_template(
+                    "confirm.html", infos=[f"Confirmation email sent to {user.email}!"]
+                )
+            else:
+                return render_template("confirm.html", errors=[f"Confirmation email failed to send. Error: {response[-1]}"])
         elif request.method == "GET":
             # User has been directed to the confirm page
             return render_template("confirm.html")
