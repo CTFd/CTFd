@@ -1,7 +1,9 @@
 import glob
 import importlib
+import inspect
 import os
 from collections import namedtuple
+from pathlib import Path
 
 from flask import current_app as app
 from flask import send_file, send_from_directory, url_for
@@ -166,6 +168,16 @@ def bypass_csrf_protection(f):
     """
     f._bypass_csrf = True
     return f
+
+
+def get_plugin_folder():
+    """
+    Get the plugin folder from function caller.
+
+    :return: Returns a Path of the calling plugin.
+    """
+    plugin_full_path = Path(inspect.stack()[1].filename)
+    return Path(*plugin_full_path.parts[-3:-1])
 
 
 def get_plugin_names():
