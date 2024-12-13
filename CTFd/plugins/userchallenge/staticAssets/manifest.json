@@ -3,36 +3,36 @@
     "file": "assets/echarts-l0sNRNKZ.js",
     "name": "echarts"
   },
-  "_jquery-BT3bhPE2.js": {
-    "file": "assets/jquery-BT3bhPE2.js",
+  "_jquery-CHTzeeNo.js": {
+    "file": "assets/jquery-CHTzeeNo.js",
     "name": "jquery"
   },
   "assets/js/config.js": {
-    "file": "assets/js/config-DU-QWuYy.js",
+    "file": "assets/js/config-CiK_xkAo.js",
     "name": "js/config",
     "src": "assets/js/config.js",
     "isEntry": true,
     "imports": [
-      "_jquery-BT3bhPE2.js"
+      "_jquery-CHTzeeNo.js"
     ]
   },
   "assets/js/main.js": {
-    "file": "assets/js/main-Dr4H208R.js",
+    "file": "assets/js/main-mUEqI6rq.js",
     "name": "js/main",
     "src": "assets/js/main.js",
     "isEntry": true,
     "imports": [
-      "_jquery-BT3bhPE2.js"
+      "_jquery-CHTzeeNo.js"
     ]
   },
   "assets/js/userChallenge.js": {
-    "file": "assets/js/userChallenge-1QWaI6oE.js",
+    "file": "assets/js/userChallenge-D8RkAOtF.js",
     "name": "js/userChallenge",
     "src": "assets/js/userChallenge.js",
     "isEntry": true,
     "imports": [
       "assets/js/main.js",
-      "_jquery-BT3bhPE2.js"
+      "_jquery-CHTzeeNo.js"
     ],
     "css": [
       "assets/userChallenge-BUE7xcDv.css"

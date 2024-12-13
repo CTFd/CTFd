@@ -1,3 +1,4 @@
+import json
 from flask import render_template,request,Blueprint, url_for, abort,redirect
 from sqlalchemy.sql import and_
 from pathlib import Path
@@ -15,6 +16,7 @@ from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.cache import clear_challenges,clear_standings
 from CTFd.utils import config, get_config
 from CTFd.utils.dates import ctf_ended
+from CTFd.utils.logging import log
 from CTFd.utils.challenges import (
     get_all_challenges,
     get_solve_counts_for_challenges,
@@ -88,10 +90,8 @@ def load(app):
     app.db.create_all()
 
     userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',static_folder ='staticAssets')
-    app.register_blueprint(userChallenge,url_prefix='/userchallenge')
-    #app.register_blueprint(apiModding.api)
 
-    #register_plugin_assets_directory(app, base_path ='/plugins/UserChallengeManagement/assets/')
+    app.register_blueprint(userChallenge,url_prefix='/userchallenge')
 
     registerTemplate('users/private.html','newUserPage.html')
 
@@ -120,7 +120,7 @@ def load(app):
             data = "enabled"
         return {"success":True,"data":data}
 
-    @app.route('/userchallenge/challenges')
+    @app.route('/userchallenge/challenges',methods=['GET',''])
     #@userChallenge_allowed
     @authed_only
     def view_challenges():
@@ -139,20 +139,23 @@ def load(app):
                 filters.append(getattr(Challenges, field).like("%{}%".format(q)))
         
         query = db.session.query(UserChallenges.challenge).filter_by(user=get_current_user().id)
-        challenge_ids = query.all()
-
+        challenge_ids_raw = query.all()
+        challenge_ids = []
+        for chal in challenge_ids_raw:
+            challenge_ids.append(chal[0])        
         challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
-        
+        log("logins", " - {name}", name=challenges)
         total = query.count()
 
-    #    return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
-        return render_template('userChallenges.html',challenges=challenges,total = total)    
+        #return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
+        return render_template('userChallenges.html',challenges=challenges,total = total,q=q,field=field)    
     
     @app.route('/userchallenge/challenges/new',methods=['GET'])
     def view_newChallenge():
         types = CHALLENGE_CLASSES.keys()
         return render_template('createUserChallenge.html',types=types)
-        
+    
+    @userChallenge.add_app_template_global
     @app.route('/userchallenge/challenges/<int:challenge_id>',methods=['GET'])
     #@userChallenge_allowed
     def updateChallenge(challenge_id):
@@ -195,7 +198,7 @@ def load(app):
     
     # api rerouting
     ## challenges
-    @app.route('/userchallenge/api/challenges/',methods=['POST'])
+    @app.route('/userchallenge/api/challenges/',methods=['POST','GET'])
     #@userChallenge_allowed
     def challengepost():
         data = request.form or request.get_json()
@@ -398,7 +401,7 @@ def load(app):
         return {"success": True, "data": response}
     
     ## types
-    @app.route('/userchallenge/api/challenges/types')
+    @app.route('/app/api/challenges/types')
     #@userChallenge_allowed
     def typeget():
         response = {}
@@ -499,3 +502,6 @@ def load(app):
         db.session.close()
 
         return {"success": True}
+
+
+    

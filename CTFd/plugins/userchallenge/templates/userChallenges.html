@@ -11,7 +11,7 @@
 	
 	<div class="container">
 		<h1>Challenges
-			<a class="no-decoration" href="/userchallenge/challenges/new">
+			<a class="no-decoration" href="userchallenge/challenges/new">
 				<span role="button" data-toggle="tooltip" title="Create Challenge">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</span>
@@ -52,31 +52,11 @@
 	<hr>
 
 	<div class="row">
-		<div class="col-md-12">
-			<div class="float-right pb-3">
-				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Challenges" id="challenges-edit-button">
-						<i class="btn-fa fas fa-pencil-alt"></i>
-					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Challenges" id="challenges-delete-button">
-						<i class="btn-fa fas fa-trash-alt"></i>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="row">
 		<div class="col-md-12 table-responsive">
 			<div>
 				<table id="challenges" class="table table-striped border">
 					<thead>
 					<tr>
-						<td class="d-block border-right border-bottom text-center" data-checkbox>
-							<div class="form-check">
-								<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
-							</div>
-						</td>
 						<th class="sort-col text-center"><b>ID</b></th>
 						<th class="sort-col"><b>Name</b></th>
 						<th class="sort-col"><b>Category</b></th>
@@ -86,15 +66,10 @@
 					</tr>
 					</thead>
 					<tbody>
-					{% for challenge in challenges %}
-						<tr data-href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">
-							<td class="d-block border-right text-center" data-checkbox>
-								<div class="form-check">
-									<input type="checkbox" class="form-check-input" value="{{ challenge.id }}" autocomplete="off" data-challenge-id="{{ challenge.id }}">&nbsp;
-								</div>
-							</td>
+					{% for challenge in challenges %}					
+						<tr data-href="{{url_for('updateChallenge',challenge_id=challenge.id)}}">
 							<td class="text-center">{{ challenge.id }}</td>
-							<td><a href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">{{ challenge.name }}</a></td>
+							<td><a href="{{url_for('updateChallenge',challenge_id=challenge.id)}}">{{ challenge.name }}</a></td>
 							<td>{{ challenge.category }}</td>
 							<td class="text-center">{{ challenge.value }}</td>
 							<td class="text-center">{{ challenge.type }}</td>
@@ -117,4 +92,5 @@
 
 {% block entrypoint %}
 	{#{{ Assets.js("assets/js/challenges.js")}}#}
+	
 {% endblock %}

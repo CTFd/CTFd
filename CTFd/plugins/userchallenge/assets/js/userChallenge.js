@@ -38,6 +38,7 @@ function loadChalTemplate(challenge) {
           body: JSON.stringify(params),
         })
           .then(function (response) {
+            console.error(response.user)
             return response.json();
           })
           .then(function (response) {

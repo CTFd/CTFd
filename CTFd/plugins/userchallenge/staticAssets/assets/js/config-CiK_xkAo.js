@@ -1,0 +1,1 @@
+import{$ as l}from"../jquery-CHTzeeNo.js";l("#toggle-button").click(()=>{l.get("/userchallenge/api/config",function(e){console.log(e.data),l("#label-enable").html("challenge creation is "+e.data)})});
