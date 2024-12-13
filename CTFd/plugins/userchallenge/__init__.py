@@ -151,11 +151,13 @@ def load(app):
         return render_template('userChallenges.html',challenges=challenges,total = total,q=q,field=field)    
     
     @app.route('/userchallenge/challenges/new',methods=['GET'])
+    @authed_only
     def view_newChallenge():
         types = CHALLENGE_CLASSES.keys()
         return render_template('createUserChallenge.html',types=types)
     
     @userChallenge.add_app_template_global
+    @authed_only
     @app.route('/userchallenge/challenges/<int:challenge_id>',methods=['GET'])
     #@userChallenge_allowed
     def updateChallenge(challenge_id):
@@ -199,6 +201,7 @@ def load(app):
     # api rerouting
     ## challenges
     @app.route('/userchallenge/api/challenges/',methods=['POST','GET'])
+    @authed_only
     #@userChallenge_allowed
     def challengepost():
         data = request.form or request.get_json()
@@ -223,6 +226,7 @@ def load(app):
 
     ## singular challenge
     @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['PATCH'])
+    @authed_only
     #@userChallenge_allowed
     def idchallpatch(challenge_id):
         data = request.get_json()
@@ -243,6 +247,7 @@ def load(app):
 
         return {"success": True, "data": response}
     @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['GET'])
+    @authed_only
     #@userChallenge_allowed
     def idchallget(challenge_id):
         if is_admin():
@@ -402,6 +407,7 @@ def load(app):
     
     ## types
     @app.route('/app/api/challenges/types')
+    @authed_only
     #@userChallenge_allowed
     def typeget():
         response = {}
@@ -421,6 +427,7 @@ def load(app):
         return {"success": True, "data": response}
     ## flag saving
     @app.route('/userchallenge/api/challenges/<challenge_id>/flags',methods=['GET'])
+    @authed_only
     #@userChallenge_allowed
     def flagget(challenge_id):
         flags = Flags.query.filter_by(challenge_id=challenge_id).all()
@@ -434,6 +441,7 @@ def load(app):
     
     ## flag posting
     @app.route('/userchallenge/api/flags',methods=['POST'])
+    @authed_only
     #@userChallenge_allowed
     def flagpost():
         req = request.get_json()
@@ -451,6 +459,7 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/flags/types',methods=['GET'])
+    @authed_only
     #@userChallenge_allowed
     def flagTypeGet():
         response = {}
@@ -462,6 +471,7 @@ def load(app):
             }
         return {"success": True, "data": response}
     @app.route('/userchallenge/api/flags/<flag_id>',methods=['GET'])
+    @authed_only
     #@userChallenge_allowed
     def flagIDget(flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
@@ -475,6 +485,7 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/flags/<flag_id>',methods=['PATCH'])
+    @authed_only
     #@userChallenge_allowed
     def flagIDpatch(flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
@@ -493,6 +504,7 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/flags/<flag_id>',methods=['DELETE'])
+    @authed_only
     #@userChallenge_allowed
     def flagIDdelete(flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
