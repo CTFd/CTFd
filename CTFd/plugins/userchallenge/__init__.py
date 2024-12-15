@@ -54,6 +54,7 @@ def registerTemplate(old_path, new_path):
     override_template(old_path,open(template_path).read())
 def update_allow_challenges():
     config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
+    log("logins", " - {name}", name=config)
     if config:
         if config.value == "true":
             config.value == "false"
@@ -144,7 +145,6 @@ def load(app):
         for chal in challenge_ids_raw:
             challenge_ids.append(chal[0])        
         challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
-        log("logins", " - {name}", name=challenges)
         total = query.count()
 
         #return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
