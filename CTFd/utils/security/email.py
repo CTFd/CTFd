@@ -25,7 +25,7 @@ def remove_email_confirm_token(nonce):
 
 def generate_password_reset_token(addr, timeout=1800):
     nonce = hmac(addr)
-    cache.set(f"reset_password_{nonce}", addr, timeout=1800)
+    cache.set(f"reset_password_{nonce}", addr, timeout=timeout)
     return nonce
 
 
