@@ -7,9 +7,11 @@
 
 
 	  {% if is_admin() != true %}
-		<a href="/userchallenge/challenges">
-			My Challenges
-		</a>
+      {% if get_config("allowUserChallenges") == true %}
+        <a href="/userchallenge/challenges">
+          My Challenges
+        </a>
+      {% endif %}
 	  {% endif %}
 
       {% if user.team_id %}

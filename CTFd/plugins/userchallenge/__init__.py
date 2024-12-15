@@ -32,6 +32,8 @@ import functools
 import CTFd.plugins.userchallenge.apiModding as apiModding
 
 
+userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',static_folder ='staticAssets')
+
 class UserChallenges(db.Model):
     __tablename__ = "UserChallenges"
     id = db.Column(db.Integer, primary_key=True)
@@ -53,20 +55,28 @@ def registerTemplate(old_path, new_path):
     template_path = dir_path/'templates'/new_path
     override_template(old_path,open(template_path).read())
 def update_allow_challenges():
+    db.session.commit()
     config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
-    log("logins", " - {name}", name=config)
+
     if config:
-        if config.value == "true":
-            config.value == "false"
+        value = config.value
+        if value == "true":
+            
+            config.value = "false"
+            db.session.commit()
+            log("logins", "config true twice - {name}", name=config.value)
             return False
         else:
-            config.value == "true"            
+            config.value = "true"
+            db.session.commit()
             return True
     else:
-        config = Configs("allowUserChallenges","true")
-        db.session.add(config)
+        conf = Configs(key="allowUserChallenges",value="true")
+        db.session.add(conf)
         db.session.commit()
+        log("logins", "config create- {name}", name=conf)
         return True
+
 def userChallenge_allowed(f):
     """
     Decorator that requires the user to be authed and userchallenges to be active
@@ -77,7 +87,8 @@ def userChallenge_allowed(f):
     @functools.wraps(f)
     def userChallenge_wrapper(*args, **kwargs):
         value = get_config("allowUserChallenges")
-        if value and value == "true" and get_current_user.authed():
+        log("logins", "config checking allowed user - {name}", name=value)
+        if (value and get_current_user()) or is_admin():
             return f(*args, **kwargs)
         else:
             if request.content_type == "application/json":
@@ -90,17 +101,19 @@ def load(app):
 
     app.db.create_all()
 
-    userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',static_folder ='staticAssets')
+    
 
     app.register_blueprint(userChallenge,url_prefix='/userchallenge')
 
     registerTemplate('users/private.html','newUserPage.html')
 
+
+
     @app.route('/admin/userChallenge')
     @admins_only
-    def view_config():
-
-        key = Configs.query.filter(Configs.key == "allowUserChallenges").all()
+    def view_config():        
+        key = Configs.query.filter(Configs.key == "allowUserChallenges").first().value
+        db.session.commit()
 
         if key:
             if key == "true":
@@ -122,7 +135,7 @@ def load(app):
         return {"success":True,"data":data}
 
     @app.route('/userchallenge/challenges',methods=['GET',''])
-    #@userChallenge_allowed
+    @userChallenge_allowed
     @authed_only
     def view_challenges():
         #TODO: add custom html extension of admin/challenges/challenges
@@ -151,12 +164,14 @@ def load(app):
         return render_template('userChallenges.html',challenges=challenges,total = total,q=q,field=field)    
     
     @app.route('/userchallenge/challenges/new',methods=['GET'])
+    @userChallenge_allowed
     @authed_only
     def view_newChallenge():
         types = CHALLENGE_CLASSES.keys()
         return render_template('createUserChallenge.html',types=types)
     
     @userChallenge.add_app_template_global
+    @userChallenge_allowed
     @authed_only
     @app.route('/userchallenge/challenges/<int:challenge_id>',methods=['GET'])
     #@userChallenge_allowed
@@ -201,6 +216,7 @@ def load(app):
     # api rerouting
     ## challenges
     @app.route('/userchallenge/api/challenges/',methods=['POST','GET'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def challengepost():
@@ -226,6 +242,7 @@ def load(app):
 
     ## singular challenge
     @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['PATCH'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def idchallpatch(challenge_id):
@@ -247,6 +264,7 @@ def load(app):
 
         return {"success": True, "data": response}
     @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['GET'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def idchallget(challenge_id):
@@ -407,6 +425,7 @@ def load(app):
     
     ## types
     @app.route('/app/api/challenges/types')
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def typeget():
@@ -427,6 +446,7 @@ def load(app):
         return {"success": True, "data": response}
     ## flag saving
     @app.route('/userchallenge/api/challenges/<challenge_id>/flags',methods=['GET'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def flagget(challenge_id):
@@ -441,6 +461,7 @@ def load(app):
     
     ## flag posting
     @app.route('/userchallenge/api/flags',methods=['POST'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def flagpost():
@@ -459,6 +480,7 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/flags/types',methods=['GET'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def flagTypeGet():
@@ -471,6 +493,7 @@ def load(app):
             }
         return {"success": True, "data": response}
     @app.route('/userchallenge/api/flags/<flag_id>',methods=['GET'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def flagIDget(flag_id):
@@ -485,6 +508,7 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/flags/<flag_id>',methods=['PATCH'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def flagIDpatch(flag_id):
@@ -504,6 +528,7 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/flags/<flag_id>',methods=['DELETE'])
+    @userChallenge_allowed
     @authed_only
     #@userChallenge_allowed
     def flagIDdelete(flag_id):
