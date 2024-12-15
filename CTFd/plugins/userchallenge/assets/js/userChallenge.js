@@ -38,7 +38,6 @@ function loadChalTemplate(challenge) {
           body: JSON.stringify(params),
         })
           .then(function (response) {
-            console.error(response.user)
             return response.json();
           })
           .then(function (response) {
@@ -314,7 +313,6 @@ $(() => {
   }
 
   $.get("/userchallenge/api/challenges/types", function (res) {
-    console.log(res)
     const data = res.data;
     loadChalTemplate(data["standard"]);
 

@@ -64,7 +64,6 @@ def update_allow_challenges():
             
             config.value = "false"
             db.session.commit()
-            log("logins", "config true twice - {name}", name=config.value)
             return False
         else:
             config.value = "true"
@@ -74,7 +73,6 @@ def update_allow_challenges():
         conf = Configs(key="allowUserChallenges",value="true")
         db.session.add(conf)
         db.session.commit()
-        log("logins", "config create- {name}", name=conf)
         return True
 
 def userChallenge_allowed(f):
@@ -87,7 +85,6 @@ def userChallenge_allowed(f):
     @functools.wraps(f)
     def userChallenge_wrapper(*args, **kwargs):
         value = get_config("allowUserChallenges")
-        log("logins", "config checking allowed user - {name}", name=value)
         if (value and get_current_user()) or is_admin():
             return f(*args, **kwargs)
         else:
@@ -100,9 +97,6 @@ def userChallenge_allowed(f):
 def load(app):
 
     app.db.create_all()
-
-    
-
     app.register_blueprint(userChallenge,url_prefix='/userchallenge')
 
     registerTemplate('users/private.html','newUserPage.html')
