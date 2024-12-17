@@ -139,7 +139,7 @@ function handleChallengeOptions(event) {
 
 $(() => {
   $(".preview-challenge").click(function (_e) {
-    let url = `${CTFd.config.urlRoot}/admin/challenges/preview/${window.CHALLENGE_ID}`;
+    let url = `/userchallenge/challenges/preview/${window.CHALLENGE_ID}`;
     $("#challenge-window").html(
       `<iframe src="${url}" height="100%" width="100%" frameBorder=0></iframe>`,
     );

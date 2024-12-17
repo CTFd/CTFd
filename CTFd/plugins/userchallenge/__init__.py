@@ -537,5 +537,39 @@ def load(app):
 
         return {"success": True}
 
+    @app.route('/userchallenge/challenges/preview/<challenge_id>')
+    def render_preview(challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        chal_class = get_chal_class(challenge.type)
+        user = get_current_user()
+        team = get_current_team()
 
-    
+        files = []
+        for f in challenge.files:
+            token = {
+                "user_id": user.id,
+                "team_id": team.id if team else None,
+                "file_id": f.id,
+            }
+            files.append(url_for("views.files", path=f.location, token=serialize(token)))
+
+        tags = [
+            tag["value"] for tag in TagSchema("user", many=True).dump(challenge.tags).data
+        ]
+
+        content = render_template(
+            chal_class.templates["view"].lstrip("/"),
+            solves=None,
+            solved_by_me=False,
+            files=files,
+            tags=tags,
+            hints=challenge.hints,
+            max_attempts=challenge.max_attempts,
+            attempts=0,
+            challenge=challenge,
+        )
+        return render_template(
+            "admin/challenges/preview.html", content=content, challenge=challenge
+        )
+
+        
