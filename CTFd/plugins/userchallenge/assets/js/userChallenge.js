@@ -150,6 +150,28 @@ $(() => {
     $("#challenge-comments-window").modal();
   });
 
+  $(".delete-challenge").click(function (_e) {
+    ezQuery({
+      title: "Delete Challenge",
+      body: `Are you sure you want to delete <strong>${htmlEntities(
+        window.CHALLENGE_NAME,
+      )}</strong>`,
+      success: function () {
+        CTFd.fetch("/userchallenge/api/challenges/" + window.CHALLENGE_ID, {
+          method: "DELETE",
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (response) {
+            if (response.success) {
+              window.location = CTFd.config.urlRoot + "/admin/challenges";
+            }
+          });
+      },
+    });
+  });
+
   $("#challenge-update-container > form").submit(function (e) {
     e.preventDefault();
     var params = $(e.target).serializeJSON(true);

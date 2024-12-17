@@ -1,4 +1,4 @@
-{% extends "userBase.html" %}
+{% extends "admin/base.html" %}
 
 {% block stylesheets %}
 	{{ Assets.css("assets/css/challenge-board.scss", theme="admin") }}
@@ -70,7 +70,11 @@
 				<a class="comments-challenge">
 					<i class="btn-fa fas fa-comments fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Comments"></i>
-				</a>			
+				</a>
+				<a class="delete-challenge">
+					<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Delete Challenge"></i>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -93,7 +97,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Files</h3>
-								{% include "modals/challenges/files.html" %}
+								{% include "admin/modals/challenges/files.html" %}
 							</div>
 						</div>
 					</div>
@@ -101,7 +105,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Flags</h3>
-								{% include "modals/challenges/flags.html" %}
+								{% include "admin/modals/challenges/flags.html" %}
 							</div>
 						</div>
 					</div>
@@ -109,7 +113,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Topics</h3>
-								{% include "modals/challenges/topics.html" %}
+								{% include "admin/modals/challenges/topics.html" %}
 							</div>
 						</div>
 					</div>
@@ -117,7 +121,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Tags</h3>
-								{% include "modals/challenges/tags.html" %}
+								{% include "admin/modals/challenges/tags.html" %}
 							</div>
 						</div>
 					</div>
@@ -125,7 +129,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Hints</h3>
-								{% include "modals/challenges/hints.html" %}
+								{% include "admin/modals/challenges/hints.html" %}
 							</div>
 						</div>
 					</div>
@@ -133,7 +137,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Requirements</h3>
-								{% include "modals/challenges/requirements.html" %}
+								{% include "admin/modals/challenges/requirements.html" %}
 							</div>
 						</div>
 					</div>
@@ -141,7 +145,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Next Challenge</h3>
-								{% include "modals/challenges/next.html" %}
+								{% include "admin/modals/challenges/next.html" %}
 							</div>
 						</div>
 					</div>
@@ -161,9 +165,10 @@
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>
+	<script defer src="{{ request.script_root }}{{ update_script }}"></script>
 {% endblock %}
 
 
 {% block entrypoint %}
-	<script type="module" src="{{url_for('userchallenge.static',filename='assets/js/userChallenge-Cvy1VnIO.js')}}"></script>
+<script type="module" src="{{url_for('userchallenge.static',filename='assets/js/userChallenge-Cvy1VnIO.js')}}"></script>
 {% endblock %}

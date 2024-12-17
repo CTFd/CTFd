@@ -57,7 +57,6 @@ def registerTemplate(old_path, new_path):
 def update_allow_challenges():
     db.session.commit()
     config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
-
     if config:
         value = config.value
         if value == "true":
@@ -97,11 +96,18 @@ def userChallenge_allowed(f):
 def load(app):
 
     app.db.create_all()
+
+    # add config value false for allowing user challenges if not existent on startup
+    if not Configs.query.filter_by(key="allowUserChallenges").first():
+        conf = Configs(key="allowUserChallenges",value="false")
+        db.session.add(conf)
+        db.session.commit()    
+
     app.register_blueprint(userChallenge,url_prefix='/userchallenge')
 
     registerTemplate('users/private.html','newUserPage.html')
-
-
+    registerTemplate('admin/challenges/challenge.html','adminChallenge.html')
+    registerTemplate('admin/challenges/challenges.html','adminChallenges.html')
 
     @app.route('/admin/userChallenge')
     @admins_only
@@ -416,7 +422,27 @@ def load(app):
 
         db.session.close()
         return {"success": True, "data": response}
-    
+    @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['DELETE'])
+    @admins_only
+    def delete(challenge_id):
+        #delete UserChallenge reference
+        query = UserChallenges.query.filter_by(challenge=challenge_id)
+        userchal = query.first()
+        if userchal:
+            query.delete()
+            db.session.commit()
+
+        #delete challenge
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        chal_class = get_chal_class(challenge.type)
+        chal_class.delete(challenge)
+
+
+        clear_standings()
+        clear_challenges()
+
+        return {"success": True}
+
     ## types
     @app.route('/app/api/challenges/types')
     @userChallenge_allowed
