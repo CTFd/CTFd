@@ -1,3 +1,5 @@
+import os
+
 from CTFd.cache import cache
 from CTFd.exceptions.email import (
     UserConfirmTokenInvalidException,
@@ -7,7 +9,7 @@ from CTFd.utils.security.signing import hmac
 
 
 def generate_email_confirm_token(addr, timeout=1800):
-    nonce = hmac(addr)
+    nonce = hmac(os.urandom(32))
     cache.set(f"confirm_email_{nonce}", addr, timeout=timeout)
     return nonce
 
@@ -24,7 +26,7 @@ def remove_email_confirm_token(nonce):
 
 
 def generate_password_reset_token(addr, timeout=1800):
-    nonce = hmac(addr)
+    nonce = hmac(os.urandom(32))
     cache.set(f"reset_password_{nonce}", addr, timeout=timeout)
     return nonce
 
