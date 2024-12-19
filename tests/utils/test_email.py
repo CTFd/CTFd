@@ -2,7 +2,6 @@ from email.message import EmailMessage
 from unittest.mock import Mock, patch
 
 import requests
-from freezegun import freeze_time
 
 from CTFd.utils import get_config, set_config
 from CTFd.utils.email import (
@@ -178,14 +177,14 @@ def test_verify_email(mock_smtp):
 
         to_addr = "user@user.com"
 
-        with freeze_time("2012-01-14 03:21:34"):
+        urandom_value = b"\xff" * 32
+        with patch("os.urandom", return_value=urandom_value):
             verify_email_address(to_addr)
 
-        # This is currently not actually validated
         msg = (
             "Welcome to CTFd!\n\n"
             "Click the following link to confirm and activate your account:\n"
-            "http://localhost/confirm/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U\n\n"
+            "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b\n\n"
             "If the link is not clickable, try copying and pasting it into your browser."
         )
 

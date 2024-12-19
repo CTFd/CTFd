@@ -47,7 +47,8 @@ def confirm(data=None):
             user_email = verify_email_confirm_token(data)
         except (UserConfirmTokenInvalidException):
             return render_template(
-                "confirm.html", errors=["Your confirmation token is invalid"]
+                "confirm.html",
+                errors=["Your confirmation link is invalid, please generate a new one"],
             )
 
         user = Users.query.filter_by(email=user_email).first_or_404()
@@ -113,7 +114,8 @@ def reset_password(data=None):
             email_address = verify_reset_password_token(data)
         except (UserResetPasswordTokenInvalidException):
             return render_template(
-                "reset_password.html", errors=["Your reset token is invalid"]
+                "reset_password.html",
+                errors=["Your reset link is invalid, please generate a new one"],
             )
 
         if request.method == "GET":
