@@ -364,16 +364,20 @@ def test_confirm_link_tokens_unique(mock_smtp):
         set_config("mail_username", "username")
         set_config("mail_password", "password")
         set_config("verify_emails", True)
-        register_user(app)
+        register_user(app, name="user1", email="user1@examplectf.com")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
-        to_addr = "user@examplectf.com"
-
-        verify_email_address(to_addr)
+        verify_email_address("user1@examplectf.com")
         call1 = str(mock_smtp.return_value.send_message.call_args[0][0])
 
-        verify_email_address(to_addr)
+        verify_email_address("user1@examplectf.com")
         call2 = str(mock_smtp.return_value.send_message.call_args[0][0])
+
+        verify_email_address("user2@examplectf.com")
+        call3 = str(mock_smtp.return_value.send_message.call_args[0][0])
         assert call1 != call2
+        assert call2 != call3
+        assert call1 != call3
     destroy_ctfd(app)
 
 
@@ -451,14 +455,18 @@ def test_reset_password_link_tokens_unique(mock_smtp):
         set_config("mail_username", "username")
         set_config("mail_password", "password")
         set_config("verify_emails", True)
-        register_user(app)
+        register_user(app, name="user1", email="user1@examplectf.com")
+        register_user(app, name="user2", email="user2@examplectf.com")
 
-        to_addr = "user@examplectf.com"
-
-        forgot_password(to_addr)
+        forgot_password("user1@examplectf.com")
         call1 = str(mock_smtp.return_value.send_message.call_args[0][0])
 
-        forgot_password(to_addr)
+        forgot_password("user1@examplectf.com")
         call2 = str(mock_smtp.return_value.send_message.call_args[0][0])
+
+        forgot_password("user2@examplectf.com")
+        call3 = str(mock_smtp.return_value.send_message.call_args[0][0])
         assert call1 != call2
+        assert call2 != call3
+        assert call1 != call3
     destroy_ctfd(app)
