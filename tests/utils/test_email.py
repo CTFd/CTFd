@@ -3,14 +3,17 @@ from unittest.mock import Mock, patch
 
 import requests
 
+from CTFd.models import Users
 from CTFd.utils import get_config, set_config
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import (
     check_email_is_whitelisted,
+    forgot_password,
     sendmail,
     successful_registration_notification,
     verify_email_address,
 )
-from tests.helpers import create_ctfd, destroy_ctfd
+from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
 @patch("smtplib.SMTP")
@@ -318,3 +321,144 @@ def test_email_whitelist():
         for case in test_cases_multiple_combined_domains:
             email, expected = case
             assert check_email_is_whitelisted(email) is expected
+    destroy_ctfd(app)
+
+
+def test_confirm_links_single_use():
+    """Test that confirm links are single use"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("verify_emails", True)
+        register_user(app)
+        client = login_as_user(app)
+
+        to_addr = "user@examplectf.com"
+
+        urandom_value = b"\xff" * 32
+        with patch("os.urandom", return_value=urandom_value):
+            verify_email_address(to_addr)
+
+        r = client.get(
+            "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b"
+        )
+        user = Users.query.filter_by(email=to_addr).first()
+        assert user.verified is True
+
+        r = client.get(
+            "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b"
+        )
+        assert (
+            "Your confirmation link is invalid, please generate a new one"
+            in r.get_data(as_text=True)
+        )
+    destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_confirm_link_tokens_unique(mock_smtp):
+    app = create_ctfd()
+    with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
+        set_config("verify_emails", True)
+        register_user(app)
+
+        to_addr = "user@examplectf.com"
+
+        verify_email_address(to_addr)
+        call1 = str(mock_smtp.return_value.send_message.call_args[0][0])
+
+        verify_email_address(to_addr)
+        call2 = str(mock_smtp.return_value.send_message.call_args[0][0])
+        assert call1 != call2
+    destroy_ctfd(app)
+
+
+def test_reset_password_links_single_use():
+    """Test that reset password links are single use"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
+
+        with app.test_client() as client:
+            client.get("/reset_password")
+
+            # Build reset password data
+            with client.session_transaction() as sess:
+                data = {"nonce": sess.get("nonce"), "email": "user@examplectf.com"}
+
+            # Issue the password reset request
+            urandom_value = b"\xff" * 32
+            with patch("os.urandom", return_value=urandom_value):
+                client.post("/reset_password", data=data)
+
+            # Get user's original password
+            user = Users.query.filter_by(email="user@examplectf.com").first()
+
+            # Build the POST data
+            with client.session_transaction() as sess:
+                data = {"nonce": sess.get("nonce"), "password": "passwordtwo"}
+
+            # Do the password reset
+            r = client.get("/reset_password/bb8a8526146e50778b211ae63074595880edbc0b")
+            assert r.status_code == 200
+            r = client.post(
+                "/reset_password/bb8a8526146e50778b211ae63074595880edbc0b",
+                data=data,
+            )
+            assert r.status_code == 302
+
+            # Make sure that the user's password changed
+            user = Users.query.filter_by(email="user@examplectf.com").first()
+            assert verify_password("passwordtwo", user.password)
+
+            # Attempt to re-use the password reset link
+            r = client.get("/reset_password/bb8a8526146e50778b211ae63074595880edbc0b")
+            assert (
+                "Your reset link is invalid, please generate a new one"
+                in r.get_data(as_text=True)
+            )
+            assert r.status_code == 200
+            with client.session_transaction() as sess:
+                data = {"nonce": sess.get("nonce"), "password": "passwordthree"}
+            r = client.post(
+                "/reset_password/bb8a8526146e50778b211ae63074595880edbc0b",
+                data=data,
+            )
+            assert r.status_code == 200
+            # Password should not have been changed
+            user = Users.query.filter_by(email="user@examplectf.com").first()
+            assert verify_password("passwordthree", user.password) is False
+    destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_reset_password_link_tokens_unique(mock_smtp):
+    app = create_ctfd()
+    with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
+        set_config("verify_emails", True)
+        register_user(app)
+
+        to_addr = "user@examplectf.com"
+
+        forgot_password(to_addr)
+        call1 = str(mock_smtp.return_value.send_message.call_args[0][0])
+
+        forgot_password(to_addr)
+        call2 = str(mock_smtp.return_value.send_message.call_args[0][0])
+        assert call1 != call2
+    destroy_ctfd(app)
