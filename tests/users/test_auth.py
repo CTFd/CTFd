@@ -333,7 +333,7 @@ def test_user_can_confirm_email(mock_smtp):
             )  # We got redirected to /confirm
 
             r = client.get(
-                "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b"
+                "http://localhost/confirm/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             )
             assert r.location == "http://localhost/challenges"
 
@@ -385,7 +385,7 @@ def test_user_can_reset_password(mock_smtp):
             msg = (
                 "Did you initiate a password reset on CTFd? If you didn't initiate this request you can ignore this email. "
                 "\n\nClick the following link to reset your password:\n"
-                "http://localhost/reset_password/bb8a8526146e50778b211ae63074595880edbc0b\n\n"
+                "http://localhost/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n\n"
                 "If the link is not clickable, try copying and pasting it into your browser."
             )
             ctf_name = get_config("ctf_name")
@@ -413,9 +413,11 @@ def test_user_can_reset_password(mock_smtp):
                 data = {"nonce": sess.get("nonce"), "password": "passwordtwo"}
 
             # Do the password reset
-            client.get("/reset_password/bb8a8526146e50778b211ae63074595880edbc0b")
+            client.get(
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            )
             client.post(
-                "/reset_password/bb8a8526146e50778b211ae63074595880edbc0b",
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                 data=data,
             )
 

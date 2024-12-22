@@ -187,7 +187,7 @@ def test_verify_email(mock_smtp):
         msg = (
             "Welcome to CTFd!\n\n"
             "Click the following link to confirm and activate your account:\n"
-            "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b\n\n"
+            "http://localhost/confirm/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n\n"
             "If the link is not clickable, try copying and pasting it into your browser."
         )
 
@@ -339,13 +339,13 @@ def test_confirm_links_single_use():
             verify_email_address(to_addr)
 
         r = client.get(
-            "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b"
+            "http://localhost/confirm/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         )
         user = Users.query.filter_by(email=to_addr).first()
         assert user.verified is True
 
         r = client.get(
-            "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b"
+            "http://localhost/confirm/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         )
         assert (
             "Your confirmation link is invalid, please generate a new one"
@@ -413,10 +413,12 @@ def test_reset_password_links_single_use():
                 data = {"nonce": sess.get("nonce"), "password": "passwordtwo"}
 
             # Do the password reset
-            r = client.get("/reset_password/bb8a8526146e50778b211ae63074595880edbc0b")
+            r = client.get(
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            )
             assert r.status_code == 200
             r = client.post(
-                "/reset_password/bb8a8526146e50778b211ae63074595880edbc0b",
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                 data=data,
             )
             assert r.status_code == 302
@@ -426,7 +428,9 @@ def test_reset_password_links_single_use():
             assert verify_password("passwordtwo", user.password)
 
             # Attempt to re-use the password reset link
-            r = client.get("/reset_password/bb8a8526146e50778b211ae63074595880edbc0b")
+            r = client.get(
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            )
             assert (
                 "Your reset link is invalid, please generate a new one"
                 in r.get_data(as_text=True)
@@ -435,7 +439,7 @@ def test_reset_password_links_single_use():
             with client.session_transaction() as sess:
                 data = {"nonce": sess.get("nonce"), "password": "passwordthree"}
             r = client.post(
-                "/reset_password/bb8a8526146e50778b211ae63074595880edbc0b",
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                 data=data,
             )
             assert r.status_code == 200
