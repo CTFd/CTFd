@@ -10,10 +10,12 @@ from CTFd.models import (
     Tags,
     db,
 )
-from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins import get_plugin_folder, register_plugin_assets_directory
 from CTFd.plugins.flags import FlagException, get_flag_class
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
+
+PLUGIN_PATH = get_plugin_folder()
 
 
 class BaseChallenge(object):
@@ -178,17 +180,17 @@ class CTFdStandardChallenge(BaseChallenge):
     id = "standard"  # Unique identifier used to register challenges
     name = "standard"  # Name of a challenge type
     templates = {  # Templates used for each aspect of challenge editing & viewing
-        "create": "/plugins/challenges/assets/create.html",
-        "update": "/plugins/challenges/assets/update.html",
-        "view": "/plugins/challenges/assets/view.html",
+        "create": f"{PLUGIN_PATH}/assets/create.html",
+        "update": f"{PLUGIN_PATH}/assets/update.html",
+        "view": f"{PLUGIN_PATH}/assets/view.html",
     }
     scripts = {  # Scripts that are loaded when a template is loaded
-        "create": "/plugins/challenges/assets/create.js",
-        "update": "/plugins/challenges/assets/update.js",
-        "view": "/plugins/challenges/assets/view.js",
+        "create": f"{PLUGIN_PATH}/assets/create.js",
+        "update": f"{PLUGIN_PATH}/assets/update.js",
+        "view": f"{PLUGIN_PATH}/assets/view.js",
     }
     # Route at which files are accessible. This must be registered using register_plugin_assets_directory()
-    route = "/plugins/challenges/assets/"
+    route = f"{PLUGIN_PATH}/assets"
     # Blueprint used to access the static_folder directory.
     blueprint = Blueprint(
         "standard", __name__, template_folder="templates", static_folder="assets"
@@ -217,4 +219,4 @@ CHALLENGE_CLASSES = {"standard": CTFdStandardChallenge}
 
 
 def load(app):
-    register_plugin_assets_directory(app, base_path="/plugins/challenges/assets/")
+    register_plugin_assets_directory(app, base_path=f"{PLUGIN_PATH}/assets")
