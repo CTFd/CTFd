@@ -86,6 +86,7 @@ itsdangerous==2.1.2
     # via flask
 jinja2==3.1.5
     # via
+    #   -r requirements.in
     #   flask
     #   flask-babel
 jmespath==0.10.0
