@@ -3,6 +3,7 @@ from copy import deepcopy
 import nh3
 
 HTML_ALLOWED_ATTRIBUTES = deepcopy(nh3.ALLOWED_ATTRIBUTES)
+ALLOWED_TAGS = deepcopy(nh3.ALLOWED_TAGS)
 
 
 # Copied from lxml:
@@ -25,6 +26,7 @@ SAFE_ATTRS = (
 
 PAGE_STRUCTURE_TAGS = {
     "title": [],
+    "section": [],
 }
 
 META_TAGS = {
@@ -65,10 +67,9 @@ MEDIA_TAGS = {
     "iframe": ["width", "height", "src", "frameborder", "allow", "allowfullscreen"],
 }
 
-
 for TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):
     for element in TAGS:
-        nh3.ALLOWED_TAGS.add(element)
+        ALLOWED_TAGS.add(element)
         for attribute in TAGS[element]:
             if HTML_ALLOWED_ATTRIBUTES.get(element) is None:
                 HTML_ALLOWED_ATTRIBUTES[element] = set()
@@ -85,10 +86,10 @@ HTML_ALLOWED_ATTRIBUTES["*"].add("style")
 def sanitize_html(html):
     return nh3.clean(
         html,
-        tags=nh3.ALLOWED_TAGS,
+        tags=ALLOWED_TAGS,
         attributes=HTML_ALLOWED_ATTRIBUTES,
         link_rel="noopener noreferrer nofollow",
-        strip_comments=True,
-        generic_attribute_prefixes={"data-"},
-        url_schemes={"data", "http", "https", "tel"},
+        strip_comments=False,
+        generic_attribute_prefixes={"data-", "aria-"},
+        url_schemes={"data", "http", "https", "tel", "mailto"},
     )
