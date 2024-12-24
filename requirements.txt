@@ -36,7 +36,7 @@ cffi==1.17.1
     #   pybluemonday
 charset-normalizer==2.0.12
     # via requests
-click==7.1.2
+click==8.1.8
     # via flask
 cmarkgfm==2024.1.14
     # via -r requirements.in
@@ -44,7 +44,7 @@ cryptography==40.0.2
     # via pymysql
 dataset==1.6.2
     # via -r requirements.in
-flask==2.0.3
+flask==2.2.5
     # via
     #   -r requirements.in
     #   flask-babel
@@ -101,6 +101,7 @@ markupsafe==2.1.3
     # via
     #   jinja2
     #   mako
+    #   werkzeug
     #   wtforms
 marshmallow==2.20.2
     # via
@@ -174,7 +175,7 @@ urllib3==1.26.20
     #   -r requirements.in
     #   botocore
     #   requests
-werkzeug==2.0.3
+werkzeug==2.3.7
     # via
     #   -r requirements.in
     #   flask
