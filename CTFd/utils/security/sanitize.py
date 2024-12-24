@@ -1,5 +1,6 @@
-import nh3
 from copy import deepcopy
+
+import nh3
 
 HTML_ALLOWED_ATTRIBUTES = deepcopy(nh3.ALLOWED_ATTRIBUTES)
 
@@ -83,11 +84,11 @@ HTML_ALLOWED_ATTRIBUTES["*"].add("style")
 
 def sanitize_html(html):
     return nh3.clean(
-        html, 
-        tags=nh3.ALLOWED_TAGS, 
+        html,
+        tags=nh3.ALLOWED_TAGS,
         attributes=HTML_ALLOWED_ATTRIBUTES,
         link_rel="noopener noreferrer nofollow",
         strip_comments=True,
         generic_attribute_prefixes={"data-"},
-        url_schemes={'data', 'http', 'https', 'tel'}
+        url_schemes={"data", "http", "https", "tel"},
     )
