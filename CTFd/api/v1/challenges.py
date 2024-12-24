@@ -503,6 +503,13 @@ class ChallengeAttempt(Resource):
         else:
             request_data = request.get_json()
 
+        # Light validation to ensure the request is well formed
+        # This is not a replacement for actual validation
+        if request_data.get("challenge_id") is None:
+            return {"success": False}, 400
+        if request_data.get("submission") is None:
+            return {"success": False}, 400
+
         challenge_id = request_data.get("challenge_id")
 
         if current_user.is_admin():
