@@ -1,7 +1,12 @@
-from pybluemonday import UGCPolicy
+import nh3
+from copy import deepcopy
+
+HTML_ALLOWED_ATTRIBUTES = deepcopy(nh3.ALLOWED_ATTRIBUTES)
+
 
 # Copied from lxml:
 # https://github.com/lxml/lxml/blob/e986a9cb5d54827c59aefa8803bc90954d67221e/src/lxml/html/defs.py#L38
+# We specifically remove rel to support the link_rel parameter
 # fmt: off
 SAFE_ATTRS = (
     'abbr', 'accept', 'accept-charset', 'accesskey', 'action', 'align',
@@ -11,7 +16,7 @@ SAFE_ATTRS = (
     'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace', 'id',
     'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',
     'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',
-    'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',
+    'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape',
     'size', 'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',
     'type', 'usemap', 'valign', 'value', 'vspace', 'width'
 )
@@ -59,42 +64,30 @@ MEDIA_TAGS = {
     "iframe": ["width", "height", "src", "frameborder", "allow", "allowfullscreen"],
 }
 
-SANITIZER = UGCPolicy()
 
 for TAGS in (PAGE_STRUCTURE_TAGS, META_TAGS, FORM_TAGS, ANNOYING_TAGS, MEDIA_TAGS):
     for element in TAGS:
-        SANITIZER.AllowElements(element)
-        SANITIZER.AllowAttrs(*TAGS[element]).OnElements(element)
+        nh3.ALLOWED_TAGS.add(element)
+        for attribute in TAGS[element]:
+            if HTML_ALLOWED_ATTRIBUTES.get(element) is None:
+                HTML_ALLOWED_ATTRIBUTES[element] = set()
+            HTML_ALLOWED_ATTRIBUTES[element].add(attribute)
 
-# Allow safe attrs copied from lxml
-SANITIZER.AllowAttrs(*SAFE_ATTRS).Globally()
+HTML_ALLOWED_ATTRIBUTES["*"] = set()
+for attribute in SAFE_ATTRS:
+    HTML_ALLOWED_ATTRIBUTES["*"].add(attribute)
 
-# Allow styling globally
-SANITIZER.AllowAttrs("class", "style").Globally()
-
-# Allow styling via bluemonday
-SANITIZER.AllowStyling()
-
-# Allow safe convenience functions from bluemonday
-SANITIZER.AllowStandardAttributes()
-SANITIZER.AllowStandardURLs()
-
-# Allow data atributes
-SANITIZER.AllowDataAttributes()
-
-# Allow data URI images
-SANITIZER.AllowDataURIImages()
-
-# Link security
-SANITIZER.AllowRelativeURLs(True)
-SANITIZER.RequireNoFollowOnFullyQualifiedLinks(True)
-SANITIZER.RequireNoFollowOnLinks(True)
-SANITIZER.RequireNoReferrerOnFullyQualifiedLinks(True)
-SANITIZER.RequireNoReferrerOnLinks(True)
-
-# Allow Comments
-SANITIZER.AllowComments()
+HTML_ALLOWED_ATTRIBUTES["*"].add("class")
+HTML_ALLOWED_ATTRIBUTES["*"].add("style")
 
 
 def sanitize_html(html):
-    return SANITIZER.sanitize(html)
+    return nh3.clean(
+        html, 
+        tags=nh3.ALLOWED_TAGS, 
+        attributes=HTML_ALLOWED_ATTRIBUTES,
+        link_rel="noopener noreferrer nofollow",
+        strip_comments=True,
+        generic_attribute_prefixes={"data-"},
+        url_schemes={'data', 'http', 'https', 'tel'}
+    )

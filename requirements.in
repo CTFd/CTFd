@@ -27,7 +27,7 @@ WTForms==2.3.1
 python-geoacumen-city==2023.4.15
 maxminddb==1.5.4
 tenacity==6.2.0
-pybluemonday==0.0.14
+nh3==0.2.20
 freezegun==1.2.2
 Flask-Babel==2.0.0
 Pillow==10.1.0
