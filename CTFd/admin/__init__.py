@@ -123,9 +123,7 @@ def export_ctf():
     ctf_name = ctf_config.ctf_name()
     day = datetime.datetime.now().strftime("%Y-%m-%d_%T")
     full_name = "{}.{}.zip".format(ctf_name, day)
-    return send_file(
-        backup, cache_timeout=-1, as_attachment=True, attachment_filename=full_name
-    )
+    return send_file(backup, max_age=-1, as_attachment=True, download_name=full_name)
 
 
 @admin.route("/admin/import/csv", methods=["POST"])

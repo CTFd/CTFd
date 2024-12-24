@@ -28,19 +28,20 @@ def test_session_invalidation_on_admin_password_change():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        with login_as_user(app, name="admin") as admin, login_as_user(app) as user:
+        admin = login_as_user(app, name="admin")
+        user = login_as_user(app)
 
-            r = user.get("/settings")
-            assert r.status_code == 200
+        r = user.get("/settings")
+        assert r.status_code == 200
 
-            r = admin.patch("/api/v1/users/2", json={"password": "password2"})
-            assert r.status_code == 200
+        r = admin.patch("/api/v1/users/2", json={"password": "password2"})
+        assert r.status_code == 200
 
-            r = user.get("/settings")
-            # User's password was changed
-            # They should be logged out
-            assert r.location.startswith("http://localhost/login")
-            assert r.status_code == 302
+        r = user.get("/settings")
+        # User's password was changed
+        # They should be logged out
+        assert r.location.startswith("/login")
+        assert r.status_code == 302
     destroy_ctfd(app)
 
 

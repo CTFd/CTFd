@@ -118,9 +118,7 @@ def test_user_bad_login():
         with client.session_transaction() as sess:
             assert sess.get("id") is None
         r = client.get("/profile")
-        assert r.location.startswith(
-            "http://localhost/login"
-        )  # We got redirected to login
+        assert r.location.startswith("/login")  # We got redirected to login
     destroy_ctfd(app)
 
 
@@ -160,7 +158,7 @@ def test_user_get_logout():
         client = login_as_user(app)
         client.get("/logout", follow_redirects=True)
         r = client.get("/challenges")
-        assert r.location == "http://localhost/login?next=%2Fchallenges%3F"
+        assert r.location == "/login?next=/challenges?"
         assert r.status_code == 302
     destroy_ctfd(app)
 
@@ -181,7 +179,7 @@ def test_user_isnt_admin():
             "config",
         ]:
             r = client.get("/admin/{}".format(page))
-            assert r.location.startswith("http://localhost/login?next=")
+            assert r.location.startswith("/login?next=")
             assert r.status_code == 302
     destroy_ctfd(app)
 
@@ -328,21 +326,19 @@ def test_user_can_confirm_email(mock_smtp):
             assert "Confirmation email sent to" in r.get_data(as_text=True)
 
             r = client.get("/challenges")
-            assert (
-                r.location == "http://localhost/confirm"
-            )  # We got redirected to /confirm
+            assert r.location == "/confirm"  # We got redirected to /confirm
 
             r = client.get(
                 "http://localhost/confirm/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             )
-            assert r.location == "http://localhost/challenges"
+            assert r.location == "/challenges"
 
             # The team is now verified
             user = Users.query.filter_by(email="user@user.com").first()
             assert user.verified is True
 
             r = client.get("http://localhost/confirm")
-            assert r.location == "http://localhost/settings"
+            assert r.location == "/settings"
     destroy_ctfd(app)
 
 
@@ -480,7 +476,7 @@ def test_registration_code_required():
             data["registration_code"] = "secret-sauce"
             r = client.post("/register", data=data)
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/challenges")
+            assert r.location.startswith("/challenges")
     destroy_ctfd(app)
 
 
@@ -510,5 +506,5 @@ def test_registration_code_allows_numeric():
             data["registration_code"] = "1234567890"
             r = client.post("/register", data=data)
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/challenges")
+            assert r.location.startswith("/challenges")
     destroy_ctfd(app)

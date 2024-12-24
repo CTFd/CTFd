@@ -259,7 +259,7 @@ def test_user_needs_all_required_fields():
 
             r = client.get("/challenges")
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/settings")
+            assert r.location.startswith("/settings")
 
             # Populate the non-required fields
             r = client.patch(
@@ -277,7 +277,7 @@ def test_user_needs_all_required_fields():
             # I should still be restricted from seeing challenges
             r = client.get("/challenges")
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/settings")
+            assert r.location.startswith("/settings")
 
             # I should still see all fields b/c I don't have a complete profile
             r = client.get("/settings")

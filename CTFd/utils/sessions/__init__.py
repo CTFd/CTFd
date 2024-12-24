@@ -64,7 +64,7 @@ class CachingSessionInterface(SessionInterface):
         self.permanent = permanent
 
     def open_session(self, app, request):
-        sid = request.cookies.get(app.session_cookie_name)
+        sid = request.cookies.get(app.config["SESSION_COOKIE_NAME"])
         if not sid:
             sid = self._generate_sid()
             return self.session_class(sid=sid, permanent=self.permanent)
@@ -96,7 +96,7 @@ class CachingSessionInterface(SessionInterface):
             if session.modified:
                 cache.delete(self.key_prefix + session.sid)
                 response.delete_cookie(
-                    app.session_cookie_name, domain=domain, path=path
+                    app.config["SESSION_COOKIE_NAME"], domain=domain, path=path
                 )
             return
 
@@ -122,7 +122,7 @@ class CachingSessionInterface(SessionInterface):
                 session_id = session.sid
 
             response.set_cookie(
-                app.session_cookie_name,
+                app.config["SESSION_COOKIE_NAME"],
                 session_id,
                 expires=expires,
                 httponly=httponly,
