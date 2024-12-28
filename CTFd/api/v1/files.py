@@ -3,7 +3,7 @@ from typing import List
 from flask import request
 from flask_restx import Namespace, Resource
 
-from CTFd.api.v1.helpers.request import validate_args
+from CTFd.api.v1.helpers.request import expects_args, validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.constants import RawEnum
@@ -93,7 +93,7 @@ class FilesList(Resource):
             }
         },
     )
-    @validate_args(
+    @expects_args(
         {
             "challenge_id": (int, None),
             "challenge": (int, None),
@@ -103,6 +103,8 @@ class FilesList(Resource):
             "location": (str, None),
         },
         location="form",
+        allow_extras=True,
+        pass_args=True,
     )
     def post(self, form_args):
         files = request.files.getlist("file")
