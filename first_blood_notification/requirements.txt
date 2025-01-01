@@ -1,0 +1,12 @@
+annotated-types
+certifi
+charset-normalizer
+discord-webhook
+idna
+pydantic-core
+pydantic-settings
+pydantic
+python-dotenv
+requests
+typing-extensions
+urllib3

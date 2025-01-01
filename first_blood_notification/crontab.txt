@@ -1,0 +1,1 @@
+*/1 * * * * python /opt/notification/notify.py
