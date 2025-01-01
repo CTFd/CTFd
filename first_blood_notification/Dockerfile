@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.11-alpine
 
 COPY ./notification.requirements.txt /requirements.txt
 RUN pip install --no-cache -r /requirements.txt
