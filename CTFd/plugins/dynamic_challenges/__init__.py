@@ -1,11 +1,11 @@
 from flask import Blueprint
 
+from CTFd.exceptions import PluginException
 from CTFd.models import Challenges, db
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
 from CTFd.plugins.dynamic_challenges.decay import DECAY_FUNCTIONS, logarithmic
 from CTFd.plugins.migrations import upgrade
-from CTFd.exceptions import PluginException
 
 
 class DynamicChallenge(Challenges):
@@ -99,7 +99,7 @@ class DynamicValueChallenge(BaseChallenge):
                 try:
                     value = float(value)
                 except ValueError:
-                    raise PluginException(f'invalid float input on {attr}')
+                    raise PluginException(f"invalid float input on {attr}")
             setattr(challenge, attr, value)
 
         return DynamicValueChallenge.calculate_value(challenge)

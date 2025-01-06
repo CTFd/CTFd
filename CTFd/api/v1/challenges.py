@@ -9,6 +9,7 @@ from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
+from CTFd.exceptions import PluginException
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import Challenges
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
@@ -53,8 +54,6 @@ from CTFd.utils.user import (
     get_current_user_attrs,
     is_admin,
 )
-
-from CTFd.exceptions import PluginException
 
 challenges_namespace = Namespace(
     "challenges", description="Endpoint to retrieve Challenges"
@@ -254,7 +253,7 @@ class ChallengeList(Resource):
         try:
             challenge = challenge_class.create(request)
         except PluginException as e:
-           return {"success": False, "errors": { "text": [str(e)] }}, 500
+            return {"success": False, "errors": {"text": [str(e)]}}, 500
 
         response = challenge_class.read(challenge)
 
@@ -480,7 +479,7 @@ class Challenge(Resource):
         try:
             challenge = challenge_class.update(challenge, request)
         except PluginException as e:
-            return {"success": False, "errors": { "text": [str(e)] }}, 500
+            return {"success": False, "errors": {"text": [str(e)]}}, 500
 
         response = challenge_class.read(challenge)
 
