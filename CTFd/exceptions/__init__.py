@@ -12,3 +12,6 @@ class TeamTokenExpiredException(Exception):
 
 class TeamTokenInvalidException(Exception):
     pass
+
+class PluginException(Exception):
+    pass

@@ -54,6 +54,8 @@ from CTFd.utils.user import (
     is_admin,
 )
 
+from CTFd.exceptions import PluginException
+
 challenges_namespace = Namespace(
     "challenges", description="Endpoint to retrieve Challenges"
 )
@@ -242,9 +244,18 @@ class ChallengeList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        challenge_type = data["type"]
+        # load challenge type and prevent error if I sent empty form
+        challenge_type = "standard"
+        if "type" in data.keys():
+            challenge_type = data["type"]
+
         challenge_class = get_chal_class(challenge_type)
-        challenge = challenge_class.create(request)
+        # handling error while challenge creation (particulary for plugin)
+        try:
+            challenge = challenge_class.create(request)
+        except PluginException as e:
+           return {"success": False, "errors": { "text": [str(e)] }}, 500
+
         response = challenge_class.read(challenge)
 
         clear_challenges()
@@ -465,7 +476,12 @@ class Challenge(Resource):
 
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         challenge_class = get_chal_class(challenge.type)
-        challenge = challenge_class.update(challenge, request)
+
+        try:
+            challenge = challenge_class.update(challenge, request)
+        except PluginException as e:
+            return {"success": False, "errors": { "text": [str(e)] }}, 500
+
         response = challenge_class.read(challenge)
 
         clear_standings()
