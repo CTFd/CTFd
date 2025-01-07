@@ -1,0 +1,392 @@
+:root {
+    --background-gradient: linear-gradient(to bottom, #dddddd, #C6FDF1);
+}
+
+.triangleContainer {
+    height: 100vh;
+    height: calc(var(--1dvh, 1vh) * 100);
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: calc(var(--1dvh, 1vh) * 100);
+    max-height: 100dvh;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    position: relative;
+    background-image: var(--triangular-bg), var(--background-gradient);
+    background-size: 3.5rem, auto;
+    // animation: marquee 20s infinite linear;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    &.page-challenges-listing {
+        padding: 0;
+        gap: 0;
+    }
+
+    .iconWallCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    > #mainMenuButton {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 2;
+    }
+
+    .controlRow {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        z-index: 2;
+
+        > .filler {
+            flex-grow: 1;
+        }
+
+        > .status {
+            align-self: center;
+            position: relative;
+        }
+    }
+
+    .contentWrapper {
+        flex-grow: 1;
+        background-color: #fff;
+        border-radius: 1rem;
+        padding: 1rem;
+        height: 0;
+        overflow: auto;
+        z-index: 2;
+
+        @include subtle-scroll;
+
+        .scoreboard-listing &, .teams-listing &, .users-listing &, .views-notifications & {
+            scrollbar-gutter: stable both-edges;
+        }
+    }
+
+    #backButton {
+        z-index: 2;
+    }
+
+    .titleContainer {
+        display: flex;
+        flex-direction: row;
+        width: fit-content;
+        z-index: 2;
+
+        .titleGroup {
+            @include media-sm {
+                display: none;
+            }
+
+            margin-left: -1rem;
+            filter: drop-shadow(3px 3px 0px $accent-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title {
+            margin: 0;
+            line-height: 0.7em;
+            color: #444463;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+            margin-left: 1.5rem;
+            font-weight: 800;
+            font-size: 2.6rem;
+        }
+
+        .subtitle {
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+            padding: 0;
+            padding-left: 1.5rem;
+            padding-right: 1rem;
+            background-color: #444463;
+            height: 2.2rem;
+            width: 15rem;
+            font-size: 1.25rem;
+            font-weight: 550;
+            color: white;
+            position: relative;
+
+            > span {
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                height: 1.2em;
+                white-space: nowrap;
+                line-height: 1.15;
+            }
+        }
+
+        .subtitle::before {
+            content: "▶";
+            margin-right: 0.25rem;
+            color: $warning-color;
+        }
+
+        .subtitle::after {
+            content: "";
+            width: 4.2rem;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: calc(100% - 1px);
+            background-image: var(--halftone-tail);
+            background-size: auto 100%;
+            background-position: left center;
+            background-repeat: no-repeat;
+        }
+    }
+
+    // Tabbed
+
+    .tabs {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.3);
+        padding-top: 7rem;
+        display: flex;
+        gap: 1rem;
+
+        @include subtle-scroll;
+
+        @include media-lg {
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: $tab-width;
+            border-right: 5px solid white;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+            overflow-y: overlay;
+        }
+
+        @include media-sm {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: $tab-height;
+            border-bottom: 5px solid white;
+            flex-direction: row;
+            overflow-y: hidden;
+            overflow-x: auto;
+            overflow-x: overlay;
+        }
+
+        .tab {
+            background-color: #75FBDE;
+            color: $primary-fg;
+            min-height: $tab-height;
+            min-width: $tab-width;
+            font-size: 1rem;
+            font-family: $font-family;
+            background-repeat: no-repeat;
+            background-position: top;
+            border: 0;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+
+            &:hover {
+                background-color: color.scale(#75FBDE, $lightness: -30%);
+            }
+
+            &.active {
+                background: var(--stripe-border), #F9DE6C;
+                background-repeat: repeat-x;
+                background-size: auto 15px;
+            }
+
+            > img {
+                width: 100%;
+            }
+        }
+
+        .filler {
+            flex-grow: 1;
+        }
+    }
+
+    @include media-lg {
+        .contentWrapper.tabbed {
+            margin-left: $tab-width + 1rem;
+        }
+    }
+
+    @include media-sm {
+        .contentWrapper.tabbed {
+            margin-top: $tab-height + 1rem;
+        }
+    }
+
+    .tabPane {
+        height: 100%;
+
+        &.hidden {
+            display: none;
+        }
+    }
+
+    .frameContentWrapper {
+        min-height: calc(100% - 3rem);
+        max-width: 800px;
+        margin: 0 auto;
+        padding-bottom: 1rem;
+    }
+}
+
+@keyframes marquee {
+    0% {
+        background-position: 0, center, center;
+    }
+
+    100% {
+        background-position: 235px -203px, center, center;
+    }
+}
+
+
+.pageIndicator {
+    position: fixed;
+    transform: translate(0, -50%);
+    top: calc((100% - 8rem) / 2 + 8rem);
+
+    &.nextPage {
+        right: 1rem;
+        animation: nextPageTransition 1s ease-in-out infinite;
+        animation-direction: alternate;
+    }
+
+    &.previousPage {
+        left: 1rem;
+        animation: previousPageTransition 1s ease-in-out infinite;
+        animation-direction: alternate;
+    }
+}
+
+@keyframes nextPageTransition {
+    0% {
+        transform: translate(0, -50%);
+    }
+
+    100% {
+        transform: translate(-15px, -50%);
+    }
+}
+
+@keyframes previousPageTransition {
+    0% {
+        transform: translate(0, -50%);
+    }
+
+    100% {
+        transform: translate(15px, -50%);
+    }
+}
+
+
+.pageCounter {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    width: fit-content;
+    margin: 1rem auto 0 auto;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .pageCounterDot {
+        height: 10px;
+        width: 10px;
+        background-color: $primary-fg;
+        border-radius: 50%;
+    }
+
+    .pageCounterDot.active {
+        background-color: $warning-color;
+    }
+}
+
+.status {
+    background-color: #fff;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    border-radius: 2rem 0 0 2rem;
+
+    @include media-sm {
+        display: none;
+    }
+
+    .statusItem {
+        background-color: #444463;
+        padding: 0.3rem 0.75rem;
+        color: white;
+        border-radius: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-right: 0.25rem;
+        
+        > iconify-icon {
+            color: $accent-color;
+            font-size: 1.1em;
+        }
+    }
+
+    #statusName {
+        width: 9rem;
+
+        @media (max-width: 1000px) {
+            display: none;
+        }
+    }
+
+    #statusPlace {
+        width: 5.5rem;
+        font-variant-numeric: tabular-nums;
+        sup {
+            vertical-align: top;
+        }
+    }
+
+    #statusScore {
+        width: 6rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .statusValue {
+        text-align: right;
+        flex-grow: 1;
+        overflow: hidden;
+        height: 1.2em;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    #statusCountdown {
+        position: absolute;
+        top: -0.5rem;
+        display: block;
+        right: 1.5rem;
+        padding: 1px 7px;
+        font-size: 0.8em;
+        background-color: #F4B73F;
+        border-radius: 6px;
+        font-variant-numeric: tabular-nums;
+    }
+}

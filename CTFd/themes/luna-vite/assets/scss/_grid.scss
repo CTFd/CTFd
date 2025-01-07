@@ -1,0 +1,52 @@
+.grid {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: stretch;
+    box-sizing: border-box;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    @include media-sm {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    
+    .gridCell {
+        display: block;
+        border: 3px solid #8888A7;
+        border-radius: 0.8rem;
+        text-decoration: none;
+        box-sizing: border-box;
+
+        .cellHeader {
+            background-color: #8888a7;
+            color: white;
+            padding: 5px 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            border-radius: 0.6rem 0.6rem 0 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .cellFooter {
+            background-color: #D2EDED;
+            color: #444463;
+            padding: 5px 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            border-radius: 0 0 0.6rem 0.6rem;
+            text-align: center;
+        }
+
+        .cellBody {
+            text-align: center;
+            padding: 0.5rem 0.5rem 0.25rem 0.5rem;
+        }
+
+        .cellBodyIcon {
+            border-radius: 5px;
+            border: 1px solid #fff;
+            box-shadow: 0 0 0 3px #62B8B9;
+        }
+    }
+}

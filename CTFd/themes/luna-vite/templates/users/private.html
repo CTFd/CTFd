@@ -1,0 +1,212 @@
+{% extends "templates/tabbed.html" %}
+{% from "macros/rank.html" import get_rank %}
+
+{% block title %}Users{% endblock %}
+{% block subtitle %}{% trans %}Your profile{% endtrans %}{% endblock %}
+
+{% block tabbedContent %}
+<button class="tab active" data-target="tabSolves">{% trans %}Solves{% endtrans %}</button>
+<button class="tab" data-target="tabBreakdown">{% trans %}Breakdown{% endtrans %}</button>
+<button class="tab" data-target="tabTimeline">{% trans %}Timeline{% endtrans %}</button>
+{% endblock %}
+
+{% block framedContent %}
+{% set solves = user.solves %}
+{% set awards = user.awards %}
+<div x-data="UserGraphs" style="height: 100%;">
+<div class="frameContentWrap">
+  {% include "components/errors.html" %}
+</div>
+
+<div class="tabPane" id="tabSolves">
+  <div class="frameContentWrapper">
+
+    <div class="profileDetailGroup">
+      <div class="profileIcon">
+        {% set user_name = user.name | urlencode %}
+        {% set user_name = user_name.replace('%20', '+') %}
+        <img width="80" height="80" class="cellBodyIcon" src="{{ user.gravatar('404') }}" data-fallback="https://avatars.dicebear.com/api/initials/{{user_name}}.svg?backgroundColorLevel=800" onerror="this.src = this.dataset.fallback;this.onerror='';">
+      </div>
+      <div class="profileMeta">
+        <div class="profileMetaRow">
+          <div class="profileMetaBox">
+            {{ user.name }}
+          </div>
+          {% if user.oauth_id %}
+          <a href="https://majorleaguecyber.org/u/{{ user.name }}" class="chip tall">
+            {% trans %}Official{% endtrans %}
+          </a>
+          {% endif %}
+        </div>
+        
+        <div class="profileMetaRow">
+          <label class="chip tall" id="teamLabel">{% trans %}Team{% endtrans %}</label>
+          <div class="profileMetaBox">{% if user.team_id %}{{ user.team.name }}{% else %}<em>{% trans %}No team{% endtrans %}</em>{% endif %}</div>
+          {% if user.team_id %}
+          <a href="{{ url_for('teams.public', team_id=user.team_id) }}" class="button textButton shade small">
+            <span>{% trans %}View team{% endtrans %}</span>
+          </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+      <div class="profileRank">
+        <label class="chip">{% trans %}Rank{% endtrans %}</label>
+        {% if account.place %}
+        <div class="profileRankNumber">{{ get_rank(account.place[:-2]) }}</div>
+        {% else %}
+        <div class="profileRankNumber unranked">{% trans %}Unranked{% endtrans %}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% for field in user.fields %}
+    <div>
+      <strong>{{ field.name }}</strong>: {{ field.value }}
+    </div>
+    {% endfor %}
+
+    {#% if user.affiliation %}
+    <h3 class="d-inline-block mx-1">
+      <span class="badge rounded-pill bg-primary">{{ user.affiliation }}</span>
+    </h3>
+    {% endif %}
+
+    {% if user.country %}
+    <h3 class="d-inline-block mx-1">
+      <span class="badge rounded-pill bg-primary">
+        <i class="flag-{{ user.country.lower() }}"></i>
+        {{ lookup_country_code(user.country) }}
+      </span>
+    </h3>
+    {% endif %#}
+
+    {# 
+    <div class="pt-3">
+      {% if user.website %}
+      <a href="{{ user.website }}" target="_blank" style="color: inherit;" rel="noopener">
+        <i class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+          title="{{ user.website }}"></i>
+      </a>
+      {% endif %}
+    </div>
+    #}
+
+    <h3 class="sectionTitle">{% trans %}Solves{% endtrans %}</h3>
+    {% if solves %}
+    {% for solve in solves %}
+    <a class="listItem" href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+      <div class="listItemDetails">
+        <div class="listItemDetailsPrimary">{{ solve.challenge.name }}</div>
+        <div>{{ gettext("%(category)s, solved on %(time)s.", category=solve.challenge.category, time=gettext('<time data-time="%(date)s"></time>', date=solve.date | isoformat )) | safe }}</div>
+      </div>
+      <div class="listItemScore digits5">
+        <span>
+          <span class="listItemScoreValue">{{ solve.challenge.value }}</span>&nbsp;<span class="listItemScoreP">P</span>
+        </span>
+      </div>
+    </a>
+    {% endfor %}
+    {% else %}
+      <div class="info" style="justify-content: center;">{% trans %}No solves yet.{% endtrans %}</div>
+    {% endif %}
+
+  </div>
+  <div class="totalScore">
+    <div class="frameContentWrapper">
+      <span class="totalScorePrompt">{% trans %}Total score{% endtrans %}</span>
+      <span class="totalScoreDisplay">
+        <span class="totalScoreValue">{{ account.score }}</span>&nbsp;<span class="totalScoreP">P</span>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="tabPane hidden" id="tabBreakdown">
+  <div class="frameContentWrapper progressBarCharts">
+    
+    {% if solves %}
+    <div class="progressBarChart">
+      <h3 class="sectionTitle">{% trans %}Solve percentages{% endtrans %}</h3>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar"
+          :style="{ width: `${getSolvePercentage()}%`, 'background-color': 'rgb(0, 209, 64)' }">
+        </div><div class="progress-bar" role="progressbar"
+          :style="{ width: `${getFailPercentage()}%`, 'background-color': 'rgb(207, 38, 0)' }">
+        </div></div>
+      <div class="progressBarLegend">
+        <svg height="16" width="16">
+          <circle cx="8" cy="8" r="5" fill="rgb(0, 209, 64)" />
+        </svg>
+        <small x-text="`Solves (${getSolvePercentage().toFixed(2)}%)`"></small>
+      </div>
+      <div class="progressBarLegend">
+        <svg height="16" width="16">
+          <circle cx="8" cy="8" r="5" fill="rgb(207, 38, 0)" />
+        </svg>
+        <small x-text="`Fails (${getFailPercentage().toFixed(2)}%)`"></small>
+      </div>
+    </div>
+
+    <div class="progressBarChart">
+      <h3 class="sectionTitle">{% trans %}Category breakdown{% endtrans %}</h3>
+      <div class="progress">
+        <template x-for="category in getCategoryBreakdown()" :key="category.name">
+          <div class="progress-bar" role="progressbar"
+            :style="{ width: `${category.percent}%`, 'background-color': category.color }">
+          </div>
+        </template>
+      </div>
+      <template x-for="category in getCategoryBreakdown()" :key="category.name">
+        <div class="progressBarLegend">
+          <svg height="16" width="16">
+            <circle cx="8" cy="8" r="5" :fill="category.color" />
+          </svg>
+          <small x-text="`${category.name} (${category.percent.toFixed(2)}%)`"></small>
+        </div>
+      </template>
+    </div>
+    {% else %}
+      <div class="info" style="justify-content: center;">{% trans %}No solves yet.{% endtrans %}</div>
+    {% endif %}
+
+  </div>
+</div>
+<div class="tabPane hidden" id="tabTimeline">
+  <div class="chartContainer">
+  {% if solves %}
+    <div id="score-graph" x-ref="scoregraph" style="width: 100%; height: 100%;">
+      Loading...
+    </div>
+    {% else %}
+    <div class="info" style="justify-content: center;">{% trans %}No solves yet.{% endtrans %}</div>
+    {% endif %}
+  </div>
+</div>
+</div>
+{#% if awards %}
+<div class="row">
+  <div class="col-md-12">
+    <h3>Awards</h3>
+
+  </div>
+  {% for award in awards %}
+  <div class="col-md-3 col-sm-6">
+    <p class="text-center">
+      <i class="award-icon award-{{ award.icon }} fa-2x"></i>
+      <br>
+      <strong>{{ award.name }}</strong>
+    </p>
+    <p class="text-center">{{ award.category or "" }}</p>
+    <p class="text-center">{{ award.description or "" }}</p>
+    <p class="text-center">{{ award.value }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %#}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ Assets.js("assets/js/userProfile.js") }}
+{% endblock %}

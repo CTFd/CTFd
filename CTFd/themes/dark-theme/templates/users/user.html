@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 id="user-id" user-id="{{ user.id }}">{{ user.name }}</h1>
+
+		{% if user.oauth_id %}
+			<a href="https://majorleaguecyber.org/u/{{ user.name }}">
+				<h3><span class="badge badge-primary">Official</span></h3>
+			</a>
+		{% endif %}
+
+		<div class="user-info">
+			<h2 id="user-place" class="text-center">
+				{# This intentionally hides the user's place because this can be their internal profile. #}
+				{# Public page hiding is done at the route level #}
+				{% if scores_visible() %}
+					{{ user.place }}
+					<small>place</small>
+				{% endif %}
+			</h2>
+			<h2 id="user-score" class="text-center">
+				{% if score %}
+					{{ user.score }}
+					<small>points</small>
+				{% endif %}
+			</h2>
+		</div>
+	</div>
+</div>
+<div class="container">
+	{% if errors %}
+	<div id='errors' class="row">
+	{% for error in errors %}
+		<h1>{{ error }}</h1>
+	{% endfor %}
+	</div>
+	{% else %}
+
+	{% if score_frozen %}
+	<div class="row">
+		<h1 class="text-center">Scoreboard has been frozen.</h1>
+	</div>
+	{% endif %}
+
+	<br>
+
+	{% set solves = user.solves %}
+	{% set awards = user.awards %}
+
+	{% if solves %}
+	<div id="keys-pie-graph" class="w-50 mr-0 pr-0 float-left d-none d-md-block d-lg-block">
+		<div class="text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+	<div id="categories-pie-graph" class="w-50 mr-0 pr-0 float-left d-none d-md-block d-lg-block">
+		<div class="text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+	<br class="clearfix">
+	<div id="score-graph" class="w-100 float-right d-none d-md-block d-lg-block">
+		<div class="text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	{% if awards %}
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Awards</h3>
+		</div>
+		{% for award in awards %}
+				<div class="col-md-3 col-sm-6">
+					<p class="text-center"><strong>{{ award.name }}</strong></p>
+					{% if award.category %}<p class="text-center">{{ award.category }}</p>{% endif %}
+					{% if award.description %}<p class="text-center">{{ award.description }}</p>{% endif %}
+					<p class="text-center">{{ award.value }}</p>
+				</div>
+		{% endfor %}
+	</div>
+
+	<br>
+	{% endif %}
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Solves</h3>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<td><b>Challenge</b></td>
+						<td class="d-none d-md-block d-lg-block"><b>Category</b></td>
+						<td><b>Value</b></td>
+						<td><b>Time</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for solve in solves %}
+					<tr>
+						<td><a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}">{{ solve.challenge.name }}</a></td>
+						<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td><td>{{ solve.challenge.value }}</td>
+						<td class="solve-time"><script>document.write( moment("{{ solve.date|isoformat }}").local().format('MMMM Do, h:mm:ss A'))</script></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% else %}
+		<div class="text-center"><h3 class="spinner-error">No solves yet</h3></div>
+	{% endif %}
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script>
+	var user_id = {{ user.id }};
+	var user_name = {{ user.name | tojson }};
+	var team_id = {{ user.team_id | tojson }};
+	var user_self = {{ (user.id == id) | tojson }};
+	var user_account_id = user_self ? "me" : user_id;
+	</script>
+	<script src="{{ url_for('views.themes', path='js/vendor/plotly.min.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/utils.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/user.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "templates/plain.html" %}
+{% from "macros/input.html" import wtf_input_field %}
+{% from "macros/forms.html" import render_extra_fields %}
+
+{% block plainContent %}
+{% with form = Forms.teams.TeamRegisterForm() %}
+<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="modal centered fit">
+  <h2 class="modalHeader">{% trans %}Create Team{% endtrans %}</h2>
+
+  <div class="modalBody formFields">
+    
+    {{ form.name.label(class="chip") }}
+    {{ wtf_input_field(form.name(class="")) }}
+    
+    {{ form.password.label(class="chip") }}
+    {{ wtf_input_field(form.password(class="")) }}
+
+    <p class="formHint">
+      {% trans %}After creating your team, share the team name and password with your teammates so they can join your team.{% endtrans %}
+    </p>
+
+    {{ render_extra_fields(form.extra) }}
+    {% include "components/errors.html" %}
+    
+    {{ form.nonce() }}
+  </div>
+  <div class="modalFooter">
+    <button class="button textButton shade" type="submit">
+      <span>{% trans %}Create{% endtrans %}</span>
+    </button>
+  </div>
+</form>
+{% endwith %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "templates/framed.html" %}
+
+{% block title %}Info{% endblock %}
+{% block subtitle %}{{ gettext('Privacy Policy') if request.path == '/privacy' else gettext('Terms of Service') if request.path == '/tos' else gettext('Rules') if request.path == '/rules' else title }}{% endblock %}
+
+{% block framedContent %}
+  <div class="container">
+    {{ content | safe }}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {# { Assets.js("assets/js/page.js") } #}
+{% endblock %}

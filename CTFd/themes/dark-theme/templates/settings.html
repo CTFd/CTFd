@@ -1,0 +1,98 @@
+ {% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Settings</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			{% if confirm_email %}
+				<div class="alert alert-info alert-dismissable submit-row" role="alert">
+					Your email address isn't confirmed!
+					Please check your email to confirm your email address.
+					<br>
+					<br>
+					To have the confirmation email resent please <a href="{{ url_for('auth.confirm') }}">click
+					here.</a>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+							aria-hidden="true">×</span></button>
+				</div>
+			{% endif %}
+			<form id="user-settings-form" method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+				<div class="form-group">
+					<label for="name-input">
+						Team Name
+					</label>
+					<input class="form-control" type="text" name="name" id="name-input" value="{{name}}"/>
+				</div>
+				<div class="form-group">
+					<label for="email-input">
+						Email
+					</label>
+					<input class="form-control" type="email" name="email" id="email-input" value="{{email}}"/>
+				</div>
+
+				<hr>
+
+				<div class="form-group">
+					<label for="confirm-input">
+						Current Password
+					</label>
+					<input class="form-control" type="password" name="confirm" id="confirm-input" />
+				</div>
+				<div class="form-group">
+					<label for="password-input">
+						New Password
+					</label>
+					<input class="form-control" type="password" name="password" id="password-input" />
+				</div>
+
+				<hr>
+
+				<div class="form-group">
+					<label for="affiliation-input">
+						Affiliation
+					</label>
+					<input class="form-control" type="text" name="affiliation" id="affiliation-input" value="{% if affiliation %}{{affiliation}}{% endif %}" />
+				</div>
+				<div class="form-group">
+					<label for="website-input">
+						Website
+					</label>
+					<input class="form-control" type="url" name="website" id="website-input" value="{% if website %}{{website}}{% endif %}" />
+				</div>
+				<div class="form-group">
+					<label for="country-input">
+						Country
+					</label>
+					<select class="form-control" id="country-input" name="country">
+						<option></option>
+						{% set countries = get_countries() %}
+						{% for country_code in countries.keys() %}
+							<option value="{{ country_code }}" {% if country == country_code %}selected{% endif %}>{{ countries[country_code] }}</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<div id="results" class="form-group">
+				</div>
+
+				<div class="form-group">
+					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
+	<script src="{{ url_for('views.themes', path='js/settings.js') }}"></script>
+{% endblock %}

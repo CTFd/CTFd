@@ -1,0 +1,307 @@
+body.titleScreenVisible {
+    overflow: hidden;
+}
+
+#homeWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: calc(var(--1dvh, 1vh) * 100);
+    height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: var(--low-poly-bg),
+        radial-gradient(circle at center bottom, #ffffff, #ddedfc);
+    background-blend-mode: overlay;
+    background-position: center, bottom center;
+    @include subtle-scroll;
+
+    .homeContent {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        font-variant-numeric: tabular-nums;
+        word-break: break-all;
+    }
+
+    .homeScreen {
+        width: 100%;
+        padding-top: 30vh;
+        padding-bottom: 6rem;
+        height: 100vh;
+        height: calc(var(--1dvh, 1vh) * 100);
+        height: 100dvh;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo {
+        width: clamp(250px, 30vw, 600px);
+        max-height: 40vh;
+    }
+
+    #homeCountdown {
+        margin-top: 3rem;
+        font-size: 1.25rem;
+        font-weight: 550;
+        background-color: #F4B73F;
+        border-radius: 0.5rem;
+        padding: 0.25rem 0.75rem;
+    }
+
+    #homeLocalDate {
+        margin: 0.5rem 0;
+        font-weight: 550;
+        color: color.scale(#F4B73F, $lightness: -40%);
+    }
+
+    #homeISODate {
+        opacity: 0.5;
+        font-size: .85rem;
+    }
+
+    .buttonOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .buttonOverlay > * {
+        pointer-events: all;
+    }
+
+    .discordButton {
+        position: absolute; 
+        top: 1.5rem;
+        left: 1.5rem;
+    }
+
+    .menuButton {
+        position: absolute; 
+        top: 1.5rem;
+        right: 1.5rem;
+    } 
+    
+    .status {
+        position: absolute;
+        top: 2.3rem;
+        right: 6rem;
+    }
+
+    .homeCTAButtons {
+        position: absolute;
+        right: 1.5rem;
+        bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-direction: row;
+
+    }
+    
+    .homeCTAButton {
+        > span {
+            padding-right: 0.5rem;
+        }
+
+        iconify-icon {
+            font-size: 3rem;
+            color: $warning-color;
+            transform: translateY(-15px) scale(1.1);
+            filter: url('#primaryIconStroke');
+        }
+
+        &.primary iconify-icon {
+            filter: url('#accentIconStroke');
+        }
+
+        @include media-sm {
+            display: none;
+            
+            &:last-child {
+                display: inline-flex;
+            }
+        }
+    }
+
+    .homeFiller {
+        height: 8rem;
+    }
+}
+
+#titleScreen {
+    width: 100vw;
+    height: 100vh;
+    height: calc(var(--1dvh, 1vh) * 100);
+    height: 100dvh;
+    background-image: var(--title-bg);
+    background-color: #fff;
+    background-size: cover;
+    background-position: center center;
+    padding: 0.5em;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    &.hidden {
+        display: none;
+    }
+
+    .metadata {
+        color: #fff;
+        font-weight: 600;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4), 1px -1px 0 rgba(0, 0, 0, 0.4), -1px 1px 0 rgba(0, 0, 0, 0.4), 1px 1px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    #sessionSid {
+        position: absolute;
+
+        @include media-sm {
+            display: none;
+        }
+    }
+
+    .credit {
+        position: absolute;
+        right: 0.5em;
+        bottom: 0.5em;
+        text-align: right;
+
+        @include media-sm {
+            font-size: 0.75rem;
+        }
+    }
+
+    .sponsors {
+        position: absolute;
+        right: 0.5em;
+        top: 0.5em;
+        text-align: right;
+    }
+
+    .sponsors a {
+        text-decoration: none;
+    }
+
+    .sponsors img {
+        width: 3em;
+        height: 3em;
+        margin-left: 0.5em;
+    }
+
+    .particlesCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .logoBox {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: clamp(250px, 33vw, 500px);
+        text-align: center;
+    }
+
+    .logoBox img {
+        width: 100%;
+        filter:
+            drop-shadow(0 0 5px #fff) drop-shadow(0 0 5px #fff) drop-shadow(0 0 5px #fff);
+    }
+
+    .tapToStart {
+        margin-top: 1em;
+        font-weight: 750;
+        font-size: 1.5em;
+        padding: 0.1em 0 0.05em 0;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.75);
+        color: #fff;
+        text-transform: uppercase;
+        background: linear-gradient(to right,
+                rgba(92, 201, 188, 0) 0%,
+                rgba(92, 201, 188, 1) 20%,
+                rgba(92, 201, 188, 1) 80%,
+                rgba(92, 201, 188, 0) 100%);
+        animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .tap {
+        display: none;
+    }
+
+    @media (pointer: coarse) {
+        .tap {
+            display: inline;
+        }
+
+        .click {
+            display: none;
+        }
+    }
+
+    &.splash-exit::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        animation-duration: 1000ms;
+        animation-name: splashWhiteIn;
+        background-color: #fff;
+        animation-fill-mode: forwards;
+    }
+
+    &.splash-exit {
+        animation-duration: 1000ms;
+        animation-delay: 1000ms;
+        animation-name: splashFadeOut;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes splashFadeOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
+    @keyframes splashWhiteIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+}

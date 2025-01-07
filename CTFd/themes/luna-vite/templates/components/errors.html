@@ -1,0 +1,13 @@
+{% for info in infos %}
+  <div class="info" role="alert">
+    <iconify-icon icon="material-symbols:info"></iconify-icon>
+    <span>{{ info }}</span>
+  </div>
+{% endfor %}
+
+{% for error in errors %}
+  <div class="warning" role="alert">
+    <iconify-icon icon="material-symbols:warning"></iconify-icon>
+    <span>{{ error }}</span>
+  </div>
+{% endfor %}

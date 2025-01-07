@@ -1,0 +1,50 @@
+{% extends "templates/plain.html" %}
+{% from "macros/input.html" import wtf_input_field %}
+{% from "macros/forms.html" import render_extra_fields %}
+
+{% block plainContent %}
+
+{% with form = Forms.auth.RegistrationForm() %}
+<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="modal centered fit">
+  <h2 class="modalHeader">{% trans %}Register{% endtrans %}</h2>
+  <div class="modalBody formFields">
+
+    {{ form.name.label(class="chip") }}
+    {{ wtf_input_field(form.name(class="", value=name)) }}
+    <p class="formHint fieldHint">
+      {% trans %}Your username on the site{% endtrans %}
+    </p>
+
+    {{ form.email.label(class="chip") }}
+    {{ wtf_input_field(form.email(class="", value=email)) }}
+    <p class="formHint fieldHint">
+      {% trans %}Never shown to the public{% endtrans %}
+    </p>
+
+    {{ form.password.label(class="chip") }}
+    {{ wtf_input_field(form.password(class="", value=password)) }}
+    <p class="formHint fieldHint">
+      {% trans %}Password used to log into your account{% endtrans %}
+    </p>
+    {{ render_extra_fields(form.extra) }}
+
+    {{ form.nonce() }}
+    {% include "components/errors.html" %}
+
+    {% if Configs.tos_or_privacy %}
+    <p class="formHint">
+        {{ gettext('By registering, you agree to the
+        <a href="%(privacy)s" rel="noopener" target="_blank">privacy policy</a>
+        and <a href="%(tos)s" rel="noopener" target="_blank">terms of service</a>', privacy=Configs.privacy_link, tos=Configs.tos_link) | safe }}
+    </p>
+    {% endif %}
+
+  </div>
+  <div class="modalFooter">
+    <button class="button textButton shade" type="submit">
+      <span>{% trans %}Register{% endtrans %}</span>
+    </button>
+  </div>
+  </form>
+{% endwith %}
+{% endblock %}

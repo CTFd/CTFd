@@ -1,0 +1,15 @@
+{% extends "templates/plain.html" %}
+
+{% block plainContent %}
+
+<div class="modal centered fit">
+  <h2 class="modalHeader">500: Internal Server Error</h2>
+
+  <div class="modalFooter">
+	<div class="warning" role="alert">
+	  <iconify-icon icon="material-symbols:warning"></iconify-icon>
+	  <span>{{ error }}</span>
+	</div>
+  </div>
+</div>
+{% endblock %}

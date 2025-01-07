@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container py-5 mb-5">
+    <h1 class="mb-5 text-center">Notifications<span class="vim-caret">͏͏&nbsp;&nbsp;</span>
+    </h1>
+  </div>
+  <div class="container">
+    {% if not notifications %}
+      <h2 class="text-center">There are no notifications yet</h2>
+    {% endif %}
+    {% for notification in notifications %}
+      <div class="card mb-4">
+        <div class="card-body">
+          <h3 class="card-title">{{ notification.title }}</h3>
+          <blockquote class="card-blockquote mb-0">
+            <p>{{ notification.html }}</p>
+            <small class="text-muted">
+              <span data-time="{{ notification.date | isoformat }}"></span></small>
+          </blockquote>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block entrypoint %}
+  <script defer="defer" src="{{ url_for('views.themes', theme='core', path='js/pages/notifications.js') }}"></script>
+{% endblock %}

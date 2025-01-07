@@ -1,0 +1,16 @@
+.searchForm {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+
+    > .inputFrame {
+        flex-grow: 1;
+        > input {
+            width: 0;
+        }
+    }
+}

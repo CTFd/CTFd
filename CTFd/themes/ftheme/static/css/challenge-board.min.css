@@ -1,0 +1,42 @@
+.chal-desc {
+  padding-left: 30px;
+  padding-right: 30px;
+  font-size: 14px
+}
+
+.chal-desc img {
+  max-width: 100%;
+  height: auto
+}
+
+.modal-content {padding: 1em;margin: 0 auto}
+
+.badge-info,
+.btn-info {
+  background-color: var(--primary) !important
+}
+
+/* .challenge-button {
+  box-shadow: 3px 3px 3px white;
+} */
+
+.solved-challenge {
+  background-color: var(--primary) !important;
+  border: 3px solid var(--orange)
+}
+
+.corner-button-check {
+  margin-top: -10px;
+  margin-right: 25px;
+  position: absolute;
+  right: 0
+}
+
+.key-submit .btn {
+  height: 51px
+}
+
+.category-header > h3 {
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+}

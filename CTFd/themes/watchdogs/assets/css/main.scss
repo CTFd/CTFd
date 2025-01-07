@@ -1,0 +1,197 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import "~highlight.js/styles/github.css";
+@import "includes/jumbotron.css";
+@import "includes/sticky-footer.css";
+@import "includes/award-icons.scss";
+@import "includes/flag-icons.scss";
+@import "includes/utils/opacity.scss";
+@import "includes/utils/min-height.scss";
+
+html,
+body,
+.container {
+  font-family: "Lato", "LatoOffline", sans-serif;
+  color: #F5F5F5;
+}
+
+body {
+  background: rgb(10, 10, 10);
+}
+
+h1 {
+  font-family: "Hacked";
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+h2 {
+  font-family: "Raleway", "RalewayOffline", sans-serif;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #7E57C2;
+}
+
+a {
+  color: #7E57C2;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #B39DDB;
+  text-decoration: none;
+}
+
+table > thead > tr > td {
+  /* Remove border line from thead of all tables */
+  /* It can overlap with other element styles */
+  border-top: none !important;
+}
+
+blockquote {
+  border-left: 4px solid $secondary;
+  padding-left: 15px;
+}
+
+.table thead th {
+  white-space: nowrap;
+}
+
+.fa-spin.spinner {
+  text-align: center;
+  opacity: 0.5;
+}
+
+.spinner-error {
+  padding-top: 20vh;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.jumbotron {
+  border-radius: 0;
+  text-align: center;
+  background-color: #000000 !important;
+  color: #7E57C2;
+}
+
+.form-control {
+  position: relative;
+  display: block;
+  padding: 0.8em !important;
+  border-radius: 0;
+  background: transparent;
+  color: #7E57C2;
+  font-weight: 400;
+  font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-appearance: none;
+  /* Behavior changed in Bootstrap v4.1.3. See https://github.com/twbs/bootstrap/issues/27629 */
+  height: auto !important;
+}
+
+.form-control:focus {
+  background-color: transparent;
+  border-color: #7E57C2;
+  box-shadow: 0 0 0 0.1rem rgba(124, 77, 255, 0.5);
+  color: #7E57C2;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+select.form-control {
+  height: auto !important;
+}
+
+.input-filled-valid {
+  background-color: transparent !important;
+  border-color: #1DE9B6;
+  box-shadow: 0 0 0 0.1rem rgba(29, 233, 182, 0.5);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.input-filled-invalid {
+  background-color: transparent !important;
+  border-color: #F44336;
+  box-shadow: 0 0 0 0.1rem rgba(244, 67, 54, 0.5);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn-outlined.btn-theme {
+  background: none;
+  color: #7E57C2;
+  border-color: #7E57C2;
+  border: 3px solid;
+}
+
+.btn-outlined {
+  border-radius: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.btn {
+  letter-spacing: 1px;
+  text-decoration: none;
+  -moz-user-select: none;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  padding: 8px 20px;
+}
+
+.btn-info {
+  background-color: #304FFE !important;
+  border-color: #304FFE !important;
+}
+
+.badge-info {
+  background-color: #304FFE !important;
+}
+
+.alert {
+  border-radius: 0 !important;
+  padding: 0.8em;
+}
+
+.btn-fa {
+  cursor: pointer;
+}
+
+.close {
+  cursor: pointer;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-help {
+  cursor: help;
+}
+
+.modal-content {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+}
+
+.fa-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.badge-notification {
+  vertical-align: top;
+  margin-left: -1.5em;
+  font-size: 50%;
+}
+
+select.form-control {
+  height: auto !important;
+}

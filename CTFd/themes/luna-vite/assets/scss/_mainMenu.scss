@@ -1,0 +1,20 @@
+#mainMenuModal {
+    .modalBody {
+        display: grid;
+        gap: 1rem;
+        // overflow: visible;
+        grid-template-columns: repeat(4, 1fr);
+
+        @media (max-width: 900px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include media-sm {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .modalBody button {
+        max-width: 18rem;
+    }
+}

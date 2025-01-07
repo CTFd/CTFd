@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+  <div class="container py-5 mb-5">
+    <h1 class="mb-5 text-center">Register for
+      {{ Configs.ctf_name }}
+      <span class="vim-caret">͏͏&nbsp;&nbsp;</span></h1>
+    <div class="row py-4">
+      <div class="col-md-8 order-md-2">
+        {% include "components/errors.html" %}
+        {% with form = Forms
+          .auth
+          .RegistrationForm() %}
+        {% from "core/macros/forms.html" import render_extra_fields %}
+        <form method="post" accept-charset="utf-8" autocomplete="off" role="form">
+          <div class="mb-3">
+            {{ form.name.label }}
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+              </div>
+              {{ form.name(class="form-control", value=name, placeholder="Username") }}
+              <div class="invalid-feedback" style="width: 100%;">
+                Your username is required.
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.email.label }}
+            {{ form.email(class="form-control", value=email, placeholder="you@example.com") }}
+            <div class="invalid-feedback">
+              Please enter a valid email address.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.password.label }}
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">#</span>
+              </div>
+              {{ form.password(class="form-control", value=password, placeholder="Make sure nobody's behind you ;)") }}
+              <div class="invalid-feedback">
+                Please enter a valid password.
+              </div>
+            </div>
+          </div>
+          <hr class="mb-4">
+          {{ form.nonce() }}
+          {{ render_extra_fields(form.extra) }}
+          {{ form.submit(class="btn btn-outline-success btn-shadow btn-lg btn-block") }}
+        </form>
+        {% endwith %}
+        {% if Configs.tos_or_privacy %}
+          <hr class="mb-4">
+          <div class="custom-control">
+            <div class="col-md-12 text-center">
+              <small class="text-muted text-center">
+                By registering, you agree to the
+                <a href="{{ Configs.privacy_link }}" rel="noopener" target="_blank">privacy policy</a>
+                and
+                <a href="{{ Configs.tos_link }}" rel="noopener" target="_blank">terms of service</a>
+              </small>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-md-2 order-md-1"></div>
+      <div class="col-md-2 order-md-3"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}{% endblock %}

@@ -1,0 +1,20 @@
+.notificationItem {
+    .listItemDetails {
+        padding: 1rem;
+        min-height: 0;
+    }
+
+    .notificationBody {
+        margin-top: 1rem;
+
+        & > p:first-child {
+            margin-top: 0;
+        }
+        & > p:last-child {
+            margin-bottom: 0;
+        }
+        code {
+            color: $warning-color;
+        }
+    }
+}

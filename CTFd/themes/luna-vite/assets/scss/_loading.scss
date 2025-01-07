@@ -1,0 +1,42 @@
+.loading {
+    background-color: #444463;
+    padding: 0.25em 0.75em;
+    border-radius: 5px;
+    font-weight: 700;
+    color: white;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+
+    .dot0,
+    .dot1,
+    .dot2 {
+        display: inline-block;
+        animation: bounce ease-in 2s infinite;
+    }
+
+    .dot0 {
+        animation-delay: 0s;
+    }
+
+    .dot1 {
+        animation-delay: 0.5s;
+    }
+
+    .dot2 {
+        animation-delay: 1s;
+    }
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    12.5% {
+        transform: translateY(-25%);
+    }
+
+    25% {
+        transform: translateY(0);
+    }
+}

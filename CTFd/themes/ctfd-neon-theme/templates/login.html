@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+  <div class="container py-5 mb-5">
+    <h1 class="mb-5 text-center">Before we start HACKING<span class="vim-caret">͏͏&nbsp;&nbsp;</span>
+    </h1>
+    <div class="row py-4">
+      <div class="col-md-8 order-md-2">
+        {% include "components/errors.html" %}
+        {% with form = Forms
+          .auth
+          .LoginForm() %}
+        <form method="post" accept-charset="utf-8" autocomplete="off">
+          <div class="mb-3">
+            {{ form.name.label }}
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+              </div>
+              {{ form.name(class="form-control", value=name, placeholder="Who are you?") }}
+              <div class="invalid-feedback" style="width: 100%;">
+                Your username is required.
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.password.label }}
+
+            <a class="float-right align-text-to-button" href="{{ url_for('auth.reset_password') }}">
+              Forgot your password?
+            </a>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">#</span>
+              </div>
+              {{ form.password(class="form-control", value=password, placeholder="Make sure nobody's behind you ;)") }}
+              <div class="invalid-feedback">
+                Please enter a valid password.
+              </div>
+            </div>
+          </div>
+          <hr class="mb-4">
+          {{ form.submit(class="btn btn-outline-success btn-shadow btn-lg btn-block") }}
+          {{ form.nonce() }}
+        </form>
+        {% endwith %}
+      </div>
+      <div class="col-md-2 order-md-1"></div>
+      <div class="col-md-2 order-md-3"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}{% endblock %}

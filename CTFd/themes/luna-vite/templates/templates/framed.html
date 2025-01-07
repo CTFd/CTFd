@@ -1,0 +1,35 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+<div class="triangleContainer">
+    <div class="controlRow">
+        <div class="titleContainer">
+            <button class="button iconButton" id="backButton" aria-label="Go back" title="Go back">
+                <iconify-icon icon="icon-park-solid:back"></iconify-icon>
+            </button>
+            <div class="titleGroup">
+                <h1 class="title">{% block title %}{% endblock title %}</h1>
+                <h2 class="subtitle"><span>{% block subtitle %}{% endblock subtitle %}</span></h2>
+            </div>
+        </div>
+        <div class="filler"></div>
+        {% include 'components/status.html' %}
+        {% include 'components/menu.html' %}
+    </div>
+    <div class="contentWrapper">
+        {% block framedContent %}
+        {% endblock framedContent %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<style>
+    :root {
+        --icon-wall: url("{{ url_for('views.themes', path='img/assets/icon-wall.svg') }}");
+        --triangular-bg: url("{{ url_for('views.themes', path='img/triangular-bg.svg') }}");
+        --halftone-tail: url("{{ url_for('views.themes', path='img/halftone-tail.svg') }}");
+    }
+</style>
+{% endblock scripts %}

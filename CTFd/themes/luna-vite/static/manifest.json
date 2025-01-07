@@ -1,0 +1,167 @@
+{
+  "assets/js/base.js": {
+    "file": "assets/base.29aca91b.js",
+    "src": "assets/js/base.js",
+    "isEntry": true,
+    "imports": [
+      "_duration.21bcce5f.js",
+      "_echarts.4cc66d9c.js",
+      "_notificationCounter.4f4e1e9f.js"
+    ]
+  },
+  "assets/js/index.js": {
+    "file": "assets/index.4dd4a53e.js",
+    "src": "assets/js/index.js",
+    "isEntry": true,
+    "imports": [
+      "_duration.21bcce5f.js",
+      "_lodash.35b6ecef.js",
+      "_tippy.esm.67f4ecc9.js"
+    ]
+  },
+  "assets/js/settings.js": {
+    "file": "assets/settings.c1e43fa0.js",
+    "src": "assets/js/settings.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm.860ebcbd.js",
+      "_forms.8e7f478f.js",
+      "assets/js/base.js",
+      "_clipboard.ea7c673c.js",
+      "_duration.21bcce5f.js",
+      "_echarts.4cc66d9c.js",
+      "_notificationCounter.4f4e1e9f.js",
+      "_tippy.esm.67f4ecc9.js"
+    ]
+  },
+  "assets/js/userProfile.js": {
+    "file": "assets/user_profile.e4a7a323.js",
+    "src": "assets/js/userProfile.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm.860ebcbd.js",
+      "assets/js/base.js",
+      "_userscore.91901217.js",
+      "_duration.21bcce5f.js",
+      "_echarts.4cc66d9c.js",
+      "_notificationCounter.4f4e1e9f.js",
+      "_scoreboard.326bd4d6.js"
+    ]
+  },
+  "assets/js/teamProfile.js": {
+    "file": "assets/team_profile.1a5c29ae.js",
+    "src": "assets/js/teamProfile.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm.860ebcbd.js",
+      "assets/js/base.js",
+      "_userscore.91901217.js",
+      "_duration.21bcce5f.js",
+      "_echarts.4cc66d9c.js",
+      "_notificationCounter.4f4e1e9f.js",
+      "_scoreboard.326bd4d6.js"
+    ]
+  },
+  "assets/js/teamAdmin.js": {
+    "file": "assets/team_admin.79e09369.js",
+    "src": "assets/js/teamAdmin.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm.860ebcbd.js",
+      "assets/js/base.js",
+      "_forms.8e7f478f.js",
+      "_clipboard.ea7c673c.js",
+      "_duration.21bcce5f.js",
+      "_echarts.4cc66d9c.js",
+      "_notificationCounter.4f4e1e9f.js",
+      "_tippy.esm.67f4ecc9.js"
+    ]
+  },
+  "assets/js/scoreboard.js": {
+    "file": "assets/scoreboard.67f11ef3.js",
+    "src": "assets/js/scoreboard.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm.860ebcbd.js",
+      "assets/js/base.js",
+      "_scoreboard.326bd4d6.js",
+      "_duration.21bcce5f.js",
+      "_echarts.4cc66d9c.js",
+      "_notificationCounter.4f4e1e9f.js"
+    ]
+  },
+  "assets/js/notifications.js": {
+    "file": "assets/notifications.6c9ef35b.js",
+    "src": "assets/js/notifications.js",
+    "isEntry": true,
+    "imports": [
+      "_notificationCounter.4f4e1e9f.js"
+    ]
+  },
+  "assets/js/challenges.js": {
+    "file": "assets/challenges.ef87c991.js",
+    "src": "assets/js/challenges.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm.860ebcbd.js",
+      "assets/js/base.js",
+      "_duration.21bcce5f.js",
+      "_lodash.35b6ecef.js",
+      "_clipboard.ea7c673c.js",
+      "_echarts.4cc66d9c.js",
+      "_notificationCounter.4f4e1e9f.js",
+      "_tippy.esm.67f4ecc9.js"
+    ]
+  },
+  "_echarts.4cc66d9c.js": {
+    "file": "assets/echarts.4cc66d9c.js"
+  },
+  "_duration.21bcce5f.js": {
+    "file": "assets/duration.21bcce5f.js"
+  },
+  "_notificationCounter.4f4e1e9f.js": {
+    "file": "assets/notificationCounter.4f4e1e9f.js"
+  },
+  "_tippy.esm.67f4ecc9.js": {
+    "file": "assets/tippy.esm.67f4ecc9.js"
+  },
+  "_lodash.35b6ecef.js": {
+    "file": "assets/lodash.35b6ecef.js",
+    "imports": [
+      "_duration.21bcce5f.js"
+    ]
+  },
+  "_module.esm.860ebcbd.js": {
+    "file": "assets/module.esm.860ebcbd.js"
+  },
+  "_forms.8e7f478f.js": {
+    "file": "assets/forms.8e7f478f.js"
+  },
+  "_clipboard.ea7c673c.js": {
+    "file": "assets/clipboard.ea7c673c.js",
+    "imports": [
+      "_tippy.esm.67f4ecc9.js",
+      "_duration.21bcce5f.js"
+    ]
+  },
+  "_userscore.91901217.js": {
+    "file": "assets/userscore.91901217.js",
+    "imports": [
+      "assets/js/base.js",
+      "_scoreboard.326bd4d6.js",
+      "_duration.21bcce5f.js"
+    ]
+  },
+  "_scoreboard.326bd4d6.js": {
+    "file": "assets/scoreboard.326bd4d6.js",
+    "imports": [
+      "assets/js/base.js",
+      "_duration.21bcce5f.js"
+    ]
+  },
+  "assets/scss/main.scss": {
+    "file": "assets/main.1b6d3920.css",
+    "src": "assets/scss/main.scss",
+    "isEntry": true
+  }
+}

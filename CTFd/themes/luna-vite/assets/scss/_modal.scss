@@ -1,0 +1,139 @@
+dialog.modal:not([open]) {
+    display: none;
+}
+
+.modal {
+    background-color: #fff;
+    border-radius: 1rem;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 0;
+    border: none;
+
+    &::backdrop, & + .backdrop {
+        background-color: #00000060;
+    }
+
+    &.fit {
+        min-width: 300px;
+        max-height: calc(100vh - 4rem);
+        max-height: calc(var(--1dvh, 1vh) * 100 - 4rem);
+        max-height: calc(100dvh - 4rem);
+        width: max-content;
+        max-width: calc(100vw - 4rem);
+    }
+
+    &.full {
+        position: absolute;
+        inset: 3rem;
+    }
+
+    &.centered {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+    }
+
+    .modalHeader {
+        background-color: #5CC9BB;
+        color: #fff;
+        padding: 1rem 4rem;
+        margin: 0;
+        text-align: center;
+        border-radius: 1rem 1rem 0 0;
+        font-weight: 600;
+        font-size: 1.5rem;
+        position: relative;
+    }
+
+    .modalHeader::before, .modalHeader::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        border: 5px solid #74FADD;
+        box-sizing: content-box;
+        border-radius: 3px;
+        transform: translateY(-50%) rotate(45deg);
+    }
+
+    .modalHeader::before {
+        left: 1.25rem;
+    }
+
+    .modalHeader::after {
+        right: 1.25rem;
+    }
+
+    .full .modalBody {
+        height: 0;
+        flex-grow: 1;
+    }
+
+    .modalBody {
+        overflow-y: auto;
+        overflow-x: hidden;
+        // Fix scroll issue on Firefox
+        padding: 2px 10px;
+        @include modal-scroll;
+
+        &.text {
+            max-width: 800px;
+        }
+
+        & > p:first-child {
+            margin-top: 0;
+        }
+        & > p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .modalBody, .modalFooter {
+        margin: 0 2rem;
+    }
+
+    .modalBody, .modalFooter {
+        margin: 0 2rem;
+    }
+
+    .modalFooter {
+        text-align: center;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        @include media-sm {
+            flex-direction: column;
+        }
+        gap: 1rem;
+    }
+
+    &:not(.centered)[open] {
+        animation: showModal 100ms ease normal;
+    }
+
+    &:not(.centered).hide {
+        animation: hideModal 100ms ease normal;
+    }
+}
+
+@keyframes showModal {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes hideModal {
+    to {
+        transform: scale(0);
+    }
+}

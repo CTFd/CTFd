@@ -1,0 +1,26 @@
+{% extends "templates/framed.html" %}
+
+{% block title %}INFO{% endblock %}
+{% block subtitle %}{% trans %}Notifications{% endtrans %}{% endblock %}
+
+{% block framedContent %}
+<div class="frameContentWrapper">
+	{% if not notifications %}
+	<p class="info" style="justify-content: center;">{% trans %}There are no notifications yet.{% endtrans %}</p>
+	{% endif %}
+	{% for notification in notifications %}
+	<div class="listItem notificationItem">
+		<div class="listItemDetails">
+			<div class="listItemDetailsPrimary">{{ notification.title }}</div>
+			<small><span data-time="{{ notification.date | isoformat }}"></span></small>
+			{% if notification.html %}<div class="notificationBody">{{ notification.html }}</div>{% endif %}
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {{ Assets.js("assets/js/notifications.js") }}
+{% endblock %}

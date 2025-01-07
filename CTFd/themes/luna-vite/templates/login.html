@@ -1,0 +1,31 @@
+{% extends "templates/plain.html" %}
+{% from "macros/input.html" import wtf_input_field %}
+
+{% block plainContent %}
+
+{% with form = Forms.auth.LoginForm() %}
+<form method="post" accept-charset="utf-8" autocomplete="off" class="modal centered fit">
+  <h2 class="modalHeader">{% trans %}Log in{% endtrans %}</h2>
+  <div class="modalBody formFields">
+
+    {{ form.name.label(class="chip") }}
+    {{ wtf_input_field(form.name(class="", value=name)) }}
+    
+    {{ form.password.label(class="chip") }}
+    {{ wtf_input_field(form.password(class="", value=password)) }}
+    
+    {{ form.nonce() }}
+    {% include "components/errors.html" %}
+
+  </div>
+  <div class="modalFooter">
+    <a class="button textButton shade" href="{{ url_for('auth.reset_password') }}">
+      <span>{% trans %}Forgot password?{% endtrans %}</span>
+    </a>
+    <button class="button textButton primary shade" type="submit">
+      <span>{% trans %}Log in{% endtrans %}</span>
+    </button>
+  </div>
+</form>
+{% endwith %}
+{% endblock %}

@@ -1,0 +1,14 @@
+<div :class="{challengeScore: true, solves: sortOrder === 'Solves', lrn: lrn !== null}"
+    x-text="sortOrder === 'Solves' ? ch.solves : ch.value"
+    :aria-label="sortOrder === 'Solves' ? `{{ gettext('%(solves)s solves', solves='${ch.solves}') }}` : `{{ gettext('%(points)s points', points='${ch.value}') }}`"></div>
+<template x-if="lrn !== null"><img :src="`https://assets.pjsek.ai/file/pjsekai-assets/startapp/music/jacket/${lrn[(ch.id - 1) % lrn.length].assetbundleName}/${lrn[(ch.id - 1) % lrn.length].assetbundleName}.png`" class="challengeCover"></template>
+<div class="challengeDetails">
+    <div class="challengeLabel" x-show="ch.label" x-text="ch.label"></div>
+    <div class="challengeTitle" x-text="lrn === null ? ch.name : lrn[(ch.id - 1) % lrn.length].title" :lang="lrn === null ? '' : 'ja'"></div>
+    <div class="challengeCategory" x-text="ch.category"></div>
+    <div class="challengeDifficulty" x-bind:title="`{{ gettext('Difficulty level %(diff)s', diff='${ch.difficulty}') }}, ` + (ch.is_first_solver ? '{% trans %}you are the first solver{% endtrans %}' : ch.solved_by_me ? '{% trans %}solved{% endtrans %}' : '{% trans %}unsolved{% endtrans %}')">
+        <template x-for="_ in Array(ch.difficulty)">
+            <span :class="{'challengeIndicator': true, 'first': ch.is_first_solver, 'solved': ch.solved_by_me && !ch.is_first_solver}"></span>
+        </template>
+    </div>
+</div>

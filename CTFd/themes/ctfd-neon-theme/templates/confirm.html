@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+  <div class="container py-5 mb-5">
+    <h1 class="text-center">Confirm<span class="vim-caret">͏͏&nbsp;&nbsp;</span>
+    </h1>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        {% include "components/errors.html" %}
+
+        <h5 class="text-center">
+          We've sent a confirmation email to your email address.
+        </h5>
+
+        <br>
+
+        <h5 class="text-center">
+          Please click the link in that email to confirm your account.
+        </h5>
+
+        <br>
+
+        <h5 class="text-center">
+          If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account.
+        </h5>
+
+        <hr>
+
+        {% with form = Forms
+          .auth
+          .ConfirmForm() %}
+        <form method="POST" action="{{ url_for('auth.confirm') }}">
+          <div class="row">
+            <div class="col-md-6">
+              {{ form.submit(class="btn btn-md btn-primary btn-outlined w-100") }}
+            </div>
+            <div class="col-md-6">
+              <a href="{{ url_for('views.settings') }}" class="btn btn-md btn-secondary btn-outlined w-100">
+                Change Email Address
+              </a>
+            </div>
+            {{ form.nonce() }}
+          </div>
+        </form>
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}{% endblock %}

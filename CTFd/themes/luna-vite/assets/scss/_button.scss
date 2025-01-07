@@ -1,0 +1,164 @@
+// Plain button
+
+.button {
+    background-color: #fff;
+    border: 5px solid #e1e1e1;
+    border-radius: 10px;
+    box-shadow: 0 0 0 3px #555573, 0 3px 0 3px #555573;
+    margin: 3px 3px 6px 3px;
+    font-weight: 550;
+    font-family: $font-family;
+    padding: 0;
+    text-decoration: none;
+    color: #454367;
+    cursor: default;
+
+    &:disabled {
+        filter: brightness(0.5);
+    }
+
+    &:hover:not(:disabled) {
+        border-color: $accent-color;
+        box-shadow: 0 0 0 3px #555573;
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.9);
+    }
+
+    &.shade {
+        background-image: var(--halftone-bg);
+        background-position-x: center;
+        background-repeat: repeat-x;
+        background-position-y: -10px;
+        background-size: auto 40px, auto;
+    }
+
+    &.primary {
+        border-color: #fff;
+        background-image: linear-gradient(to bottom, #7AFBCA, #75FBF7);
+        background-position-y: auto;
+        background-size: auto;
+    }
+
+    &.primary.shade {
+        background-image: 
+            var(--halftone-bg-white),
+            linear-gradient(to bottom, #7AFBCA, #75FBF7);
+        background-position-y: -10px, center;
+        background-size: auto 40px, 100% 100%;
+    }
+
+    // Icon button
+
+    &.iconButton {
+        width: 4rem;
+        height: 4rem;
+        font-size: 3rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: $accent-color;
+        box-sizing: border-box;
+        
+        &.small {
+            width: 3rem;
+            height: 3rem;
+            font-size: 2rem;
+            border-width: 4px;
+        }
+        &.tiny {
+            width: 2rem;
+            height: 2rem;
+            font-size: 1.25rem;
+            border-width: 3px;
+            box-shadow: 0 0 0 3px #555573, 0 2px 0 3px #555573;
+
+            &:hover:not(:disabled) {
+                border-color: $accent-color;
+                box-shadow: 0 0 0 3px #555573;
+            }
+        }
+    }
+
+    &.roundIconButton {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        font-size: 1.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: $accent-color;
+    }
+
+    // Text button
+
+    &.textButton {
+        font-size: 1.5rem;
+        padding: 0 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: $primary-fg;
+
+        & iconify-icon {
+            transform: scale(1.3);
+            transform-origin: left center;
+            color: $accent-color;
+            min-width: 1em;
+        }
+
+        &.primaryIcon iconify-icon {
+            color: $warning-color;
+            filter: url('#primaryIconStroke');
+            padding: 6px;
+            margin: -6px;
+        }
+
+        &.primaryIcon iconify-icon * {
+            fill: url('#primaryGradient');
+        }
+
+        & > span {
+            flex-grow: 1;
+            flex-basis: 0;
+            text-align: center;
+            padding: 0.5rem 1.25rem;
+        }
+
+        &.alternate > span {
+            font-size: 1.1rem;
+        }
+
+        &.small {
+            font-size: 1rem;
+            padding: 0 0.25rem;
+            background-position-y: -20px;        
+        }
+
+        &.small > span {
+            padding: 0.25rem 0.5rem;
+        }
+    }
+
+    &.buttonNotificationOn {
+        position: relative;
+
+        &::before {
+            content: "!";
+            position: absolute;
+            right: -0.7em;
+            top: -0.7em;
+            font-size: 1.3rem;
+            background-color: #ED6289;
+            color: white;
+            width: 1.2em;
+            height: 1.2em;
+            border-radius: 50%;
+            font-weight: 900;
+            text-align: center;
+        }
+    }
+}

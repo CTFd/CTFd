@@ -1,0 +1,20 @@
+{% if authed() and (get_config("user_mode") == "users" or get_current_team_attrs()) %}
+{% set status_score = User.score if get_config("user_mode") == "users" else Team.score %}
+{% set status_place = User.place if get_config("user_mode") == "users" else Team.place %}
+{% set status_name = get_current_user_attrs().name if get_config("user_mode") == "users" else get_current_team_attrs().name %}
+<div class="status">
+    <span class="statusItem" id="statusName">
+        <iconify-icon icon="material-symbols:group" inline="true" title="{% trans %}Participating as{% endtrans %}"></iconify-icon>
+        <span class="statusValue">{{ status_name | truncate(50) }}</span>
+    </span>
+    <span class="statusItem" id="statusScore">
+        <iconify-icon icon="mdi:counter" inline="true" title="{% trans %}Total score{% endtrans %}"></iconify-icon>
+        <span class="statusValue">{{ status_score or 0 }}</span>
+    </span>
+    <span class="statusItem" id="statusPlace">
+        <iconify-icon icon="mdi:podium" inline="true" title="{% trans %}Standing{% endtrans %}"></iconify-icon>
+        <span class="statusValue">{% if status_place %}{{ status_place[:-2] }}<sup>{{ status_place[-2:] }}</sup>{% else %}{% trans %}N/A{% endtrans %}{% endif %}</span>
+    </span>
+    <time id="statusCountdown">...</time>
+</div>
+{% endif %}

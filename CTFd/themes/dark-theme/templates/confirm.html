@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Confirm</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				{% for info in infos %}
+					<div class="alert alert-info alert-dismissable" role="alert">
+						<span class="sr-only"></span>
+						{{ info }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+				{% endfor %}
+				{% for error in errors %}
+					<div class="alert alert-danger alert-dismissable" role="alert">
+						<span class="sr-only">Error:</span>
+						{{ error }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+				{% endfor %}
+				{% if user %}
+				<h3 class="text-center">
+					We've sent a confirmation email to {{ user.email }}
+				</h3>
+
+				<br>
+
+				<h4 class="text-center">
+					Please click the link in that email to confirm your account.
+				</h4>
+				{% endif %}
+
+				<hr>
+
+				{% if name %}
+				<form method="POST" action="{{ url_for('auth.confirm') }}">
+					<h4 class="text-center">
+						Need to resend the confirmation email?
+					</h4>
+					<div class="col-md-12 text-center">
+						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">Resend</button>
+					</div>
+					<input type="hidden" name="nonce" value="{{ nonce }}">
+				</form>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ url_for('views.themes', path='js/style.js') }}"></script>
+{% endblock %}
+

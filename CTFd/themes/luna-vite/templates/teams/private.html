@@ -1,0 +1,366 @@
+{% extends "templates/tabbed.html" %}
+{% from "macros/rank.html" import get_rank %}
+{% from "macros/input.html" import wtf_input_field, wtf_dropdown_field %}
+{% from "macros/forms.html" import render_extra_fields %}
+
+{% block title %}Teams{% endblock %}
+{% block subtitle %}{% trans %}Your team{% endtrans %}{% endblock %}
+
+{% block tabbedContent %}
+<button class="tab active" data-target="tabMembers">{% trans %}Members{% endtrans %}</button>
+<button class="tab" data-target="tabSolves">{% trans %}Solves{% endtrans %}</button>
+<button class="tab" data-target="tabBreakdown">{% trans %}Breakdown{% endtrans %}</button>
+<button class="tab" data-target="tabTimeline">{% trans %}Timeline{% endtrans %}</button>
+{% endblock %}
+
+{% block framedContent %}
+<div x-data="TeamGraphs" style="height: 100%;">
+<div class="frameContentWrap">
+  {% include "components/errors.html" %}
+</div>
+
+<div class="tabPane" id="tabMembers">
+  <div class="frameContentWrapper">
+
+    <div class="profileDetailGroup">
+      <div class="profileMeta">
+        <div class="profileMetaRow">
+          <span class="chip tall">Team</span>
+          <div class="profileMetaBox" id="team-id" data-ctfd-team-id="{{ team.id }}">
+            {{ team.name }}
+          </div>
+          {% if team.oauth_id %}
+          <a href="https://majorleaguecyber.org/u/{{ team.name }}" class="chip tall">
+            {% trans %}Official{% endtrans %}
+          </a>
+          {% endif %}
+        </div>
+        <div class="profileMetaRow" x-data="CaptainMenu">
+          <button class="button textButton shade small" @click="editTeam()">
+            <span>{% trans %}Edit team{% endtrans %}</span>
+          </button>
+          <button class="button textButton shade small" @click="chooseCaptain()">
+            <span>{% trans %}Choose captain{% endtrans %}</span>
+          </button>
+          <button class="button textButton shade small" @click="inviteMembers()">
+            <span>{% trans %}Invite users{% endtrans %}</span>
+          </button>
+          <button class="button textButton shade small" @click="disbandTeam()">
+            <span>{% trans %}Disband team{% endtrans %}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="profileRank">
+        <label class="chip">{% trans %}Rank{% endtrans %}</label>
+        {% if scores_visible() and place %}
+        <div class="profileRankNumber">{{ get_rank(place[:-2]) }}</div>
+        {% elif not scores_visible() %}
+        <div class="profileRankNumber unranked">{% trans %}Hidden{% endtrans %}</div>
+        {% else %}
+        <div class="profileRankNumber unranked">{% trans %}Unranked{% endtrans %}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% for field in team.fields %}
+    <div>
+      <strong>{{ field.name }}</strong>: {{ field.value }}
+    </div>
+    {% endfor %}
+
+    <h3 class="sectionTitle">{% trans %}Members{% endtrans %}</h3>
+    {% if team.members %}
+    {% for member in team.members %}
+    <a class="listItem{% if member.id == Session.id %} active{% endif %}" href="{{ url_for('users.public', user_id=member.id) }}">
+      {% set member_name = member.name | urlencode %}
+      {% set member_name = member_name.replace('%20', '+') %}
+      <div class="listItemDetailsIcon">
+        <img width="60" height="60" class="cellBodyIcon" src="{{ member.gravatar('404') }}" data-fallback="https://avatars.dicebear.com/api/initials/{{member_name}}.svg?backgroundColorLevel=800" onerror="this.src = this.dataset.fallback;this.onerror='';">
+      </div>
+      <div class="listItemDetails">
+        <div class="listItemDetailsPrimary">
+          {{ member.name }}
+          {% if team.captain_id == member.id %}
+            <iconify-icon icon="material-symbols:manage-accounts" class="teamCaptain" inline></iconify-icon>
+          {% endif %}
+        </div>
+        <div>{{ ngettext('%(solves)d solve', '%(solves)d solves', member.solves | length, solves=member.solves | length) }}</div>
+      </div>
+      <div class="listItemScore digits5">
+        <span>
+          <span class="listItemScoreValue">{{ member.score }}</span>&nbsp;<span class="listItemScoreP">P</span>
+        </span>
+      </div>
+    </a>
+    {% endfor %}
+    {% else %}
+      <div class="info" style="justify-content: center;">{% trans %}No members.{% endtrans %}</div>
+    {% endif %}
+
+  </div>
+  <div class="totalScore">
+    <div class="frameContentWrapper">
+      <span class="totalScorePrompt">{% trans %}Total score{% endtrans %}</span>
+      <span class="totalScoreDisplay">
+        <span class="totalScoreValue">{{ score or 0 }}</span>&nbsp;<span class="totalScoreP">P</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="hidden tabPane" id="tabSolves">
+  <div class="frameContentWrapper">
+    {% if solves %}
+    {% for solve in solves %}
+    <a class="listItem" href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+      <div class="listItemDetails">
+        <div class="listItemDetailsPrimary">{{ solve.challenge.name }}</div>
+        <div>{{ gettext("%(category)s, solved on %(time)s.", category=solve.challenge.category, time=gettext('<time data-time="%(date)s"></time>', date=solve.date | isoformat )) | safe }}</div>
+      </div>
+      <div class="listItemScore digits5">
+        <span>
+          <span class="listItemScoreValue">{{ solve.challenge.value }}</span>&nbsp;<span class="listItemScoreP">P</span>
+        </span>
+      </div>
+    </a>
+    {% endfor %}
+    {% else %}
+      <div class="info" style="justify-content: center;">{% trans %}No solves yet.{% endtrans %}</div>
+    {% endif %}
+
+  </div>
+  <div class="totalScore">
+    <div class="frameContentWrapper">
+      <span class="totalScorePrompt">{% trans %}Total score{% endtrans %}</span>
+      <span class="totalScoreDisplay">
+        <span class="totalScoreValue">{{ score }}</span>&nbsp;<span class="totalScoreP">P</span>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="hidden tabPane" id="tabBreakdown">
+  <div class="frameContentWrapper progressBarCharts">
+    
+    {% if solves %}
+    <div class="progressBarChart">
+      <h3 class="sectionTitle">{% trans %}Solve percentages{% endtrans %}</h3>
+      <div class="progress">
+        <div class="progress-bar" role="progressbar"
+          :style="{ width: `${getSolvePercentage()}%`, 'background-color': 'rgb(0, 209, 64)' }">
+        </div><div class="progress-bar" role="progressbar"
+          :style="{ width: `${getFailPercentage()}%`, 'background-color': 'rgb(207, 38, 0)' }">
+        </div></div>
+      <div class="progressBarLegend">
+        <svg height="16" width="16">
+          <circle cx="8" cy="8" r="5" fill="rgb(0, 209, 64)" />
+        </svg>
+        <small x-text="`{% trans %}Solves{% endtrans %} (${getSolvePercentage().toFixed(2)}%)`"></small>
+      </div>
+      <div class="progressBarLegend">
+        <svg height="16" width="16">
+          <circle cx="8" cy="8" r="5" fill="rgb(207, 38, 0)" />
+        </svg>
+        <small x-text="`{% trans %}Fails{% endtrans %} (${getFailPercentage().toFixed(2)}%)`"></small>
+      </div>
+    </div>
+
+    <div class="progressBarChart">
+      <h3 class="sectionTitle">{% trans %}Category breakdown{% endtrans %}</h3>
+      <div class="progress">
+        <template x-for="category in getCategoryBreakdown()" :key="category.name">
+          <div class="progress-bar" role="progressbar"
+            :style="{ width: `${category.percent}%`, 'background-color': category.color }">
+          </div>
+        </template>
+      </div>
+      <template x-for="category in getCategoryBreakdown()" :key="category.name">
+        <div class="progressBarLegend">
+          <svg height="16" width="16">
+            <circle cx="8" cy="8" r="5" :fill="category.color" />
+          </svg>
+          <small x-text="`${category.name} (${category.percent.toFixed(2)}%)`"></small>
+        </div>
+      </template>
+    </div>
+    {% else %}
+      <div class="info" style="justify-content: center;">{% trans %}No solves yet.{% endtrans %}</div>
+    {% endif %}
+
+  </div>
+</div>
+<div class="hidden tabPane" id="tabTimeline">
+  <div class="chartContainer">
+  {% if solves %}
+    <div id="score-graph" x-ref="scoregraph" style="width: 100%; height: 100%;">
+      Loading...
+    </div>
+    {% else %}
+    <div class="info" style="justify-content: center;">{% trans %}No solves yet.{% endtrans %}</div>
+    {% endif %}
+  </div>
+</div>
+</div>
+{#% if awards %}
+<div class="row">
+  <div class="col-md-12">
+    <h3>Awards</h3>
+
+  </div>
+  {% for award in awards %}
+  <div class="col-md-3 col-sm-6">
+    <p class="text-center">
+      <i class="award-icon award-{{ award.icon }} fa-2x"></i>
+      <br>
+      <strong>{{ award.name }}</strong>
+    </p>
+    <p class="text-center">{{ award.category or "" }}</p>
+    <p class="text-center">{{ award.description or "" }}</p>
+    <p class="text-center">{{ award.value }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %#}
+
+
+<dialog class="modal fit" id="teamEditModal" x-data="TeamEditModal">
+  <h2 class="modalHeader">Edit team</h2>
+  <form id="teamEditForm" class="modalBody formFields" method="POST" @submit.prevent="updateProfile()">
+    {% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+
+    {{ form.name.label(class="chip") }}
+    {{ wtf_input_field(form.name(class="")) }}
+    <p class="formHint fieldHint">{{ form.name.description }}</p>
+
+    {{ form.password.label(class="chip") }}
+    {{ wtf_input_field(form.password(class="")) }}
+    <p class="formHint fieldHint">{{ form.password.description }}</p>
+
+    {{ form.confirm.label(class="chip") }}
+    {{ wtf_input_field(form.confirm(class="")) }}
+    <p class="formHint fieldHint">{{ form.confirm.description }}</p>
+
+    {{ render_extra_fields(form.extra) }}
+
+    <div class="info" role="alert" x-cloak="success" x-show="success">
+      <iconify-icon icon="material-symbols:info"></iconify-icon>
+      <span><strong>{% trans %}Success!{% endtrans %}</strong> {% trans %}Your team’s profile has been updated.{% endtrans %}</span>
+    </div>
+    <template x-for="(msg, idx) in errors" :key="idx">
+      <div class="warning" role="alert">
+        <iconify-icon icon="material-symbols:warning"></iconify-icon>
+        <span x-text="msg"></span>
+      </div>
+    </template>
+    {% endwith %}
+  </form>
+  <div class="modalFooter">
+      <button class="button textButton shade" id="teamEditModalClose">
+          <span>{% trans %}Cancel{% endtrans %}</span>
+      </button>
+      <button class="button textButton shade primary" type="submit" form="teamEditForm" x-bind:disabled="submitting">
+          <span>{% trans %}Update{% endtrans %}</span>
+      </button>
+  </div>
+</dialog>
+
+<dialog class="modal fit" id="teamCaptainModal" x-data="TeamCaptainModal">
+  {% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
+  <h2 class="modalHeader">{% trans %}Choose captain{% endtrans %}</h2>
+  <form id="teamCaptainForm" method="POST" @submit.prevent="updateCaptain()" class="modalBody formFields">
+    {{ form.captain_id.label(class="chip") }}
+    {% for member in team.members %}
+      {# Append members to the select choices #}
+      {% set _ = form.captain_id.choices.append((member.id, member.name)) %}
+    {% endfor %}
+    {{ wtf_dropdown_field(form.captain_id(class="")) }}
+
+    <div class="info" role="alert" x-cloak="success" x-show="success">
+      <iconify-icon icon="material-symbols:info"></iconify-icon>
+      <span><strong>{% trans %}Success!{% endtrans %}</strong> {% trans %}Your captain rights have been transferred.{% endtrans %}</span>
+    </div>
+    <template x-for="(msg, idx) in errors" :key="idx">
+      <div class="warning" role="alert">
+        <iconify-icon icon="material-symbols:warning"></iconify-icon>
+        <span x-text="msg"></span>
+      </div>
+    </template>
+
+  </form>
+  <div class="modalFooter">
+      <button class="button textButton shade" id="teamCaptainModalClose">
+          <span>Cancel</span>
+      </button>
+      <button class="button textButton shade primary" type="submit" form="teamCaptainForm">
+          <span>Update</span>
+      </button>
+  </div>
+  {% endwith %}
+</dialog>
+
+<dialog class="modal fit" id="teamInviteModal" x-data="TeamInviteModal">
+  <h2 class="modalHeader">{% trans %}Invite users{% endtrans %}</h2>
+  <div class="modalBody formFields">
+  {% with form = Forms.teams.TeamInviteForm() %}
+
+    {{ form.link.label(class="chip") }}
+    <div class="inputFrame">
+      {{ form.link(id="teamInviteLink", readonly=True, **{"x-ref": "link", "x-bind:value": "$store.inviteToken"}) }}
+      <button class="inputIcon" type="button"
+          @click="copy()">
+        <iconify-icon icon="material-symbols:content-copy" inline class=""></iconify-icon>
+      </button>
+    </div>
+    <p class="formHint fieldHint">
+      {% trans %}Share this link with your team members for them to join your team.<br>
+      Invite links can be re-used and expire after one day.{% endtrans %}
+    </p>
+
+    {% endwith %}
+  </div>
+  <div class="modalFooter">
+    <button class="button textButton shade" id="teamInviteModalClose">
+      <span>{% trans %}Close{% endtrans %}</span>
+    </button>
+  </div>
+</dialog>
+
+<dialog class="modal fit" id="teamDisbandModal" x-data="TeamDisbandModal">
+  <h2 class="modalHeader">{% trans %}Disband team?{% endtrans %}</h2>
+  <div class="modalBody">
+    <div class="warning">{% trans %}Are you sure you want to disband your team?{% endtrans %}</div>
+    <template x-for="(msg, idx) in errors" :key="idx">
+      <div class="warning" role="alert">
+        <iconify-icon icon="material-symbols:warning"></iconify-icon>
+        <span x-text="msg"></span>
+      </div>
+    </template>
+  </div>
+  <div class="modalFooter">
+      <button class="button textButton shade primary" id="teamDisbandModalClose">
+          <span>{% trans %}Cancel{% endtrans %}</span>
+      </button>
+      <button class="button textButton shade" type="submit" @click="disbandTeam()" :disabled="errors.length > 0">
+          <span>{% trans %}Disband{% endtrans %}</span>
+      </button>
+  </div>
+</dialog>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+<script>
+  window.stats_data = {{ {
+    'type': 'team',
+    'id': team.id,
+    'name': team.name,
+    'account_id': 'me',
+  } | tojson }};
+
+  window.team_captain = {{ (user.id == team.captain_id) | tojson }};
+</script>
+
+{{ Assets.js("assets/js/teamAdmin.js") }}
+{{ Assets.js("assets/js/teamProfile.js") }}
+{% endblock %}

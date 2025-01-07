@@ -1,0 +1,97 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+<div id="homeWrapper">
+    <div class="homeContent">
+        <div class="homeScreen">
+            <img class="logo" src="{{ url_for('views.files', path=Configs.ctf_logo) if Configs.ctf_logo else url_for('views.themes', path='img/logos/sekai2.svg') }}" alt="Project SEKAI CTF" />
+            <time id="homeCountdown">...</time>
+            <time id="homeLocalDate">...</time>
+            <code><time id="homeISODate">...</time></code>
+        </div>
+        {{ content | safe }}
+        <div class="homeFiller"></div>
+    </div>
+    <div class="buttonOverlay">
+        <a href="{{ Configs.theme_settings.get('social_link_url', 'https://1a23.com') }}" target="_blank" class="button iconButton shade discordButton" data-tippy-lyrics>
+            <iconify-icon icon="{{ Configs.theme_settings.get('social_link_icon', 'codicon:globe') }}" inline></iconify-icon>
+        </a>
+        {% include 'components/status.html' %}
+        {% include 'components/menu.html' %}
+        <div class="homeCTAButtons">
+            <a href="{{ url_for('views.static_html', route='rules') }}" class="button textButton shade homeCTAButton">
+                <iconify-icon icon="material-symbols:menu-book" style="transform: translate(4px, -8px) scale(1.1);"></iconify-icon>
+                <span>{% trans %}Rules{% endtrans %}</span>
+            </a>
+            {% if authed() %}
+            <a href="{{ url_for('scoreboard.listing') }}" class="button textButton shade homeCTAButton">
+                <iconify-icon icon="mdi:podium" style="transform: translate(4px, -10px) scale(1.1);"></iconify-icon>
+                <span>{% trans %}Rankings{% endtrans %}</span>
+            </a>
+            <a href="{{ url_for('challenges.listing') }}" class="button textButton shade primary homeCTAButton">
+                <iconify-icon icon="fluent:music-note-2-24-filled" style="transform: translateY(-15px) scale(1.4);"></iconify-icon>
+                <span>{% trans %}Challenges{% endtrans %}</span>
+            </a>
+            {% else %}
+            {% if registration_visible() %}
+            <a href="{{ url_for('auth.register') }}" class="button textButton shade homeCTAButton">
+                <iconify-icon icon="mdi:account-plus" style="transform: translate(4px, -10px) scale(1.1);"></iconify-icon>
+                <span>{% trans %}Register{% endtrans %}</span>
+            </a>
+            {% endif %}
+            <a href="{{ url_for('auth.login') }}" class="button textButton shade primary homeCTAButton">
+                <iconify-icon icon="mdi:login-variant" style="transform: translateY(-13px) scale(1.25);"></iconify-icon>
+                <span>{% trans %}Log in{% endtrans %}</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# Title screen #}
+
+<div id="titleScreen" class="hidden">
+    <canvas class="particlesCanvas" id="particlesCanvas" ref="canvasRef"></canvas>
+    <div id="sessionSid" class="metadata" data-tippy-lyrics>{{ session.sid }}</div>
+    <div class="credit metadata">
+        {{ config.get_config("ctf_version") }}.Luna, Powered by CTFd<br />
+        <small>Theme Luna by 1A23 Studio for Project SEKAI CTF<br />
+        <small>This website is in no way affiliated with SEGA, Colorful Palette Inc., Crypton Future Media, INC.</small>
+        </small>
+    </div>
+    <div class="sponsors metadata">
+        <a href="https://ctfd.io" target="_blank" rel="noopener noreferrer" onClick="(e)=> e.stopPropagation()">
+            <img src="{{ url_for('views.themes', path='img/logos/ctfd.svg') }}" alt="CTFd" />
+        </a>
+        <a href="https://sekai.1a23.studio" target="_blank" rel="noopener noreferrer" onClick="(e)=> e.stopPropagation()">
+            <img src="{{ url_for('views.themes', path='img/logos/team2.svg') }}" style="transform: scale(1.2)" alt="Project SEKAI" />
+        </a>
+        <a href="https://1a23.com" target="_blank" rel="noopener noreferrer" onClick="(e)=> e.stopPropagation()">
+            <img src="{{ url_for('views.themes', path='img/logos/1a23-sq.svg') }}" alt="1A23 Studio" />
+        </a>
+    </div>
+    <div class="logoBox">
+        <img src="{{ url_for('views.files', path=Configs.ctf_logo) if Configs.ctf_logo else url_for('views.themes', path='img/logos/sekai2.svg') }}" alt="Project SEKAI CTF" />
+        <div class="tapToStart">{{ gettext("%(verb)s to start", verb=gettext('<span class="click">Click</span><span class="tap">Tap</span>')) | safe }}</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const PartileAssets = {
+        pattern1: "{{ url_for('views.themes', path='img/particles/solid.svg') }}",
+        pattern2: "{{ url_for('views.themes', path='img/particles/outline.svg') }}",
+        pattern3: "{{ url_for('views.themes', path='img/particles/blur.svg') }}",
+    };
+</script>
+
+<style>
+    body {
+        --title-bg: url("{{ url_for('views.themes', path='img/splash-background.svg') }}");
+        --low-poly-bg: url("{{ url_for('views.themes', path='img/particles/lowpoly.svg') }}");
+    }
+</style>
+
+{{ Assets.js("assets/js/index.js") }}
+{% endblock %}

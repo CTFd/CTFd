@@ -1,0 +1,164 @@
+.profileDetailGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+
+    @include media-sm {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .profileIcon {
+        @include media-sm {
+            display: none;
+        }
+
+        .cellBodyIcon {
+            border-radius: 5px;
+            border: 1px solid #fff;
+            box-shadow: 0 0 0 3px #62B8B9;
+        }
+    }
+
+    .profileMeta {
+        flex-grow: 1;
+        display: flex;
+        gap: 0.5rem;
+        flex-direction: column;
+
+        @include media-sm {
+            flex-grow: 0;
+            width: 100%;
+            
+            // #teamLabel {
+            //     display: none;
+            // }
+        }
+    }
+
+    .profileMetaRow {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .profileMetaBox {
+        border: 3px solid #D5EBEF;
+        padding: 0.5rem 0.5rem;
+        max-width: 15rem;
+        width: 9rem;
+        flex-grow: 1;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @include media-sm {
+            width: 0;
+            max-width: unset;
+            min-width: fit-content;
+            flex-grow: 1;
+        }
+    }
+
+    .profileRank {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .profileRankNumber {
+        width: 2em;
+        color: #5CC9BB;
+        font-variant-numeric: tabular-nums;
+        font-weight: 800;
+        font-size: 3.5rem;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+
+        img {
+            width: 100%;
+        }
+
+        &.unranked {
+            font-size: 1.4rem;
+            font-style: italic;
+            font-weight: 500;
+            width: 6.25rem;
+        }
+    }
+}
+
+.totalScore {
+    position: sticky;
+    bottom: -1rem;
+    background: $primary-fg;
+    margin: 0 -1rem -1rem -1rem;
+    padding: 0.5rem 1rem;
+    color: white;
+
+    & > .frameContentWrapper {    
+        display: flex;
+        flex-direction: row;
+        font-size: 1.25rem;
+        align-items: center;
+        padding-bottom: 0;
+    }
+
+    .totalScorePrompt {
+        flex-grow: 1;
+    }
+
+    .totalScoreValue {
+        font-size: 1.3em;
+        color: $warning-color;
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.progress {
+    height: 1rem;
+    width: 100%;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 1rem;
+    
+    .progress-bar {
+        height: 100%;
+    }
+}
+
+.progressBarLegend {
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+
+    > svg {
+        vertical-align: middle;
+    }
+}
+
+.progressBarCharts {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.chartContainer {
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    > div {
+        margin: 0 auto;
+    }
+}
+
+.teamCaptain {
+    color: $warning-color;
+}

@@ -1,0 +1,62 @@
+@use "sass:color";
+@import 'notyf/notyf.min.css';
+@import 'dialog-polyfill/dialog-polyfill.css';
+@import 'utils';
+
+@import url('https://rsms.me/inter/inter.css');
+@import url('https://fonts.googleapis.com/css2?family=Recursive:wght,CASL,CRSV,MONO@300..1000,1,0..1,1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@100..900&display=swap');
+:root {
+  font-size: 16px;
+
+  @media (max-width: 768px), (max-width: 900px) and (pointer: coarse) {
+    font-size: 14px;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: $font-family;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $primary-fg;
+}
+
+a {
+    color: $accent-text-color;
+}
+
+pre, code {
+  font-family: $monospace-font;
+  font-variation-settings: "dlig" 1, "ss08" 1, "ss09" 1, "CASL" 1, "MONO" 1;
+}
+
+// Notyf
+.notyf__message {
+  word-break: break-word;
+}
+.notyf__toast {
+  max-width: 500px;
+}
+.notyf__ripple {
+  width: 600px;
+  height: 600px;
+}
+
+:lang(ja), button:lang(ja) {
+  font-family: 'InterVar', 'Inter var', 'Inter', 'M PLUS 1', sans-serif;
+}
+
+@import 'index';
+@import 'button';
+@import 'modal';
+@import 'mainMenu';
+@import 'templates';
+@import 'form';
+@import 'list';
+@import 'grid';
+@import 'search';
+@import 'profile';
+@import 'notifications';
+@import 'challenges';
+@import 'loading';

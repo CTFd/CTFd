@@ -1,0 +1,23 @@
+{% extends "templates/base.html" %}
+
+{% block content %}
+<div class="triangleContainer page-{{ (request.endpoint or 'unknown').replace('.', '-') }}">
+
+    {% include 'components/menu.html' %}
+    {% block plainContent %}
+    {% endblock plainContent %}
+
+</div>
+{% endblock content %}
+
+{% block scripts %}
+{{ super() }}
+<style>
+    :root {
+        --icon-wall: url("{{ url_for('views.themes', path='img/assets/icon-wall.svg') }}");
+        --triangular-bg: url("{{ url_for('views.themes', path='img/triangular-bg.svg') }}");
+        --halftone-tail: url("{{ url_for('views.themes', path='img/halftone-tail.svg') }}");
+        --stripe-border: url("{{ url_for('views.themes', path='img/stripe-border.svg') }}");
+    }
+</style>
+{% endblock scripts %}

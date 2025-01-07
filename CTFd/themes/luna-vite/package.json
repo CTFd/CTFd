@@ -1,0 +1,37 @@
+{
+  "name": "luna-vite",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@alpinejs/persist": "^3.10.3",
+    "@ctfdio/ctfd-js": "^0.0.7",
+    "2d-canvas-image-particles": "^1.4.2",
+    "alpinejs": "^3.10.2",
+    "dayjs": "^1.11.3",
+    "dialog-polyfill": "^0.5.6",
+    "echarts": "^5.3.3",
+    "howler": "^2.2.3",
+    "iconify-icon": "^0.0.6",
+    "konami": "^1.6.3",
+    "large-small-dynamic-viewport-units-polyfill": "^0.0.4",
+    "lodash": "^4.17.21",
+    "notyf": "^3.10.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "tippy.js": "^6.3.7",
+    "vite-manifest-css": "^0.0.1",
+    "vue": "^3.2.25"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@vitejs/plugin-vue": "^3.0.1",
+    "sass": "^1.53.0",
+    "typescript": "^4.5.4",
+    "vite": "^3.0.5",
+    "vue-tsc": "^0.34.7"
+  }
+}

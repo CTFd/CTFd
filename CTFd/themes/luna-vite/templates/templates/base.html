@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+
+<head>
+    <title>{{ Configs.ctf_name.replace('Sekai', 'Project SEKAI ') }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="{{ Configs.ctf_name }}" />
+    <meta property="og:description" content="{{ Configs.theme_settings.get('social_desc', Configs.ctf_name.replace('Sekai', 'Project SEKAI ') + ' is yet another CTF contest brought to you by a yet another CTF team.') }}" />
+    <meta property="og:image" content="{{ Configs.theme_settings.get('social_banner', 'https://ProjectSEKAIctf.1a23.studio/twitter-card.png') }}" />
+    <meta property="og:type" content="website" />
+	<link rel="shortcut icon" href="{{ Configs.ctf_small_icon }}">
+    <script src="https://unpkg.com/@ungap/has-own@0.1.1/min.js"></script>
+
+    {% block stylesheets %}
+    {{ Assets.css("assets/scss/main.scss") }}
+    {% endblock %}
+
+    {{ Plugins.styles }}
+
+    <script type="text/javascript">
+        window.init = {
+            'urlRoot': "{{ request.script_root }}",
+            'csrfNonce': "{{ Session.nonce }}",
+            'userMode': "{{ Configs.user_mode }}",
+            'smallIcon': "{{ Configs.ctf_small_icon }}",
+            'userId': {{ Session.id }},
+            'userName': {{ User.name | tojson }},
+            'userEmail': "{{ User.email }}",
+            'teamId': {{ Team.id | tojson }},
+            'teamName': {{ Team.name | tojson }},
+            'start': {{ Configs.start | tojson }},
+            'end': {{ Configs.end | tojson }},
+            'themeSettings': {{ Configs.theme_settings | tojson }},
+        }
+    </script>
+
+    {{ Configs.theme_header }}
+</head>
+
+<body class="{{ request.endpoint | replace('.', '-') }}">
+    <svg width="0" height="0" xmlns="http://www.w3.org/2000/svg" style="position: absolute; visibility: hidden;">
+        <filter id="primaryIconStroke" filterUnits="objectBoundingBox"
+            primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feMorphology operator="dilate" radius="2 2" in="SourceGraphic"
+                result="morphology" />
+            <feMorphology operator="dilate" radius="3.5 3.5" in="SourceGraphic"
+                result="morphology1" />
+            <feFlood flood-color="#ffffff" flood-opacity="1" result="flood" />
+            <feFlood flood-color="#E0E0E0" flood-opacity="1" result="flood1" />
+            <feComposite in="flood" in2="morphology" operator="in"
+                result="composite" />
+            <feComposite in="flood1" in2="morphology1" operator="in"
+                result="composite1" />
+            <feMerge result="merge">
+                <feMergeNode in="composite1" />
+                <feMergeNode in="composite" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="accentIconStroke" filterUnits="objectBoundingBox"
+            primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feMorphology operator="dilate" radius="2 2" in="SourceGraphic"
+                result="morphology" />
+            <feMorphology operator="dilate" radius="3.5 3.5" in="SourceGraphic"
+                result="morphology1" />
+            <feFlood flood-color="#ffffff" flood-opacity="1" result="flood" />
+            <feFlood flood-color="#95FCDB" flood-opacity="1" result="flood1" />
+            <feComposite in="flood" in2="morphology" operator="in"
+                result="composite" />
+            <feComposite in="flood1" in2="morphology1" operator="in"
+                result="composite1" />
+            <feMerge result="merge">
+                <feMergeNode in="composite1" />
+                <feMergeNode in="composite" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="chevronStroke" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feMorphology operator="dilate" radius="3 3" in="SourceGraphic" result="morphology"/>
+            <feFlood flood-color="#ffffff" flood-opacity="1" result="flood"/>
+            <feComposite in="flood" in2="morphology" operator="in" result="composite2"/>
+            <feMerge result="merge">
+                    <feMergeNode in="composite2"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+        </filter>
+        <linearGradient id="primaryGradient" gradientTransform="rotate(90)">
+            <stop offset="0%" stop-color="#EB53B8" stop-opacity="1" />
+            <stop offset="100%" stop-color="#EE79F8" stop-opacity="1" />
+        </linearGradient>
+    </svg>
+
+    {% block content %}
+    {% endblock %}
+
+    <script>
+        window.strings = {
+            "The CTF is archived.": "{{ gettext('The CTF is archived.') }}",
+            "D MMM YYYY, H:mm": "{{ gettext('D MMM YYYY, H:mm') }}",
+            "%(time)s until start.": "{{ gettext('%(time)s until start.', time='%(time)s') }}",
+            "%(time)s until end.": "{{ gettext('%(time)s until end.', time='%(time)s') }}",
+            "%(days)sd %(rest)s": "{{ gettext('%(days)sd %(rest)s', days='%(days)s', rest='%(rest)s') }}",
+            "%(hours)sh %(rest)s": "{{ gettext('%(hours)sh %(rest)s', hours='%(hours)s', rest='%(rest)s') }}",
+            "HH[h] mm[m] ss[s]": "{{ gettext('HH[h] mm[m] ss[s]') }}",
+            "mm[m] ss[s]": "{{ gettext('mm[m] ss[s]') }}",
+            "The CTF has started.": "{{ gettext('The CTF has started.') }}",
+            "The CTF has ended.": "{{ gettext('The CTF has ended.') }}",
+            "Category Breakdown": "{{ gettext('Category Breakdown') }}",
+            "Top 10 Teams": "{{ gettext('Top 10 Teams') }}",
+            "Top 10 Users": "{{ gettext('Top 10 Users') }}",
+            "Solve Percentages": "{{ gettext('Solve Percentages') }}",
+            "Fails": "{{ gettext('Fails') }}",
+            "Solves": "{{ gettext('Solves') }}",
+            "Score over Time": "{{ gettext('Score over Time') }}",
+            "Clipboard is not available.": "{{ gettext('Clipboard is not available.') }}",
+            "Copied!": "{{ gettext('Copied!') }}",
+            "%d<small>s</small>": "{{ gettext('%(val)s<small>s</small>', val='%d') }}",
+            "1<small>min</small>": "{{ gettext('1<small>min</small>') }}",
+            "%d<small>mins</small>": "{{ gettext('%(val)s<small>mins</small>', val='%d') }}",
+            "1<small>hr</small>": "{{ gettext('1<small>hr</small>') }}",
+            "%d<small>hrs</small>": "{{ gettext('%(val)s<small>hrs</small>', val='%d') }}",
+            "1<small>d</small>": "{{ gettext('1<small>d</small>') }}",
+            "%d<small>d</small>": "{{ gettext('%(val)s<small>d</small>', val='%d') }}",
+            "1<small>mth</small>": "{{ gettext('1<small>mth</small>') }}",
+            "%d<small>mths</small>": "{{ gettext('%(val)s<small>mths</small>', val='%d') }}",
+            "1<small>yr</small>": "{{ gettext('1<small>yr</small>') }}",
+            "%d<small>yrs</small>": "{{ gettext('%(val)s<small>yrs</small>', val='%d') }}",
+            "Hint is not available.": "{{ gettext('Hint is not available.') }}",
+            "Close": "{{ gettext('Close') }}",
+            "Invite users": "{{ gettext('Invite users') }}",
+        };
+    </script>
+    {{ Assets.js("assets/js/base.js") }}
+    {% block scripts %}
+    {% endblock %}
+
+    {{ Plugins.scripts }}
+
+    <style>
+        body {
+            --halftone-bg: url("{{ url_for('views.themes', path='img/halftoneButtonBg.svg') }}");
+            --halftone-bg-white: url("{{ url_for('views.themes', path='img/halftoneButtonBgWhite.svg') }}");
+            --halftone-bg-white-25: url("{{ url_for('views.themes', path='img/halftoneButtonBgWhite25.svg') }}");
+        }
+
+        @font-face {
+            font-family: "InterVar";
+            font-weight: 100 900;
+            font-display: swap;
+            font-style: normal;
+            src: url("{{ url_for('views.themes', path='fonts/InterVariable.woff2') }}") format("woff2-variations"),
+                 url("{{ url_for('views.themes', path='fonts/InterVariable.woff2') }}") format("woff2");
+            src: url("{{ url_for('views.themes', path='fonts/InterVariable.woff2') }}") format("woff2") tech("variations");
+        }
+        
+        @font-face {
+            font-family: "InterVar";
+            font-weight: 100 900;
+            font-display: swap;
+            font-style: italic;
+            src: url("{{ url_for('views.themes', path='fonts/InterVariable-Italic.woff2') }}") format("woff2-variations"),
+                 url("{{ url_for('views.themes', path='fonts/InterVariable-Italic.woff2') }}") format("woff2");
+            src: url("{{ url_for('views.themes', path='fonts/InterVariable-Italic.woff2') }}") format("woff2") tech("variations");
+        }
+    </style>
+
+    {{ Configs.theme_footer }}
+</body>
+
+</html>

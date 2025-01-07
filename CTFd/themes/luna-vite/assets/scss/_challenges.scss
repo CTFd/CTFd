@@ -1,0 +1,617 @@
+$challenges-width: max(30vw, calc((100vw - $tab-width) / 5 * 2));
+
+.page-challenges-listing {
+    #mainMenuButton {
+        z-index: 10;
+    }
+}
+
+@mixin challengeScore {
+    margin: 1rem;
+    color: $accent-color-bright;
+    font-weight: 600;
+    background-color: $primary-fg;
+    font-size: 1.75rem;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    position: relative;
+    text-align: center;
+}
+
+@mixin challengeScoreLabel {
+    content: "Points";
+    position: absolute;
+    bottom: 0;
+    font-size: 0.8rem;
+    filter: 
+        drop-shadow(0 1px 0 $primary-fg) 
+        drop-shadow(-1px 1px 0 $primary-fg) 
+        drop-shadow(1px 1px 0 $primary-fg) 
+        drop-shadow(2px 1px 0 $primary-fg) 
+        drop-shadow(-2px 1px 0 $primary-fg);
+}
+
+@mixin challengeIndicator {
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.7rem;
+    background: #444463;
+    border: 2px solid #444463;
+    border-radius: 3px;
+    transform: rotate(45deg) translate(2px, 1px);
+    margin-right: 0.4rem;
+    
+    &.solved {
+        background: linear-gradient(135deg, #FFEFB5, #FFD642);
+        box-shadow: inset -1px -1px 0px 0px rgb(0 0 0 / 30%), inset 1px 1px 0px 0px rgb(255 255 255 / 75%);
+    }
+    
+    &.first {
+        background: linear-gradient(135deg, #FB9CF7, #9CBFFF, #00FCBB);
+        box-shadow: inset -1px -1px 0px 0px rgb(0 0 0 / 30%), inset 1px 1px 0px 0px rgb(255 255 255 / 75%);
+    }
+}
+
+#challengesWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+
+    .titleContainer {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+    }
+
+    #settingsButton {
+        position: absolute;
+        top: 1.5rem;
+        right: 6.5rem;
+        z-index: 6;
+    }
+
+    @include media-lg {
+        flex-direction: row;
+
+        .tabs {
+            position: unset;
+        }
+        #challengesList {
+            width: $challenges-width;
+        }
+    }
+
+    #challengesListWrapper {
+        background-color: color.scale($primary-fg, $alpha: -20%);
+        height: 100%;
+        position: relative;
+        
+        #challengeContentErrors {
+            background-color: #fff;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem;
+
+            position: fixed;
+            left: 1rem;
+            @include media-lg {
+                top: 6rem;
+            }
+            @include media-sm {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+
+        &.expanded #challengeContentErrorsWrapper {
+            display: none;
+        }
+
+        @include media-sm {
+            position: absolute;
+            top: calc(11rem + 5px);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: auto;
+        }
+    }
+
+    #challengesList {
+        height: 100%;
+        overflow-y: auto;
+        position: relative;
+
+        mask-image: linear-gradient(to bottom, #00000000 4rem, #000000ff 6rem, #000000ff 100%);
+        -webkit-mask-image: linear-gradient(to bottom, #00000000 4rem, #000000ff 6rem, #000000ff 100%);
+        
+        scrollbar-width: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        @include media-sm {
+            mask-image: none;
+            -webkit-mask-image: none;    
+        }
+
+        @include media-lg {
+            .nonScrollFiller {
+                height: 6rem;
+            }
+        }
+
+        &.loopHighlight > .challengeItem:not([data-is-center]) > * {
+            opacity: 0.25;
+        }
+
+        &.highContrast {
+            .challengeItem.solved {
+                background: linear-gradient(to bottom, #FFEFB5, #FFD642);
+                .challengeDetails {
+                    color: $primary-fg;
+                }
+            }
+
+            .challengeItem.solved.solvedFirst {
+                background: linear-gradient(to bottom, #FB9CF7, #9CBFFF, #00FCBB);
+                .challengeDetails {
+                    color: $primary-fg;
+                }
+            }
+        }
+
+        &, &.highContrast {
+            .challengeItem.selected {
+                &, &.solved, &.solved.solvedFirst {
+                    margin-top: -2px;
+                    padding: 2px 0;
+                    background: $warning-color;
+                    border-bottom: none;
+                    margin-bottom: 2px;
+
+                    .challengeDetails {
+                        color: #fff;
+                    }
+
+                    .challengeScore::after {
+                        @include challengeScoreLabel;
+                    }
+                    .challengeScore.solves::after {
+                        content: "Solves";
+                    }
+                    .challengeScore.lrn::after {
+                        @include challengeScoreLabel;
+                        content: "ポイント";
+                        font-family: 'M PLUS 1', sans-serif !important;
+                    }
+                    .challengeScore.solves.lrn::after {
+                        content: "人クリア";
+                        font-family: 'M PLUS 1', sans-serif !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .noChallenge {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-sizing: border-box;
+
+        @include media-lg {
+            padding-top: 7rem;
+        }
+    }
+    
+    .challengeSettings2, .challengeSettings3 {
+        display: grid;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 0.25rem;
+    }
+
+    @include media-lg {
+        .challengeSettings2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        .challengeSettings3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+    }
+
+    .challengeItem {
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: start;
+        height: 100px;
+        box-sizing: border-box;
+        border-bottom: 2px solid #858390;
+        display: flex;
+        font-family: $font-family;
+        padding: 0;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+    
+        .challengeScore {
+            @include challengeScore;
+        }
+
+        .challengeScore.solves {
+            font-size: 1.75rem;
+        }
+
+        .challengeCover {
+            height: 75px;
+            width: 75px;
+            margin-right: 15px;
+        }
+
+        .challengeDetails {
+            color: white;
+            font-size: 1rem;
+            width: 0;
+            flex-grow: 1;
+        }
+        
+        .challengeTitle {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .challengeTitle, .challengeCategory {
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .challengeIndicator {
+            @include challengeIndicator;
+        }
+
+        &.selected .challengeLabel {
+            display: block;
+        }
+
+        .challengeLabel {
+            display: none;
+            position: absolute;
+            top: -1rem;
+            background-color: #953D74;
+            padding: 0.25rem 0.75rem;
+            left: 0;
+            border-radius: 5px;
+            white-space: nowrap;
+            height: 28px;
+            box-sizing: border-box;
+            
+            &::after {
+                position: absolute;
+                content: "";
+                right: -20px;
+                top: 0;
+                height: 0;
+                width: 0;
+                font-size: 0;
+                line-height: 0;
+                border-top: 14px solid #953D74;
+                border-bottom: 14px solid #953D74;
+                border-left: 14px solid #953D74;
+                border-right: 14px solid transparent;
+            }
+        }
+    }
+
+    .indicator {
+        position: sticky;
+        top: 50%;
+        color: $warning-color;
+        left: 0;
+        z-index: 5;
+        height: 0;
+        font-size: 1rem;
+        transform: translateY(-0.5rem);
+    }
+
+    .loadingWrapper {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        padding: 0 1rem 1rem 0;
+        box-sizing: border-box;
+        z-index: 10;
+    }
+
+    #challengesContentWrapper {
+        height: 100%;
+        position: relative;
+        transition: width 0.5s;
+
+        @include media-lg {
+            flex-grow: 1;
+            width: 0;
+        }
+
+        @include media-sm {
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+            z-index: 7;
+
+            &:not(.expanded) {
+                width: 0;
+
+                .loadingWrapper {
+                    display: none;
+                }
+            }
+        }
+
+        #challengeContent {
+            box-sizing: border-box;
+            padding: 1.5rem;
+            max-height: 100%;
+            overflow-y: auto;
+            @include subtle-scroll;
+
+            .currentChallengeInfoRow {
+                display: flex;
+                flex-direction: row;
+                gap: 1rem;
+            }
+
+            .currentChallengeScore {
+                @include challengeScore;
+                margin: 0;
+
+                &::after {
+                    @include challengeScoreLabel;
+                }
+            }
+            
+            .currentChallengeInfo {
+                flex-grow: 1;
+                width: 0;
+            }
+
+            .currentChallengeName {
+                margin: 0.25rem 0;
+
+                @include media-lg {
+                    padding-right: 8rem;
+                }
+            }
+
+            .currentChallengeCategory {
+                margin: 0.25rem 0;
+                font-weight: 600;
+            }
+            
+            .currentChallengeMeta {
+                display: flex;
+                flex-direction: row;
+                gap: 0.5rem;
+                font-size: 1rem;
+                align-items: center;
+                flex-wrap: wrap;
+                margin: 1rem 0;
+            }
+
+            .challengeIndicator {
+                @include challengeIndicator;
+
+                width: 0.8rem;
+                height: 0.8rem;
+            }
+
+            .solvers {
+                background: white;
+            }
+            
+            .flagSubmissionRow {
+                display: flex;
+                gap: 0.5rem;
+            }
+            
+            .flagSubmissionRow .inputFrame {
+                flex-grow: 1;
+                width: 0;
+            }
+
+            .flagSubmissionRow input {
+                font-family: $monospace-font;
+                font-variation-settings: "dlig" 1, "ss08" 1, "ss09" 1, "CASL" 1, "MONO" 1;
+            }
+
+            .copyableConnection {
+                padding-left: 0.5rem;
+            }
+
+            .copyableConnection, .hints {
+                margin: 1em 0;
+            }
+
+            .connectionValue {
+                font-size: 1.2rem;
+                flex-grow: 1;
+                word-break: break-all;
+            }
+
+            .buttonRow {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .challenge-desc {
+                blockquote {
+                    border-left: 5px solid $accent-color;
+                    margin: 0;
+                    padding-left: 1em;
+                }
+
+                code {
+                    color: $warning-color;
+                }
+            }
+
+            .solversItemDetails {
+                margin-right: 1rem;
+            }
+            
+            @include media-lg {
+                padding-bottom: 6rem;
+
+                .solvers {
+                    position: fixed;
+                    left: $tab-width;
+                    bottom: 0;
+                    right: 0;
+                    padding: 0.5rem 1.5rem;
+                }
+            
+                .flagSubmissionRow {
+                    position: fixed;
+                    right: 1rem;
+                    left: calc($challenges-width + 13rem);
+                    bottom: 1rem;
+                }
+
+                #collapseButton {
+                    display: none;
+                }
+            }
+
+            @include media-sm {
+                background-image: var(--triangular-bg), var(--background-gradient);
+                background-size: 3.5rem, auto;
+                padding-bottom: 0;
+                min-height: 100%;
+                display: flex;
+                flex-direction: column;
+                box-sizing: border-box;
+
+                .filler {
+                    flex-grow: 1;
+                }
+
+                .currentChallengeInfoRow {
+                    margin-top: 0.5rem;
+                }
+
+                .solvers {
+                    position: sticky;
+                    left: -2rem;
+                    bottom: 4.5rem;
+                    right: 0;
+                    padding: 0.5rem 1rem;
+                    text-align: right;
+                    margin: 0 -1.5rem;
+                    background: linear-gradient(to bottom, transparent 50%, white 50.1%);
+                }
+            
+                .flagSubmissionRow {
+                    position: sticky;
+                    bottom: 0;
+                    background: white;
+                    padding: 0 1rem 1rem;
+                    margin: 0 -1.5rem;
+                }
+            }
+        }
+    }
+
+    .modeSelection {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        align-items: center;
+        position: relative;
+        overflow: initial;
+
+        @include media-sm {
+            flex-direction: column;
+        }
+
+        &::before {
+            content: "Recommended";
+            position: absolute;
+            width: 160px;
+            height: 40px;
+            background-image: var(--popout);
+            background-size: contain;
+            background-repeat: no-repeat;
+            color: #fff;
+            font-size: 1rem;
+            top: 0;
+            padding: 0.3rem 0 0;
+            text-align: center;
+            z-index: 5;
+            animation: popOutBounce ease-in-out 2s infinite alternate;
+        }
+
+        @keyframes popOutBounce {
+            0%   { transform: translateY(-20px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        button {
+            width: 15rem;
+            height: 11rem;
+            background-position-y: -10px, center;
+            background-size: auto 80px, 100% 100%;
+            background-position-x: center;
+            background-repeat: repeat-x;
+
+            .mainName {
+                font-weight: 500;
+                font-size: 1.5rem;
+            }
+            
+            .subName {
+                font-family: 'Source Han Sans', 'Noto Sans CJK', 'HiraginoSans-W8', 'Yu Gothic', $font-family;
+                font-weight: 800;
+                opacity: 0.5;
+                font-feature-settings: "palt" 1;
+            }
+
+            iconify-icon {
+                font-size: 5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        #sekaiMode {
+            background-image: var(--halftone-bg-white);
+            background-color: #00FFDD;
+            border-color: #CBFFF7;
+            position: relative;
+        }
+
+        #focusMode {
+            background-image: var(--halftone-bg-white-25);
+            background-color: #FEA48F;
+            border-color: #FFD1C7;
+        }
+    }
+} 

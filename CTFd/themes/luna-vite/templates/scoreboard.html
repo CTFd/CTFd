@@ -1,0 +1,70 @@
+{% extends "templates/tabbed.html" %}
+{% from "macros/rank.html" import get_rank_int %}
+
+{% block title %}Ranking{% endblock %}
+{% block subtitle %}{% trans %}Scoreboard{% endtrans %}{% endblock %}
+
+{% block tabbedContent %}
+<button class="tab active" data-target="tabScoreboard">{% trans %}Scoreboard{% endtrans %}</button>
+<button class="tab" data-target="tabTimeline">{% trans %}Timeline{% endtrans %}</button>
+{% endblock %}
+
+{% block framedContent %}
+<div class="tabPane" id="tabScoreboard">
+  <div class="frameContentWrapper">
+    {% include "components/errors.html" %}
+    
+    {% cache 60, CacheKeys.PUBLIC_SCOREBOARD_TABLE %}
+    {% if standings %}
+      {% for standing in standings %}
+        <a class="listItem scoreboardListItem" href="{{ generate_account_url(standing.account_id) }}" data-{{ get_config('user_mode')[:-1] }}-id="{{ standing.account_id }}">
+          <div class="listItemNumber">
+            {{ get_rank_int(loop.index) }}
+          </div>
+          {% set team_name = standing.name | urlencode %}
+          {% set team_name = team_name.replace('%20', '+') %}
+          <div class="listItemDetailsIcon">
+            <img width="60" height="60" loading="lazy" class="cellBodyIcon" src="{{ standing.gravatar }}" data-fallback="https://avatars.dicebear.com/api/initials/{{team_name}}.svg?backgroundColorLevel=800" onerror="this.src = this.dataset.fallback;this.onerror='';">
+          </div>
+          <div class="listItemDetails">
+            
+            <div class="listItemDetailsPrimary">
+              
+              {{ standing.name | truncate(50) }}
+              {% if standing.oauth_id %}
+                {% if Configs.user_mode == 'teams' %}
+                  <a href="https://majorleaguecyber.org/t/{{ standing.name }}" class="chip">{% trans %}Official{% endtrans %}</a>
+                {% elif Configs.user_mode == 'users' %}
+                  <a href="https://majorleaguecyber.org/u/{{ standing.name }}" class="chip">{% trans %}Official{% endtrans %}</a>
+                {% endif %}
+              {% endif %}
+            </div>
+            <div>{{ ngettext('%(solves)d solve', '%(solves)d solves', standing.count, solves=standing.count) }}</div>
+          </div>
+          <div class="listItemScore digits5">
+            <span>
+              <span class="listItemScoreValue">{{ standing.score }}</span>&nbsp;<span class="listItemScoreP">P</span>
+            </span>
+          </div>
+        </a>
+      {% endfor %}
+    {% else %}
+      <div class="info" style="justify-content: center;">{% trans %}Scoreboard is unavailable.{% endtrans %}</div>
+    {% endif %}
+    {% endcache %}
+
+  </div>
+</div>
+<div class="hidden tabPane" id="tabTimeline">
+  <div class="chartContainer">
+    <div id="score-graph" style="width: 100%; height: 100%;" x-data="ScoreboardDetail" x-ref="scoregraph">
+      Loading...
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+  {{ Assets.js("assets/js/scoreboard.js") }}
+{% endblock %}

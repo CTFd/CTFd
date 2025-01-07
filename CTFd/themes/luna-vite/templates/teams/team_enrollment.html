@@ -1,0 +1,38 @@
+{% extends "templates/plain.html" %}
+
+{% block plainContent %}
+
+<div class="modal centered fit">
+  <h2 class="modalHeader">Team</h2>
+
+  <div class="modalBody">
+    <p>
+      {{ gettext("Welcome to <b>%(name)s</b>!", name=Configs.ctf_name) | safe }}
+    </p>
+    <p>
+      {% trans %}In order to participate you must either join or create a team.{% endtrans %}
+    </p>
+
+  </div>
+  <div class="modalFooter">
+    {% if integrations.mlc() %}
+      <a href="{{ url_for('auth.oauth_login') }}" class="button textButton alternate primary shade">
+        <span>{% trans %}Play with Official Team{% endtrans %}</span>
+      </a>
+      <a href="{{ url_for('teams.join') }}" class="button textButton alternate shade">
+        <span>{% trans %}Join Unofficial Team{% endtrans %}</span>
+      </a>
+      <a href="{{ url_for('teams.new') }}" class="button textButton alternate shade">
+        <span>{% trans %}Create Unofficial Team{% endtrans %}</span>
+      </a>
+    {% else %}
+      <a href="{{ url_for('teams.join') }}" class="button textButton shade">
+        <span>{% trans %}Join Team{% endtrans %}</span>
+      </a>
+      <a href="{{ url_for('teams.new') }}" class="button textButton primary shade">
+        <span>{% trans %}Create Team{% endtrans %}</span>
+      </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

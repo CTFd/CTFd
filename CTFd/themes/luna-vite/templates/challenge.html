@@ -1,0 +1,190 @@
+{%- set info = {"labels": [], "difficulty": 1} -%}
+{%- set difficultyMapping = {
+Configs.theme_settings["tag_difficulty_1"]: 1,
+Configs.theme_settings["tag_difficulty_2"]: 2,
+Configs.theme_settings["tag_difficulty_3"]: 3,
+Configs.theme_settings["tag_difficulty_4"]: 4,
+Configs.theme_settings["tag_difficulty_5"]: 5,
+} -%}
+{%- for tag in tags -%}
+{%- if tag in difficultyMapping -%}
+{%- set _ = info.update(difficulty=difficultyMapping[tag]) -%}
+{%- else -%}
+{%- set _ = info['labels'].append(tag) -%}
+{%- endif -%}
+{%- endfor -%}
+<div id="challengeContent" x-data="Challenge" x-init="id = {{ challenge.id }}">
+  <button class="button iconButton small" id="collapseButton" @click="collapse()">
+    <iconify-icon icon="fa6-solid:chevron-left"></iconify-icon>
+  </button>
+  <div class="currentChallengeInfoRow">
+    <div class="currentChallengeScore">
+      {{ challenge.value }}
+    </div>
+    <hgroup class="currentChallengeInfo">
+      <h2 class="currentChallengeName">{{ challenge.name }}</h2>
+      <p class="currentChallengeCategory" role="doc-subtitle">{{ challenge.category }}</p>
+    </hgroup>
+  </div>
+  <div class="currentChallengeMeta">
+    {% for label in info['labels'] %}
+    <span class="chip" aria-label="Tag: {{ label }}">{{ label }}</span>
+    {% endfor %}
+    <div
+      class="challengeIndicators"
+      aria-label="{{ gettext('Difficulty level %(diff)s', diff='${ch.difficulty}') }}, {{'{% trans %}you are the first solver{% endtrans %}' if is_first_solver else '{% trans %}solved{% endtrans %}' if solved_by_me else '{% trans %}unsolved{% endtrans %}'}}"
+      title="{{ gettext('Difficulty level %(diff)s', diff='${ch.difficulty}') }}, {{'{% trans %}you are the first solver{% endtrans %}' if is_first_solver else '{% trans %}solved{% endtrans %}' if solved_by_me else '{% trans %}unsolved{% endtrans %}'}}"
+      >
+      {% for i in range(info['difficulty']) %}
+      <span
+        class="challengeIndicator {{'first' if is_first_solver else '{% trans %}solved{% endtrans %}' if solved_by_me else '{% trans %}unsolved{% endtrans %}'}}"></span>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</div>
+
+  {% if challenge.connection_info %}
+  <div class="inputFrame copyableConnection" x-ref="connectionBox">
+    {% block connection_info %}
+    {% set conn = challenge.connection_info %}
+    {% if not conn %}
+    {% elif conn.startswith("http") %}
+    <code class="connectionValue">{{ conn | urlize(target="_blank") }}</code>
+    {% else %}
+    <code class="connectionValue">{{ conn }}</code>
+    {% endif %}
+    <button class="inputIcon" type="button" @click="copyText({{ conn | tojson | forceescape }})">
+      <iconify-icon icon="material-symbols:content-copy" inline class=""></iconify-icon>
+    </button>
+    {% endblock %}
+  </div>
+  {% endif %}
+
+  {% if hints %}
+  <div class="buttonRow">
+    {% for hint in hints %}
+    {% if hint.content %}
+    <button class="button textButton shade small" @click="showHint({{ hint.id }}, false)">
+      <span>{{ gettext('View hint %(id)d', id=loop.index) }}</span>
+    </button>
+    {% else %}
+    <button class="button textButton shade small" @click="showHint({{ hint.id }}, true)">
+      {% if hint.cost == 0 %}
+      <span>{{ gettext('View hint %(id)d', id=loop.index) }}</span>
+      {% else %}
+      <span>{{ gettext('Unlock hint %(id)d for %(points)d points', id=loop.index, points=hint.cost) }}</span>
+      {% endif %}
+      </details>
+      {% endif %}
+      {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if files %}
+  <div class="buttonRow">
+    {% for file in files %}
+    <a href="{{ file }}" target="_blank" class="button textButton shade small">
+      <iconify-icon icon="material-symbols:download" aria-label="{% trans %}Download attachment{% endtrans %}"></iconify-icon>
+      <span>
+        {% set segments = file.split('/') %}
+        {% set file = segments | last %}
+        {% set token = file.split('?') | last %}
+        {% if token %}
+        {{ file | replace("?" + token, "") }}
+        {% else %}
+        {{ file }}
+        {% endif %}
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if max_attempts > 0 %}
+  <div class="info" role="alert">
+    <iconify-icon icon="material-symbols:info"></iconify-icon>
+    <span>{{ gettext('%(attempts)d/%(max)d attempt', attempts=attempts, max=max_attempts) }}</span>
+  </div>
+  {% endif %}
+
+  <div class="filler"></div>
+
+  {% block solves %}
+  <div class="solvers">
+    {% if solves != None %}
+    <button class="button textButton shade small" {{ 'disabled' if solves==0 else '' }} @click="showSolves()"><span>
+        <span x-show="solves === null">{{ ngettext('%(solves)s solve', '%(solves)s solves', solves, solves=solves) }}</span>
+        <span x-show="solves !== null">{{ gettext('<span x-text="(solves && solves.length)"></span> solve<span x-text="(solves && solves.length !== 1) ? `s` : ``"></span>') | safe }}</span>
+      </span></button>
+    {% endif %}
+  </div>
+  {% endblock %}
+
+  <div class="flagSubmissionRow">
+    {% block input %}
+    <input id="challenge-id" type="hidden" value="{{ challenge.id }}">
+    <div class="inputFrame flag">
+      <input type="text" name="submission" id="challenge-input"
+        aria-label="{{ gettext('Challenge is already solved') if solved_by_me else gettext('Enter flag') }}"
+        @keyup.enter="submitChallenge()" x-model="submission" {{ 'disabled' if solved_by_me else '' }}
+        placeholder="{{ gettext('Already solved.') if solved_by_me else (Configs.theme_settings['flag_placeholder'] or 'SEKAI{…}') }}">
+      <iconify-icon icon="ic:baseline-edit" class="inputIcon" aria-hidden="true"></iconify-icon>
+    </div>
+    {% endblock %}
+    {% block submit %}
+    <button class="button iconButton small" @click.debounce.500ms="submitChallenge()"
+      :disabled="{{ solved_by_me | tojson }} || submitting" aria-label="{% trans %}Submit flag{% endtrans %}" title="{% trans %}Submit flag{% endtrans %}">
+      <iconify-icon icon="material-symbols:send" aria-hidden="true"></iconify-icon>
+    </button>
+    {% endblock %}
+  </div>
+
+  <dialog class="modal fit" id="solvers" x-ref="solversModal">
+    <h2 class="modalHeader">{{ gettext('<span x-text="solves && solves.length"></span> solve<span
+        x-text="(solves && solves.length !== 1) ? `s` : ``"></span> of %(name)s', name=challenge.name) | safe }}</h2>
+    <div class="modalBody">
+      <template x-for="(solve, idx) in solves">
+        <a :href="solve.account_url"
+          :class="{'listItem': true, 'active': solve.account_id == (window.init.userMode == 'teams' ? window.init.teamId : window.init.userId)}">
+          <div class="listItemNumber">
+            <img :src="window.rankIcons[idx]" :alt="idx + 1" x-show="idx < 3">
+            <span x-text="idx + 1" x-show="idx >= 3"></span>
+          </div>
+          <div class="listItemDetails solversItemDetails">
+            <div class="listItemDetailsPrimary" x-text="solve.name"></div>
+            <div x-text="solve.date"></div>
+          </div>
+          <div class="listItemScore digits5">
+            <span>
+              <span class="listItemScoreValue" x-html="solve.timeDiff"></span>
+            </span>
+          </div>
+        </a>
+      </template>
+    </div>
+    <div class="modalFooter">
+      <button class="button textButton shade" x-ref="solversModalClose">
+        <span>{% trans %}Close{% endtrans %}</span>
+      </button>
+    </div>
+  </dialog>
+
+  {% for hint in hints %}
+  <dialog class="modal fit hintModal" x-ref="hintDialog{{ hint.id }}" data-hint-id="{{ hint.id }}">
+    <h2 class="modalHeader">{{ gettext('Hint %(id)d', id=loop.index) }}</h2>
+    <div class="modalBody text">
+      {% if hint.content %}
+      {{ hint.html | safe }}
+      {% else %}
+      <div x-html="hints[{{ hint.id }}].html"></div>
+      {% endif %}
+    </div>
+    <div class="modalFooter">
+      <button class="button textButton shade">
+        <span>{% trans %}Close{% endtrans %}</span>
+      </button>
+    </div>
+  </dialog>
+  {% endfor %}
+
+</div>

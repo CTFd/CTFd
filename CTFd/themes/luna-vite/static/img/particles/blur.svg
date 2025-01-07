@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="136px" height="91px" viewBox="0 0 136 91" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>blur</title>
+    <defs>
+        <filter x="-12.9%" y="-22.1%" width="125.8%" height="144.1%" filterUnits="objectBoundingBox" id="filter-1">
+            <feGaussianBlur stdDeviation="10" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="blur" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M68.6691104,11.7766734 L122.495025,74.6999259 C123.213036,75.539291 123.114659,76.8017939 122.275294,77.519805 C121.913019,77.8297032 121.451959,78 120.97522,78 L13.3233906,78 C12.2188212,78 11.3233906,77.1045695 11.3233906,76 C11.3233906,75.5232607 11.4936874,75.0622013 11.8035857,74.6999259 L65.6295004,11.7766734 C66.3475115,10.9373083 67.6100144,10.8389315 68.4493795,11.5569426 C68.5282109,11.6243767 68.6016762,11.697842 68.6691104,11.7766734 Z" id="Triangle-Copy-5" fill="#FFFFFF" filter="url(#filter-1)"></path>
+    </g>
+</svg>

@@ -1,0 +1,11 @@
+{% macro wtf_input_field(field) -%}
+<div class="inputFrame">
+    {{ field }}
+    <iconify-icon icon="ic:baseline-edit" class="inputIcon"></iconify-icon>
+</div>
+{%- endmacro %}
+{% macro wtf_dropdown_field(field) -%}
+<div class="inputFrame dropdown">
+    {{ field }}
+</div>
+{%- endmacro %}

@@ -1,0 +1,176 @@
+{% extends "templates/plain.html" %}
+
+{% block plainContent %}
+<div id="challengesWrapper" x-data="ChallengeBoard" @load-challenges.window="loadChallengesEvt()"
+@load-challenge.window="loadChallengeEvt($event.detail)" @collapse-challenge.window="collapseChallengeEvt()" @lrlr.window="lrlr()">
+  <div class="titleContainer">
+      <button class="button iconButton shade" id="backButton" aria-label="Go back" title="Go back">
+          <iconify-icon icon="icon-park-solid:back"></iconify-icon>
+      </button>
+      <div class="titleGroup">
+          <h1 class="title" x-text="lrn === null ? 'Challenges' : 'Solo Live'">Challenges</h1>
+          <h2 class="subtitle"><span x-text="lrn === null ? '{% trans %}Challenges list{% endtrans %}' : '楽曲選択'" :lang="lrn === null ? '' : 'ja'">{% trans %}Challenges list{% endtrans %}</span></h2>
+      </div>
+    </div>
+    <button class="button iconButton tiny" id="settingsButton" @click="$refs.settingsModal.showModal()" aria-label="Challenge settings" title="Challenge settings">
+      <iconify-icon icon="material-symbols:settings"></iconify-icon>
+    </button>
+  <nav class="tabs">
+      <div class="filler"></div>
+      <button :class="{'tab': true, 'active': category === null}" @click="setCategory(null)" aria-label="{% trans %}All challenges{% endtrans %}" x-text="lrn === null ? '{% trans %}All{% endtrans %}' : 'すべて'" :lang="lrn === null ? '' : 'ja'">{% trans %}All{% endtrans %}</button>
+      <template x-for="(cat, idx) in getCategoryWithIcons()" :key="idx">
+        <button class="tab" :class="{'tab': true, 'active': category === cat[0]}" @click="setCategory(cat[0])" :aria-label="`${cat[0]}, {% trans %}category{% endtrans %}`">
+          <img :src="cat[1]" :alt="cat[0]" x-show="cat[1] !== null" :title="cat[0]" aria-hidden="true"/>
+          <span x-text="cat[0]" x-show="cat[1] === null"></span>
+        </button>
+      </template>
+      <div class="filler"></div>
+  </nav>
+
+  <div id="challengesListWrapper">
+    <div id="challengesList" :class="{'loopHighlight': loopHighlight, 'highContrast': highContrast}" x-ref="listNode" role="list" aria-label="{% trans %}Challenges list{% endtrans %}">
+      <div x-show="filteredChallenges.length < 1" class="noChallenge">{% trans %}No challenges found.{% endtrans %}</div>
+      <div x-show="filteredChallenges.length > 0" class="indicator">▶</div>
+      <template x-for="(ch, idx) in repeatArray(filteredChallenges, repeatTimes)" :key="`a${ch.id}-${idx}`">
+        <div :data-id="ch.id" :class="{'challengeItem': true, 'solved': ch.solved_by_me, 'solvedFirst': ch.is_first_solver, }" @click="selectChallenge(idx % filteredChallenges.length, $event.target)" aria-hidden="true">
+        {% include 'components/challengeListEntry.html' %}
+        </div>
+      </template>
+      <template x-for="(ch, idx) in filteredChallenges" :key="`c${ch.id}-${idx}`">
+        <button :data-id="ch.id" :data-is-center="idx" :data-index="idx" 
+          :class="{ 'challengeItem': true, 'solved': ch.solved_by_me, 'solvedFirst': ch.is_first_solver, 'selected': ch.id === selectedId }" 
+          @click="selectChallenge(idx, $event.target)" role="listitem" :aria-label="`${ch.name}, {{ gettext('%(points)s points', points='${ch.value}') }}, {{ gettext('category %(category)s', category='${ch.category}') }}, {{ gettext('difficulty level %(level)s', level='${ch.difficulty}') }}, ` + (ch.is_first_solver ? '{% trans %}you are the first solver{% endtrans %}' : ch.solved_by_me ? '{% trans %}solved{% endtrans %}' : '{% trans %}unsolved{% endtrans %}')"> 
+        {% include 'components/challengeListEntry.html' %}
+        </button>
+      </template>
+      <template x-for="(ch, idx) in repeatArray(filteredChallenges, repeatTimes)" :key="`b${ch.id}-${idx}`" x-ref="bottomRepeatTemplate">
+        <div :data-id="ch.id" :class="{'challengeItem': true, 'solved': ch.solved_by_me, 'solvedFirst': ch.is_first_solver, }" @click="selectChallenge(idx % filteredChallenges.length, $event.target)" aria-hidden="true">
+        {% include 'components/challengeListEntry.html' %}
+        </div>
+      </template>
+    </div>
+    <div x-show="!loaded" class="loadingWrapper">{% include "components/loading.html" %}</div>
+    {% if infos or errors %}
+      <div id="challengeContentErrors">
+        {% include "components/errors.html" %}
+      </div>
+    {% endif %}
+    </div>
+
+  <article id="challengesContentWrapper" :class="{'expanded': selectedId !== null}" x-ref="challengesContentWrapper" tabindex="0" x-html="$store.challenge.data.view">
+  </article>
+  <div class="loadingWrapper" x-show="$store.challenge.loading">{% include "components/loading.html" %}</div>
+
+  <dialog class="modal fit" id="challengesSettings" x-ref="settingsModal" :lang="lrn === null ? '' : 'ja'">
+    <h2 class="modalHeader" x-text="lrn === null ? '{% trans %}Challenges settings{% endtrans %}' : 'オプション'">{% trans %}Challenges settings{% endtrans %}</h2>
+    <div class="modalBody">
+      <h3 class="sectionTitle" x-text="lrn === null ? '{% trans %}Sort order{% endtrans %}' : '並べ替え'">{% trans %}Sort order{% endtrans %}</h3>
+      <div class="challengeSettings2">
+        <div class="radioGroup">
+          <input type="radio" @change="refreshSortFilter()" name="sortOrder" x-model="sortOrder" id="sortOrederDifficulty" value="Difficulty">
+          <label for="sortOrederDifficulty" x-text="lrn === null ? '{% trans %}Difficulty{% endtrans %}' : '難易度順'">{% trans %}Difficulty{% endtrans %}</label>
+        </div>
+        <div class="radioGroup">
+          <input type="radio" @change="refreshSortFilter()" name="sortOrder" x-model="sortOrder" id="sortOrederScore" value="Score">
+          <label for="sortOrederScore" x-text="lrn === null ? '{% trans %}Score{% endtrans %}' : 'スコア順'">{% trans %}Score{% endtrans %}</label>
+        </div>
+        <div class="radioGroup">
+          <input type="radio" @change="refreshSortFilter()" name="sortOrder" x-model="sortOrder" id="sortOrederSolves" value="Solves">
+          <label for="sortOrederSolves" x-text="lrn === null ? '{% trans %}Solves{% endtrans %}' : 'クリア人数順'">{% trans %}Solves{% endtrans %}</label>
+        </div>
+        <div class="radioGroup">
+          <input type="radio" @change="refreshSortFilter()" name="sortOrder" x-model="sortOrder" id="sortOrederName" value="Name">
+          <label for="sortOrederName" x-text="lrn === null ? '{% trans %}Name{% endtrans %}' : '50音順'">{% trans %}Name{% endtrans %}</label>
+        </div>
+      </div>
+      <h3 class="sectionTitle" x-text="lrn === null ? '{% trans %}Filter challenges{% endtrans %}' : '絞り込み'">{% trans %}Filter challenges{% endtrans %}</h3>
+      <div class="challengeSettings3">
+        <div class="radioGroup">
+          <input type="radio" @change="refreshSortFilter()" name="filterCondition" x-model="filterCondition" id="filterConditionAll" value="All">
+          <label for="filterConditionAll" x-text="lrn === null ? '{% trans %}All{% endtrans %}' : 'すべて'">{% trans %}All{% endtrans %}</label>
+        </div>
+        <div class="radioGroup">
+          <input type="radio" @change="refreshSortFilter()" name="filterCondition" x-model="filterCondition" id="filterConditionUnsolved" value="Unsolved">
+          <label for="filterConditionUnsolved" x-text="lrn === null ? '{% trans %}Unsolved{% endtrans %}' : '未クリア'">{% trans %}Unsolved{% endtrans %}</label>
+        </div>
+        <div class="radioGroup">
+          <input type="radio" @change="refreshSortFilter()" name="filterCondition" x-model="filterCondition" id="filterConditionSolved" value="Solved">
+          <label for="filterConditionSolved" x-text="lrn === null ? '{% trans %}Solved{% endtrans %}' : 'クリア済み'">{% trans %}Solved{% endtrans %}</label>
+        </div>
+      </div>
+      <h3 class="sectionTitle" x-text="lrn === null ? '{% trans %}Accessibility{% endtrans %}' : 'システム'">{% trans %}Accessibility{% endtrans %}</h3>
+      <div class="challengeSettings3">
+        <div class="chip" x-text="lrn === null ? '{% trans %}Focus mode{% endtrans %}' : 'フォーカスモード'">{% trans %}Focus mode{% endtrans %}</div>
+        <div class="radioGroup">
+          <input type="radio" name="loopHighlight" x-model.number="loopHighlight" id="loopHighlightOn" value="1">
+          <label for="loopHighlightOn" x-text="lrn === null ? '{% trans %}On{% endtrans %}' : 'ON'">{% trans %}On{% endtrans %}</label>
+        </div>
+        <div class="radioGroup">
+          <input type="radio" name="loopHighlight" x-model.number="loopHighlight" id="loopHighlightOff" value="0">
+          <label for="loopHighlightOff" x-text="lrn === null ? '{% trans %}Off{% endtrans %}' : 'OFF'">{% trans %}Off{% endtrans %}</label>
+        </div>
+        <div class="chip" x-text="lrn === null ? '{% trans %}High contrast{% endtrans %}' : 'ハイコントラスト'">{% trans %}High contrast{% endtrans %}</div>
+        <div class="radioGroup">
+          <input type="radio" name="highContrast" x-model.number="highContrast" id="highContrastOn" value="1">
+          <label for="highContrastOn" x-text="lrn === null ? '{% trans %}On{% endtrans %}' : 'ON'">{% trans %}On{% endtrans %}</label>
+        </div>
+        <div class="radioGroup">
+          <input type="radio" name="highContrast" x-model.number="highContrast" id="highContrastOff" value="0">
+          <label for="highContrastOff" x-text="lrn === null ? '{% trans %}Off{% endtrans %}' : 'OFF'">{% trans %}Off{% endtrans %}</label>
+        </div>
+      </div>
+    </div>
+    <div class="modalFooter">
+        <button class="button textButton shade" x-ref="settingsModalClose">
+            <span x-text="lrn === null ? '{% trans %}Close{% endtrans %}' : '閉じる'" :lang="lrn === null ? '' : 'ja'">{% trans %}Close{% endtrans %}</span>
+        </button>
+    </div>
+  </dialog>
+
+  <dialog class="modal fit" id="oobeModal" x-ref="oobeModal">
+    <h2 class="modalHeader">{% trans %}Select a style{% endtrans %}</h2>
+    <div class="modalBody modeSelection">
+      <button class="button" id="sekaiMode" @click="oobeUpdate(false)">
+        <iconify-icon icon="fluent:music-note-2-24-filled"></iconify-icon>
+        <div class="subName" lang="ja">セカイモード</div>  
+        <div class="mainName">{% trans %}SEKAI mode{% endtrans %}</div>
+      </button>
+      <button class="button" id="focusMode" @click="oobeUpdate(true)">
+        <iconify-icon icon="carbon:accessibility-color"></iconify-icon>
+        <div class="subName" lang="ja">フォーカスモード</div>  
+        <div class="mainName">{% trans %}Focus mode{% endtrans %}</div>
+      </button>
+    </div>
+    <div class="modalFooter">
+      <div class="formHint">{% trans %}You can change your selection later in the Settings panel.{% endtrans %}</div>
+    </div>
+  </dialog>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<style>
+body {
+    --popout: url("{{ url_for('views.themes', path='img/popout.svg') }}");
+}
+</style>
+<script>
+  window.tagImages = {
+    "misc": "{{ url_for('views.themes', path='img/categories/Misc.svg') }}",
+    "crypto": "{{ url_for('views.themes', path='img/categories/Crypto.svg') }}",
+    "forensics": "{{ url_for('views.themes', path='img/categories/Forensics.svg') }}",
+    "reverse": "{{ url_for('views.themes', path='img/categories/Reverse.svg') }}",
+    "pwn": "{{ url_for('views.themes', path='img/categories/Pwn.svg') }}",
+    "ppc": "{{ url_for('views.themes', path='img/categories/PPC.png') }}",
+    "web": "{{ url_for('views.themes', path='img/categories/Web.svg') }}",
+    "blockchains": "{{ url_for('views.themes', path='img/categories/Blockchains.svg') }}",
+  };
+  window.rankIcons = [
+    "{{ url_for('views.themes', path='img/ranks/rank-1.svg') }}",
+    "{{ url_for('views.themes', path='img/ranks/rank-2.svg') }}",
+    "{{ url_for('views.themes', path='img/ranks/rank-3.svg') }}",
+  ];
+</script>
+{{ Assets.js("assets/js/challenges.js") }}
+{% endblock %}

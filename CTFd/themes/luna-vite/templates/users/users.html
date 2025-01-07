@@ -1,0 +1,70 @@
+{% extends "templates/framed.html" %}
+{% from "macros/input.html" import wtf_input_field %}
+
+{% block title %}Users{% endblock %}
+{% block subtitle %}{% if q and field %}{% trans %}Search result{% endtrans %}{% else %}{% trans %}Users list{% endtrans %}{% endif %}{% endblock %}
+
+{% block framedContent %}
+<div class="frameContentWrapper">
+  
+  {% with form = Forms.users.PublicUserSearchForm(field=field, q=q) %}
+    <form method="GET" class="searchForm">
+      <input type="hidden" name="field" value="name">
+      {{ wtf_input_field(form.q(class="form-control w-100", placeholder="Search")) }}
+      <button type="submit" class="button roundIconButton">
+        <iconify-icon icon="material-symbols:search" class="" inline></iconify-icon>
+      </button>
+    </form>
+  {% endwith %}
+
+  {% if users.total == 0 %}
+    <div class="warning" style="justify-content: center;">{% trans %}No user found.{% endtrans %}</div>
+  {% else %}
+    <div class="grid">
+      {% for user in users.items %}
+        {% if scores_visible() %}
+        <a href="{{ url_for('users.public', user_id=user.id) }}" class="gridCell">
+        {% else %}
+        <div class="gridItem">
+        {% endif %}
+          <div class="cellHeader">{{ user.name | truncate(50) }}</div>
+          <div class="cellBody">
+            {% set user_name = user.name | urlencode %}
+            {% set user_name = user_name.replace('%20', '+') %}
+            <img width="80" height="80" class="cellBodyIcon" src="{{ user.gravatar('404') }}" data-fallback="https://avatars.dicebear.com/api/initials/{{user_name}}.svg?backgroundColorLevel=800" onerror="this.src = this.dataset.fallback;this.onerror='';">
+          </div>
+          <div class="cellFooter">
+            {% if user.team %}{{user.team.name | truncate(50) }}{% else %}<em>{% trans %}No team{% endtrans %}</em>{% endif %}
+          </div>
+        {% if scores_visible() %}</a>{% else %}</div>{% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if users.pages > 1 %}
+  <div class="pageCounter">
+    {% for page in range(1, users.pages + 1) %}
+    <a class="pageCounterDot {% if users.page == page %}active{% endif %}" href="{{ url_for(request.endpoint) }}?page={{ page }}" title="Page {{ page }}" aria-label="Page {{ page }}"></a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% if users.pages > 1 %}
+  {% if users.page != 1 %}
+  <a class="pageIndicator previousPage" href="{{ prev_page }}">
+      <img src="{{ url_for('views.themes', path='img/left-chevron.svg') }}" alt="Previous page" />
+    </a>
+  {% endif %}
+
+  {% if users.next_num %}
+    <a class="pageIndicator nextPage" href="{{ next_page }}">
+      <img src="{{ url_for('views.themes', path='img/right-chevron.svg') }}" alt="Next page" />
+    </a>
+  {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {#{ Assets.js("assets/js/users/list.js") }#}
+{% endblock %}

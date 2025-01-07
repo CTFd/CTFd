@@ -1,0 +1,214 @@
+.chip {
+    background-color: $accent-color;
+    color: white;
+    border-radius: 2rem;
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    text-align: center;
+
+    &.tall {
+        padding: 0.5rem 1rem;
+    }
+}
+
+.inputFrame {
+    border: 2px solid #8787A5;
+    padding: 0.25rem;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 0 0 #C5C5D2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.5rem;
+    background-color: #fff;
+
+    input:focus {
+        outline: none;
+    }
+
+    input {
+        border: none;
+        font-family: $font-family;
+        flex-grow: 1;
+        font-size: 0.75em;
+    }
+
+    .inputIcon {
+        color: #444463;
+        font-size: 1em;
+    }
+
+    button.inputIcon {
+        padding: 0 5px;
+        background-color: transparent;
+        border: none;
+        border-radius: 5px;
+    }
+
+    button.inputIcon:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &.dropdown select {
+        width: 100%;
+        border: none;
+        background-color: transparent;
+        font-size: 0.75em;
+    }
+}
+
+.warning {
+    color: $warning-color;
+}
+
+.info {
+    color: $accent-text-color;
+}
+
+.formHint {
+    color: opacify($primary-fg, 0.75);
+    font-size: 1rem;
+    font-style: italic;
+}
+
+.warning,
+.info {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.warning iconify-icon,
+.info iconify-icon {
+    font-size: 1.5rem;
+}
+
+.warning span,
+.info span {
+    align-self: center;
+}
+
+.formFields {
+    display: grid;
+    gap: 1rem;
+    overflow: visible;
+    align-items: center;
+
+    @include media-lg {
+        grid-template-columns: max-content 1fr;
+    }
+
+    .warning,
+    .info,
+    .formHint {
+        grid-column: 1/-1;
+    }
+
+    .formHint {
+        margin: 0;
+    }
+
+    .formHint.fieldHint {
+        margin: -0.5rem 0 0 0;
+    }
+
+    .formButtons {
+        grid-column: 1/-1;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
+
+        @include media-sm {
+            flex-direction: column;
+        }
+    }
+}
+
+@import 'tippy.js/dist/tippy.css';
+@import 'tippy.js/themes/light.css';
+@import 'tippy.js/dist/border.css';
+
+.tippy-box[data-theme~='lunaDefault'] {
+    background-color: $primary-fg;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.sectionTitle {
+    color: $accent-color;
+    border-bottom: 2px solid $accent-color;
+    margin-bottom: 1rem;
+    font-weight: 600;
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border: 5px solid $accent-color;
+        box-sizing: content-box;
+        border-radius: 3px;
+        transform: rotate(45deg);
+        margin-right: 0.3em;
+    }
+}
+
+.radioGroup {
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: 400;
+
+    input[type=radio] {
+        position: relative;
+        margin: 0.25rem 1rem 0.25rem 0;
+        width: 1.5rem;
+        height: 1.5rem;
+
+        &:checked::before {
+            transform: scale(1, 1);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus::after {
+            border-color: $accent-color;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: -0.25rem;
+            left: -0.125rem;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 50%;
+            border: 3px solid #e1e1e1;
+            box-shadow: 0 0 0 3px #555573, 0 2px 0 3px #555573;
+        }
+
+        &::before {
+            transition: transform 0.4s cubic-bezier(0.45, 1.8, 0.5, 0.75);
+            transform: scale(0, 0);
+            content: "";
+            position: absolute;
+            top: 0.1rem;
+            left: 0.225rem;
+            z-index: 1;
+            width: 80%;
+            height: 80%;
+            background: #5CC9BB;
+            border-radius: 50%;
+        }
+    }
+}

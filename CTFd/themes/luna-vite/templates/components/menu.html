@@ -1,0 +1,103 @@
+<button class="button shade iconButton menuButton buttonNotification" id="mainMenuButton" aria-label="Main menu" title="Main Menu">
+    <iconify-icon icon="ic:baseline-menu"></iconify-icon>
+</button>
+<dialog class="modal fit" id="mainMenuModal">
+    <h2 class="modalHeader">{% trans %}Menu{% endtrans %}</h2>
+    <div class="modalBody">
+        {% for page in Plugins.user_menu_pages %}
+            <a class="button textButton shade primaryIcon" href="{{ page.route }}">
+                <iconify-icon icon="ic:baseline-contact-page"></iconify-icon>
+                <span>{{ gettext("Rules") if page.title == "Rules" else page.title }}</span>
+            </a>
+        {% endfor %}
+
+        {% if Configs.account_visibility != 'admins' %}
+            {% if Configs.user_mode == 'teams' %}
+                <a class="button textButton shade primaryIcon" href="{{ url_for('teams.listing') }}">
+                    <iconify-icon icon="ic:baseline-people-alt"></iconify-icon>
+                    <span>{% trans %}Teams{% endtrans %}</span>
+                </a>
+            {% endif %}
+
+            <a class="button textButton shade primaryIcon" href="{{ url_for('users.listing') }}">
+                <iconify-icon icon="ic:baseline-person"></iconify-icon>
+                <span>{% trans %}Users{% endtrans %}</span>
+            </a>
+        {% endif %}
+
+        {% if Configs.score_visibility != 'admins' %}
+            <a class="button textButton shade primaryIcon" href="{{ url_for('scoreboard.listing') }}">
+                <iconify-icon icon="mdi:podium"></iconify-icon>
+                <span>{% trans %}Ranking{% endtrans %}</span>
+            </a>
+        {% endif %}
+
+        <a class="button textButton alternate" href="/">
+            <iconify-icon icon="ic:baseline-home"></iconify-icon>
+            <span>{% trans %}Home{% endtrans %}</span>
+        </a>
+
+        <a class="button textButton alternate" id="mainMenuTitleBtn" href="/">
+            <iconify-icon icon="icon-park-solid:back"></iconify-icon>
+            <span>{% trans %}Title{% endtrans %}</span>
+        </a>
+
+        {% if authed() %}
+            <a class="button textButton alternate" href="{{ url_for('challenges.listing') }}">
+                <iconify-icon icon="fluent:music-note-2-24-filled"></iconify-icon>
+                <span>{% trans %}Challenges{% endtrans %}</span>
+            </a>
+            <a class="button textButton alternate buttonNotification" id="mainMenuTitleBtn" href="{{ url_for('views.notifications') }}">
+                <iconify-icon icon="ic:baseline-notifications"></iconify-icon>
+                <span>{% trans %}Notifications{% endtrans %}</span>
+            </a>
+
+            {% if Configs.user_mode == "teams" %}
+                <a class="button textButton small" id="mainMenuTitleBtn" href="{{ url_for('teams.private') }}">
+                    <iconify-icon icon="mdi:account-multiple-check"></iconify-icon>
+                    <span>{% trans %}Your team{% endtrans %}</span>
+                </a>
+            {% endif %}
+
+
+            <a class="button textButton small" id="mainMenuTitleBtn" href="{{ url_for('users.private') }}">
+                <iconify-icon icon="mdi:account-check"></iconify-icon>
+                <span>{% trans %}Profile{% endtrans %}</span>
+            </a>
+            <a class="button textButton small" id="mainMenuTitleBtn" href="{{ url_for('views.settings') }}">
+                <iconify-icon icon="mdi:cog"></iconify-icon>
+                <span>{% trans %}Settings{% endtrans %}</span>
+            </a>
+            <a class="button textButton small" id="mainMenuTitleBtn" href="{{ url_for('auth.logout') }}">
+                <iconify-icon icon="mdi:logout-variant"></iconify-icon>
+                <span>{% trans %}Log out{% endtrans %}</span>
+            </a>
+
+            {% if is_admin() %}
+                <a class="button textButton small" href="{{ url_for('admin.view') }}">
+                    <iconify-icon icon="ic:baseline-admin-panel-settings"></iconify-icon>
+                    <span>{% trans %}Admin panel{% endtrans %}</span>
+                </a>
+            {% endif %}
+
+        {% else %}
+
+            {% if registration_visible() %}
+                <a class="button textButton alternate" id="mainMenuTitleBtn" href="{{ url_for('auth.register') }}">
+                    <iconify-icon icon="mdi:account-plus"></iconify-icon>
+                    <span>{% trans %}Register{% endtrans %}</span>
+                </a>
+            {% endif %}
+
+            <a class="button textButton alternate" id="mainMenuTitleBtn" href="{{ url_for('auth.login') }}">
+                <iconify-icon icon="mdi:login-variant"></iconify-icon>
+                <span>{% trans %}Log in{% endtrans %}</span>
+            </a>
+        {% endif %}
+    </div>
+    <div class="modalFooter">
+        <button class="button textButton shade" id="mainMenuClose">
+            <span>{% trans %}Close{% endtrans %}</span>
+        </button>
+    </div>
+</dialog>
