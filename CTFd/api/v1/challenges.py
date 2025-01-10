@@ -203,21 +203,22 @@ class ChallengeList(Resource):
                 # Challenge type does not exist. Fall through to next challenge.
                 continue
 
-            # Challenge passes all checks, add it to response
-            response.append(
-                {
-                    "id": challenge.id,
-                    "type": challenge_type.name,
-                    "name": challenge.name,
-                    "value": challenge.value,
-                    "solves": solve_counts.get(challenge.id, solve_count_dfl),
-                    "solved_by_me": challenge.id in user_solves,
-                    "category": challenge.category,
-                    "tags": tag_schema.dump(challenge.tags).data,
-                    "template": challenge_type.templates["view"],
-                    "script": challenge_type.scripts["view"],
-                }
-            )
+            if admin_view or challenge_type.is_visible(challenge):
+                # Challenge passes all checks, add it to response
+                response.append(
+                    {
+                        "id": challenge.id,
+                        "type": challenge_type.name,
+                        "name": challenge.name,
+                        "value": challenge.value,
+                        "solves": solve_counts.get(challenge.id, solve_count_dfl),
+                        "solved_by_me": challenge.id in user_solves,
+                        "category": challenge.category,
+                        "tags": tag_schema.dump(challenge.tags).data,
+                        "template": challenge_type.templates["view"],
+                        "script": challenge_type.scripts["view"],
+                    }
+                )
 
         db.session.close()
         return {"success": True, "data": response}
@@ -303,6 +304,10 @@ class Challenge(Resource):
                 500,
                 f"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.",
             )
+        # If the challenge plugin says its not visible, 404 immediately for non
+        # admin users
+        if not is_admin() and not chal_class.is_visible(chal):
+            abort(404)
 
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
@@ -620,6 +625,8 @@ class ChallengeAttempt(Resource):
                     403,
                 )
 
+            # Note that we don't call `is_visible()` here since the challenge
+            # type may wish to be invisible but still solvable
             status, message = chal_class.attempt(challenge, request)
             if status:  # The challenge plugin says the input is right
                 if ctftime() or current_user.is_admin():
