@@ -1,3 +1,4 @@
+from CTFd.utils.security.signing import serialize
 from flask import render_template,request,Blueprint, url_for, abort,redirect
 from sqlalchemy.sql import and_
 from pathlib import Path
