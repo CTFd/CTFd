@@ -1,16 +1,13 @@
-import json
 from flask import render_template,request,Blueprint, url_for, abort,redirect
 from sqlalchemy.sql import and_
 from pathlib import Path
 from CTFd.utils.plugins import override_template
-from CTFd.utils.helpers.models import build_model_filters
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.plugins.flags import FLAG_CLASSES,get_flag_class
-from CTFd.utils.user import get_current_user,is_admin, authed,get_current_team_attrs,get_current_user_attrs,get_current_team
+from CTFd.utils.user import get_current_user,is_admin, authed,get_current_team
 from CTFd.models import Challenges, Solves, Flags, db, Configs,Hints,HintUnlocks,Flags,Submissions
-from CTFd.utils.decorators import authed_only, admins_only
+from CTFd.utils.decorators import admins_only
 from CTFd.schemas.flags import FlagSchema
-from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.cache import clear_challenges,clear_standings
@@ -18,10 +15,8 @@ from CTFd.utils import config, get_config
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.logging import log
 from CTFd.utils.challenges import (
-    get_all_challenges,
     get_solve_counts_for_challenges,
     get_solve_ids_for_user_id,
-    get_solves_for_challenge_id
 )
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -131,7 +126,6 @@ def load(app):
     def view_config():        
         key = Configs.query.filter(Configs.key == "allowUserChallenges").first().value
         db.session.commit()
-
         if key:
             if key == "true":
                 enabled = "enabled"
@@ -589,5 +583,3 @@ def load(app):
         return render_template(
             "admin/challenges/preview.html", content=content, challenge=challenge
         )
-
-        
