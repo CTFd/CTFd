@@ -122,7 +122,7 @@ export default {
         cost: this.getCost(),
         requirements: { prerequisites: this.selectedHints },
       };
-      CTFd.fetch("/api/v1/hints", {
+      CTFd.fetch("/userchallenge/api/hints", {
         method: "POST",
         credentials: "same-origin",
         headers: {

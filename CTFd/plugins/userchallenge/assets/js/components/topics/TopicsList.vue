@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     loadTopics: function () {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/topics`, {
+      CTFd.fetch(`/userchallenge/api/challenges/${this.$props.challenge_id}/topics`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -86,7 +86,7 @@ export default {
         return;
       }
 
-      CTFd.fetch(`/api/v1/topics?field=value&q=${this.topicValue}`, {
+      CTFd.fetch(`/userchallenge/api/topics?field=value&q=${this.topicValue}`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -118,7 +118,7 @@ export default {
         type: "challenge",
       };
 
-      CTFd.fetch("/api/v1/topics", {
+      CTFd.fetch("/userchallenge/api/topics", {
         method: "POST",
         body: JSON.stringify(params),
       })
@@ -133,7 +133,7 @@ export default {
         });
     },
     deleteTopic: function (topic_id) {
-      CTFd.fetch(`/api/v1/topics?type=challenge&target_id=${topic_id}`, {
+      CTFd.fetch(`/userchallenge/api/topics?type=challenge&target_id=${topic_id}`, {
         method: "DELETE",
       })
         .then((response) => {

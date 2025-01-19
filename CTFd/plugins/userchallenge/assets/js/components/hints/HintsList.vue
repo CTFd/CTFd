@@ -81,7 +81,7 @@ export default {
   methods: {
     loadHints: async function () {
       let result = await CTFd.fetch(
-        `/api/v1/challenges/${this.$props.challenge_id}/hints`,
+        `/userchallenge/api/challenges/${this.$props.challenge_id}/hints`,
         {
           method: "GET",
           credentials: "same-origin",
@@ -133,7 +133,7 @@ export default {
         title: "Delete Hint",
         body: "Are you sure you want to delete this hint?",
         success: () => {
-          CTFd.fetch(`/api/v1/hints/${hintId}`, {
+          CTFd.fetch(`/userchallenge/api/hints/${hintId}`, {
             method: "DELETE",
           })
             .then((response) => {

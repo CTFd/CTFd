@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     loadData: function () {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}`, {
+      CTFd.fetch(`/userchallenge/api/challenges/${this.$props.challenge_id}`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -100,7 +100,7 @@ export default {
         });
     },
     updateNext: function () {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}`, {
+      CTFd.fetch(`/userchallenge/api/challenges/${this.$props.challenge_id}`, {
         method: "PATCH",
         credentials: "same-origin",
         headers: {

@@ -44,7 +44,7 @@ export default {
   },
   methods: {
     loadTags: function () {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/tags`, {
+      CTFd.fetch(`/userchallenge/api/challenges/${this.$props.challenge_id}/tags`, {
         method: "GET",
         credentials: "same-origin",
         headers: {

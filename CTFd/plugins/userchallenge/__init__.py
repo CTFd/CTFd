@@ -1,3 +1,7 @@
+from CTFd.api.v1.helpers.request import validate_args
+from CTFd.schemas.files import FileSchema
+from CTFd.schemas.hints import HintSchema
+from CTFd.schemas.topics import ChallengeTopicSchema, TopicSchema
 from CTFd.utils.security.signing import serialize
 from flask import render_template,request,Blueprint, url_for, abort,redirect
 from sqlalchemy.sql import and_
@@ -6,13 +10,16 @@ from CTFd.utils.plugins import override_template
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.plugins.flags import FLAG_CLASSES,get_flag_class
 from CTFd.utils.user import get_current_user,is_admin, authed,get_current_team
-from CTFd.models import Challenges, Solves, Flags, db, Configs,Hints,HintUnlocks,Flags,Submissions
+from CTFd.models import ChallengeTopics, Challenges, Files, Solves, Flags, Tags, Topics, db, Configs,Hints,HintUnlocks,Flags,Submissions
+from CTFd.models import ChallengeFiles as ChallengeFilesModel
+from CTFd.models import ChallengeTopics as ChallengeTopicsModel
+
 from CTFd.utils.decorators import admins_only
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.cache import clear_challenges,clear_standings
-from CTFd.utils import config, get_config
+from CTFd.utils import config, get_config, uploads
 from CTFd.utils.dates import ctf_ended
 from CTFd.utils.logging import log
 from CTFd.utils.challenges import (
@@ -25,7 +32,8 @@ from CTFd.utils.config.visibility import (
     scores_visible
 )
 import functools
-import CTFd.plugins.userchallenge.apiModding as apiModding
+
+from flask_restx import Namespace
 
 
 userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',static_folder ='staticAssets')
@@ -106,6 +114,24 @@ def userChallenge_allowed(f):
                 return redirect(url_for("auth.login", next=request.full_path))
     return userChallenge_wrapper
 
+def getAllUserChallenges(q,field):
+    filters =[]
+    
+    if q:
+        # The field exists as an exposed column
+        if Challenges.__mapper__.has_property(field):
+            filters.append(getattr(Challenges, field).like("%{}%".format(q)))
+
+    filters.append(getattr(UserChallenges,'user').like(get_current_user().id))
+
+    query = db.session.query(UserChallenges.challenge).filter(*filters)
+    challenge_ids_raw = query.all()
+    challenge_ids = []
+    for chal in challenge_ids_raw:
+        challenge_ids.append(chal[0])        
+    challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
+    return challenges
+
 def load(app):
 
     app.db.create_all()
@@ -157,19 +183,8 @@ def load(app):
 
         q = request.args.get("q")
         field = request.args.get("field") 
-        filters =[]
-        if q:
-            # The field exists as an exposed column
-            if Challenges.__mapper__.has_property(field):
-                filters.append(getattr(Challenges, field).like("%{}%".format(q)))
-        
-        query = db.session.query(UserChallenges.challenge).filter_by(user=get_current_user().id)
-        challenge_ids_raw = query.all()
-        challenge_ids = []
-        for chal in challenge_ids_raw:
-            challenge_ids.append(chal[0])        
-        challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
-        total = query.count()
+        challenges = getAllUserChallenges(q, field)
+        total = len(challenges)
 
         #return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
         return render_template('userChallenges.html',challenges=challenges,total = total,q=q,field=field)    
@@ -246,6 +261,91 @@ def load(app):
 
         clear_challenges()
 
+        return {"success": True, "data": response}
+    @app.route('/userchallenge/api/challenges/',methods=['GET'])
+    def getChallenges():
+
+        # Get a cached mapping of challenge_id to solve_count
+        solve_counts = get_solve_counts_for_challenges(admin=True)
+
+        # Get list of solve_ids for current user
+        if authed():
+            user = get_current_user()
+            user_solves = get_solve_ids_for_user_id(user_id=user.id)
+        else:
+            user_solves = set()
+
+        # Aggregate the query results into the hashes defined at the top of
+        # this block for later use
+        if scores_visible() and accounts_visible():
+            solve_count_dfl = 0
+        else:
+            # Empty out the solves_count if we're hiding scores/accounts
+            solve_counts = {}
+            # This is necessary to match the challenge detail API which returns
+            # `None` for the solve count if visiblity checks fail
+            solve_count_dfl = None
+
+        chal_q = getAllUserChallenges()
+
+        # Iterate through the list of challenges, adding to the object which
+        # will be JSONified back to the client
+        response = []
+        tag_schema = TagSchema(view="user", many=True)
+
+        # Gather all challenge IDs so that we can determine invalid challenge prereqs
+        all_challenge_ids = {
+            c.id for c in Challenges.query.with_entities(Challenges.id).all()
+        }
+        for challenge in chal_q:
+            if challenge.requirements:
+                requirements = challenge.requirements.get("prerequisites", [])
+                anonymize = challenge.requirements.get("anonymize")
+                prereqs = set(requirements).intersection(all_challenge_ids)
+                if user_solves >= prereqs or admin_view:
+                    pass
+                else:
+                    if anonymize:
+                        response.append(
+                            {
+                                "id": challenge.id,
+                                "type": "hidden",
+                                "name": "???",
+                                "value": 0,
+                                "solves": None,
+                                "solved_by_me": False,
+                                "category": "???",
+                                "tags": [],
+                                "template": "",
+                                "script": "",
+                            }
+                        )
+                    # Fallthrough to continue
+                    continue
+
+            try:
+                challenge_type = get_chal_class(challenge.type)
+            except KeyError:
+                # Challenge type does not exist. Fall through to next challenge.
+                continue
+
+            # Challenge passes all checks, add it to response
+            response.append(
+                {
+                    "id": challenge.id,
+                    "type": challenge_type.name,
+                    "name": challenge.name,
+                    "value": challenge.value,
+                    "solves": solve_counts.get(challenge.id, solve_count_dfl),
+                    "solved_by_me": challenge.id in user_solves,
+                    "category": challenge.category,
+                    "tags": tag_schema.dump(challenge.tags).data,
+                    "template": challenge_type.templates["view"],
+                    "script": challenge_type.scripts["view"],
+                }
+            )
+
+        db.session.close()
         return {"success": True, "data": response}
 
     ## singular challenge
@@ -446,8 +546,44 @@ def load(app):
         clear_challenges()
 
         return {"success": True}
+    
+    @app.route('/userchallenge/challenges/preview/<challenge_id>')
+    @userChallenge_allowed
+    def render_preview(challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        chal_class = get_chal_class(challenge.type)
+        user = get_current_user()
+        team = get_current_team()
 
-    ## types
+        files = []
+        for f in challenge.files:
+            token = {
+                "user_id": user.id,
+                "team_id": team.id if team else None,
+                "file_id": f.id,
+            }
+            files.append(url_for("views.files", path=f.location, token=serialize(token)))
+
+        tags = [
+            tag["value"] for tag in TagSchema("user", many=True).dump(challenge.tags).data
+        ]
+
+        content = render_template(
+            chal_class.templates["view"].lstrip("/"),
+            solves=None,
+            solved_by_me=False,
+            files=files,
+            tags=tags,
+            hints=challenge.hints,
+            max_attempts=challenge.max_attempts,
+            attempts=0,
+            challenge=challenge,
+        )
+        return render_template(
+            "admin/challenges/preview.html", content=content, challenge=challenge
+        )
+    
+    ## FLAGS
     @app.route('/userchallenge/api/challenges/types')
     @userChallenge_allowed
     def typeget():
@@ -477,8 +613,7 @@ def load(app):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
-    
+        return {"success": True, "data": response.data} 
     ## flag posting
     @app.route('/userchallenge/api/flags',methods=['POST'])
     @userChallenge_allowed
@@ -550,37 +685,404 @@ def load(app):
 
         return {"success": True}
 
-    @app.route('/userchallenge/challenges/preview/<challenge_id>')
-    def render_preview(challenge_id):
-        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-        chal_class = get_chal_class(challenge.type)
-        user = get_current_user()
-        team = get_current_team()
+    #FILES
+    @app.route('/userchallenge/api/challenges/<challenge_id>/files', methods=['GET'])
+    @userChallenge_allowed
+    def getchallengeFiles(challenge_id):
+        response = []
 
-        files = []
-        for f in challenge.files:
-            token = {
-                "user_id": user.id,
-                "team_id": team.id if team else None,
-                "file_id": f.id,
+        challenge_files = ChallengeFilesModel.query.filter_by(
+            challenge_id=challenge_id
+        ).all()
+
+        for f in challenge_files:
+            response.append({"id": f.id, "type": f.type, "location": f.location})
+        return {"success": True, "data": response}
+    files_namespace = Namespace("files", description="Endpoint to retrieve Files")
+    @app.route('/userchallenge/api/files',methods=['POST'])
+    @files_namespace.doc(
+        description="Endpoint to get file objects in bulk",
+        responses={
+            200: ("Success", "FileDetailedSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+        params={
+            "file": {
+                "in": "formData",
+                "type": "file",
+                "required": True,
+                "description": "The file to upload",
             }
-            files.append(url_for("views.files", path=f.location, token=serialize(token)))
+        },
+    )
+    @validate_args(
+        {
+            "challenge_id": (int, None),
+            "challenge": (int, None),
+            "page_id": (int, None),
+            "page": (int, None),
+            "type": (str, None),
+            "location": (str, None),
+        },
+        location="form",
+    )
+    @userChallenge_allowed
+    def uploadFile(form_args):
+        files = request.files.getlist("file")
+        location = form_args.get("location")
+        # challenge_id
+        # page_id
 
-        tags = [
-            tag["value"] for tag in TagSchema("user", many=True).dump(challenge.tags).data
-        ]
+        # Handle situation where users attempt to upload multiple files with a single location
+        if len(files) > 1 and location:
+            return {
+                "success": False,
+                "errors": {
+                    "location": ["Location cannot be specified with multiple files"]
+                },
+            }, 400
 
-        content = render_template(
-            chal_class.templates["view"].lstrip("/"),
-            solves=None,
-            solved_by_me=False,
-            files=files,
-            tags=tags,
-            hints=challenge.hints,
-            max_attempts=challenge.max_attempts,
-            attempts=0,
-            challenge=challenge,
-        )
-        return render_template(
-            "admin/challenges/preview.html", content=content, challenge=challenge
-        )
+        objs = []
+        for f in files:
+            # uploads.upload_file(file=f, chalid=req.get('challenge'))
+            try:
+                obj = uploads.upload_file(file=f, **form_args)
+            except ValueError as e:
+                return {
+                    "success": False,
+                    "errors": {"location": [str(e)]},
+                }, 400
+            objs.append(obj)
+
+        schema = FileSchema(many=True)
+        response = schema.dump(objs)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/files/<file_id>',methods=['DELETE'])
+    @userChallenge_allowed
+    def deleteFile(file_id):
+        f = Files.query.filter_by(id=file_id).first_or_404()
+
+        uploads.delete_file(file_id=f.id)
+        db.session.delete(f)
+        db.session.commit()
+        db.session.close()
+
+        return {"success": True}
+    @app.route('/userchallenge/api/files/<file_id>',methods=['GET'])
+    @userChallenge_allowed
+    def getFile(file_id):
+        f = Files.query.filter_by(id=file_id).first_or_404()
+        schema = FileSchema()
+        response = schema.dump(f)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+
+    #TOPICS
+    @app.route('/userchallenge/api/challenges/<challenge_id>/topics', methods=['GET'])
+    @userChallenge_allowed
+    def getTopics(challenge_id):
+        response = []
+
+        topics = ChallengeTopicsModel.query.filter_by(challenge_id=challenge_id).all()
+
+        for t in topics:
+            response.append(
+                {
+                    "id": t.id,
+                    "challenge_id": t.challenge_id,
+                    "topic_id": t.topic_id,
+                    "value": t.topic.value,
+                }
+            )
+        return {"success": True, "data": response}
+    
+    @app.route('/userchallenge/api/topics',methods=['POST'])
+    @userChallenge_allowed
+    def createTopic():
+        req = request.get_json()
+        value = req.get("value")
+
+        if value:
+            topic = Topics.query.filter_by(value=value).first()
+            if topic is None:
+                schema = TopicSchema()
+                response = schema.load(req, session=db.session)
+
+                if response.errors:
+                    return {"success": False, "errors": response.errors}, 400
+
+                topic = response.data
+                db.session.add(topic)
+                db.session.commit()
+        else:
+            topic_id = req.get("topic_id")
+            topic = Topics.query.filter_by(id=topic_id).first_or_404()
+
+        req["topic_id"] = topic.id
+        topic_type = req.get("type")
+        if topic_type == "challenge":
+            schema = ChallengeTopicSchema()
+            response = schema.load(req, session=db.session)
+        else:
+            return {"success": False}, 400
+
+        db.session.add(response.data)
+        db.session.commit()
+
+        response = schema.dump(response.data)
+        db.session.close()
+
+        return {"success": True, "data": response.data}
+
+    @app.route('/userchallenge/api/topics',methods=['DELETE'])
+    @validate_args(
+        {"type": (str, None), "target_id": (int, 0)},
+        location="query",
+    )
+    def deleteTop(query_args):
+        topic_type = query_args.get("type")
+        target_id = int(query_args.get("target_id", 0))
+
+        if topic_type == "challenge":
+            Model = ChallengeTopics
+        else:
+            return {"success": False}, 400
+
+        topic = Model.query.filter_by(id=target_id).first_or_404()
+        db.session.delete(topic)
+        db.session.commit()
+        db.session.close()
+
+        return {"success": True}
+    @app.route('/userchallenge/api/topics/<topic_id>',methods=['GET'])
+    @userChallenge_allowed
+    def getTopic(topic_id):
+        topic = Topics.query.filter_by(id=topic_id).first_or_404()
+        response = TopicSchema().dump(topic)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/topic/<topic_id>',methods=['DELETE'])
+    @userChallenge_allowed
+    def deleteTopic(topic_id):
+        topic = Topics.query.filter_by(id=topic_id).first_or_404()
+        db.session.delete(topic)
+        db.session.commit()
+        db.session.close()
+
+        return {"success": True}
+    
+    # TAGS
+    @app.route('/userchallenge/api/challenges/<challenge_id>/tags',methods=['GET'])
+    @userChallenge_allowed
+    def getTags(challenge_id):
+        response = []
+
+        tags = Tags.query.filter_by(challenge_id=challenge_id).all()
+
+        for t in tags:
+            response.append(
+                {"id": t.id, "challenge_id": t.challenge_id, "value": t.value}
+            )
+        return {"success": True, "data": response}
+
+    @app.route('/userchallenge/api/tags',methods=['POST'])
+    @userChallenge_allowed
+    def createTag():
+        req = request.get_json()
+        schema = TagSchema()
+        response = schema.load(req, session=db.session)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        db.session.add(response.data)
+        db.session.commit()
+
+        response = schema.dump(response.data)
+        db.session.close()
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/tags/<tag_id>',methods=['GET'])
+    @userChallenge_allowed
+    def getTag(tag_id):
+        tag = Tags.query.filter_by(id=tag_id).first_or_404()
+
+        response = TagSchema().dump(tag)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/tags/<tag_id>',methods=['PATCH'])
+    @userChallenge_allowed
+    def patchTag(tag_id):
+        tag = Tags.query.filter_by(id=tag_id).first_or_404()
+        schema = TagSchema()
+        req = request.get_json()
+
+        response = schema.load(req, session=db.session, instance=tag)
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        db.session.commit()
+
+        response = schema.dump(response.data)
+        db.session.close()
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/tags/<tag_id>',methods=['DELETE'])
+    @userChallenge_allowed
+    def deleteTag(tag_id):
+        tag = Tags.query.filter_by(id=tag_id).first_or_404()
+        db.session.delete(tag)
+        db.session.commit()
+        db.session.close()
+
+        return {"success": True}
+
+    # Hints
+    @app.route('/userchallenge/api/challenges/<challenge_id>/hints',methods=['GET'])
+    @userChallenge_allowed
+    def getHints(challenge_id):
+        hints = Hints.query.filter_by(challenge_id=challenge_id).all()
+        schema = HintSchema(many=True)
+        response = schema.dump(hints)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/hints',methods=['POST'])
+    @userChallenge_allowed
+    def createHint():
+        req = request.get_json()
+        schema = HintSchema(view="admin")
+        response = schema.load(req, session=db.session)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        db.session.add(response.data)
+        db.session.commit()
+
+        response = schema.dump(response.data)
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/hints/<hint_id>',methods=['GET'])
+    @userChallenge_allowed
+    def getHint(hint_id):
+        hint = Hints.query.filter_by(id=hint_id).first_or_404()
+        user = get_current_user()
+
+        # We allow public accessing of hints if challenges are visible and there is no cost or prerequisites
+        # If there is a cost or a prereq we should block the user from seeing the hint
+        if user is None:
+            if hint.cost or hint.prerequisites:
+                return (
+                    {
+                        "success": False,
+                        "errors": {"cost": ["You must login to unlock this hint"]},
+                    },
+                    403,
+                )
+
+        if hint.prerequisites:
+            requirements = hint.prerequisites
+
+            # Get the IDs of all hints that the user has unlocked
+            all_unlocks = HintUnlocks.query.filter_by(account_id=user.account_id).all()
+            unlock_ids = {unlock.target for unlock in all_unlocks}
+
+            # Get the IDs of all free hints
+            free_hints = Hints.query.filter_by(cost=0).all()
+            free_ids = {h.id for h in free_hints}
+
+            # Add free hints to unlocked IDs
+            unlock_ids.update(free_ids)
+
+            # Filter out hint IDs that don't exist
+            all_hint_ids = {h.id for h in Hints.query.with_entities(Hints.id).all()}
+            prereqs = set(requirements).intersection(all_hint_ids)
+
+            # If the user has the necessary unlocks or is admin we should allow them to view
+            if unlock_ids >= prereqs or is_admin():
+                pass
+            else:
+                return (
+                    {
+                        "success": False,
+                        "errors": {
+                            "requirements": [
+                                "You must unlock other hints before accessing this hint"
+                            ]
+                        },
+                    },
+                    403,
+                )
+
+        view = "unlocked"
+        if hint.cost:
+            view = "locked"
+            unlocked = HintUnlocks.query.filter_by(
+                account_id=user.account_id, target=hint.id
+            ).first()
+            if unlocked:
+                view = "unlocked"
+
+        if is_admin():
+            if request.args.get("preview", False):
+                view = "admin"
+
+        response = HintSchema(view=view).dump(hint)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/hints/<hint_id>',methods=['PATCH'])
+    @userChallenge_allowed
+    def patchHint(hint_id):
+        hint = Hints.query.filter_by(id=hint_id).first_or_404()
+        req = request.get_json()
+
+        schema = HintSchema(view="admin")
+        response = schema.load(req, instance=hint, partial=True, session=db.session)
+
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        db.session.add(response.data)
+        db.session.commit()
+
+        response = schema.dump(response.data)
+
+        return {"success": True, "data": response.data}
+    @app.route('/userchallenge/api/hints/<hint_id>',methods=['DELETE'])
+    @userChallenge_allowed
+    def deleteHint(hint_id):
+        hint = Hints.query.filter_by(id=hint_id).first_or_404()
+        db.session.delete(hint)
+        db.session.commit()
+        db.session.close()
+
+        return {"success": True}
+
+    # Requirements
+    @app.route('/userchallenge/api/challenges/<challenge_id>/requirements',methods=['GET'])
+    def getReqs(challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        return {"success": True, "data": challenge.requirements}
+

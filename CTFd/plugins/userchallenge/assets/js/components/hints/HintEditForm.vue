@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     loadHint: function () {
-      CTFd.fetch(`/api/v1/hints/${this.$props.hint_id}?preview=true`, {
+      CTFd.fetch(`/userchallenge/api/hints/${this.$props.hint_id}?preview=true`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -183,7 +183,7 @@ export default {
         requirements: { prerequisites: this.selectedHints },
       };
 
-      CTFd.fetch(`/api/v1/hints/${this.$props.hint_id}`, {
+      CTFd.fetch(`/userchallenge/api/hints/${this.$props.hint_id}`, {
         method: "PATCH",
         credentials: "same-origin",
         headers: {

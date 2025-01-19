@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     loadFiles: function () {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/files`, {
+      CTFd.fetch(`/userchallenge/api/challenges/${this.$props.challenge_id}/files`, {
         method: "GET",
       })
         .then((response) => {
@@ -101,7 +101,7 @@ export default {
         title: "Delete Files",
         body: "Are you sure you want to delete this file?",
         success: () => {
-          CTFd.fetch(`/api/v1/files/${fileId}`, {
+          CTFd.fetch(`/userchallenge/api/files/${fileId}`, {
             method: "DELETE",
           })
             .then((response) => {
