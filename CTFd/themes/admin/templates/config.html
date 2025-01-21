@@ -125,7 +125,7 @@
 				</li>
 				
 				<!-- Plugins -->
-				{% set plugins = get_configurable_plugins() %}
+				{% set plugins = get_configurable_plugins() | selectattr('config', 'defined') | list %}
 				{% if plugins %}
 					<small class="section-title">Plugins</small>
 					{% for plugin in plugins %}
