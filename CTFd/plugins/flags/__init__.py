@@ -118,11 +118,11 @@ class CTFdMAPEFlag(BaseFlag):
         mape *= 100
         return mape < float(data)
 
-class CTFdMAXPEFlag(BaseFlag):
-    name = "maxpe"
+class CTFdMAXAPEFlag(BaseFlag):
+    name = "maxape"
     templates = {
-        "create": "/plugins/flags/assets/mape/create.html",
-        "update": "/plugins/flags/assets/mape/edit.html",
+        "create": "/plugins/flags/assets/maxape/create.html",
+        "update": "/plugins/flags/assets/maxape/edit.html",
     }
 
     @staticmethod
@@ -136,14 +136,14 @@ class CTFdMAXPEFlag(BaseFlag):
             raise FlagException("Flag must be comma separated floats")
         if len(provided_np) != len(saved_np):
             raise FlagException(f"Incorrect number of values: provided {len(provided_np)}, expected {len(saved_np)}")
-        mape = 0
+        flag = True
         for p,s in zip(provided_np, saved_np):
-            mape += abs(p-s)/s
-        mape /= len(provided_np)
-        mape *= 100
-        return mape > float(data)
+            mape = abs(p-s)/s
+            if mape > float(data):
+                flag = False
+        return flag
 
-FLAG_CLASSES = {"static": CTFdStaticFlag, "regex": CTFdRegexFlag, "mse": CTFdMSEFlag, "mape": CTFdMAPEFlag, "maxpe": CTFdMAXPEFlag}
+FLAG_CLASSES = {"static": CTFdStaticFlag, "regex": CTFdRegexFlag, "mse": CTFdMSEFlag, "mape": CTFdMAPEFlag, "maxape": CTFdMAXAPEFlag}
 
 
 def get_flag_class(class_id):
