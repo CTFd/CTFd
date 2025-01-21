@@ -72,7 +72,7 @@
             <div class="card-text" v-html="comment.html"></div>
             <small class="text-muted float-left">
               <span>
-                <a :href="`${urlRoot}/admin/users/${comment.author_id}`">{{
+                <a :href="`${urlRoot}/users/${comment.author_id}`">{{
                   comment.author.name
                 }}</a>
               </span>

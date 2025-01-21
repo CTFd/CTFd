@@ -8,7 +8,7 @@
     "name": "jquery"
   },
   "assets/js/adminChallenges.js": {
-    "file": "assets/js/adminChallenges-DXG2H0lp.js",
+    "file": "assets/js/adminChallenges-BdqmTGYA.js",
     "name": "js/adminChallenges",
     "src": "assets/js/adminChallenges.js",
     "isEntry": true,
@@ -27,7 +27,7 @@
     ]
   },
   "assets/js/main.js": {
-    "file": "assets/js/main-BDMscTd4.js",
+    "file": "assets/js/main-CTvcPpen.js",
     "name": "js/main",
     "src": "assets/js/main.js",
     "isEntry": true,
@@ -36,7 +36,7 @@
     ]
   },
   "assets/js/userChallenge.js": {
-    "file": "assets/js/userChallenge-BcFj_fBx.js",
+    "file": "assets/js/userChallenge-B09a4v49.js",
     "name": "js/userChallenge",
     "src": "assets/js/userChallenge.js",
     "isEntry": true,
@@ -45,7 +45,7 @@
       "_jquery-BT3bhPE2.js"
     ],
     "css": [
-      "assets/userChallenge-C1fatTkJ.css"
+      "assets/userChallenge-BenJeVaH.css"
     ]
   }
 }

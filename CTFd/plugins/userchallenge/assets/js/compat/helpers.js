@@ -68,7 +68,7 @@ const files = {
 const comments = {
   get_comments: (extra_args) => {
     const CTFd = window.CTFd;
-    return CTFd.fetch("/api/v1/comments?" + $.param(extra_args), {
+    return CTFd.fetch("/userchallenge/api/comments?" + $.param(extra_args), {
       method: "GET",
       credentials: "same-origin",
       headers: {
@@ -86,7 +86,7 @@ const comments = {
       type: type,
       ...extra_args,
     };
-    CTFd.fetch("/api/v1/comments", {
+    CTFd.fetch("/userchallenge/api/comments", {
       method: "POST",
       credentials: "same-origin",
       headers: {
@@ -106,7 +106,7 @@ const comments = {
   },
   delete_comment: (comment_id) => {
     const CTFd = window.CTFd;
-    return CTFd.fetch(`/api/v1/comments/${comment_id}`, {
+    return CTFd.fetch(`/userchallenge/api/comments/${comment_id}`, {
       method: "DELETE",
       credentials: "same-origin",
       headers: {
