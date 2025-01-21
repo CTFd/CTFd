@@ -139,6 +139,7 @@ class CTFdMAXAPEFlag(BaseFlag):
         flag = True
         for p,s in zip(provided_np, saved_np):
             mape = abs(p-s)/s
+            mape *= 100
             if mape > float(data):
                 flag = False
         return flag
