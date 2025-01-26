@@ -132,6 +132,11 @@ def getAllUserChallenges(q,field):
     challenge_ids_raw = query.all()
     challenge_ids = []
     for chal in challenge_ids_raw:
+        log(
+                "logins",
+                format=" - successful password reset for {name}",
+                name=chal[0],
+            )
         challenge_ids.append(chal[0])        
     challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
     return challenges

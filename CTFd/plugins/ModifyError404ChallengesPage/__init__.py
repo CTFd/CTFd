@@ -47,6 +47,7 @@ def load(app):
 
     '''
         discarding for the moment because it doesn't work as I want it to 
+        
     @require_complete_profile
     @during_ctf_time_only
     @require_verified_emails
