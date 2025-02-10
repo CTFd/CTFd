@@ -79,7 +79,7 @@
                     </details>
                     {% else %}
                     <details @toggle="showHint(event)">
-                      <summary>Unlock Hint for {{ hint.cost }} point{{ hint.cost|pluralize }}</summary>
+                      <summary>Unlock Hint for {{ hint.cost }} point{{ hint.cost|pluralize }}{{ ": {}".format(hint.title) if hint.title }}</summary>
                       <div x-html="html"></div>
                     </details>
                     {% endif %}
