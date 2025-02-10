@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2025-02-09 23:12\n"
+"PO-Revision-Date: 2025-02-10 19:33\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -355,7 +355,7 @@ msgstr ""
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Ξεχάσατε τον κωδικό πρόσβασής σας;"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:97
 #: CTFd/themes/core-beta/templates/notifications.html:7
