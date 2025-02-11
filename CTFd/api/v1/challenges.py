@@ -9,7 +9,10 @@ from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
-from CTFd.exceptions import PluginException
+from CTFd.exceptions.challenges import (
+    ChallengeCreateException,
+    ChallengeUpdateException,
+)
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import Challenges
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
@@ -243,17 +246,13 @@ class ChallengeList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        # load challenge type and prevent error if I sent empty form
-        challenge_type = "standard"
-        if "type" in data.keys():
-            challenge_type = data["type"]
+        challenge_type = data.get("type", "standard")
 
         challenge_class = get_chal_class(challenge_type)
-        # handling error while challenge creation (particulary for plugin)
         try:
             challenge = challenge_class.create(request)
-        except PluginException as e:
-            return {"success": False, "errors": {"text": [str(e)]}}, 500
+        except ChallengeCreateException as e:
+            return {"success": False, "errors": {"": [str(e)]}}, 500
 
         response = challenge_class.read(challenge)
 
@@ -478,8 +477,8 @@ class Challenge(Resource):
 
         try:
             challenge = challenge_class.update(challenge, request)
-        except PluginException as e:
-            return {"success": False, "errors": {"text": [str(e)]}}, 500
+        except ChallengeUpdateException as e:
+            return {"success": False, "errors": {"": [str(e)]}}, 500
 
         response = challenge_class.read(challenge)
 

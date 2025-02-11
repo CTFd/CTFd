@@ -1,6 +1,9 @@
 from flask import Blueprint
 
-from CTFd.exceptions import PluginException
+from CTFd.exceptions.challenges import (
+    ChallengeCreateException,
+    ChallengeUpdateException,
+)
 from CTFd.models import Challenges, db
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
@@ -23,7 +26,7 @@ class DynamicChallenge(Challenges):
         try:
             self.value = kwargs["initial"]
         except KeyError:
-            raise PluginException("missing initial value")
+            raise ChallengeCreateException("Missing initial value for challenge")
 
 
 class DynamicValueChallenge(BaseChallenge):
@@ -99,7 +102,7 @@ class DynamicValueChallenge(BaseChallenge):
                 try:
                     value = float(value)
                 except ValueError:
-                    raise PluginException(f"invalid float input on {attr}")
+                    raise ChallengeUpdateException(f"Invalid input for '{attr}'")
             setattr(challenge, attr, value)
 
         return DynamicValueChallenge.calculate_value(challenge)
