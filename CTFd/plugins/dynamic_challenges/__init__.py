@@ -101,7 +101,7 @@ class DynamicValueChallenge(BaseChallenge):
             if attr in ("initial", "minimum", "decay"):
                 try:
                     value = float(value)
-                except ValueError:
+                except (ValueError, TypeError):
                     raise ChallengeUpdateException(f"Invalid input for '{attr}'")
             setattr(challenge, attr, value)
 
