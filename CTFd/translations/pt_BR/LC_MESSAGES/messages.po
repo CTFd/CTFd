@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2024-04-01 05:30\n"
+"PO-Revision-Date: 2025-02-14 21:47\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -302,8 +302,8 @@ msgstr "Desafio"
 #, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d Solução"
+msgstr[1] "%(num)d Soluções"
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"
@@ -759,12 +759,12 @@ msgstr "Usuário"
 #: CTFd/utils/modes/__init__.py:35
 msgid "user"
 msgid_plural "users"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "usuário"
+msgstr[1] "usuários"
 
 #: CTFd/utils/modes/__init__.py:37
 msgid "team"
 msgid_plural "teams"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "equipe"
+msgstr[1] "equipes"
 
