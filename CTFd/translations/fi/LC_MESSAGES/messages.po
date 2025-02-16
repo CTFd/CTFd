@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2025-02-14 21:47\n"
+"PO-Revision-Date: 2025-02-16 08:16\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -138,7 +138,7 @@ msgstr "Hallintatilin salasanasi"
 
 #: CTFd/forms/setup.py:61
 msgid "Logo"
-msgstr "Logo"
+msgstr ""
 
 #: CTFd/forms/setup.py:62
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
@@ -288,7 +288,7 @@ msgstr "Etsi vastaavia käyttäjiä"
 
 #: CTFd/themes/core-beta/templates/base.html:49
 msgid "Powered by CTFd"
-msgstr "Powered by CTFd"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/challenge.html:11
 #: CTFd/themes/core-beta/templates/teams/private.html:375
