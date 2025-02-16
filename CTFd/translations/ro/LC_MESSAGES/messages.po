@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2025-02-16 08:15\n"
+"PO-Revision-Date: 2025-02-16 19:44\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "MIME-Version: 1.0\n"
@@ -27,7 +27,7 @@ msgstr "Nume de utilizator"
 #: CTFd/forms/auth.py:21 CTFd/forms/auth.py:53 CTFd/forms/self.py:17
 #: CTFd/forms/teams.py:203
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: CTFd/forms/auth.py:22 CTFd/forms/auth.py:43 CTFd/forms/auth.py:60
 #: CTFd/forms/self.py:19 CTFd/forms/teams.py:204
@@ -146,7 +146,7 @@ msgstr "Sigla de utilizat pentru site-ul web în locul unui nume CTF. Folosit ca
 
 #: CTFd/forms/setup.py:67
 msgid "Banner"
-msgstr ""
+msgstr "Banner"
 
 #: CTFd/forms/setup.py:67
 msgid "Banner to use for the homepage. Optional."
@@ -459,7 +459,7 @@ msgstr "Configurare"
 
 #: CTFd/themes/core-beta/templates/setup.html:44
 msgid "General"
-msgstr ""
+msgstr "General"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
 msgid "Mode"
