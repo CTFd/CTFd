@@ -1,3 +1,32 @@
+# 3.7.5 / 2024-12-27
+
+**Security**
+
+- Change confirmation and reset password emails to be single use instead of only expiring in 30 minutes
+
+**General**
+
+- Fix issue where users could set their own bracket after registration
+- If a user or team do not have a password set we allow setting a password without providing a previous password confirmation
+- Fix issue where dynamic challenges did not return their attribution over the API
+- Language selection is now available in the main theme navigation bar
+
+**Admin Panel**
+
+- A point breakdown graph showing the amount of challenge points allocated to each category has been added to the Admin Panel
+- Bracket ID and Bracket Name have been added to CSV scoreboard exports
+- Fix issue with certain interactions in the Media Library
+
+**API**
+
+- Swagger specification has been updated to properly validate
+- `/api/v1/flags/types` and `/api/v1/flags/types/<type_name>` have been seperated into two seperate controllers
+
+**Deployment**
+
+- IP Tracking has been updated to only occur if we have not seen the IP before or on state changing methods
+- Bump dependencies for `cmarkgfm` and `jinja2`
+
 # 3.7.4 / 2024-10-08
 
 **Security**
