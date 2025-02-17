@@ -9,6 +9,10 @@ from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_challenges, clear_standings
 from CTFd.constants import RawEnum
+from CTFd.exceptions.challenges import (
+    ChallengeCreateException,
+    ChallengeUpdateException,
+)
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import Challenges
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
@@ -242,9 +246,14 @@ class ChallengeList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
-        challenge_type = data["type"]
+        challenge_type = data.get("type", "standard")
+
         challenge_class = get_chal_class(challenge_type)
-        challenge = challenge_class.create(request)
+        try:
+            challenge = challenge_class.create(request)
+        except ChallengeCreateException as e:
+            return {"success": False, "errors": {"": [str(e)]}}, 500
+
         response = challenge_class.read(challenge)
 
         clear_challenges()
@@ -465,7 +474,12 @@ class Challenge(Resource):
 
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         challenge_class = get_chal_class(challenge.type)
-        challenge = challenge_class.update(challenge, request)
+
+        try:
+            challenge = challenge_class.update(challenge, request)
+        except ChallengeUpdateException as e:
+            return {"success": False, "errors": {"": [str(e)]}}, 500
+
         response = challenge_class.read(challenge)
 
         clear_standings()
