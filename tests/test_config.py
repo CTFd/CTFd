@@ -76,7 +76,7 @@ def test_trusted_hosts_config():
         r = client.get("/", headers={"Host": "example.com"})
         assert r.status_code == 200
 
-        # TODO: We need to allow either a 500 or a 400 because Flask-RestX 
+        # TODO: We need to allow either a 500 or a 400 because Flask-RestX
         # seems to be overriding Flask's error handler
         try:
             r = client.get("/", headers={"Host": "evil.com"})
