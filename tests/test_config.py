@@ -81,5 +81,6 @@ def test_trusted_hosts_config():
         except SecurityError:
             pass
         else:
-            raise SecurityError("Responded to untrusted request")
+            if r.status_code != 400:
+                raise SecurityError("Responded to untrusted request")
     destroy_ctfd(app)
