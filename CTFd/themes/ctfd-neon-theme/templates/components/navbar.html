@@ -1,0 +1,96 @@
+<div class="ht-tm-navbar navbar-dark text-white">
+  <div class="container">
+    <div class="ht-tm-navbar-left">
+      <a href="{{ url_for('views.static_html', route='/') }}" class="text-decoration-none text-light">
+        <span class="ht-tm-navbar-title">{{ Configs.ctf_name }}</span>
+      </a>
+      <nav class="ht-tm-nav">
+        <a href="{{ url_for('views.static_html', route='/') }}" class="pl-md-0 p-3 text-light">Home</a>
+        {% for page in Plugins.user_menu_pages %}
+          <a class="text-decoration-none text-light" href="{{ page.route }}">{{ page.title }}</a>
+        {% endfor %}
+
+        {% if Configs.account_visibility != 'admins' %}
+          <a class="text-decoration-none text-light" href="{{ url_for('users.listing') }}">Users</a>
+          {% if Configs.user_mode == 'teams' %}
+            <a class="text-decoration-none text-light" href="{{ url_for('teams.listing') }}">Teams</a>
+          {% endif %}
+        {% endif %}
+
+        {% if Configs.score_visibility != 'admins' %}
+          <a class="text-decoration-none text-light" href="{{ url_for('scoreboard.listing') }}">Scoreboard</a>
+        {% endif %}
+        <a class="text-decoration-none text-light" href="{{ url_for('challenges.listing') }}">Challenges</a>
+        <a class="text-decoration-none text-light" href="{{ url_for('views.notifications') }}">Notifications</a>
+      </nav>
+    </div>
+    <div class="ht-tm-element btn-group ml-auto">
+      {% if authed() %}
+        {% if is_admin() %}
+          <a class="btn btn-sm btn-outline-light ml-auto" href="{{ url_for('admin.view') }}">
+            <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Admin Panel">
+              <i class="fas fa-wrench d-none d-md-block d-lg-none"></i>
+            </span>
+            <span class="d-sm-block d-md-none d-lg-block">
+              <i class="fas fa-wrench pr-1"></i>Admin Panel
+            </span>
+          </a>
+        {% endif %}
+        {% if Configs.user_mode == "teams" %}
+          <a class="btn btn-sm btn-outline-light" href="{{ url_for('teams.private') }}">
+            <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Team">
+              <i class="fas fa-users d-none d-md-block d-lg-none"></i>
+            </span>
+            <span class="d-sm-block d-md-none d-lg-block">
+              <i class="fas fa-users pr-1"></i>Team
+            </span>
+          </a>
+        {% endif %}
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('users.private') }}">
+          <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Profile">
+            <i class="fas fa-user-circle d-none d-md-block d-lg-none"></i>
+          </span>
+          <span class="d-sm-block d-md-none d-lg-block">
+            <i class="fas fa-user-circle pr-1"></i>Profile
+          </span>
+        </a>
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('views.settings') }}">
+          <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Settings">
+            <i class="fas fa-cogs d-none d-md-block d-lg-none"></i>
+          </span>
+          <span class="d-sm-block d-md-none d-lg-block">
+            <i class="fas fa-cogs pr-1"></i>Settings
+          </span>
+        </a>
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('auth.logout') }}">
+          <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Logout">
+            <i class="fas fa-sign-out-alt d-none d-md-block d-lg-none"></i>
+          </span>
+          <span class="d-sm-block d-md-none d-lg-block">
+            <i class="fas fa-sign-out-alt pr-1"></i>
+            <span class="d-lg-none">Logout</span>
+          </span>
+        </a>
+      {% else %}
+        {% if registration_visible() %}
+          <a class="btn btn-sm btn-outline-light" href="{{ url_for('auth.register') }}">
+            <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Register">
+              <i class="fas fa-user-plus d-none d-md-block d-lg-none"></i>
+            </span>
+            <span class="d-sm-block d-md-none d-lg-block">
+              <i class="fas fa-user-plus pr-1"></i>Register
+            </span>
+          </a>
+        {% endif %}
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('auth.login') }}">
+          <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Login">
+            <i class="fas fa-sign-in-alt d-none d-md-block d-lg-none"></i>
+          </span>
+          <span class="d-sm-block d-md-none d-lg-block">
+            <i class="fas fa-sign-in-alt pr-1"></i>Login
+          </span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
