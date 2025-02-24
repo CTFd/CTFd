@@ -134,7 +134,7 @@
 
             CTFd._internal.challenge = {};
             $.get(
-                CTFd.config.urlRoot + "/api/v1/challenges/" + window.CHALLENGE_ID,
+                "/userchallenge/api/challenges/" + window.CHALLENGE_ID,
                 function (response) {
                     // Preview should not show any solves
                     var challenge_data = response.data;

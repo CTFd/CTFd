@@ -5,6 +5,7 @@ from CTFd.schemas.comments import CommentSchema
 from CTFd.schemas.files import FileSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.topics import ChallengeTopicSchema, TopicSchema
+from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.security.signing import serialize
 from flask import render_template,request,Blueprint, url_for, abort,redirect,session
@@ -14,17 +15,19 @@ from CTFd.utils.plugins import override_template
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.plugins.flags import FLAG_CLASSES,get_flag_class
 from CTFd.utils.user import get_current_user,is_admin, authed,get_current_team
-from CTFd.models import ChallengeTopics, Challenges, Comments, Files, Solves, Flags, Tags, Topics, db, Configs,Hints,HintUnlocks,Flags,Submissions
+from CTFd.utils import user as current_user
+from CTFd.models import ChallengeTopics, Challenges, Comments, Fails, Files, Solves, Flags, Tags, Topics, db, Configs,Hints,HintUnlocks,Flags,Submissions
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
 
-from CTFd.utils.decorators import admins_only
+
+from CTFd.utils.decorators import admins_only, during_ctf_time_only, require_verified_emails
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.cache import clear_challenges,clear_standings
 from CTFd.utils import config, get_config, uploads
-from CTFd.utils.dates import ctf_ended
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
 from CTFd.utils.logging import log
 from CTFd.utils.challenges import (
     get_solve_counts_for_challenges,
@@ -62,6 +65,7 @@ def registerTemplate(old_path, new_path):
     dir_path = Path(__file__).parent.resolve()
     template_path = dir_path/'templates'/new_path
     override_template(old_path,open(template_path).read())
+
 def update_allow_challenges():
     db.session.commit()
     config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
@@ -90,6 +94,7 @@ def owned_by_user(f):
     @functools.wraps(f)
     def is_owned_wrapper(*args, **kwargs):
         user = db.session.query(UserChallenges.user).filter(UserChallenges.challenge == kwargs.get("challenge_id")).first()
+        db.session.commit()
         if (user and get_current_user() and user[0] == get_current_user().id) or is_admin():
             return f(*args, **kwargs)
         else:
@@ -195,6 +200,8 @@ def load(app):
         challenges = getAllUserChallenges(q, field)
         total = len(challenges)
 
+        
+
         #return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
         return render_template('userChallenges.html',challenges=challenges,total = total,q=q,field=field)    
     
@@ -295,7 +302,7 @@ def load(app):
             # `None` for the solve count if visiblity checks fail
             solve_count_dfl = None
 
-        chal_q = getAllUserChallenges()
+        chal_q = getAllUserChallenges(False,False)
 
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
@@ -589,7 +596,7 @@ def load(app):
             challenge=challenge,
         )
         return render_template(
-            "admin/challenges/preview.html", content=content, challenge=challenge
+            "userPreview.html", content=content, challenge=challenge
         )
     
     ## FLAGS
@@ -1182,3 +1189,248 @@ def load(app):
             return {"success": True}
         else:
             return {"success": False}
+
+    
+    def challengeAttempt():
+
+        log(
+                "logins",
+                format="[{date}] {ip} - successful password reset for {name}",
+                name='is called #########################',
+            )
+
+        if authed() is False:
+            return {"success": True, "data": {"status": "authentication_required"}}, 403
+
+        if not request.is_json:
+            request_data = request.form
+        else:
+            request_data = request.get_json()
+
+        challenge_id = request_data.get("challenge_id")
+
+        non_admin = non_admin_preview(challenge_id)
+        if(non_admin):
+            return non_admin
+        
+        return challengeAttemptDefault(challenge_id,request_data)
+
+    @userChallenge_allowed
+    def non_admin_preview(challenge_id):
+        log(
+                "logins",
+                format="[{date}] {ip} - successful password reset for {name}",
+                name='admin preview #########################',
+            )
+        preview = request.args.get("preview", False)
+        if preview:
+            challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+            chal_class = get_chal_class(challenge.type)
+            status, message = chal_class.attempt(challenge, request)
+
+            return {
+                "success": True,
+                "data": {
+                    "status": "correct" if status else "incorrect",
+                    "message": message,
+                },
+            }
+
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @require_verified_emails
+    def challengeAttemptDefault( challenge_id,request_data):
+        if current_user.is_admin():
+            preview = request.args.get("preview", False)
+            if preview:
+                challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+                chal_class = get_chal_class(challenge.type)
+                status, message = chal_class.attempt(challenge, request)
+
+                return {
+                    "success": True,
+                    "data": {
+                        "status": "correct" if status else "incorrect",
+                        "message": message,
+                    },
+                }
+
+        if ctf_paused():
+            return (
+                {
+                    "success": True,
+                    "data": {
+                        "status": "paused",
+                        "message": "{} is paused".format(config.ctf_name()),
+                    },
+                },
+                403,
+            )
+
+        user = get_current_user()
+        team = get_current_team()
+
+        # TODO: Convert this into a re-useable decorator
+        if config.is_teams_mode() and team is None:
+            abort(403)
+
+        fails = Fails.query.filter_by(
+            account_id=user.account_id, challenge_id=challenge_id
+        ).count()
+
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        if challenge.state == "hidden":
+            abort(404)
+
+        if challenge.state == "locked":
+            abort(403)
+
+        if challenge.requirements:
+            requirements = challenge.requirements.get("prerequisites", [])
+            solve_ids = (
+                Solves.query.with_entities(Solves.challenge_id)
+                .filter_by(account_id=user.account_id)
+                .order_by(Solves.challenge_id.asc())
+                .all()
+            )
+            solve_ids = {solve_id for solve_id, in solve_ids}
+            # Gather all challenge IDs so that we can determine invalid challenge prereqs
+            all_challenge_ids = {
+                c.id for c in Challenges.query.with_entities(Challenges.id).all()
+            }
+            prereqs = set(requirements).intersection(all_challenge_ids)
+            if solve_ids >= prereqs:
+                pass
+            else:
+                abort(403)
+
+        chal_class = get_chal_class(challenge.type)
+
+        # Anti-bruteforce / submitting Flags too quickly
+        kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
+        kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
+        if kpm > kpm_limit:
+            if ctftime():
+                chal_class.fail(
+                    user=user, team=team, challenge=challenge, request=request
+                )
+            log(
+                "submissions",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
+                name=user.name,
+                submission=request_data.get("submission", "").encode("utf-8"),
+                challenge_id=challenge_id,
+                kpm=kpm,
+            )
+            # Submitting too fast
+            return (
+                {
+                    "success": True,
+                    "data": {
+                        "status": "ratelimited",
+                        "message": "You're submitting flags too fast. Slow down.",
+                    },
+                },
+                429,
+            )
+
+        solves = Solves.query.filter_by(
+            account_id=user.account_id, challenge_id=challenge_id
+        ).first()
+
+        # Challenge not solved yet
+        if not solves:
+            # Hit max attempts
+            max_tries = challenge.max_attempts
+            if max_tries and fails >= max_tries > 0:
+                return (
+                    {
+                        "success": True,
+                        "data": {
+                            "status": "incorrect",
+                            "message": "You have 0 tries remaining",
+                        },
+                    },
+                    403,
+                )
+
+            status, message = chal_class.attempt(challenge, request)
+            if status:  # The challenge plugin says the input is right
+                if ctftime() or current_user.is_admin():
+                    chal_class.solve(
+                        user=user, team=team, challenge=challenge, request=request
+                    )
+                    clear_standings()
+                    clear_challenges()
+
+                log(
+                    "submissions",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
+                    name=user.name,
+                    submission=request_data.get("submission", "").encode("utf-8"),
+                    challenge_id=challenge_id,
+                    kpm=kpm,
+                )
+                return {
+                    "success": True,
+                    "data": {"status": "correct", "message": message},
+                }
+            else:  # The challenge plugin says the input is wrong
+                if ctftime() or current_user.is_admin():
+                    chal_class.fail(
+                        user=user, team=team, challenge=challenge, request=request
+                    )
+                    clear_standings()
+                    clear_challenges()
+
+                log(
+                    "submissions",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
+                    name=user.name,
+                    submission=request_data.get("submission", "").encode("utf-8"),
+                    challenge_id=challenge_id,
+                    kpm=kpm,
+                )
+
+                if max_tries:
+                    # Off by one since fails has changed since it was gotten
+                    attempts_left = max_tries - fails - 1
+                    tries_str = pluralize(attempts_left, singular="try", plural="tries")
+                    # Add a punctuation mark if there isn't one
+                    if message[-1] not in "!().;?[]{}":
+                        message = message + "."
+                    return {
+                        "success": True,
+                        "data": {
+                            "status": "incorrect",
+                            "message": "{} You have {} {} remaining.".format(
+                                message, attempts_left, tries_str
+                            ),
+                        },
+                    }
+                else:
+                    return {
+                        "success": True,
+                        "data": {"status": "incorrect", "message": message},
+                    }
+        # Challenge already solved
+        else:
+            log(
+                "submissions",
+                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                name=user.name,
+                submission=request_data.get("submission", "").encode("utf-8"),
+                challenge_id=challenge_id,
+                kpm=kpm,
+            )
+            return {
+                "success": True,
+                "data": {
+                    "status": "already_solved",
+                    "message": "You already solved this",
+                },
+            }
+        
+    app.view_functions['api.challenges_challenge_attempt'] = challengeAttempt
+    
