@@ -15,7 +15,7 @@ from CTFd.utils.plugins import override_template
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.plugins.flags import FLAG_CLASSES,get_flag_class
 from CTFd.utils.user import get_current_user,is_admin, authed,get_current_team
-from CTFd.utils import user as current_user
+from CTFd.utils import set_config, user as current_user
 from CTFd.models import ChallengeTopics, Challenges, Comments, Fails, Files, Solves, Flags, Tags, Topics, db, Configs,Hints,HintUnlocks,Flags,Submissions
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
@@ -66,25 +66,43 @@ def registerTemplate(old_path, new_path):
     template_path = dir_path/'templates'/new_path
     override_template(old_path,open(template_path).read())
 
+def userChallenge_allowed(f):
+    """
+    Decorator that requires the user to be authed and userchallenges to be active
+    :param f:
+    :return:
+    """
+
+    @functools.wraps(f)
+    def userChallenge_wrapper(*args, **kwargs):
+        value = get_config('allowUserChallenges')
+
+        if (value == 'true' and get_current_user()) or is_admin():
+            return f(*args, **kwargs)
+        else:
+            if request.content_type == "application/json":
+                abort(403)
+            else:
+                return redirect(url_for("auth.login", next=request.full_path))
+    return userChallenge_wrapper
+
 def update_allow_challenges():
     db.session.commit()
     config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
     if config:
-        value = config.value
-        if value == "true":
-            
-            config.value = "false"
-            db.session.commit()
+        value = get_config('allowUserChallenges')
+        if value:
+            set_config('allowUserChallenges','false')
             return False
         else:
-            config.value = "true"
-            db.session.commit()
+            set_config('allowUserChallenges','true')
             return True
     else:
         conf = Configs(key="allowUserChallenges",value="true")
         db.session.add(conf)
         db.session.commit()
         return True
+
 def owned_by_user(f):
     """
     Decorator that requires the accessed challenge to be registered under the user's name
@@ -104,25 +122,6 @@ def owned_by_user(f):
                 return redirect(url_for("auth.login", next=request.full_path))
     return is_owned_wrapper
 
-def userChallenge_allowed(f):
-    """
-    Decorator that requires the user to be authed and userchallenges to be active
-    :param f:
-    :return:
-    """
-
-    @functools.wraps(f)
-    def userChallenge_wrapper(*args, **kwargs):
-        value = get_config("allowUserChallenges")
-        if (value and get_current_user()) or is_admin():
-            return f(*args, **kwargs)
-        else:
-            if request.content_type == "application/json":
-                abort(403)
-            else:
-                return redirect(url_for("auth.login", next=request.full_path))
-    return userChallenge_wrapper
-
 def getAllUserChallenges(q,field):
     filters =[]
     
@@ -137,11 +136,6 @@ def getAllUserChallenges(q,field):
     challenge_ids_raw = query.all()
     challenge_ids = []
     for chal in challenge_ids_raw:
-        log(
-                "logins",
-                format=" - successful password reset for {name}",
-                name=chal[0],
-            )
         challenge_ids.append(chal[0])        
     challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
     return challenges
@@ -161,6 +155,7 @@ def load(app):
     registerTemplate('users/private.html','newUserPage.html')
     registerTemplate('admin/challenges/challenge.html','adminChallenge.html')
     registerTemplate('admin/challenges/challenges.html','adminChallenges.html')
+    
 
     @app.route('/admin/userChallenge')
     @admins_only
@@ -198,9 +193,7 @@ def load(app):
         q = request.args.get("q")
         field = request.args.get("field") 
         challenges = getAllUserChallenges(q, field)
-        total = len(challenges)
-
-        
+        total = len(challenges)    
 
         #return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
         return render_template('userChallenges.html',challenges=challenges,total = total,q=q,field=field)    
@@ -212,7 +205,6 @@ def load(app):
         types = CHALLENGE_CLASSES.keys()
         return render_template('createUserChallenge.html',types=types)
     
-    @userChallenge_allowed
     @app.route('/userchallenge/challenges/<int:challenge_id>',methods=['GET'])
     @owned_by_user
     @userChallenge_allowed
@@ -385,6 +377,7 @@ def load(app):
         clear_challenges()
 
         return {"success": True, "data": response}
+    
     @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['GET'])
     @userChallenge_allowed
     def idchallget(challenge_id):
@@ -1189,15 +1182,8 @@ def load(app):
             return {"success": True}
         else:
             return {"success": False}
-
     
     def challengeAttempt():
-
-        log(
-                "logins",
-                format="[{date}] {ip} - successful password reset for {name}",
-                name='is called #########################',
-            )
 
         if authed() is False:
             return {"success": True, "data": {"status": "authentication_required"}}, 403
@@ -1217,11 +1203,6 @@ def load(app):
 
     @userChallenge_allowed
     def non_admin_preview(challenge_id):
-        log(
-                "logins",
-                format="[{date}] {ip} - successful password reset for {name}",
-                name='admin preview #########################',
-            )
         preview = request.args.get("preview", False)
         if preview:
             challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()

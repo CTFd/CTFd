@@ -7,8 +7,8 @@
 
 
 	  {% if is_admin() != true %}
-      {% if get_config("allowUserChallenges") == true %}
-        <a href="/userchallenge/challenges">
+      {% if get_config('allowUserChallenges')%}
+        <a href="/userchallenge/challenges/">
           My Challenges
         </a>
       {% endif %}
