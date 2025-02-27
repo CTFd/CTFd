@@ -77,7 +77,7 @@ def userChallenge_allowed(f):
     def userChallenge_wrapper(*args, **kwargs):
         value = get_config('allowUserChallenges')
 
-        if (value == 'true' and get_current_user()) or is_admin():
+        if (value and get_current_user()) or is_admin():
             return f(*args, **kwargs)
         else:
             if request.content_type == "application/json":
