@@ -14,9 +14,9 @@ from pathlib import Path
 from CTFd.utils.plugins import override_template
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.plugins.flags import FLAG_CLASSES,get_flag_class
-from CTFd.utils.user import get_current_user,is_admin, authed,get_current_team
+from CTFd.utils.user import get_current_user, get_user_attrs,is_admin, authed,get_current_team
 from CTFd.utils import set_config, user as current_user
-from CTFd.models import ChallengeTopics, Challenges, Comments, Fails, Files, Solves, Flags, Tags, Topics, db, Configs,Hints,HintUnlocks,Flags,Submissions
+from CTFd.models import ChallengeTopics, Challenges, Comments, Fails, Files, Solves, Flags, Tags, Topics, Users, db, Configs,Hints,HintUnlocks,Flags,Submissions
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
 
@@ -55,6 +55,15 @@ class UserChallenges(db.Model):
     def __init__(self,user,challenge):
         self.user = user
         self.challenge = challenge
+
+class UserChallenge:
+    def __init__(self,id,name,category,author,value,type):
+        self.id = id
+        self.name = name
+        self.category = category
+        self.author = author
+        self.value = value
+        self.type = type
 
 def add_User_Link(challenge_id):
     userchallenge = UserChallenges(get_current_user().id,challenge_id)
@@ -140,6 +149,11 @@ def getAllUserChallenges(q,field):
     challenges = Challenges.query.filter(Challenges.id.in_(challenge_ids)).all()
     return challenges
 
+def getUserForChallenge(id):
+    query = db.session.query(UserChallenges.user).filter(getattr(UserChallenges,'challenge').like(id)).first()
+    return 'system-created' if query == None else get_user_attrs(query[0]).name
+
+
 def load(app):
 
     app.db.create_all()
@@ -154,7 +168,6 @@ def load(app):
 
     registerTemplate('users/private.html','newUserPage.html')
     registerTemplate('admin/challenges/challenge.html','adminChallenge.html')
-    registerTemplate('admin/challenges/challenges.html','adminChallenges.html')
     
 
     @app.route('/admin/userChallenge')
@@ -172,6 +185,37 @@ def load(app):
                 
         return render_template('userConfig.html',enabled = enabled)
     
+    @admins_only
+    def challenges_listing():
+        q = request.args.get("q")
+        field = request.args.get("field")
+        filters = []
+
+        if q:
+            # The field exists as an exposed column
+            if Challenges.__mapper__.has_property(field):
+                filters.append(getattr(Challenges, field).like("%{}%".format(q)))
+
+        query = Challenges.query.filter(*filters).order_by(Challenges.id.asc())
+        challenges_pre = query.all()
+        total = query.count()
+
+        challenges = []
+        for n in challenges_pre:
+            author = getUserForChallenge(n.id)
+            challenges.append(UserChallenge(n.id,n.name,n.category,author,n.value,n.type))
+            
+
+        return render_template(
+            "adminChallenges.html",
+            challenges=challenges,
+            total=total,
+            q=q,
+            field=field,)
+
+    app.view_functions['admin.challenges_listing'] = challenges_listing
+
+
     @app.route('/userchallenge/api/config',methods=['GET','POST'])
     @admins_only
     def getConfig():
