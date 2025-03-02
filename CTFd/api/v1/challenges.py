@@ -399,7 +399,7 @@ class Challenge(Resource):
                     {"id": hint.id, "cost": hint.cost, "content": hint.content}
                 )
             else:
-                hints.append({"id": hint.id, "cost": hint.cost})
+                hints.append({"id": hint.id, "cost": hint.cost, "title": hint.title})
 
         response = chal_class.read(challenge=chal)
 
