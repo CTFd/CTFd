@@ -1,3 +1,23 @@
+# 3.7.6 / 2025-02-19
+
+**Security**
+
+- Added the `TRUSTED_HOSTS` configuration to more easily restrict CTFd to valid host names
+
+**General**
+
+- Added language switcher on the main navigation bar
+- Removed autocomplete=off from login, register, and reset password forms
+
+**Plugins**
+
+- Challenge type plugins can now raise `ChallengeCreateException` or `ChallengeUpdateException` to show input validation messages
+- Plugins specifying a config route will now appear in the Admin Panel under the Plugins section
+
+**Translations**
+
+- Add Romanian, Greek, Finnish, Slovenian, Swedish languages
+
 # 3.7.5 / 2024-12-27
 
 **Security**
