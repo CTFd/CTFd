@@ -17,24 +17,19 @@
           </td>
 
           <td class="text-center">
-            <code
-              class="small text-xs"
-              style="
-                max-width: 10ch;
-                display: inline-block;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-              "
+            <div
+              class="d-flex flex-row align-items-center justify-content-center"
             >
-              {{ file.sha1sum || "No Hash Available" }}
-            </code>
-            <i
-              role="button"
-              class="btn-fa fas fa-copy ml-2"
-              title="Copy hash to clipboard"
-              @click="copyToClipboard(file.sha1sum)"
-            ></i>
+              <span class="text-truncate d-inline-block mr-2">
+                {{ file.sha1sum || "No Hash Available" }}
+              </span>
+              <i
+                role="button"
+                class="btn-fa fas fa-copy"
+                title="Copy hash to clipboard"
+                @click="copyToClipboard(file.sha1sum)"
+              ></i>
+            </div>
           </td>
 
           <td class="text-center">
