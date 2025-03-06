@@ -1,3 +1,4 @@
+import datetime
 from CTFd.api.v1.comments import get_comment_model
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.constants import RawEnum
@@ -50,23 +51,25 @@ class UserChallenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user = db.Column(db.Integer,db.ForeignKey('users.id'))
     challenge = db.Column(db.Integer,db.ForeignKey('challenges.id'))
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-
-    def __init__(self,user,challenge):
+    def __init__(self,user,challenge,date):
         self.user = user
         self.challenge = challenge
+        self.date = date
 
 class UserChallenge:
-    def __init__(self,id,name,category,author,value,type):
+    def __init__(self,id,name,category,author,value,type,creation):
         self.id = id
         self.name = name
         self.category = category
         self.author = author
         self.value = value
         self.type = type
+        self.creation = creation
 
 def add_User_Link(challenge_id):
-    userchallenge = UserChallenges(get_current_user().id,challenge_id)
+    userchallenge = UserChallenges(get_current_user().id,challenge_id,datetime.datetime.utcnow())
     db.session.add(userchallenge)
     db.session.commit()
 
@@ -153,7 +156,14 @@ def getUserForChallenge(id):
     query = db.session.query(UserChallenges.user).filter(getattr(UserChallenges,'challenge').like(id)).first()
     return 'system-created' if query == None else get_user_attrs(query[0]).name
 
-
+def getCreationDate(id):
+    query = db.session.query(UserChallenges).filter(getattr(UserChallenges,'challenge').like(id)).first()
+    log(
+                "submissions",
+                "[{date}] on with kpm +#################### {kpm}",
+                kpm=query,
+            )
+    
 def load(app):
 
     app.db.create_all()
@@ -203,7 +213,8 @@ def load(app):
         challenges = []
         for n in challenges_pre:
             author = getUserForChallenge(n.id)
-            challenges.append(UserChallenge(n.id,n.name,n.category,author,n.value,n.type))
+            date = getCreationDate(n.id)
+            challenges.append(UserChallenge(n.id,n.name,n.category,author,n.value,n.type,date))
             
 
         return render_template(
