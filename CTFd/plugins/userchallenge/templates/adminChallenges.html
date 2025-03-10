@@ -82,7 +82,8 @@
 						<th class="sort-col text-center"><b>Value</b></th>
 						<th class="sort-col text-center"><b>Type</b></th>
 						<th class="sort-col text-center"><b>State</b></th>
-						<th class="sort-col text-center"><b>Date</b></th>
+						<th class="sort-col text-center"><b>Created On</b></th>
+						<th class="sort-col text-center"><b>Last Changed</b></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -104,6 +105,7 @@
 								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
 							<td class="text-center">{{ challenge.creation }}</td>
+							<td class="text-center">{{ challenge.lastChanged }}</td>
 						</tr>
 					{% endfor %}
 					</tbody>

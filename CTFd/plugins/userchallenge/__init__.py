@@ -52,6 +52,7 @@ class UserChallenges(db.Model):
     user = db.Column(db.Integer,db.ForeignKey('users.id'))
     challenge = db.Column(db.Integer,db.ForeignKey('challenges.id'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    changed = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self,user,challenge,date):
         self.user = user
@@ -59,7 +60,7 @@ class UserChallenges(db.Model):
         self.date = date
 
 class UserChallenge:
-    def __init__(self,id,name,category,author,value,type,state,creation):
+    def __init__(self,id,name,category,author,value,type,state,creation,lchange):
         self.id = id
         self.name = name
         self.category = category
@@ -68,6 +69,7 @@ class UserChallenge:
         self.type = type
         self.state = state
         self.creation = creation
+        self.lastChanged = lchange
 
 def add_User_Link(challenge_id):
     userchallenge = UserChallenges(get_current_user().id,challenge_id,datetime.datetime.utcnow())
@@ -168,6 +170,25 @@ def getCreationDate(id):
     else:
         return query[0]
     
+def getLastChanged(id):
+    db.session.execute('alter Table UserChallenges add column if not exists changed datetime')
+    query = db.session.query(UserChallenges.changed).filter(getattr(UserChallenges,'challenge').like(id)).first()
+    db.session.commit()
+    if(query == None):
+        return getCreationDate(id)
+    elif(query[0] == None):
+        return getCreationDate(id)
+    else:
+        return query[0]
+   
+def setLastChanged(id):
+    db.session.execute('alter Table UserChallenges add column if not exists changed datetime')
+    time = datetime.datetime.utcnow()
+    query = db.session.query(UserChallenges).filter(getattr(UserChallenges,'challenge').like(id)).first()
+    if(query != None):
+        setattr(query,'changed',time)
+    db.session.commit()
+
 def load(app):
 
     app.db.create_all()
@@ -218,7 +239,8 @@ def load(app):
         for n in challenges_pre:
             author = getUserForChallenge(n.id)
             date = getCreationDate(n.id)
-            challenges.append(UserChallenge(n.id,n.name,n.category,author,n.value,n.type,n.state,date))
+            lchange = getLastChanged(n.id)
+            challenges.append(UserChallenge(n.id,n.name,n.category,author,n.value,n.type,n.state,date,lchange=lchange))
             
 
         return render_template(
@@ -431,6 +453,8 @@ def load(app):
         challenge_class = get_chal_class(challenge.type)
         challenge = challenge_class.update(challenge, request)
         response = challenge_class.read(challenge)
+
+        setLastChanged(challenge_id)
 
         clear_standings()
         clear_challenges()
