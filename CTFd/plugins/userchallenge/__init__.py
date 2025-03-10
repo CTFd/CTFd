@@ -59,13 +59,14 @@ class UserChallenges(db.Model):
         self.date = date
 
 class UserChallenge:
-    def __init__(self,id,name,category,author,value,type,creation):
+    def __init__(self,id,name,category,author,value,type,state,creation):
         self.id = id
         self.name = name
         self.category = category
         self.author = author
         self.value = value
         self.type = type
+        self.state = state
         self.creation = creation
 
 def add_User_Link(challenge_id):
@@ -157,12 +158,15 @@ def getUserForChallenge(id):
     return 'system-created' if query == None else get_user_attrs(query[0]).name
 
 def getCreationDate(id):
-    query = db.session.query(UserChallenges).filter(getattr(UserChallenges,'challenge').like(id)).first()
-    log(
-                "submissions",
-                "[{date}] on with kpm +#################### {kpm}",
-                kpm=query,
-            )
+    db.session.execute('alter Table UserChallenges add column if not exists date datetime')
+    query = db.session.query(UserChallenges.date).filter(getattr(UserChallenges,'challenge').like(id)).first()
+    db.session.commit()
+    if(query == None):
+        return "no date saved"
+    elif (query[0]== None):
+        return "no date saved"
+    else:
+        return query[0]
     
 def load(app):
 
@@ -214,7 +218,7 @@ def load(app):
         for n in challenges_pre:
             author = getUserForChallenge(n.id)
             date = getCreationDate(n.id)
-            challenges.append(UserChallenge(n.id,n.name,n.category,author,n.value,n.type,date))
+            challenges.append(UserChallenge(n.id,n.name,n.category,author,n.value,n.type,n.state,date))
             
 
         return render_template(

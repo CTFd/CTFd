@@ -82,6 +82,7 @@
 						<th class="sort-col text-center"><b>Value</b></th>
 						<th class="sort-col text-center"><b>Type</b></th>
 						<th class="sort-col text-center"><b>State</b></th>
+						<th class="sort-col text-center"><b>Date</b></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -102,6 +103,7 @@
 								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
+							<td class="text-center">{{ challenge.creation }}</td>
 						</tr>
 					{% endfor %}
 					</tbody>
