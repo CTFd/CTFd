@@ -1,0 +1,9 @@
+[submodule "CTFd/plugins/ctfd-chall-manager"]
+	path = CTFd/plugins/ctfd-chall-manager
+	url = git@github.com:TobiasInvictus/ctfd-chall-manager.git
+[submodule "CTFd/plugins/CTFd-OAuth2"]
+	path = CTFd/plugins/CTFd-OAuth2
+	url = git@github.com:TobiasInvictus/CTFd-OAuth2.git
+[submodule "CTFd/plugins/CTFd-subscriptions"]
+	path = CTFd/plugins/CTFd-subscriptions
+	url = git@github.com:TobiasInvictus/CTFd-subscriptions.git
