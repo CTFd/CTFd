@@ -35,3 +35,4 @@ cffi==1.17.1
 six==1.16.0
 urllib3==1.26.20
 psycopg2-binary==2.9.10
+Flask-Dance==7.1.0

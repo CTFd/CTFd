@@ -114,6 +114,7 @@ class Challenges(db.Model):
     description = db.Column(db.Text)
     attribution = db.Column(db.Text)
     connection_info = db.Column(db.Text)
+    subscription_required = db.Column(db.String(32), nullable=False, default="premium")
     next_id = db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="SET NULL"))
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
@@ -361,6 +362,7 @@ class Users(db.Model):
     secret = db.Column(db.String(128))
 
     # Supplementary attributes
+    subscription_level = db.Column(db.String(32), nullable=False, default="freemium")
     website = db.Column(db.String(128))
     affiliation = db.Column(db.String(128))
     country = db.Column(db.String(32))

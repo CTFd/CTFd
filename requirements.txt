@@ -49,6 +49,7 @@ flask==2.0.3
     #   -r requirements.in
     #   flask-babel
     #   flask-caching
+    #   flask-dance
     #   flask-marshmallow
     #   flask-migrate
     #   flask-restx
@@ -57,6 +58,8 @@ flask==2.0.3
 flask-babel==2.0.0
     # via -r requirements.in
 flask-caching==2.0.2
+    # via -r requirements.in
+flask-dance==7.1.0
     # via -r requirements.in
 flask-marshmallow==0.10.1
     # via -r requirements.in
@@ -113,6 +116,10 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
+oauthlib==3.2.2
+    # via
+    #   flask-dance
+    #   requests-oauthlib
 passlib==1.7.4
     # via -r requirements.in
 pillow==10.1.0
@@ -149,7 +156,12 @@ pytz==2020.4
 redis==4.5.5
     # via -r requirements.in
 requests==2.32.3
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   flask-dance
+    #   requests-oauthlib
+requests-oauthlib==2.0.0
+    # via flask-dance
 s3transfer==0.10.0
     # via boto3
 six==1.16.0
@@ -176,10 +188,13 @@ urllib3==1.26.20
     #   -r requirements.in
     #   botocore
     #   requests
+urlobject==2.4.3
+    # via flask-dance
 werkzeug==2.0.3
     # via
     #   -r requirements.in
     #   flask
+    #   flask-dance
     #   flask-restx
 wtforms==2.3.1
     # via -r requirements.in
