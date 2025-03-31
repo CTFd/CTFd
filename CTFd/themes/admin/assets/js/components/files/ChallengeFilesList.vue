@@ -4,24 +4,23 @@
       <thead>
         <tr>
           <td class="text-center"><b>File</b></td>
-          <td class="text-center"><b>SHA-1 Hash</b></td>
           <td class="text-center"><b>Settings</b></td>
         </tr>
       </thead>
       <tbody>
         <tr v-for="file in files" :key="file.id">
-          <td class="text-center">
+          <td class="text-left">
             <a :href="`${urlRoot}/files/${file.location}`">{{
               file.location.split("/").pop()
             }}</a>
-          </td>
-
-          <td class="text-center">
             <div
-              class="d-flex flex-row align-items-center justify-content-center"
+              class="d-flex flex-row align-items-center"
             >
-              <span class="text-truncate d-inline-block mr-2">
-                {{ file.sha1sum || "No Hash Available" }}
+              <strong class="mr-2 small">
+                SHA1:
+              </strong>
+              <span class="d-inline-block mr-2 small text-muted">
+                {{ file.sha1sum || "null" }}
               </span>
               <i
                 role="button"
