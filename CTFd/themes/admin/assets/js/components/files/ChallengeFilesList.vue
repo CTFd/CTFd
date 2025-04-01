@@ -13,21 +13,11 @@
             <a :href="`${urlRoot}/files/${file.location}`">{{
               file.location.split("/").pop()
             }}</a>
-            <div
-              class="d-flex flex-row align-items-center"
-            >
-              <strong class="mr-2 small">
-                SHA1:
-              </strong>
+            <div class="d-flex flex-row align-items-center">
+              <strong class="mr-2 small"> SHA1: </strong>
               <span class="d-inline-block mr-2 small text-muted">
                 {{ file.sha1sum || "null" }}
               </span>
-              <i
-                role="button"
-                class="btn-fa fas fa-copy"
-                title="Copy hash to clipboard"
-                @click="copyToClipboard(file.sha1sum)"
-              ></i>
             </div>
           </td>
 
@@ -130,17 +120,6 @@ export default {
             });
         },
       });
-    },
-    copyToClipboard: function (text) {
-      if (!text) return;
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          // maybe we could add a toast notification here? I'm not sure what best practice for this would be
-        })
-        .catch((err) => {
-          console.error("Failed to copy text: ", err);
-        });
     },
   },
   created() {
