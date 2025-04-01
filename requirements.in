@@ -11,7 +11,7 @@ passlib==1.7.4
 bcrypt==4.0.1
 requests==2.32.3
 PyMySQL[rsa]==1.0.2
-gunicorn==20.1.0
+gunicorn==23.0.0
 dataset==1.6.2
 cmarkgfm==2024.1.14
 redis==4.5.5
