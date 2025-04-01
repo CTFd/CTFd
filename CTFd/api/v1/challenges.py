@@ -753,7 +753,14 @@ class ChallengeFiles(Resource):
         ).all()
 
         for f in challenge_files:
-            response.append({"id": f.id, "type": f.type, "location": f.location})
+            response.append(
+                {
+                    "id": f.id,
+                    "type": f.type,
+                    "location": f.location,
+                    "sha1sum": f.sha1sum,
+                }
+            )
         return {"success": True, "data": response}
 
 
