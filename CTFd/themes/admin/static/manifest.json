@@ -28,8 +28,8 @@
       "_echarts.common-BkpF2UHI.js"
     ]
   },
-  "_htmlmixed-BWmNrl3P.js": {
-    "file": "assets/htmlmixed-BWmNrl3P.js",
+  "_htmlmixed-CgqC0nGv.js": {
+    "file": "assets/htmlmixed-CgqC0nGv.js",
     "imports": [
       "assets/js/pages/main.js"
     ]
@@ -66,7 +66,7 @@
     "isEntry": true
   },
   "assets/js/pages/challenge.js": {
-    "file": "assets/pages/challenge-BbfAg1H4.js",
+    "file": "assets/pages/challenge-Dr_gH2mB.js",
     "src": "assets/js/pages/challenge.js",
     "isEntry": true,
     "imports": [
@@ -87,22 +87,22 @@
     ]
   },
   "assets/js/pages/configs.js": {
-    "file": "assets/pages/configs-BQ8PvcN-.js",
+    "file": "assets/pages/configs-nPJPVxIa.js",
     "src": "assets/js/pages/configs.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
       "_tab-Cf0xqoEM.js",
-      "_htmlmixed-BWmNrl3P.js"
+      "_htmlmixed-CgqC0nGv.js"
     ]
   },
   "assets/js/pages/editor.js": {
-    "file": "assets/pages/editor-NzwfhJEo.js",
+    "file": "assets/pages/editor-Cr5tDatB.js",
     "src": "assets/js/pages/editor.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_htmlmixed-BWmNrl3P.js",
+      "_htmlmixed-CgqC0nGv.js",
       "_CommentBox-Bb-LQ90m.js"
     ]
   },
