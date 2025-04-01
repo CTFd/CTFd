@@ -78,7 +78,7 @@ greenlet==3.0.3
     # via
     #   gevent
     #   sqlalchemy
-gunicorn==20.1.0
+gunicorn==23.0.0
     # via -r requirements.in
 idna==2.10
     # via requests
@@ -113,6 +113,8 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
+packaging==24.2
+    # via gunicorn
 passlib==1.7.4
     # via -r requirements.in
 pillow==10.1.0
