@@ -324,6 +324,166 @@ def test_email_whitelist():
     destroy_ctfd(app)
 
 
+def test_email_whitelist():
+    app = create_ctfd()
+    with app.app_context():
+        set_config("domain_whitelist", "example.com")
+        test_cases_specific_domain = [
+            ("john.doe@example.com", True),
+            ("john.doe@ext.example.com", False),
+            ("john.doe@example.io", False),
+            ("john.doe@example.co", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@exexample.com", False),
+        ]
+
+        for case in test_cases_specific_domain:
+            email, expected = case
+            assert check_email_is_whitelisted(email) is expected
+
+        set_config("domain_whitelist", "*.example.com")
+        test_cases_wildcard_domain = [
+            ("john.doe@ext.example.com", True),
+            ("john.doe@.example.com", True),  # this is expected behaviour
+            ("john.doe@example.com", False),
+            ("john.doe@example.io", False),
+            ("john.doe@example.co", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@exexample.com", False),
+            ("john.doe@*example.com", False),
+            ("john.doe@*.example.com", False),
+        ]
+
+        for case in test_cases_wildcard_domain:
+            email, expected = case
+            assert check_email_is_whitelisted(email) is expected
+
+        set_config("domain_whitelist", "example.com, *.example.com")
+        test_cases_combined_domain = [
+            ("john.doe@example.com", True),
+            ("john.doe@ext.example.com", True),
+            ("john.doe@.example.com", True),  # this is expected behaviour
+            ("john.doe@example.io", False),
+            ("john.doe@example.co", False),
+            ("john.doe@gmail.com", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@exexample.com", False),
+            ("john.doe@*example.com", False),
+            ("john.doe@*.example.com", False),
+        ]
+
+        for case in test_cases_combined_domain:
+            email, expected = case
+            assert check_email_is_whitelisted(email) is expected
+
+        set_config("domain_whitelist", "example.com, uni.acme.com, *.edu, *.edu.de")
+
+        test_cases_multiple_combined_domains = [
+            ("john.doe@example.com", True),
+            ("john.doe@uni.acme.com", True),
+            ("john.doe@uni.edu", True),
+            ("john.doe@cs.uni.edu", True),
+            ("john.doe@mail.cs.uni.edu", True),
+            ("john.doe@uni.edu.de", True),
+            ("john.doe@cs.uni.edu.de", True),
+            ("john.doe@mail.cs.uni.edu.de", True),
+            ("john.doe@gmail.com", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@example1.com", False),
+            ("john.doe@1example.com", False),
+            ("john.doe@ext.example.com", False),
+            ("john.doe@cs.acme.com", False),
+            ("john.doe@edu.com", False),
+            ("john.doe@mail.uni.acme.com", False),
+            ("john.doe@edu", False),
+        ]
+
+        for case in test_cases_multiple_combined_domains:
+            email, expected = case
+            assert check_email_is_whitelisted(email) is expected
+    destroy_ctfd(app)
+
+
+def test_email_blacklist():
+    app = create_ctfd()
+    with app.app_context():
+        set_config("domain_blacklist", "example.com")
+        test_cases_specific_domain = [
+            ("john.doe@example.com", True),
+            ("john.doe@ext.example.com", False),
+            ("john.doe@example.io", False),
+            ("john.doe@example.co", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@exexample.com", False),
+        ]
+
+        for case in test_cases_specific_domain:
+            email, expected = case
+            assert check_email_is_blacklisted(email) is expected
+
+        set_config("domain_blacklist", "*.example.com")
+        test_cases_wildcard_domain = [
+            ("john.doe@ext.example.com", True),
+            ("john.doe@.example.com", True),  # this is expected behaviour
+            ("john.doe@example.com", True), 
+            ("john.doe@example.io", False),
+            ("john.doe@example.co", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@exexample.com", False),
+            ("john.doe@*example.com", False),
+            ("john.doe@*.example.com", False),
+        ]
+
+        for case in test_cases_wildcard_domain:
+            email, expected = case
+            assert check_email_is_blacklisted(email) is expected
+
+        set_config("domain_blacklist", "example.com, *.example.com")
+        test_cases_combined_domain = [
+            ("john.doe@example.com", True),
+            ("john.doe@ext.example.com", True),
+            ("john.doe@.example.com", True),  # this is expected behaviour
+            ("john.doe@example.io", False),
+            ("john.doe@example.co", False),
+            ("john.doe@gmail.com", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@exexample.com", False),
+            ("john.doe@*example.com", False),
+            ("john.doe@*.example.com", False),
+        ]
+
+        for case in test_cases_combined_domain:
+            email, expected = case
+            assert check_email_is_blacklisted(email) is expected
+
+        set_config("domain_blacklist", "example.com, uni.acme.com, *.edu, *.edu.de")
+
+        test_cases_multiple_combined_domains = [
+            ("john.doe@example.com", True),
+            ("john.doe@uni.acme.com", True),
+            ("john.doe@uni.edu", True),
+            ("john.doe@cs.uni.edu", True),
+            ("john.doe@mail.cs.uni.edu", True),
+            ("john.doe@uni.edu.de", True),
+            ("john.doe@cs.uni.edu.de", True),
+            ("john.doe@mail.cs.uni.edu.de", True),
+            ("john.doe@gmail.com", False),
+            ("john.doe@ample.com", False),
+            ("john.doe@example1.com", False),
+            ("john.doe@1example.com", False),
+            ("john.doe@ext.example.com", False),
+            ("john.doe@cs.acme.com", False),
+            ("john.doe@edu.com", False),
+            ("john.doe@mail.uni.acme.com", False),
+            ("john.doe@edu", False),
+        ]
+
+        for case in test_cases_multiple_combined_domains:
+            email, expected = case
+            assert check_email_is_blacklisted(email) is expected
+    destroy_ctfd(app)
+
+
 def test_confirm_links_single_use():
     """Test that confirm links are single use"""
     app = create_ctfd()
