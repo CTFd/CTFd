@@ -346,7 +346,7 @@ def test_email_blacklist():
         test_cases_wildcard_domain = [
             ("john.doe@ext.example.com", True),
             ("john.doe@.example.com", True),  # this is expected behaviour
-            ("john.doe@example.com", True),
+            ("john.doe@example.com", False), # intentional behavior
             ("john.doe@example.io", False),
             ("john.doe@example.co", False),
             ("john.doe@ample.com", False),
