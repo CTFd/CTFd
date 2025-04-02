@@ -1,6 +1,6 @@
-# Translations template for PROJECT.
-# Copyright (C) 2025 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# Translations template for CTFd.
+# Copyright (C) 2025 CTFd LLC
+# This file is distributed under the same license as the CTFd project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
 #, fuzzy
@@ -8,20 +8,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-03-11 15:05+0100\n"
+"POT-Creation-Date: 2025-04-02 07:37-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
 msgstr ""
 
-#: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:36
+#: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
 msgstr ""
@@ -31,7 +31,7 @@ msgstr ""
 msgid "%(ctf_name)s is paused"
 msgstr ""
 
-#: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:30
+#: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
 msgstr ""
@@ -126,7 +126,7 @@ msgstr ""
 msgid "Team Mode"
 msgstr ""
 
-#: CTFd/forms/setup.py:38
+#: CTFd/forms/setup.py:39
 msgid ""
 "Controls whether users join together in teams to play (Team Mode) or play"
 " as themselves (User Mode)"
@@ -160,7 +160,7 @@ msgstr ""
 msgid "Logo"
 msgstr ""
 
-#: CTFd/forms/setup.py:62
+#: CTFd/forms/setup.py:63
 msgid ""
 "Logo to use for the website instead of a CTF name. Used as the home page "
 "button. Optional."
@@ -178,7 +178,7 @@ msgstr ""
 msgid "Small Icon"
 msgstr ""
 
-#: CTFd/forms/setup.py:71
+#: CTFd/forms/setup.py:72
 msgid ""
 "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. "
 "Optional."
@@ -196,7 +196,7 @@ msgstr ""
 msgid "Theme Color"
 msgstr ""
 
-#: CTFd/forms/setup.py:85
+#: CTFd/forms/setup.py:86
 msgid ""
 "Color used by theme to control aesthetics. Requires theme support. "
 "Optional."
@@ -259,13 +259,13 @@ msgstr ""
 msgid "Confirm Current Team Password"
 msgstr ""
 
-#: CTFd/forms/teams.py:135
+#: CTFd/forms/teams.py:136
 msgid ""
 "Provide your current team password (or your password) to update your "
 "team's password"
 msgstr ""
 
-#: CTFd/forms/teams.py:141
+#: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
 msgstr ""
 
