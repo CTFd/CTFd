@@ -324,7 +324,6 @@ def test_email_whitelist():
             assert check_email_is_whitelisted(email) is expected
     destroy_ctfd(app)
 
-
 def test_email_blacklist():
     app = create_ctfd()
     with app.app_context():
@@ -345,14 +344,14 @@ def test_email_blacklist():
         set_config("domain_blacklist", "*.example.com")
         test_cases_wildcard_domain = [
             ("john.doe@ext.example.com", True),
-            ("john.doe@.example.com", True),  # this is expected behaviour
-            ("john.doe@example.com", False),  # intentional behavior
+            ("john.doe@.example.com", True),
+            ("john.doe@example.com", False),
             ("john.doe@example.io", False),
             ("john.doe@example.co", False),
             ("john.doe@ample.com", False),
             ("john.doe@exexample.com", False),
-            ("john.doe@*example.com", False),
-            ("john.doe@*.example.com", False),
+            ("john.doe@*example.com", True),
+            ("john.doe@*.example.com", True),
         ]
 
         for case in test_cases_wildcard_domain:
@@ -363,14 +362,14 @@ def test_email_blacklist():
         test_cases_combined_domain = [
             ("john.doe@example.com", True),
             ("john.doe@ext.example.com", True),
-            ("john.doe@.example.com", True),  # this is expected behaviour
+            ("john.doe@.example.com", True),
             ("john.doe@example.io", False),
             ("john.doe@example.co", False),
             ("john.doe@gmail.com", False),
             ("john.doe@ample.com", False),
             ("john.doe@exexample.com", False),
-            ("john.doe@*example.com", False),
-            ("john.doe@*.example.com", False),
+            ("john.doe@*example.com", True),
+            ("john.doe@*.example.com", True),
         ]
 
         for case in test_cases_combined_domain:
@@ -378,7 +377,6 @@ def test_email_blacklist():
             assert check_email_is_blacklisted(email) is expected
 
         set_config("domain_blacklist", "example.com, uni.acme.com, *.edu, *.edu.de")
-
         test_cases_multiple_combined_domains = [
             ("john.doe@example.com", True),
             ("john.doe@uni.acme.com", True),
