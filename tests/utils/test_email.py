@@ -8,6 +8,7 @@ from CTFd.utils import get_config, set_config
 from CTFd.utils.crypto import verify_password
 from CTFd.utils.email import (
     check_email_is_whitelisted,
+    check_email_is_blacklisted,
     forgot_password,
     sendmail,
     successful_registration_notification,
