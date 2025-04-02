@@ -324,6 +324,7 @@ def test_email_whitelist():
             assert check_email_is_whitelisted(email) is expected
     destroy_ctfd(app)
 
+
 def test_email_blacklist():
     app = create_ctfd()
     with app.app_context():
