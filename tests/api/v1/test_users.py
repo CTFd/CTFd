@@ -588,7 +588,7 @@ def test_api_user_change_email_under_blacklist():
 
             r = client.patch(
                 "/api/v1/users/me",
-                json={"email": "new_email@email.com", "confirm": "password"},
+                json={"email": "new_email@test.com", "confirm": "password"},
             )
             assert r.status_code == 200
             resp = r.get_json()
