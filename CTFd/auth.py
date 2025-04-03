@@ -282,7 +282,7 @@ def register():
         if email.check_email_is_whitelisted(email_address) is False:
             errors.append("Your email address is not from an allowed domain")
         if email.check_email_is_blacklisted(email_address) is True:
-            errors.append("Your email address is from a disallowed domain")
+            errors.append("Your email address is not from an allowed domain")
         if names:
             errors.append("That user name is already taken")
         if team_name_email_check is True:

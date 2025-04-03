@@ -157,7 +157,7 @@ class UserSchema(ma.ModelSchema):
                     )
                 if check_email_is_blacklisted(email) is True:
                     raise ValidationError(
-                        "Email address is from a disallowed domain",
+                        "Email address is not from an allowed domain",
                         field_names=["email"],
                     )
                 if get_config("verify_emails"):
