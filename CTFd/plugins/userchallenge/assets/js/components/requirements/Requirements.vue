@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     loadChallenges: function () {
-      CTFd.fetch("/userchallenge/api/challenges/", {
+      CTFd.fetch("/api/v1/challenges?view=admin", {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -135,7 +135,7 @@ export default {
     },
     loadRequirements: function () {
       CTFd.fetch(
-        `/userchallenge/api/challenges/${this.$props.challenge_id}/requirements`,
+        `/api/v1/challenges/${this.$props.challenge_id}/requirements`,
         {
           method: "GET",
           credentials: "same-origin",
@@ -169,7 +169,7 @@ export default {
         params.requirements.anonymize = true;
       }
 
-      CTFd.fetch(`/userchallenge/api/challenges/${this.$props.challenge_id}`, {
+      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}`, {
         method: "PATCH",
         credentials: "same-origin",
         headers: {
