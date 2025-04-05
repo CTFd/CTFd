@@ -34,3 +34,4 @@ Pillow==10.1.0
 cffi==1.17.1
 six==1.16.0
 urllib3==1.26.20
+Flask-SocketIO==5.3.4

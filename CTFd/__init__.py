@@ -32,6 +32,8 @@ from CTFd.utils.migrations import create_database, migrations, stamp_latest_revi
 from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.user import get_locale
+from flask_socketio import SocketIO
+from threading import Lock
 
 __version__ = "3.7.6"
 __channel__ = "oss"
@@ -174,11 +176,13 @@ def run_upgrade():
 
 def create_app(config="CTFd.config.Config"):
     app = CTFdFlask(__name__)
+    socketio = SocketIO(app, async_mode='threading', cors_allowed_origins="*")
     with app.app_context():
         app.config.from_object(config)
 
         from CTFd.cache import cache
         from CTFd.utils import import_in_progress
+        from CTFd.api.v1.websockets import emit_challenge_statistics, emit_scores_distribution, emit_submissions_statistics, emit_teams_statistics, emit_users_statistics, emit_solve_percentages_statistics
 
         cache.init_app(app)
         app.cache = cache
@@ -339,4 +343,33 @@ def create_app(config="CTFd.config.Config"):
         init_plugins(app)
         init_cli(app)
 
+        thread = None
+        thread_lock = Lock()
+
+        def background_thread(app):
+            with app.app_context():
+                while True:
+                    socketio.sleep(2)
+                    emit_challenge_statistics()
+                    emit_scores_distribution()
+                    emit_submissions_statistics()
+                    emit_teams_statistics()
+                    emit_users_statistics()
+                    emit_solve_percentages_statistics()
+
+
+        @socketio.on('connect')
+        def handle_connect():
+            nonlocal thread
+            with thread_lock:
+                if thread is None:
+                    thread = socketio.start_background_task(background_thread, app)
+
+        
         return app
+
+    if __name__ == "__main__":
+        app = create_app()
+        socketio.run(app, debug=True, host="127.0.0.1", port=4000, cors_allowed_origins="*")
+
+    

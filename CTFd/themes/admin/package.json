@@ -35,6 +35,7 @@
     "markdown-it": "^14.0.0",
     "nunjucks": "^3.2.4",
     "q": "^1.5.1",
+    "socket.io-client": "^4.8.1",
     "vue": "^3.2.25"
   }
 }
