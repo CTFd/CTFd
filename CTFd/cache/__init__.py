@@ -53,22 +53,36 @@ def make_cache_key(path=None, key_prefix="view/%s"):
     return cache_key
 
 
-def make_cache_key_with_query_string(allowed_params=None, query_string_hash=None):
-    if allowed_params is None:
-        allowed_params = []
+def make_cache_key_with_query_string(allowed_query_params=None, query_string_hash=None, allowed_route_params=None):
+    if allowed_query_params is None:
+        allowed_query_params = []
+    
+    if allowed_route_params is None:
+        allowed_route_params = []
 
     def _make_cache_key_with_query_string(path=None, key_prefix="view/%s/%s"):
         if path is None:
             path = request.endpoint
 
         if query_string_hash:
-            args_hash = query_string_hash
+            query_args_hash = query_string_hash
         else:
-            args_hash = calculate_param_hash(
+            query_args_hash = calculate_param_hash(
                 params=tuple(request.args.items(multi=True)),
-                allowed_params=allowed_params,
+                allowed_params=allowed_query_params,
             )
-        cache_key = key_prefix % (path, args_hash)
+
+        if request.view_args is None:
+            cache_key = key_prefix % (path, query_args_hash)
+        else:
+            route_args_hash = calculate_param_hash(
+                params=tuple(request.view_args.items()),
+                allowed_params=allowed_route_params,
+            )
+
+            key_prefix = "view/%s/%s/%s"
+            cache_key = key_prefix % (path, query_args_hash, route_args_hash)
+
         return cache_key
 
     return _make_cache_key_with_query_string
