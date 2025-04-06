@@ -11,11 +11,66 @@ socket.on('connect', function () {
   console.log('Conectado al servidor');
 });
 
+function updateTextContent(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+let solvePercentagesChart = null;  // variable global
+let challengeStatsChart = null;
+let scoreDistributionChart = null;
+let submissionsStatsChart = null;
+let categoriesGraphChart = null;
+let pointsGraphChart = null;
+
 function updateChallengeStatsGraph(data) {
-  if (!Array.isArray(data.data)) return;
   const el = document.querySelector('#solves-graph');
   if (!el) return;
-  const chart = echarts.init(el);
+
+  if (!challengeStatsChart) {
+    challengeStatsChart = echarts.init(el);
+
+    const option = {
+      title: { left: "center", text: "Solve Counts" },
+      tooltip: { trigger: "item" },
+      toolbox: {
+        show: true,
+        feature: {
+          mark: { show: true },
+          dataView: { show: true, readOnly: false },
+          magicType: { show: true, type: ["line", "bar"] },
+          restore: { show: true },
+          saveAsImage: { show: true },
+        },
+      },
+      xAxis: {
+        name: "Solve Count",
+        nameLocation: "middle",
+        type: "value",
+      },
+      yAxis: {
+        name: "Challenge Name",
+        nameLocation: "middle",
+        nameGap: 60,
+        type: "category",
+        axisLabel: { interval: 0, rotate: 0 },
+        data: []
+      },
+      series: [
+        {
+          label: { show: true },
+          data: [],
+          type: "bar",
+          itemStyle: { color: "#1f76b4" },
+        },
+      ],
+    };
+
+    challengeStatsChart.setOption(option);
+    $(window).on("resize", () => challengeStatsChart.resize());
+  }
+
+  if (!Array.isArray(data.data)) return;
 
   const chals = [];
   const counts = [];
@@ -35,174 +90,192 @@ function updateChallengeStatsGraph(data) {
     counts.push(solves[key].solves);
   });
 
-  const option = {
-    title: { left: "center", text: "Solve Counts" },
-    tooltip: { trigger: "item" },
-    toolbox: {
-      show: true,
-      feature: {
-        mark: { show: true },
-        dataView: { show: true, readOnly: false },
-        magicType: { show: true, type: ["line", "bar"] },
-        restore: { show: true },
-        saveAsImage: { show: true },
-      },
-    },
-    xAxis: {
-      name: "Solve Count",
-      nameLocation: "middle",
-      type: "value",
-    },
+  challengeStatsChart.setOption({
     yAxis: {
-      name: "Challenge Name",
-      nameLocation: "middle",
-      nameGap: 60,
-      type: "category",
       data: chals,
-      axisLabel: { interval: 0, rotate: 0 },
     },
-    dataZoom: [
-      { show: false, start: 0, end: 100 },
-      { type: "inside", yAxisIndex: 0, show: true, width: 20 },
-      {
-        fillerColor: "rgba(233, 236, 241, 0.4)",
-        show: true,
-        yAxisIndex: 0,
-        width: 20,
-      },
-    ],
-    series: [
-      {
-        label: { show: true },
-        data: counts,
-        type: "bar",
-        itemStyle: { color: "#1f76b4" },
-      },
-    ],
-  };
-
-  chart.setOption(option);
-  $(window).on("resize", () => chart.resize());
+    series: [{
+      data: counts
+    }]
+  });
 }
 
 function updateScoresDistributionGraph(data) {
-  if (!data.data || !data.data.brackets) return;
   const el = document.querySelector('#score-distribution-graph');
   if (!el) return;
-  const chart = echarts.init(el);
+
+  if (!scoreDistributionChart) {
+    scoreDistributionChart = echarts.init(el);
+
+    const option = {
+      title: {
+        left: "center",
+        text: "Score Distribution",
+      },
+      tooltip: {
+        trigger: "item",
+      },
+      toolbox: {
+        show: true,
+        feature: {
+          mark: { show: true },
+          dataView: { show: true, readOnly: false },
+          magicType: { show: true, type: ["line", "bar"] },
+          restore: { show: true },
+          saveAsImage: { show: true },
+        },
+      },
+      xAxis: {
+        name: "Score Bracket",
+        nameGap: 40,
+        nameLocation: "middle",
+        type: "category",
+        data: [],
+      },
+      yAxis: {
+        name: "Number of Teams/Users",
+        nameGap: 50,
+        nameLocation: "middle",
+        type: "value",
+      },
+      dataZoom: [
+        {
+          show: false,
+          start: 0,
+          end: 100,
+        },
+        {
+          type: "inside",
+          show: true,
+          start: 0,
+          end: 100,
+        },
+        {
+          fillerColor: "rgba(233, 236, 241, 0.4)",
+          show: true,
+          right: 60,
+          yAxisIndex: 0,
+          width: 20,
+        },
+        {
+          type: "slider",
+          fillerColor: "rgba(233, 236, 241, 0.4)",
+          top: 35,
+          height: 20,
+          show: true,
+          start: 0,
+          end: 100,
+        },
+      ],
+      series: [
+        {
+          label: { show: true },
+          data: [],
+          type: "bar",
+          itemStyle: { color: "#1f76b4" },
+        },
+      ],
+    };
+
+    scoreDistributionChart.setOption(option);
+    $(window).on("resize", () => scoreDistributionChart.resize());
+  }
+
+  if (!data.data || !data.data.brackets) return;
 
   const brackets = Object.keys(data.data.brackets).sort((a, b) => a - b);
   const sizes = brackets.map(key => data.data.brackets[key]);
 
-  const option = {
-    title: { left: "center", text: "Score Distribution" },
-    tooltip: { trigger: "item" },
-    toolbox: {
-      show: true,
-      feature: {
-        mark: { show: true },
-        dataView: { show: true, readOnly: false },
-        magicType: { show: true, type: ["line", "bar"] },
-        restore: { show: true },
-        saveAsImage: { show: true },
-      },
-    },
+  scoreDistributionChart.setOption({
     xAxis: {
-      name: "Score Bracket",
-      nameGap: 40,
-      nameLocation: "middle",
-      type: "category",
-      data: brackets.map(key => `${key - (data.bracket_size || 0)} - ${key}`),
+      data: brackets,
     },
-    yAxis: {
-      name: `Number of ${CTFd.config.userMode.charAt(0).toUpperCase() + CTFd.config.userMode.slice(1)}`,
-      nameGap: 50,
-      nameLocation: "middle",
-      type: "value",
-    },
-    series: [
-      {
-        label: { show: true },
-        data: sizes,
-        type: "bar",
-        itemStyle: { color: "#1f76b4" },
-      },
-    ],
-  };
-
-  chart.setOption(option);
+    series: [{
+      data: sizes
+    }]
+  });
 }
 
 function updateSubmissionsStatsGraph(data) {
-  console.log(data);
   const el = document.querySelector('#keys-pie-graph');
   if (!el) return;
-  const chart = echarts.init(el);
+
+  if (!submissionsStatsChart) {
+    submissionsStatsChart = echarts.init(el);
+
+    const option = {
+      title: { left: "center", text: "Submission Percentages" },
+      tooltip: { trigger: "item" },
+      toolbox: {
+        show: true,
+        feature: {
+          dataView: { show: true, readOnly: false },
+          saveAsImage: {},
+        },
+      },
+      legend: {
+        orient: "vertical",
+        top: "middle",
+        right: 0,
+        data: ["Fails", "Solves"],
+      },
+      series: [
+        {
+          name: "Submission Percentages",
+          type: "pie",
+          radius: ["30%", "50%"],
+          data: [],
+        },
+      ],
+    };
+
+    submissionsStatsChart.setOption(option);
+    $(window).on("resize", () => submissionsStatsChart.resize());
+  }
 
   const correct = data.data.correct || 0;
   const incorrect = data.data.incorrect || 0;
   const total = correct + incorrect;
 
-  const option = {
-    title: { left: "center", text: "Submission Percentages" },
-    tooltip: { trigger: "item" },
-    toolbox: {
-      show: true,
-      feature: {
-        dataView: { show: true, readOnly: false },
-        saveAsImage: {},
-      },
-    },
-    legend: {
-      orient: "vertical",
-      top: "middle",
-      right: 0,
-      data: ["Fails", "Solves"],
-    },
-    series: [
-      {
-        name: "Submission Percentages",
-        type: "pie",
-        radius: ["30%", "50%"],
-        avoidLabelOverlap: false,
-        label: { show: false, position: "center" },
-        itemStyle: {
-          normal: {
-            label: {
-              show: true,
-              formatter: function (data) {
-                const value = data.data.value || 0;
-                const percent = total > 0 ? (value / total) * 100 : 0;
-                return `${data.data.name} (${value})\n${percent.toFixed(1)}%`;
-              },
-            },
-            labelLine: { show: true },
-          },
-          emphasis: {
-            label: {
-              show: true,
-              position: "center",
-              textStyle: { fontSize: "14", fontWeight: "normal" },
-            },
-          },
-        },
-        emphasis: { label: { show: true, fontSize: "30", fontWeight: "bold" } },
-        labelLine: { show: false },
-        data: [
-          { value: incorrect, name: "Fails", itemStyle: { color: "rgb(207, 38, 0)" } },
-          { value: correct, name: "Solves", itemStyle: { color: "rgb(0, 209, 64)" } },
-        ],
-      },
-    ],
-  };
-
-  chart.setOption(option);
+  submissionsStatsChart.setOption({
+    series: [{
+      data: [
+        { value: incorrect, name: "Fails", itemStyle: { color: "rgb(207, 38, 0)" } },
+        { value: correct, name: "Solves", itemStyle: { color: "rgb(0, 209, 64)" } },
+      ]
+    }]
+  });
 }
 
 function updateCategoriesGraph(data) {
   const el = document.querySelector('#categories-pie-graph');
   if (!el) return;
-  const chart = echarts.init(el);
+
+  if (!categoriesGraphChart) {
+    categoriesGraphChart = echarts.init(el);
+
+    const option = {
+      title: { left: "center", text: "Categories Distribution" },
+      tooltip: { trigger: "item" },
+      legend: {
+        orient: "vertical",
+        top: "middle",
+        right: 0,
+        data: [],
+      },
+      series: [
+        {
+          name: "Categories",
+          type: "pie",
+          radius: ["30%", "50%"],
+          data: [],
+        },
+      ],
+    };
+
+    categoriesGraphChart.setOption(option);
+    $(window).on("resize", () => categoriesGraphChart.resize());
+  }
 
   const categoryCounts = {};
   data.data.forEach(item => {
@@ -214,36 +287,50 @@ function updateCategoriesGraph(data) {
   const categories = Object.keys(categoryCounts);
   const counts = categories.map(category => categoryCounts[category]);
 
-  const option = {
-    title: { left: "center", text: "Categories Distribution" },
-    tooltip: { trigger: "item" },
-    legend: {
-      orient: "vertical",
-      top: "middle",
-      right: 0,
+  categoriesGraphChart.setOption({
+    leyend: {
       data: categories,
     },
-    series: [
-      {
-        name: "Categories",
-        type: "pie",
-        radius: ["30%", "50%"],
-        data: categories.map((category, index) => ({
-          value: counts[index],
-          name: category,
-          itemStyle: { color: colorHash(category) },
-        })),
-      },
-    ],
-  };
-
-  chart.setOption(option);
+    series: [{
+      data: categories.map((category, index) => ({
+        value: counts[index],
+        name: category,
+        itemStyle: { color: colorHash(category) },
+      }))
+    }]
+  });
 }
 
 function updatePointsGraph(data) {
   const el = document.querySelector('#points-pie-graph');
   if (!el) return;
-  const chart = echarts.init(el);
+
+
+  if (!pointsGraphChart) {
+    pointsGraphChart = echarts.init(el);
+
+    const option = {
+      title: { left: "center", text: "Points Distribution" },
+      tooltip: { trigger: "item" },
+      legend: {
+        orient: "vertical",
+        top: "middle",
+        right: 0,
+        data: [],
+      },
+      series: [
+        {
+          name: "Points",
+          type: "pie",
+          radius: ["30%", "50%"],
+          data: [],
+        },
+      ],
+    };
+
+    pointsGraphChart.setOption(option);
+    $(window).on("resize", () => pointsGraphChart.resize());
+  }
 
   const pointsCounts = {};
   data.data.forEach(item => {
@@ -254,63 +341,162 @@ function updatePointsGraph(data) {
   const points = Object.keys(pointsCounts);
   const counts = points.map(point => pointsCounts[point]);
 
-  const option = {
-    title: { left: "center", text: "Points Distribution" },
-    tooltip: { trigger: "item" },
+  pointsGraphChart.setOption({
     legend: {
-      orient: "vertical",
-      top: "middle",
-      right: 0,
       data: points.map(point => `Points: ${point}`),
     },
-    series: [
-      {
-        name: "Points",
-        type: "pie",
-        radius: ["30%", "50%"],
-        data: points.map((point, index) => ({
-          value: counts[index],
-          name: `Points: ${point}`,
-          itemStyle: { color: colorHash(`Points: ${point}`) },
-        })),
-      },
-    ],
-  };
-
-  chart.setOption(option);
+    series: [{
+      data: points.map((point, index) => ({
+        value: counts[index],
+        name: `Points: ${point}`,
+        itemStyle: { color: colorHash(`Points: ${point}`) },
+      }))
+    }]
+  });
 }
 
 function updateSolvePercentagesGraph(data) {
   const el = document.querySelector('#solve-percentages-graph');
   if (!el) return;
-  const chart = echarts.init(el);
-  const option = {
-    title: { left: "center", text: "Solve Percentages" },
-    tooltip: { trigger: "item" },
-    series: [
-      {
-        name: "Solve Percentages",
-        type: "pie",
-        radius: ["30%", "50%"],
-        data: [
-          { value: data.data.solved, name: "Solved", itemStyle: { color: "rgb(0, 209, 64)" } },
-          { value: data.data.unsolved, name: "Unsolved", itemStyle: { color: "rgb(207, 38, 0)" } },
-        ],
-      },
-    ],
-  };
 
-  chart.setOption(option);
+  if (!solvePercentagesChart) {
+    solvePercentagesChart = echarts.init(el);
+
+    const option = {
+      title: {
+        left: "center",
+        text: "Solve Percentages per Challenge",
+      },
+      tooltip: {
+        trigger: "item",
+        formatter: function (data) {
+          return `${data.name} - ${(Math.round(data.value * 10) / 10).toFixed(1)}%`;
+        },
+      },
+      toolbox: {
+        show: true,
+        feature: {
+          mark: { show: true },
+          dataView: { show: true, readOnly: false },
+          magicType: { show: true, type: ["line", "bar"] },
+          restore: { show: true },
+          saveAsImage: { show: true },
+        },
+      },
+      xAxis: {
+        name: "Challenge Name",
+        nameGap: 40,
+        nameLocation: "middle",
+        type: "category",
+        data: [],
+        axisLabel: {
+          interval: 0,
+          rotate: 50,
+        },
+      },
+      yAxis: {
+        name: `Percentage of ${CTFd.config.userMode.charAt(0).toUpperCase() + CTFd.config.userMode.slice(1)} (%)`,
+        nameGap: 50,
+        nameLocation: "middle",
+        type: "value",
+        min: 0,
+        max: 100,
+      },
+      dataZoom: [
+        {
+          show: false,
+          start: 0,
+          end: 100,
+        },
+        {
+          type: "inside",
+          show: true,
+          start: 0,
+          end: 100,
+        },
+        {
+          fillerColor: "rgba(233, 236, 241, 0.4)",
+          show: true,
+          right: 60,
+          yAxisIndex: 0,
+          width: 20,
+        },
+        {
+          type: "slider",
+          fillerColor: "rgba(233, 236, 241, 0.4)",
+          top: 35,
+          height: 20,
+          show: true,
+          start: 0,
+          end: 100,
+        },
+      ],
+      series: [
+        {
+          name: "Solved %",
+          type: "bar",
+          itemStyle: { color: "#1f76b4" },
+          data: [],
+        }
+      ],
+    };
+
+    solvePercentagesChart.setOption(option);
+    $(window).on("resize", () => solvePercentagesChart.resize());
+  }
+
+  if (!data.data || !data.data.challenges) return;
+
+  const challenges = data.data.challenges;
+  const challengeNames = challenges.map(c => c.name);
+  const solvePercentages = challenges.map(c => c.solve_percentage);
+
+  solvePercentagesChart.setOption({
+    xAxis: {
+      data: challengeNames,
+    },
+    series: [{
+      data: solvePercentages
+    }]
+  });
 }
 
 socket.on('challenge_stats', function (data) {
   updateChallengeStatsGraph(data);
   updateCategoriesGraph(data);
   updatePointsGraph(data);
+
+  const challenges = data.data || [];
+
+  if (challenges.length > 0) {
+    let most = challenges[0];
+    let least = challenges[0];
+
+    for (const chal of challenges) {
+      if (chal.solves > most.solves) most = chal;
+      if (chal.solves < least.solves) least = chal;
+    }
+
+    updateTextContent('challenge-count', challenges.length);
+    updateTextContent('most-solved', most.name);
+    updateTextContent('most-solved-count', most.solves);
+    updateTextContent('least-solved', least.name);
+    updateTextContent('least-solved-count', least.solves);
+  }
 });
 socket.on('scores_distribution', updateScoresDistributionGraph);
 socket.on('submissions_stats', updateSubmissionsStatsGraph);
-socket.on('solve_percentages_stats', updateSolvePercentagesGraph);
+socket.on('users_stats', function (data) {
+  updateTextContent('user-count', data.data.registered);
+});
+socket.on('teams_stats', function (data) {
+  updateTextContent('team-count', data.data.registered);
+});
+socket.on('solve_percentages_stats', function (data) {
+  updateSolvePercentagesGraph(data);
+  updateTextContent('solve-count', data.data.solved);
+  updateTextContent('wrong-count', data.data.unsolved);
+});
 
 $(document).ready(function () {
   socket.emit('request_initial_data');

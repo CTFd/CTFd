@@ -9,21 +9,22 @@
 <div class="container">
 	<div class="row d-flex align-items-center">
 		<div class="col-md-4 text-right">
-			<h5><b>{{ user_count }}</b> users registered</h5>
+			<h5><b id="user-count">{{ user_count }}</b> users registered</h5>
 			{% if get_config('user_mode') == 'teams' %}
-			<h5><b>{{ team_count }}</b> teams registered</h5>
+			<h5><b id="team-count">{{ team_count }}</b> teams registered</h5>
 			{% endif %}
-			<h5><b>{{ ip_count }}</b> IP addresses</h5>
+			<h5><b id="ip-count">{{ ip_count }}</b> IP addresses</h5>
 			<hr>
-			<h5><b>{{ total_points }}</b> total possible points</h5>
-			<h5><b>{{ challenge_count }}</b> challenges</h5>
+			<h5><b id="total-points">{{ total_points }}</b> total possible points</h5>
+			<h5><b id="challenge-count">{{ challenge_count }}</b> challenges</h5>
 			{% if most_solved %}
-				<h5><b>{{ most_solved }}</b> has the most solves with <br>{{ solve_data[most_solved] }} solves</h5>
+				<h5><b id="most-solved">{{ most_solved }}</b> has the most solves with <br><span id="most-solved-count">{{ solve_data[most_solved] }}</span> solves</h5>
 			{% endif %}
 			{% if least_solved %}
-			<h5><b>{{ least_solved }}</b> has the least solves with <br>{{ solve_data[least_solved] }} solves</h5>
+			<h5><b id="least-solved">{{ least_solved }}</b> has the least solves with <br><span id="least-solved-count">{{ solve_data[least_solved] }}</span> solves</h5>
 			{% endif %}
 		</div>
+
 
 		<div class="col-md-8">
 			<div id="solves-graph" class="d-flex align-items-center">
@@ -70,9 +71,10 @@
 				</div>
 			</div>
 			<div class="text-center">
-				<h5><b>{{ solve_count }}</b> right submissions</h5>
-				<h5><b>{{ wrong_count }}</b> wrong submissions</h5>
+				<h5><b id="solve-count">{{ solve_count }}</b> right submissions</h5>
+				<h5><b id="wrong-count">{{ wrong_count }}</b> wrong submissions</h5>
 			</div>
+
 		</div>
 		<div class="col-md-4">
 			<div id="categories-pie-graph" class="d-flex align-items-center">

@@ -89,36 +89,54 @@ def emit_users_statistics():
     emit('users_stats', {'data': {'registered': registered, 'confirmed': confirmed}}, namespace='/', broadcast=True)
 
 def emit_solve_percentages_statistics():
-    solved_count = Solves.query.count()
-    unsolved_count = Fails.query.count()
-
-    total = solved_count + unsolved_count
-    if total == 0:
-        solved_percentage = 0
-        unsolved_percentage = 0
-    else:
-        solved_percentage = (solved_count / total) * 100
-        unsolved_percentage = (unsolved_count / total) * 100
-
     challenges = Challenges.query.all()
-    challenges_data = []
+
+    # Obtener solves y fails agrupados por challenge
+    solve_counts = db.session.query(
+        Solves.challenge_id,
+        db.func.count(Solves.challenge_id)
+    ).group_by(Solves.challenge_id).all()
+    solve_dict = dict(solve_counts)
+
+    fail_counts = db.session.query(
+        Fails.challenge_id,
+        db.func.count(Fails.challenge_id)
+    ).group_by(Fails.challenge_id).all()
+    fail_dict = dict(fail_counts)
+
+    challenge_stats = []
+    total_solves = 0
+    total_fails = 0
+
     for challenge in challenges:
-        # Si no hay categoría asignada, se pone como "Sin Categoría"
-        category = challenge.category if challenge.category else "Sin Categoría"
-        challenges_data.append({
+        solves = solve_dict.get(challenge.id, 0)
+        fails = fail_dict.get(challenge.id, 0)
+        total = solves + fails
+
+        total_solves += solves
+        total_fails += fails
+
+        if total == 0:
+            solve_percentage = 0
+            unsolve_percentage = 0
+        else:
+            solve_percentage = (solves / total) * 100
+            unsolve_percentage = (fails / total) * 100
+
+        challenge_stats.append({
             'id': challenge.id,
             'name': challenge.name,
-            'category': category,
-            'points': challenge.value,
+            'solves': solves,
+            'fails': fails,
+            'solve_percentage': round(solve_percentage, 2),
+            'unsolve_percentage': round(unsolve_percentage, 2),
         })
 
-    # Emitir el evento con los datos de resueltos y no resueltos, y categorías/puntos
     emit('solve_percentages_stats', {
         'data': {
-            'solved': solved_count,
-            'unsolved': unsolved_count,
-            'solved_percentage': solved_percentage,
-            'unsolved_percentage': unsolved_percentage,
-            'challenges': challenges_data  # Agregar las categorías y puntos de los desafíos
+            'solved': total_solves,
+            'unsolved': total_fails,
+            'challenges': challenge_stats
         }
     }, namespace='/', broadcast=True)
+
