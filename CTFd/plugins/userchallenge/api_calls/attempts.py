@@ -1,9 +1,8 @@
 from CTFd.cache import clear_challenges, clear_standings
-from CTFd.constants import config
 from CTFd.models import Challenges, Fails, Solves
 from CTFd.plugins.challenges import get_chal_class
 from CTFd.plugins.userchallenge.utils import userChallenge_allowed
-from CTFd.utils import get_config
+from CTFd.utils import config, get_config
 from CTFd.utils.dates import ctf_paused, ctftime
 from CTFd.utils.decorators import during_ctf_time_only, require_verified_emails
 from CTFd.utils.decorators.visibility import check_challenge_visibility
