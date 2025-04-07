@@ -8,6 +8,7 @@ from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.topics import ChallengeTopicSchema, TopicSchema
 from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.security.signing import serialize
 from flask import render_template,request,Blueprint, url_for, abort,redirect,session
 from sqlalchemy.sql import and_
@@ -102,6 +103,9 @@ def userChallenge_allowed(f):
     return userChallenge_wrapper
 
 def update_allow_challenges():
+
+    #flip submission code
+
     db.session.commit()
     config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
     if config:
@@ -461,8 +465,7 @@ def load(app):
 
         return {"success": True, "data": response}
     
-    @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['GET'])
-    @userChallenge_allowed
+    @app.route('/userchallenge/api/challenges/<challenge_id>',methods=['GET']) 
     def idchallget(challenge_id):
         if is_admin():
             chal = Challenges.query.filter(Challenges.id == challenge_id).first_or_404()
@@ -696,7 +699,6 @@ def load(app):
         return {"success": True, "data": response}
     ## flag saving
     @app.route('/userchallenge/api/challenges/<challenge_id>/flags',methods=['GET'])
-    @userChallenge_allowed
     def flagget(challenge_id):
         flags = Flags.query.filter_by(challenge_id=challenge_id).all()
         schema = FlagSchema(many=True)
@@ -736,7 +738,6 @@ def load(app):
             }
         return {"success": True, "data": response}
     @app.route('/userchallenge/api/flags/<flag_id>',methods=['GET'])
-    @userChallenge_allowed
     def flagIDget(flag_id):
         flag = Flags.query.filter_by(id=flag_id).first_or_404()
         schema = FlagSchema()
@@ -779,7 +780,6 @@ def load(app):
 
     #FILES
     @app.route('/userchallenge/api/challenges/<challenge_id>/files', methods=['GET'])
-    @userChallenge_allowed
     def getchallengeFiles(challenge_id):
         response = []
 
@@ -868,7 +868,6 @@ def load(app):
 
         return {"success": True}
     @app.route('/userchallenge/api/files/<file_id>',methods=['GET'])
-    @userChallenge_allowed
     def getFile(file_id):
         f = Files.query.filter_by(id=file_id).first_or_404()
         schema = FileSchema()
@@ -881,7 +880,6 @@ def load(app):
 
     #TOPICS
     @app.route('/userchallenge/api/challenges/<challenge_id>/topics', methods=['GET'])
-    @userChallenge_allowed
     def getTopics(challenge_id):
         response = []
 
@@ -957,7 +955,6 @@ def load(app):
 
         return {"success": True}
     @app.route('/userchallenge/api/topics/<topic_id>',methods=['GET'])
-    @userChallenge_allowed
     def getTopic(topic_id):
         topic = Topics.query.filter_by(id=topic_id).first_or_404()
         response = TopicSchema().dump(topic)
@@ -978,7 +975,6 @@ def load(app):
     
     # TAGS
     @app.route('/userchallenge/api/challenges/<challenge_id>/tags',methods=['GET'])
-    @userChallenge_allowed
     def getTags(challenge_id):
         response = []
 
@@ -1008,7 +1004,6 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/tags/<tag_id>',methods=['GET'])
-    @userChallenge_allowed
     def getTag(tag_id):
         tag = Tags.query.filter_by(id=tag_id).first_or_404()
 
@@ -1047,7 +1042,6 @@ def load(app):
 
     # Hints
     @app.route('/userchallenge/api/challenges/<challenge_id>/hints',methods=['GET'])
-    @userChallenge_allowed
     def getHints(challenge_id):
         hints = Hints.query.filter_by(challenge_id=challenge_id).all()
         schema = HintSchema(many=True)
@@ -1074,7 +1068,6 @@ def load(app):
 
         return {"success": True, "data": response.data}
     @app.route('/userchallenge/api/hints/<hint_id>',methods=['GET'])
-    @userChallenge_allowed
     def getHint(hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
         user = get_current_user()
@@ -1174,7 +1167,6 @@ def load(app):
 
     # Requirements
     @app.route('/userchallenge/api/challenges/<challenge_id>/requirements',methods=['GET'])
-    @userChallenge_allowed
     def getReqs(challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         return {"success": True, "data": challenge.requirements}
@@ -1278,9 +1270,10 @@ def load(app):
 
         challenge_id = request_data.get("challenge_id")
 
-        non_admin = non_admin_preview(challenge_id)
-        if(non_admin):
-            return non_admin
+        if get_config('allowUserChallenges'):
+            non_admin = non_admin_preview(challenge_id)
+            if(non_admin):
+                return non_admin
         
         return challengeAttemptDefault(challenge_id,request_data)
 
@@ -1299,6 +1292,8 @@ def load(app):
                     "message": message,
                 },
             }
+        else:
+            return False
 
     @check_challenge_visibility
     @during_ctf_time_only
@@ -1495,6 +1490,6 @@ def load(app):
                     "message": "You already solved this",
                 },
             }
-        
+    
     app.view_functions['api.challenges_challenge_attempt'] = challengeAttempt
     
