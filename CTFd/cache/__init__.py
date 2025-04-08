@@ -53,7 +53,9 @@ def make_cache_key(path=None, key_prefix="view/%s"):
     return cache_key
 
 
-def make_cache_key_with_query_string(allowed_query_params=None, query_string_hash=None, allowed_route_params=None):
+def make_cache_key_with_query_string(
+    allowed_query_params=None, query_string_hash=None, allowed_route_params=None
+):
     if allowed_query_params is None:
         allowed_query_params = []
     if allowed_route_params is None:
