@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from flask import jsonify
 from flask_caching import make_template_fragment_key
 
 from CTFd.cache import clear_standings
 from CTFd.models import Users
+from CTFd.utils.scoreboard import get_scoreboard_detail
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -13,6 +15,7 @@ from tests.helpers import (
     gen_flag,
     gen_solve,
     gen_team,
+    gen_user,
     login_as_user,
     register_user,
 )
@@ -33,25 +36,24 @@ def test_scoreboard_is_cached():
         # create a solve for the challenge for user1. (the id is 2 because of the admin)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
 
-        with login_as_user(app, "user1") as client:
-            # No cached data
-            assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
-            assert (
-                app.cache.get(
-                    "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
-                )
-                is None
-            )
+        # Initial get_scoreboard_detail cache key version
+        saved = app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
 
-            # Load and check cached data
+        with login_as_user(app, "user1") as client:
+            # Check basic scoreboard data
+            assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
             client.get("/api/v1/scoreboard")
             assert app.cache.get("view/api.scoreboard_scoreboard_list")
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
-            client.get("/api/v1/scoreboard/top/10")
-            assert app.cache.get(
-                "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
+
+            # Check detailed scoreboard data
+            orig = jsonify(get_scoreboard_detail.uncached(count=10)).get_json()
+            assert (
+                app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
+                == saved
             )
+            cached = client.get("/api/v1/scoreboard/top/10").get_json()
+            assert cached["data"] == orig
+            assert app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
 
             # Check scoreboard page
             assert (
@@ -64,13 +66,9 @@ def test_scoreboard_is_cached():
             # Empty standings and check that the cached data is gone
             clear_standings()
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
-            assert (
-                app.cache.get(
-                    "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
-                )
-                is None
-            )
+            # Clearing an entire function bumps flask-cachings version identify instead of setting it to null
+            new = app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
+            assert new != saved
             assert (
                 app.cache.get(make_template_fragment_key("public_scoreboard_table"))
                 is None
@@ -167,4 +165,42 @@ def test_scoreboard_tie_break_ordering_with_awards_under_teams():
             assert resp["data"][0]["score"] == 200
             assert resp["data"][1]["name"] == "team1"
             assert resp["data"][1]["score"] == 200
+    destroy_ctfd(app)
+
+
+def test_scoreboard_detail_returns_different_counts():
+    """
+    Test that /api/v1/scoreboard/top/10 and /api/v1/scoreboard/top/1
+    return different amounts of values even when cached
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Create multiple users
+        for i in range(2, 13):
+            gen_user(app.db, name=f"user{i}", email=f"user{i}@examplectf.com")
+
+        # Create a challenge
+        chal = gen_challenge(app.db, value=100)
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
+
+        # Generate solves for the challenge for multiple users
+        for user_id in range(2, 13):  # User IDs start from 2 (admin is 1)
+            gen_solve(app.db, user_id=user_id, challenge_id=chal.id)
+
+        with login_as_user(app, name="user2") as client:
+            # Fetch top 10 scores
+            top_10_resp = client.get("/api/v1/scoreboard/top/10").get_json()
+            assert len(top_10_resp["data"]) == 10
+
+            # Fetch top 1 score
+            top_1_resp = client.get("/api/v1/scoreboard/top/1").get_json()
+            assert len(top_1_resp["data"]) == 1
+
+            # Ensure the results are different
+            assert top_10_resp["data"] != top_1_resp["data"]
+
+            # Fetch scores again
+            assert top_10_resp == client.get("/api/v1/scoreboard/top/10").get_json()
+            assert top_1_resp == client.get("/api/v1/scoreboard/top/1").get_json()
+
     destroy_ctfd(app)
