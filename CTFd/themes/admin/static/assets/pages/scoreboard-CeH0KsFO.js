@@ -1,0 +1,50 @@
+import{$ as n,C as l,A as f}from"./main-sbGV3kXM.js";import{l as p}from"../index-TjCxX7sJ.js";const u={users:(e,a)=>l.api.patch_user_public({userId:e},a),teams:(e,a)=>l.api.patch_team_public({teamId:e},a)},b=p("http://127.0.0.1:4000");b.on("connect",function(){console.log("Conectado al servidor")});function h(){const e=n(this),a=e.data("account-id"),i=e.data("state");let t;i==="visible"?t=!0:i==="hidden"&&(t=!1);const d={hidden:t};u[l.config.userMode](a,d).then(s=>{s.success&&(t?(e.data("state","hidden"),e.addClass("btn-danger").removeClass("btn-success"),e.text("Hidden")):(e.data("state","visible"),e.addClass("btn-success").removeClass("btn-danger"),e.text("Visible")))})}function m(e,a){const i={hidden:a==="hidden"},t=[];for(let d of e.accounts)t.push(u[l.config.userMode](d,i));for(let d of e.users)t.push(u.users(d,i));Promise.all(t).then(d=>{window.location.reload()})}function g(e){let a=n(".tab-pane.active input[data-account-id]:checked").map(function(){return n(this).data("account-id")}),i=n(".tab-pane.active input[data-user-id]:checked").map(function(){return n(this).data("user-id")}),t={accounts:a,users:i};f({title:"Toggle Visibility",body:n(`
+    <form id="scoreboard-bulk-edit">
+      <div class="form-group">
+        <label>Visibility</label>
+        <select name="visibility" data-initial="">
+          <option value="">--</option>
+          <option value="visible">Visible</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+    </form>
+    `),button:"Submit",success:function(){let s=n("#scoreboard-bulk-edit").serializeJSON(!0).visibility;m(t,s)}})}n(()=>{n(".scoreboard-toggle").click(h),n("#scoreboard-edit-button").click(g)});function $(e,a){const i=l.config.userMode;let t;return a?i==="teams"?t=`/admin/teams/${e}`:t=`/admin/users/${e}`:i==="teams"?t=`/teams/${e}`:t=`/users/${e}`,t}function v(e,a={}){const i=window.location.origin,d={"admin.users_detail":"/admin/users/<user_id>","admin.teams_detail":"/admin/teams/<team_id>"}[e];if(!d)return console.error(`Route not found: ${e}`),"";let s=d;for(const[o,c]of Object.entries(a)){const r=`<${o}>`;s.includes(r)&&(s=s.replace(r,c))}return i+s}function _(e){const a=e.standings,i=e.user_standings,t=e.mode;let d="";if(a.forEach((s,o)=>{const c=$(s.id,!0);d+=`
+      <tr data-href="${c}">
+        <td class="border-right text-center" data-checkbox>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" value="${s.id}" data-account-id="${s.id}" autocomplete="off">&nbsp;
+          </div>
+        </td>
+        <td class="text-center" width="10%">${o+1}</td>
+        <td>
+          <a href="${c}">
+            ${s.name}
+            ${s.oauth_id?'<span class="badge badge-primary">Official</span>':""}
+          </a>
+        </td>
+        <td>${s.score}</td>
+        <td>
+          ${s.hidden?'<span class="badge badge-danger">hidden</span>':'<span class="badge badge-success">visible</span>'}
+        </td>
+      </tr>
+    `}),n("#standings-table-body").html(d),t==="teams"&&i){let s="";i.forEach((o,c)=>{const r=v("admin.users_detail",{user_id:o.user_id});s+=`
+        <tr data-href="${r}">
+          <td class="border-right text-center" data-checkbox>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" value="${o.user_id}" autocomplete="off" data-user-id="${o.user_id}">&nbsp;
+            </div>
+          </td>
+          <td class="text-center" width="10%">${c+1}</td>
+          <td>
+            <a href="${r}">
+              ${o.name}
+              ${o.oauth_id?'<span class="badge badge-primary">Official</span>':""}
+            </a>
+          </td>
+          <td>${o.score}</td>
+          <td>
+            ${o.hidden?'<span class="badge badge-danger">hidden</span>':'<span class="badge badge-success">visible</span>'}
+          </td>
+        </tr>
+      `}),n("#user-standings-table-body").html(s)}}b.on("scoreboard_update",function(e){_(e.data)});n(document).ready(function(){b.emit("request_initial_data")});
