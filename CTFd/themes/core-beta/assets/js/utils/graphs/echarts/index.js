@@ -45,4 +45,6 @@ export function embed(target, option) {
       chart.resize();
     }
   });
+
+  return chart
 }
