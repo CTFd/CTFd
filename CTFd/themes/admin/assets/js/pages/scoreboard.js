@@ -3,11 +3,18 @@ import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import "../compat/json";
 import { ezAlert } from "../compat/ezq";
+import { io } from "socket.io-client";
 
 const api_func = {
   users: (x, y) => CTFd.api.patch_user_public({ userId: x }, y),
   teams: (x, y) => CTFd.api.patch_team_public({ teamId: x }, y),
 };
+
+const socket = io('http://127.0.0.1:4000');
+
+socket.on('connect', function () {
+  console.log('Conectado al servidor');
+});
 
 function toggleAccount() {
   const $btn = $(this);
@@ -102,4 +109,119 @@ function bulkToggleAccounts(_event) {
 $(() => {
   $(".scoreboard-toggle").click(toggleAccount);
   $("#scoreboard-edit-button").click(bulkToggleAccounts);
+});
+
+
+function generateAccountUrl(accountId, admin) {
+  const mode = CTFd.config.userMode;
+  let url;
+
+  if (admin) {
+    if (mode === 'teams') {
+      url = `/admin/teams/${accountId}`;
+    } else {
+      url = `/admin/users/${accountId}`;
+    }
+  } else {
+    if (mode === 'teams') {
+      url = `/teams/${accountId}`;
+    } else {
+      url = `/users/${accountId}`;
+    }
+  }
+
+  return url;
+}
+
+function generateUrl(routeName, params = {}) {
+  const baseUrl = window.location.origin;
+  const routes = {
+    'admin.users_detail': '/admin/users/<user_id>',
+    'admin.teams_detail': '/admin/teams/<team_id>',
+  };
+
+  const pattern = routes[routeName];
+  if (!pattern) {
+    console.error(`Route not found: ${routeName}`);
+    return '';
+  }
+
+  let url = pattern;
+  for (const [key, value] of Object.entries(params)) {
+    const placeholder = `<${key}>`;
+    if (url.includes(placeholder)) {
+      url = url.replace(placeholder, value);
+    }
+  }
+
+  return baseUrl + url;
+}
+
+function renderScoreboard(data) {
+  const standings = data.standings;
+  const userStandings = data.user_standings;
+  const mode = data.mode;
+
+  let html = '';
+  standings.forEach((team, index) => {
+    const teamUrl = generateAccountUrl(team.id, true);
+    html += `
+      <tr data-href="${teamUrl}">
+        <td class="border-right text-center" data-checkbox>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" value="${team.id}" data-account-id="${team.id}" autocomplete="off">&nbsp;
+          </div>
+        </td>
+        <td class="text-center" width="10%">${index + 1}</td>
+        <td>
+          <a href="${teamUrl}">
+            ${team.name}
+            ${team.oauth_id ? '<span class="badge badge-primary">Official</span>' : ''}
+          </a>
+        </td>
+        <td>${team.score}</td>
+        <td>
+          ${team.hidden ? '<span class="badge badge-danger">hidden</span>' : '<span class="badge badge-success">visible</span>'}
+        </td>
+      </tr>
+    `;
+  });
+  $('#standings-table-body').html(html);
+
+  if (mode === 'teams' && userStandings) {
+    let userHtml = '';
+    userStandings.forEach((user, index) => {
+      const userUrl = generateUrl('admin.users_detail', { user_id: user.user_id });
+      userHtml += `
+        <tr data-href="${userUrl}">
+          <td class="border-right text-center" data-checkbox>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" value="${user.user_id}" autocomplete="off" data-user-id="${user.user_id}">&nbsp;
+            </div>
+          </td>
+          <td class="text-center" width="10%">${index + 1}</td>
+          <td>
+            <a href="${userUrl}">
+              ${user.name}
+              ${user.oauth_id ? '<span class="badge badge-primary">Official</span>' : ''}
+            </a>
+          </td>
+          <td>${user.score}</td>
+          <td>
+            ${user.hidden ? '<span class="badge badge-danger">hidden</span>' : '<span class="badge badge-success">visible</span>'}
+          </td>
+        </tr>
+      `;
+    });
+    $('#user-standings-table-body').html(userHtml);
+  }
+}
+
+socket.on('scoreboard_update', function (data) {
+  console.log(data);
+  renderScoreboard(data.data);
+});
+
+$(document).ready(function () {
+  socket.emit('request_initial_data');
 });

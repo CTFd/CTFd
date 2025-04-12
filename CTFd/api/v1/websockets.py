@@ -1,8 +1,9 @@
 from collections import defaultdict
 from flask_socketio import emit
 from CTFd.models import Challenges, Solves, Fails, Submissions, Teams, Users, db
+from CTFd.utils.config import is_teams_mode
 from CTFd.utils.modes import get_model
-from CTFd.utils.scores import get_standings
+from CTFd.utils.scores import get_standings, get_user_standings
 
 def emit_challenge_statistics():
     challenges = Challenges.query.all()
@@ -140,3 +141,43 @@ def emit_solve_percentages_statistics():
         }
     }, namespace='/', broadcast=True)
 
+def emit_scoreboard_statistics():
+    standings = get_standings(admin=True)
+    user_standings = get_user_standings(admin=True) if is_teams_mode() else None
+
+    # Obtener el modo actual (teams o users)
+    mode = "teams" if is_teams_mode() else "users"
+
+    # Convert standings to a serializable format
+    serializable_standings = [
+        {
+            "id": x.account_id,
+            "name": x.name,
+            "score": int(x.score),
+            "bracket_id": x.bracket_id,
+            "bracket_name": x.bracket_name,
+        }
+        for x in standings
+    ]
+
+    # Convert user_standings to a serializable format
+    serializable_user_standings = None
+    if user_standings:
+        serializable_user_standings = [
+            {
+                "user_id": user.user_id,
+                "name": user.name,
+                "score": user.score,
+                "hidden": user.hidden,
+                "oauth_id": user.oauth_id,
+            }
+            for user in user_standings
+        ]
+
+    data = {
+        "standings": serializable_standings,
+        "user_standings": serializable_user_standings,
+        "mode": mode,
+    }
+
+    emit('scoreboard_update', {'data': data}, namespace='/', broadcast=True)

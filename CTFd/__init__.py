@@ -182,7 +182,7 @@ def create_app(config="CTFd.config.Config"):
 
         from CTFd.cache import cache
         from CTFd.utils import import_in_progress
-        from CTFd.api.v1.websockets import emit_challenge_statistics, emit_scores_distribution, emit_submissions_statistics, emit_teams_statistics, emit_users_statistics, emit_solve_percentages_statistics
+        from CTFd.api.v1.websockets import emit_challenge_statistics, emit_scores_distribution, emit_submissions_statistics, emit_teams_statistics, emit_users_statistics, emit_solve_percentages_statistics, emit_scoreboard_statistics
 
         cache.init_app(app)
         app.cache = cache
@@ -356,6 +356,7 @@ def create_app(config="CTFd.config.Config"):
                     emit_teams_statistics()
                     emit_users_statistics()
                     emit_solve_percentages_statistics()
+                    emit_scoreboard_statistics()
 
 
         @socketio.on('connect')

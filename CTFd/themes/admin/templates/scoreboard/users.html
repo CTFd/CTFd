@@ -12,7 +12,7 @@
 			<th class="sort-col"><b>Visibility</b></th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody id="user-standings-table-body">
 	{% for standing in user_standings %}
 		<tr data-href="{{ url_for('admin.users_detail', user_id=standing.user_id) }}">
 			<td class="border-right text-center" data-checkbox>
