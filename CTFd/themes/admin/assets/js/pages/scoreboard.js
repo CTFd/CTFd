@@ -218,7 +218,6 @@ function renderScoreboard(data) {
 }
 
 socket.on('scoreboard_update', function (data) {
-  console.log(data);
   renderScoreboard(data.data);
 });
 
