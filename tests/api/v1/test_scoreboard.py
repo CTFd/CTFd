@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from flask import jsonify
 from flask_caching import make_template_fragment_key
 
 from CTFd.cache import clear_standings
 from CTFd.models import Users
+from CTFd.utils.scoreboard import get_scoreboard_detail
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -33,25 +35,24 @@ def test_scoreboard_is_cached():
         # create a solve for the challenge for user1. (the id is 2 because of the admin)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
 
-        with login_as_user(app, "user1") as client:
-            # No cached data
-            assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
-            assert (
-                app.cache.get(
-                    "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
-                )
-                is None
-            )
+        # Initial get_scoreboard_detail cache key version
+        saved = app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
 
-            # Load and check cached data
+        with login_as_user(app, "user1") as client:
+            # Check basic scoreboard data
+            assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
             client.get("/api/v1/scoreboard")
             assert app.cache.get("view/api.scoreboard_scoreboard_list")
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
-            client.get("/api/v1/scoreboard/top/10")
-            assert app.cache.get(
-                "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
+
+            # Check detailed scoreboard data
+            orig = jsonify(get_scoreboard_detail.uncached(count=10)).get_json()
+            assert (
+                app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
+                == saved
             )
+            cached = client.get("/api/v1/scoreboard/top/10").get_json()
+            assert cached["data"] == orig
+            assert app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
 
             # Check scoreboard page
             assert (
@@ -64,13 +65,9 @@ def test_scoreboard_is_cached():
             # Empty standings and check that the cached data is gone
             clear_standings()
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
-            assert app.cache.get("view/api.scoreboard_scoreboard_detail") is None
-            assert (
-                app.cache.get(
-                    "view/api.scoreboard_scoreboard_detail/bcd8b0c2eb1fce714eab6cef0d771acc"
-                )
-                is None
-            )
+            # Clearing an entire function bumps flask-cachings version identify instead of setting it to null
+            new = app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
+            assert new != saved
             assert (
                 app.cache.get(make_template_fragment_key("public_scoreboard_table"))
                 is None
