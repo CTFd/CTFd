@@ -5,28 +5,34 @@ import echarts from "echarts/dist/echarts.common";
 import { colorHash } from "../compat/styles";
 import io from 'socket.io-client';
 
+// Connect to the Socket.IO server
 const socket = io('http://127.0.0.1:4000');
 
+// Connection event handler
 socket.on('connect', function () {
-  console.log('Conectado al servidor');
+  console.log('Connected to the server');
 });
 
+// Update text content of an element by ID
 function updateTextContent(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
 }
 
-let solvePercentagesChart = null;  // variable global
+// Global chart variables
+let solvePercentagesChart = null;
 let challengeStatsChart = null;
 let scoreDistributionChart = null;
 let submissionsStatsChart = null;
 let categoriesGraphChart = null;
 let pointsGraphChart = null;
 
+// Update challenge statistics graph (solves per challenge)
 function updateChallengeStatsGraph(data) {
   const el = document.querySelector('#solves-graph');
   if (!el) return;
 
+  // Initialize chart if not already created
   if (!challengeStatsChart) {
     challengeStatsChart = echarts.init(el);
 
@@ -67,14 +73,17 @@ function updateChallengeStatsGraph(data) {
     };
 
     challengeStatsChart.setOption(option);
+    // Handle window resize events
     $(window).on("resize", () => challengeStatsChart.resize());
   }
 
+  // Process and update chart data
   if (!Array.isArray(data.data)) return;
 
   const chals = [];
   const counts = [];
 
+  // Process data and sort by solve count
   const solves = {};
   data.data.forEach(item => {
     solves[item.id] = {
@@ -100,6 +109,7 @@ function updateChallengeStatsGraph(data) {
   });
 }
 
+// Update score distribution graph (teams/users across score brackets)
 function updateScoresDistributionGraph(data) {
   const el = document.querySelector('#score-distribution-graph');
   if (!el) return;
@@ -139,33 +149,11 @@ function updateScoresDistributionGraph(data) {
         type: "value",
       },
       dataZoom: [
-        {
-          show: false,
-          start: 0,
-          end: 100,
-        },
-        {
-          type: "inside",
-          show: true,
-          start: 0,
-          end: 100,
-        },
-        {
-          fillerColor: "rgba(233, 236, 241, 0.4)",
-          show: true,
-          right: 60,
-          yAxisIndex: 0,
-          width: 20,
-        },
-        {
-          type: "slider",
-          fillerColor: "rgba(233, 236, 241, 0.4)",
-          top: 35,
-          height: 20,
-          show: true,
-          start: 0,
-          end: 100,
-        },
+        // Configuration for data zoom features
+        { show: false, start: 0, end: 100 },
+        { type: "inside", show: true, start: 0, end: 100 },
+        { fillerColor: "rgba(233, 236, 241, 0.4)", show: true, right: 60, yAxisIndex: 0, width: 20 },
+        { type: "slider", fillerColor: "rgba(233, 236, 241, 0.4)", top: 35, height: 20, show: true, start: 0, end: 100 },
       ],
       series: [
         {
@@ -181,6 +169,7 @@ function updateScoresDistributionGraph(data) {
     $(window).on("resize", () => scoreDistributionChart.resize());
   }
 
+  // Update chart data
   if (!data.data || !data.data.brackets) return;
 
   const brackets = Object.keys(data.data.brackets).sort((a, b) => a - b);
@@ -196,6 +185,7 @@ function updateScoresDistributionGraph(data) {
   });
 }
 
+// Update submissions statistics pie chart (correct/incorrect submissions)
 function updateSubmissionsStatsGraph(data) {
   const el = document.querySelector('#keys-pie-graph');
   if (!el) return;
@@ -233,9 +223,9 @@ function updateSubmissionsStatsGraph(data) {
     $(window).on("resize", () => submissionsStatsChart.resize());
   }
 
+  // Calculate percentages
   const correct = data.data.correct || 0;
   const incorrect = data.data.incorrect || 0;
-  const total = correct + incorrect;
 
   submissionsStatsChart.setOption({
     series: [{
@@ -247,6 +237,7 @@ function updateSubmissionsStatsGraph(data) {
   });
 }
 
+// Update categories distribution pie chart
 function updateCategoriesGraph(data) {
   const el = document.querySelector('#categories-pie-graph');
   if (!el) return;
@@ -277,6 +268,7 @@ function updateCategoriesGraph(data) {
     $(window).on("resize", () => categoriesGraphChart.resize());
   }
 
+  // Count challenges per category
   const categoryCounts = {};
   data.data.forEach(item => {
     if (item.category) {
@@ -288,7 +280,7 @@ function updateCategoriesGraph(data) {
   const counts = categories.map(category => categoryCounts[category]);
 
   categoriesGraphChart.setOption({
-    leyend: {
+    legend: {
       data: categories,
     },
     series: [{
@@ -301,10 +293,10 @@ function updateCategoriesGraph(data) {
   });
 }
 
+// Update points distribution pie chart
 function updatePointsGraph(data) {
   const el = document.querySelector('#points-pie-graph');
   if (!el) return;
-
 
   if (!pointsGraphChart) {
     pointsGraphChart = echarts.init(el);
@@ -332,6 +324,7 @@ function updatePointsGraph(data) {
     $(window).on("resize", () => pointsGraphChart.resize());
   }
 
+  // Count challenges per point value
   const pointsCounts = {};
   data.data.forEach(item => {
     const points = item.points || item.value;
@@ -355,6 +348,7 @@ function updatePointsGraph(data) {
   });
 }
 
+// Update solve percentages graph (percentage of users/teams who solved each challenge)
 function updateSolvePercentagesGraph(data) {
   const el = document.querySelector('#solve-percentages-graph');
   if (!el) return;
@@ -403,33 +397,11 @@ function updateSolvePercentagesGraph(data) {
         max: 100,
       },
       dataZoom: [
-        {
-          show: false,
-          start: 0,
-          end: 100,
-        },
-        {
-          type: "inside",
-          show: true,
-          start: 0,
-          end: 100,
-        },
-        {
-          fillerColor: "rgba(233, 236, 241, 0.4)",
-          show: true,
-          right: 60,
-          yAxisIndex: 0,
-          width: 20,
-        },
-        {
-          type: "slider",
-          fillerColor: "rgba(233, 236, 241, 0.4)",
-          top: 35,
-          height: 20,
-          show: true,
-          start: 0,
-          end: 100,
-        },
+        // Configuration for data zoom features
+        { show: false, start: 0, end: 100 },
+        { type: "inside", show: true, start: 0, end: 100 },
+        { fillerColor: "rgba(233, 236, 241, 0.4)", show: true, right: 60, yAxisIndex: 0, width: 20 },
+        { type: "slider", fillerColor: "rgba(233, 236, 241, 0.4)", top: 35, height: 20, show: true, start: 0, end: 100 },
       ],
       series: [
         {
@@ -445,6 +417,7 @@ function updateSolvePercentagesGraph(data) {
     $(window).on("resize", () => solvePercentagesChart.resize());
   }
 
+  // Update chart data
   if (!data.data || !data.data.challenges) return;
 
   const challenges = data.data.challenges;
@@ -461,6 +434,7 @@ function updateSolvePercentagesGraph(data) {
   });
 }
 
+// Socket.IO event handlers
 socket.on('challenge_stats', function (data) {
   updateChallengeStatsGraph(data);
   updateCategoriesGraph(data);
@@ -469,6 +443,7 @@ socket.on('challenge_stats', function (data) {
   const challenges = data.data || [];
 
   if (challenges.length > 0) {
+    // Find most and least solved challenges
     let most = challenges[0];
     let least = challenges[0];
 
@@ -484,20 +459,28 @@ socket.on('challenge_stats', function (data) {
     updateTextContent('least-solved-count', least.solves);
   }
 });
+
 socket.on('scores_distribution', updateScoresDistributionGraph);
 socket.on('submissions_stats', updateSubmissionsStatsGraph);
+
+// Update user statistics
 socket.on('users_stats', function (data) {
   updateTextContent('user-count', data.data.registered);
 });
+
+// Update team statistics
 socket.on('teams_stats', function (data) {
   updateTextContent('team-count', data.data.registered);
 });
+
+// Update solve percentages statistics
 socket.on('solve_percentages_stats', function (data) {
   updateSolvePercentagesGraph(data);
   updateTextContent('solve-count', data.data.solved);
   updateTextContent('wrong-count', data.data.unsolved);
 });
 
+// Request initial data when document is ready
 $(document).ready(function () {
   socket.emit('request_initial_data');
 });

@@ -5,34 +5,43 @@ import "../compat/json";
 import { ezAlert } from "../compat/ezq";
 import { io } from "socket.io-client";
 
+// API function mappings for user and team operations
 const api_func = {
   users: (x, y) => CTFd.api.patch_user_public({ userId: x }, y),
   teams: (x, y) => CTFd.api.patch_team_public({ teamId: x }, y),
 };
 
+// Connect to the Socket.IO server
 const socket = io('http://127.0.0.1:4000');
 
+// Connection event handler
 socket.on('connect', function () {
-  console.log('Conectado al servidor');
+  console.log('Connected to the server');
 });
 
+// Toggle account visibility (single account)
 function toggleAccount() {
   const $btn = $(this);
   const id = $btn.data("account-id");
   const state = $btn.data("state");
   let hidden = undefined;
+
+  // Determine new visibility state
   if (state === "visible") {
     hidden = true;
   } else if (state === "hidden") {
     hidden = false;
   }
 
+  // Prepare API parameters
   const params = {
     hidden: hidden,
   };
 
+  // Make API call based on current mode (teams/users)
   api_func[CTFd.config.userMode](id, params).then((response) => {
     if (response.success) {
+      // Update button state and appearance
       if (hidden) {
         $btn.data("state", "hidden");
         $btn.addClass("btn-danger").removeClass("btn-success");
@@ -46,22 +55,30 @@ function toggleAccount() {
   });
 }
 
+// Toggle visibility for multiple selected accounts
 function toggleSelectedAccounts(selectedAccounts, action) {
   const params = {
     hidden: action === "hidden" ? true : false,
   };
   const reqs = [];
+
+  // Process team accounts
   for (let accId of selectedAccounts.accounts) {
     reqs.push(api_func[CTFd.config.userMode](accId, params));
   }
+
+  // Process user accounts
   for (let accId of selectedAccounts.users) {
     reqs.push(api_func["users"](accId, params));
   }
+
+  // Execute all requests and reload on completion
   Promise.all(reqs).then((_responses) => {
     window.location.reload();
   });
 }
 
+// Bulk toggle accounts dialog and processing
 function bulkToggleAccounts(_event) {
   // Get selected account and user IDs but only on the active tab.
   // Technically this could work for both tabs at the same time but that seems like
@@ -83,6 +100,7 @@ function bulkToggleAccounts(_event) {
     users: userIDs,
   };
 
+  // Show confirmation dialog
   ezAlert({
     title: "Toggle Visibility",
     body: $(`
@@ -99,6 +117,7 @@ function bulkToggleAccounts(_event) {
     `),
     button: "Submit",
     success: function () {
+      // Process form submission
       let data = $("#scoreboard-bulk-edit").serializeJSON(true);
       let state = data.visibility;
       toggleSelectedAccounts(selectedUsers, state);
@@ -106,12 +125,13 @@ function bulkToggleAccounts(_event) {
   });
 }
 
+// Initialize event handlers
 $(() => {
   $(".scoreboard-toggle").click(toggleAccount);
   $("#scoreboard-edit-button").click(bulkToggleAccounts);
 });
 
-
+// Generate account URL based on mode and admin status
 function generateAccountUrl(accountId, admin) {
   const mode = CTFd.config.userMode;
   let url;
@@ -133,6 +153,7 @@ function generateAccountUrl(accountId, admin) {
   return url;
 }
 
+// Generate URL from route name and parameters
 function generateUrl(routeName, params = {}) {
   const baseUrl = window.location.origin;
   const routes = {
@@ -147,6 +168,7 @@ function generateUrl(routeName, params = {}) {
   }
 
   let url = pattern;
+  // Replace placeholders with actual values
   for (const [key, value] of Object.entries(params)) {
     const placeholder = `<${key}>`;
     if (url.includes(placeholder)) {
@@ -157,12 +179,14 @@ function generateUrl(routeName, params = {}) {
   return baseUrl + url;
 }
 
+// Render scoreboard data into HTML tables
 function renderScoreboard(data) {
   const standings = data.standings;
   const userStandings = data.user_standings;
   const mode = data.mode;
 
   let html = '';
+  // Render team standings
   standings.forEach((team, index) => {
     const teamUrl = generateAccountUrl(team.id, true);
     html += `
@@ -188,6 +212,7 @@ function renderScoreboard(data) {
   });
   $('#standings-table-body').html(html);
 
+  // Render user standings if in teams mode
   if (mode === 'teams' && userStandings) {
     let userHtml = '';
     userStandings.forEach((user, index) => {
@@ -217,10 +242,12 @@ function renderScoreboard(data) {
   }
 }
 
+// Handle real-time scoreboard updates
 socket.on('scoreboard_update', function (data) {
   renderScoreboard(data.data);
 });
 
+// Request initial data on page load
 $(document).ready(function () {
   socket.emit('request_initial_data');
 });

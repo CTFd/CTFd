@@ -346,31 +346,60 @@ def create_app(config="CTFd.config.Config"):
         thread = None
         thread_lock = Lock()
 
+        # Background thread function that periodically emits statistics updates
         def background_thread(app):
             with app.app_context():
                 while True:
+                    # Sleep for 2 seconds between updates
                     socketio.sleep(2)
+                    
+                    # Emit challenge statistics (solves, fails, categories)
                     emit_challenge_statistics()
+                    
+                    # Emit score distribution across brackets
                     emit_scores_distribution()
+                    
+                    # Emit submission statistics (correct/incorrect counts)
                     emit_submissions_statistics()
+                    
+                    # Emit team-related statistics (registered teams count)
                     emit_teams_statistics()
+                    
+                    # Emit user-related statistics (registered/confirmed users)
                     emit_users_statistics()
+                    
+                    # Emit solve percentage statistics per challenge
                     emit_solve_percentages_statistics()
+                    
+                    # Emit updated scoreboard data
                     emit_scoreboard_statistics()
 
-
+        # Connect event handler
         @socketio.on('connect')
         def handle_connect():
-            nonlocal thread
+            nonlocal thread  # Use nonlocal to modify variable in outer scope
+            
+            # Thread synchronization using a lock
             with thread_lock:
+                # Start background thread if it doesn't exist
                 if thread is None:
+                    # Start background task with the current app context
                     thread = socketio.start_background_task(background_thread, app)
 
         
         return app
 
+    # Application setup and execution
     if __name__ == "__main__":
-        app = create_app()
-        socketio.run(app, debug=True, host="127.0.0.1", port=4000, cors_allowed_origins="*")
+        app = create_app()  # Create the main application instance
+        
+        # Run the SocketIO server with specified parameters
+        socketio.run(
+            app, 
+            debug=True,          # Enable debug mode
+            host="127.0.0.1",    # Bind to localhost
+            port=4000,           # Use port 4000
+            cors_allowed_origins="*"  # Allow cross-origin requests from any origin
+        )
 
     
