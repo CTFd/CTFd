@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from unittest import mock
 
 from freezegun import freeze_time
 
@@ -404,6 +405,62 @@ def test_api_challenges_get_solve_count_banned_user():
             assert r.status_code == 200
             chal_data = r.get_json()["data"].pop()
             assert chal_data["solves"] == 0
+    destroy_ctfd(app)
+
+
+def test_api_challenges_get_type_with_visibility():
+    """Can users see challenges which override visibility in API list response?
+    """
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        register_user(app)
+        client = login_as_user(app)
+        # Confirm the challenge is shown with no mocking done
+        r = client.get("/api/v1/challenges")
+        assert r.status_code == 200
+        assert len(r.json["data"]) == 1
+        # Confirm that `is_visible()` is called and the challenge is only shown
+        # if it returns truthy.
+        for rv in {True, False, "thisalsoworks", 0}:
+            with mock.patch(
+                "CTFd.plugins.challenges.BaseChallenge.is_visible", return_value=rv
+            ) as mock_is_visible:
+                r = client.get("/api/v1/challenges")
+            assert mock_is_visible.call_count == 1
+            assert r.status_code == 200
+            assert len(r.json["data"]) == (1 if rv else 0)
+    destroy_ctfd(app)
+
+
+def test_api_challenges_get_type_with_visibility_admin():
+    """Can admin see challenges which override visibility in API list response?
+    """
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        register_user(app)
+        client = login_as_user(app, "admin")
+        # Confirm that if admin makes a normal request, the usual behaviour is
+        # followed and the challenge is only shown if `is_visible()` is truthy
+        for rv in {True, False}:
+            with mock.patch(
+                "CTFd.plugins.challenges.BaseChallenge.is_visible", return_value=rv
+            ) as mock_is_visible:
+                r = client.get("/api/v1/challenges")
+            assert mock_is_visible.call_count == 1
+            assert r.status_code == 200
+            assert len(r.json["data"]) == (1 if rv else 0)
+        # Confirm that if admin requests the admin view, `is_visible()` is not
+        # called and the challenge is shown regardless of its return value
+        for rv in {True, False}:
+            with mock.patch(
+                "CTFd.plugins.challenges.BaseChallenge.is_visible", return_value=rv
+            ) as mock_is_visible:
+                r = client.get("/api/v1/challenges?view=admin")
+            assert mock_is_visible.call_count == 0
+            assert r.status_code == 200
+            assert len(r.json["data"]) == 1
     destroy_ctfd(app)
 
 
@@ -834,6 +891,49 @@ def test_api_challenge_get_solve_count_banned_user():
             assert r.status_code == 200
             chal_data = r.get_json()["data"]
             assert chal_data["solves"] == 0
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_type_with_visibility():
+    """Can users see challenges which override visibility in API detail response?
+    """
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        register_user(app)
+        client = login_as_user(app)
+        # Confirm the challenge is shown with no mocking done
+        r = client.get("/api/v1/challenges/1")
+        assert r.status_code == 200
+        # Confirm that `is_visible()` is called and the challenge is only shown
+        # if it returns truthy.
+        for rv in {True, False, "thisalsoworks", 0}:
+            with mock.patch(
+                "CTFd.plugins.challenges.BaseChallenge.is_visible", return_value=rv
+            ) as mock_is_visible:
+                r = client.get("/api/v1/challenges/1")
+            assert mock_is_visible.call_count == 1
+            assert r.status_code == (200 if rv else 404)
+    destroy_ctfd(app)
+
+
+def test_api_challenge_get_type_with_visibility_admin():
+    """Can admin see challenges which override visibility in API detail response?
+    """
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        register_user(app)
+        client = login_as_user(app, "admin")
+        # Confirm that if admin makes a normal request, `is_visible()` is not
+        # called and the challenge is shown regardless of its return value
+        for rv in {True, False}:
+            with mock.patch(
+                "CTFd.plugins.challenges.BaseChallenge.is_visible", return_value=rv
+            ) as mock_is_visible:
+                r = client.get("/api/v1/challenges/1")
+            assert mock_is_visible.call_count == 0
+            assert r.status_code == 200
     destroy_ctfd(app)
 
 
