@@ -12,6 +12,7 @@
 **Deployment**
 
 - Fixed issue where the `/api/v1/scoreboard/top/<count>` endpoint wouldn't cache different count values properly
+- The `/api/v1/scoreboard/top/<count>`endpoint will now return at most the top 50 accounts
 - Updated gunicorn to 23.0.0
 - Updated Jinja2 to 3.1.6
 
