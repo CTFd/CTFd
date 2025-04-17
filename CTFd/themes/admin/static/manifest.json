@@ -69,7 +69,7 @@
     "isEntry": true
   },
   "assets/js/pages/challenge.js": {
-    "file": "assets/pages/challenge-Dr_gH2mB.js",
+    "file": "assets/pages/challenge-T7xI91K-.js",
     "src": "assets/js/pages/challenge.js",
     "isEntry": true,
     "imports": [
@@ -139,7 +139,7 @@
     ]
   },
   "assets/js/pages/scoreboard.js": {
-    "file": "assets/pages/scoreboard-CeH0KsFO.js",
+    "file": "assets/pages/scoreboard-B6IA3mLK.js",
     "src": "assets/js/pages/scoreboard.js",
     "isEntry": true,
     "imports": [
@@ -148,7 +148,7 @@
     ]
   },
   "assets/js/pages/statistics.js": {
-    "file": "assets/pages/statistics-UASC414Q.js",
+    "file": "assets/pages/statistics-Cy3lYcKm.js",
     "src": "assets/js/pages/statistics.js",
     "isEntry": true,
     "imports": [
