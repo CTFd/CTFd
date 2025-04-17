@@ -35,7 +35,7 @@ from CTFd.utils.user import get_locale
 from flask_socketio import SocketIO
 from threading import Lock
 
-__version__ = "3.7.6"
+__version__ = "3.7.7"
 __channel__ = "oss"
 
 

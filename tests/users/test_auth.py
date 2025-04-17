@@ -107,6 +107,29 @@ def test_register_whitelisted_email():
     destroy_ctfd(app)
 
 
+def test_register_blacklisted_email():
+    """A user shouldn't be able to register with an email that is on the blacklist"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config(
+            "domain_blacklist", "blacklisted.com, blacklisted.org, blacklisted.net"
+        )
+        register_user(
+            app, name="blacklisted", email="user@blacklisted.com", raise_for_error=False
+        )
+        assert Users.query.count() == 1
+
+        register_user(app, name="user1", email="user@yep.com")
+        assert Users.query.count() == 2
+
+        register_user(app, name="user2", email="user@yay.org")
+        assert Users.query.count() == 3
+
+        register_user(app, name="user3", email="user@yipee.net")
+        assert Users.query.count() == 4
+    destroy_ctfd(app)
+
+
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
     app = create_ctfd()

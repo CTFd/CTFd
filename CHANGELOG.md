@@ -1,3 +1,21 @@
+# 3.7.7 / 2025-04-14
+
+**General**
+
+- Added ability to denylist/blacklist email domains from registering
+- Hints can now include an optional title that is shown to users before unlocking
+
+**Admin Panel**
+
+- Challenge files now show the stored sha1sum
+
+**Deployment**
+
+- Fixed issue where the `/api/v1/scoreboard/top/<count>` endpoint wouldn't cache different count values properly
+- The `/api/v1/scoreboard/top/<count>`endpoint will now return at most the top 50 accounts
+- Updated gunicorn to 23.0.0
+- Updated Jinja2 to 3.1.6
+
 # 3.7.6 / 2025-02-19
 
 **Security**
