@@ -1,0 +1,63 @@
+{% extends "admin/challenges/create.html" %}
+
+{% block header %}
+<div class="alert alert-secondary" role="alert">
+	Dynamic value challenges decrease in value as they receive solves. The more solves a dynamic challenge has,
+	the lower its value is to everyone who has solved it.
+</div>
+{% endblock %}
+
+
+{% block value %}
+<div class="form-group">
+	<label for="value">Initial Value<br>
+		<small class="form-text text-muted">
+			This is how many points the challenge is worth initially.
+		</small>
+	</label>
+	<input type="number" class="form-control" name="initial" placeholder="Enter value" required>
+</div>
+
+<div class="form-group">
+	<label for="value">Decay Function<br>
+		<small class="form-text text-muted">
+			<span>How the dynamic value will be calculated based on the Decay value</span>
+			<ul>
+				<li>Linear: Calculated as <code>Initial - (Decay * SolveCount)</code></li>
+				<li>Logarithmic: Calculated as <code>(((Minimum - Initial) / (Decay^2)) * (SolveCount^2)) + Initial</code></li>
+			</ul>
+		</small>
+	</label>
+	<select name="function" class="custom-select">
+		<option value="linear">Linear</option>
+		<option value="logarithmic">Logarithmic</option>
+	</select>
+</div>
+
+<div class="form-group">
+	<label for="value">Decay<br>
+		<small class="form-text text-muted">
+			<span>The decay value is used differently depending on the above Decay Function</span>
+			<ul>
+				<li>Linear: The amount of points deducted per solve. Equal deduction per solve.</li>
+				<li>Logarithmic: The amount of solves before the challenge reaches its minimum value. Earlier solves will lose less
+					points. Later solves will lose more points</li>
+			</ul>
+		</small>
+	</label>
+	<input type="number" class="form-control" name="decay" min="1" placeholder="Enter Decay value" required>
+</div>
+
+<div class="form-group">
+	<label for="value">Minimum Value<br>
+		<small class="form-text text-muted">
+			This is the lowest that the challenge can be worth
+		</small>
+	</label>
+	<input type="number" class="form-control" name="minimum" placeholder="Enter minimum value" required>
+</div>
+{% endblock %}
+
+{% block type %}
+<input type="hidden" value="dynamic" name="type" id="chaltype">
+{% endblock %}
