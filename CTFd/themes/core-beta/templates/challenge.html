@@ -79,7 +79,11 @@
                     </details>
                     {% else %}
                     <details @toggle="showHint(event)">
+                      {% if hint.title %}
+                      <summary>{{ hint.title }} (Cost: {{ hint.cost }} point{{ hint.cost|pluralize }})</summary>
+                      {% else %}
                       <summary>Unlock Hint for {{ hint.cost }} point{{ hint.cost|pluralize }}</summary>
+                      {% endif %}
                       <div x-html="html"></div>
                     </details>
                     {% endif %}

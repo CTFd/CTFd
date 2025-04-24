@@ -7,7 +7,7 @@ from CTFd.models import Brackets, UserFieldEntries, UserFields, Users, ma
 from CTFd.schemas.fields import UserFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.email import check_email_is_whitelisted
+from CTFd.utils.email import check_email_is_blacklisted, check_email_is_whitelisted
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.validators import validate_country_code, validate_language
 
@@ -151,6 +151,11 @@ class UserSchema(ma.ModelSchema):
                         "Email address has already been used", field_names=["email"]
                     )
                 if check_email_is_whitelisted(email) is False:
+                    raise ValidationError(
+                        "Email address is not from an allowed domain",
+                        field_names=["email"],
+                    )
+                if check_email_is_blacklisted(email) is True:
                     raise ValidationError(
                         "Email address is not from an allowed domain",
                         field_names=["email"],

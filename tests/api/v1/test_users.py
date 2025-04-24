@@ -568,6 +568,35 @@ def test_api_user_change_email_under_whitelist():
     destroy_ctfd(app)
 
 
+def test_api_user_change_email_under_blacklist():
+    """Test that users can not change emails to ones in the blacklist"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        set_config(
+            "domain_blacklist", "blacklisted.com, blacklisted.org, blacklisted.net"
+        )
+        with login_as_user(app) as client:
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "new_email@blacklisted.com", "confirm": "password"},
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert resp["errors"]["email"]
+            assert resp["success"] is False
+
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "new_email@test.com", "confirm": "password"},
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp["data"]["email"] == "new_email@test.com"
+            assert resp["success"] is True
+    destroy_ctfd(app)
+
+
 def test_api_user_get_me_solves_not_logged_in():
     """Can a user get /api/v1/users/me/solves if not logged in"""
     app = create_ctfd()
