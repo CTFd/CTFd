@@ -199,7 +199,7 @@ export default {
         challenge_id: this.$props.challenge_id,
         content: this.getContent(),
         cost: this.getCost(),
-        title: getTitle(),
+        title: this.getTitle(),
         requirements: { prerequisites: this.selectedHints },
       };
 
