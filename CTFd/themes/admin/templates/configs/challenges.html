@@ -1,0 +1,20 @@
+<div role="tabpanel" class="tab-pane config-section" id="challenges">
+    {% set hints_free_public_access = "true" if hints_free_public_access == True else "false" %}
+	{% 
+		with form = Forms.config.ChallengeSettingsForm(
+			hints_free_public_access=hints_free_public_access,
+		) 
+	%}
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			{{ form.hints_free_public_access.label }}
+			{{ form.hints_free_public_access(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.hints_free_public_access.description }}
+			</small>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+	{% endwith %}
+</div>
