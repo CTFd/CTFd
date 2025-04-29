@@ -135,8 +135,7 @@ class Hint(Resource):
                 )
             else:
                 # Allow admins to allow public CTFs to see free hints if they wish
-                print(repr(get_config("hints_free_public_access")))
-                if bool(get_config("hints_free_public_access")) is True:
+                if bool(get_config("hints_free_public_access", False)) is True:
                     response = HintSchema(view="unlocked").dump(hint)
                     return {"success": True, "data": response.data}
                 else:
