@@ -396,7 +396,12 @@ class Challenge(Resource):
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
                 hints.append(
-                    {"id": hint.id, "cost": hint.cost, "content": hint.content}
+                    {
+                        "id": hint.id,
+                        "cost": hint.cost,
+                        "title": hint.title,
+                        "content": hint.content,
+                    }
                 )
             else:
                 hints.append({"id": hint.id, "cost": hint.cost, "title": hint.title})
