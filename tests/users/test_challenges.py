@@ -551,6 +551,17 @@ def test_challenge_board_under_view_after_ctf():
         gen_challenge(app.db)
         gen_flag(app.db, challenge_id=2, content="flag")
 
+        # CTF hasn't started yet. There should be an error message.
+        with freeze_time("2017-10-3"):
+            r = client.get("/challenges")
+            assert r.status_code == 403
+            assert "has not started yet" in r.get_data(as_text=True)
+
+            data = {"submission": "flag", "challenge_id": 2}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 403
+            assert Solves.query.count() == 0
+
         # CTF is ongoing. Normal operation.
         with freeze_time("2017-10-5"):
             r = client.get("/challenges")

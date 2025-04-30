@@ -1,3 +1,70 @@
+# 3.7.7 / 2025-04-14
+
+**General**
+
+- Added ability to denylist/blacklist email domains from registering
+- Hints can now include an optional title that is shown to users before unlocking
+
+**Admin Panel**
+
+- Challenge files now show the stored sha1sum
+
+**Deployment**
+
+- Fixed issue where the `/api/v1/scoreboard/top/<count>` endpoint wouldn't cache different count values properly
+- The `/api/v1/scoreboard/top/<count>`endpoint will now return at most the top 50 accounts
+- Updated gunicorn to 23.0.0
+- Updated Jinja2 to 3.1.6
+
+# 3.7.6 / 2025-02-19
+
+**Security**
+
+- Added the `TRUSTED_HOSTS` configuration to more easily restrict CTFd to valid host names
+
+**General**
+
+- Added language switcher on the main navigation bar
+- Removed autocomplete=off from login, register, and reset password forms
+
+**Plugins**
+
+- Challenge type plugins can now raise `ChallengeCreateException` or `ChallengeUpdateException` to show input validation messages
+- Plugins specifying a config route will now appear in the Admin Panel under the Plugins section
+
+**Translations**
+
+- Add Romanian, Greek, Finnish, Slovenian, Swedish languages
+
+# 3.7.5 / 2024-12-27
+
+**Security**
+
+- Change confirmation and reset password emails to be single use instead of only expiring in 30 minutes
+
+**General**
+
+- Fix issue where users could set their own bracket after registration
+- If a user or team do not have a password set we allow setting a password without providing a previous password confirmation
+- Fix issue where dynamic challenges did not return their attribution over the API
+- Language selection is now available in the main theme navigation bar
+
+**Admin Panel**
+
+- A point breakdown graph showing the amount of challenge points allocated to each category has been added to the Admin Panel
+- Bracket ID and Bracket Name have been added to CSV scoreboard exports
+- Fix issue with certain interactions in the Media Library
+
+**API**
+
+- Swagger specification has been updated to properly validate
+- `/api/v1/flags/types` and `/api/v1/flags/types/<type_name>` have been seperated into two seperate controllers
+
+**Deployment**
+
+- IP Tracking has been updated to only occur if we have not seen the IP before or on state changing methods
+- Bump dependencies for `cmarkgfm` and `jinja2`
+
 # 3.7.4 / 2024-10-08
 
 **Security**

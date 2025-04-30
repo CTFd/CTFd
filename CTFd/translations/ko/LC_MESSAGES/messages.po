@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2024-03-21 23:53\n"
+"PO-Revision-Date: 2025-02-16 18:32\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -457,7 +457,7 @@ msgstr "만들기"
 
 #: CTFd/themes/core-beta/templates/setup.html:44
 msgid "General"
-msgstr ""
+msgstr "일반 설정"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
 msgid "Mode"

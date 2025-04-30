@@ -13,6 +13,7 @@ from jinja2 import FileSystemLoader
 from jinja2.sandbox import SandboxedEnvironment
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import safe_join
+from werkzeug.wsgi import get_host
 
 import CTFd.utils.config
 from CTFd import utils
@@ -32,7 +33,7 @@ from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.user import get_locale
 
-__version__ = "3.7.4"
+__version__ = "3.7.7"
 __channel__ = "oss"
 
 
@@ -64,6 +65,17 @@ class CTFdFlask(Flask):
     def create_jinja_environment(self):
         """Overridden jinja environment constructor"""
         return super(CTFdFlask, self).create_jinja_environment()
+
+    def create_url_adapter(self, request):
+        # TODO: Backport of TRUSTED_HOSTS behavior from Flask. Remove when possible.
+        # https://github.com/pallets/flask/pull/5637
+        if request is not None:
+            if (trusted_hosts := self.config.get("TRUSTED_HOSTS")) is not None:
+                request.trusted_hosts = trusted_hosts
+
+            # Check trusted_hosts here until bind_to_environ does.
+            request.host = get_host(request.environ, request.trusted_hosts)
+        return super(CTFdFlask, self).create_url_adapter(request)
 
 
 class SandboxedBaseEnvironment(SandboxedEnvironment):
