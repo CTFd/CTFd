@@ -185,12 +185,15 @@ def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Teams.id.label("team_id"),
                 Teams.oauth_id.label("oauth_id"),
                 Teams.name.label("name"),
+                Teams.bracket_id.label("bracket_id"),
+                Brackets.name.label("bracket_name"),
                 Teams.hidden,
                 Teams.banned,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
+            .join(Brackets, isouter=True)
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -203,10 +206,13 @@ def get_team_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Teams.id.label("team_id"),
                 Teams.oauth_id.label("oauth_id"),
                 Teams.name.label("name"),
+                Teams.bracket_id.label("bracket_id"),
+                Brackets.name.label("bracket_name"),
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Teams.id == sumscores.columns.team_id)
+            .join(Brackets, isouter=True)
             .filter(Teams.banned == False)
             .filter(Teams.hidden == False)
             .order_by(
@@ -279,12 +285,15 @@ def get_user_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Users.oauth_id.label("oauth_id"),
                 Users.name.label("name"),
                 Users.team_id.label("team_id"),
+                Users.bracket_id.label("bracket_id"),
+                Brackets.name.label("bracket_name"),
                 Users.hidden,
                 Users.banned,
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
+            .join(Brackets, isouter=True)
             .order_by(
                 sumscores.columns.score.desc(),
                 sumscores.columns.date.asc(),
@@ -298,10 +307,13 @@ def get_user_standings(count=None, bracket_id=None, admin=False, fields=None):
                 Users.oauth_id.label("oauth_id"),
                 Users.name.label("name"),
                 Users.team_id.label("team_id"),
+                Users.bracket_id.label("bracket_id"),
+                Brackets.name.label("bracket_name"),
                 sumscores.columns.score,
                 *fields,
             )
             .join(sumscores, Users.id == sumscores.columns.user_id)
+            .join(Brackets, isouter=True)
             .filter(Users.banned == False, Users.hidden == False)
             .order_by(
                 sumscores.columns.score.desc(),
