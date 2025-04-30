@@ -112,7 +112,7 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
-nh3==0.2.20
+nh3==0.2.21
     # via -r requirements.in
 passlib==1.7.4
     # via -r requirements.in
