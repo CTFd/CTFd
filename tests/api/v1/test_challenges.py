@@ -22,6 +22,64 @@ from tests.helpers import (
 )
 
 
+def test_missing_data_solves():
+    """
+    Test that solves() without user or challenge data does not crash
+    """
+    app = create_ctfd()
+    with app.app_context():
+        challenge_id = gen_challenge(app.db).id
+        gen_flag(app.db, challenge_id)
+        register_user(app)
+        assert Solves.query.count() == 0
+
+        with login_as_user(app) as client:
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": None, "submission": "flag"},
+            )
+            assert r.status_code == 400
+            assert Solves.query.count() == 0
+
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": None},
+            )
+            assert r.status_code == 400
+            assert Solves.query.count() == 0
+
+    destroy_ctfd(app)
+
+
+def test_duplicate_solves():
+    """
+    Test that inputting duplicate solves does not crash the application and does not create duplicate entries
+    """
+    app = create_ctfd()
+    with app.app_context():
+        challenge_id = gen_challenge(app.db).id
+        gen_flag(app.db, challenge_id)
+        register_user(app)
+        assert Solves.query.count() == 0
+
+        with login_as_user(app) as client:
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag"},
+            )
+            assert r.status_code == 200
+            assert Solves.query.count() == 1
+
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag"},
+            )
+            assert r.status_code == 200
+            assert Solves.query.count() == 1
+
+    destroy_ctfd(app)
+
+
 def test_api_challenges_get_visibility_public():
     """Can a public user get /api/v1/challenges if challenge_visibility is private/public"""
     app = create_ctfd()
