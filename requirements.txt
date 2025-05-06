@@ -187,6 +187,7 @@ zope-event==4.5.0
     # via gevent
 zope-interface==5.2.0
     # via gevent
+psycopg2-binary
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
