@@ -1,3 +1,4 @@
+
 // Set up a MutationObserver to watch for new challenge modal content
 const observer = new MutationObserver(mutations => {
   for (let m of mutations) {
@@ -10,10 +11,21 @@ const observer = new MutationObserver(mutations => {
         // Create the button
         const btn = document.createElement('button');
         btn.id = 'test-button';
-        btn.className = 'btn btn-primary mt-3';
-        btn.textContent = 'Test';
+        btn.className = 'btn btn-warning mt-3';
+	btn.textContent = 'Run VM';
 
-        btn.onclick = () => alert('Test button clicked!');
+	btn.onclick = () => {
+	  fetch("https://franciscoalves.pt/plugins/gns3_controller/start/a443fc73-e345-461c-9776-a71c4b5b2353")
+	    .then(response => {
+	      if (!response.ok) {
+	        throw new Error(`Request failed with status ${response.status}`);
+	      }
+	      alert("Request sent successfully!");
+	    })
+	    .catch(error => {
+	      alert("Error sending request: " + error.message);
+	    });
+	};
 
         // Insert it at the bottom (e.g., after tags or description)
         const target = challengePane.querySelector('.challenge-tags') || challengePane;
