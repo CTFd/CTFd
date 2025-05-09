@@ -135,6 +135,8 @@ class ServerConfig(object):
     # === SECURITY ===
     SESSION_COOKIE_HTTPONLY: bool = config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY", fallback=True)
 
+    SESSION_COOKIE_SECURE: bool = config_ini["security"].getboolean("SESSION_COOKIE_SECURE", fallback=True)
+
     SESSION_COOKIE_SAMESITE: str = empty_str_cast(config_ini["security"]["SESSION_COOKIE_SAMESITE"]) \
         or "Lax"
 
