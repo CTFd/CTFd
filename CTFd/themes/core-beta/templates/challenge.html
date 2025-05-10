@@ -74,7 +74,7 @@
                   <div x-data="Hint" x-init="id = {{ hint.id }}">
                     {% if hint.content %}
                     <details>
-                      <summary>{% trans %}View Hint{% endtrans %}</summary>
+                      <summary>{% trans %}View Hint{% endtrans %}{% if hint.title %}: {{ hint.title }}{% endif %}</summary>
                       <div>{{ hint.html | safe }}</div>
                     </details>
                     {% else %}

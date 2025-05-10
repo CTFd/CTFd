@@ -9,6 +9,7 @@ from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessRespon
 from CTFd.constants import RawEnum
 from CTFd.models import Hints, HintUnlocks, db
 from CTFd.schemas.hints import HintSchema
+from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, during_ctf_time_only
 from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers.models import build_model_filters
@@ -132,6 +133,19 @@ class Hint(Resource):
                     },
                     403,
                 )
+            else:
+                # Allow admins to allow public CTFs to see free hints if they wish
+                if bool(get_config("hints_free_public_access", False)) is True:
+                    response = HintSchema(view="unlocked").dump(hint)
+                    return {"success": True, "data": response.data}
+                else:
+                    return (
+                        {
+                            "success": False,
+                            "errors": {"cost": ["You must login to unlock this hint"]},
+                        },
+                        403,
+                    )
 
         if hint.prerequisites:
             requirements = hint.prerequisites
@@ -139,13 +153,6 @@ class Hint(Resource):
             # Get the IDs of all hints that the user has unlocked
             all_unlocks = HintUnlocks.query.filter_by(account_id=user.account_id).all()
             unlock_ids = {unlock.target for unlock in all_unlocks}
-
-            # Get the IDs of all free hints
-            free_hints = Hints.query.filter_by(cost=0).all()
-            free_ids = {h.id for h in free_hints}
-
-            # Add free hints to unlocked IDs
-            unlock_ids.update(free_ids)
 
             # Filter out hint IDs that don't exist
             all_hint_ids = {h.id for h in Hints.query.with_entities(Hints.id).all()}
@@ -167,14 +174,12 @@ class Hint(Resource):
                     403,
                 )
 
-        view = "unlocked"
-        if hint.cost:
-            view = "locked"
-            unlocked = HintUnlocks.query.filter_by(
-                account_id=user.account_id, target=hint.id
-            ).first()
-            if unlocked:
-                view = "unlocked"
+        view = "locked"
+        unlocked = HintUnlocks.query.filter_by(
+            account_id=user.account_id, target=hint.id
+        ).first()
+        if unlocked:
+            view = "unlocked"
 
         if is_admin():
             if request.args.get("preview", False):
