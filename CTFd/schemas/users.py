@@ -152,12 +152,12 @@ class UserSchema(ma.ModelSchema):
                     )
                 if check_email_is_whitelisted(email) is False:
                     raise ValidationError(
-                        "Email address is not from an allowed domain",
+                        "Email address is not from an allowed domain or is not whitelisted",
                         field_names=["email"],
                     )
                 if check_email_is_blacklisted(email) is True:
                     raise ValidationError(
-                        "Email address is not from an allowed domain",
+                        "Email address is not from an allowed domain or is blacklisted",
                         field_names=["email"],
                     )
                 if get_config("verify_emails"):

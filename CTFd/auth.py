@@ -280,9 +280,9 @@ def register():
         if not valid_email:
             errors.append("Please enter a valid email address")
         if email.check_email_is_whitelisted(email_address) is False:
-            errors.append("Your email address is not from an allowed domain")
+            errors.append("Your email address is not from an allowed domain or is not whitelisted")
         if email.check_email_is_blacklisted(email_address) is True:
-            errors.append("Your email address is not from an allowed domain")
+            errors.append("Your email address is not from an allowed domain or is blacklisted")
         if names:
             errors.append("That user name is already taken")
         if team_name_email_check is True:

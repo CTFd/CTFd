@@ -147,54 +147,53 @@ def user_created_notification(addr, name, password):
 def check_email_is_whitelisted(email_address):
     local_id, _, domain = email_address.partition("@")
     domain_whitelist = get_config("domain_whitelist")
+    email_whitelist = get_config("email_whitelist")
+
+    matched = False
+    whitelist_present = False
+
+    if email_whitelist:
+        whitelist_present = True
+        email_whitelist = [e.strip() for e in email_whitelist.split(",")]
+        if email_address in email_whitelist:
+            matched = True
 
     if domain_whitelist:
+        whitelist_present = True
         domain_whitelist = [d.strip() for d in domain_whitelist.split(",")]
-
         for allowed_domain in domain_whitelist:
             if allowed_domain.startswith("*."):
-                # domains should never container the "*" char
-                if "*" in domain:
-                    return False
-
-                # Handle wildcard domain case
                 suffix = allowed_domain[1:]  # Remove the "*" prefix
                 if domain.endswith(suffix):
-                    return True
-
+                    matched = True
+                    break
             elif domain == allowed_domain:
-                return True
+                matched = True
+                break
 
-        # whitelist is specified but the email doesn't match any domains
-        return False
-
-    # whitelist is not specified - allow all emails
-    return True
+    if whitelist_present:
+        return matched  # True only if it matched at least one whitelist
+    return True  # No whitelist present, allow all
 
 
 def check_email_is_blacklisted(email_address):
     local_id, _, domain = email_address.partition("@")
     domain_blacklist = get_config("domain_blacklist")
+    email_blacklist = get_config("email_blacklist")
+
+    if email_blacklist:
+        email_blacklist = [e.strip() for e in email_blacklist.split(",")]
+        if email_address in email_blacklist:
+            return True
 
     if domain_blacklist:
         domain_blacklist = [d.strip() for d in domain_blacklist.split(",")]
-
         for disallowed_domain in domain_blacklist:
             if disallowed_domain.startswith("*."):
-                # domains should never container the "*" char
-                if "*" in domain:
-                    return True
-
-                # Handle wildcard domain case
                 suffix = disallowed_domain[1:]  # Remove the "*" prefix
                 if domain.endswith(suffix):
                     return True
-
             elif domain == disallowed_domain:
                 return True
 
-        # blacklist is specified but the email is not blacklisted
-        return False
-
-    # blacklist is not specified - no emails are blacklisted
-    return False
+    return False  # Not blacklisted

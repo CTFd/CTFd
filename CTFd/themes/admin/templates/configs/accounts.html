@@ -30,11 +30,31 @@
 					</div>
 
 					<div class="form-group">
+						{{ form.email_whitelist.label }}
+						{{ form.email_whitelist(class="form-control", value=email_whitelist or "", id="email_whitelist_input") }}
+						<small class="form-text text-muted">
+							{{ form.email_whitelist.description }}
+						</small>
+						<label for="email_whitelist_csv" class="mt-2">Import from CSV:</label>
+						<input type="file" accept=".csv" id="email_whitelist_csv" class="form-control-file">
+					</div>
+
+					<div class="form-group">
 						{{ form.domain_blacklist.label }}
 						{{ form.domain_blacklist(class="form-control", value=domain_blacklist or "") }}
 						<small class="form-text text-muted">
 							{{ form.domain_blacklist.description }}
 						</small>
+					</div>
+
+					<div class="form-group">
+						{{ form.email_blacklist.label }}
+						{{ form.email_blacklist(class="form-control", value=email_blacklist or "", id="email_blacklist_input") }}
+						<small class="form-text text-muted">
+							{{ form.email_blacklist.description }}
+						</small>
+						<label for="email_blacklist_csv" class="mt-2">Import from CSV:</label>
+						<input type="file" accept=".csv" id="email_blacklist_csv" class="form-control-file">
 					</div>
 			
 					<div class="form-group">
@@ -107,7 +127,105 @@
 			</div>
 		</div>
 
-		{{ form.submit(class="btn btn-md btn-primary float-right") }}
+		<button type="button" id="customSubmitBtn" class="btn btn-md btn-primary float-right">Submit</button>
 	</form>
+
+	<!-- Conflict Confirmation Modal -->
+	<div class="modal fade" id="conflictModal" tabindex="-1" role="dialog" aria-labelledby="conflictModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="conflictModalLabel">Conflict Detected</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					One or more emails or domains are listed in both the whitelist and the blacklist.<br><br>
+					<strong>Conflicting entries:</strong>
+					<ul id="conflictList" class="mt-2"></ul>
+					<p class="mt-3">Are you sure you want to proceed with this configuration?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary" id="confirmSubmitBtn">Yes, continue</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	{% endwith %}
 </div>
+<script>
+document.getElementById('email_whitelist_csv').addEventListener('change', function(e) {
+	const file = e.target.files[0];
+	if (!file) return;
+
+	const reader = new FileReader();
+	reader.onload = function(event) {
+		const csvContent = event.target.result;
+		document.getElementById('email_whitelist_input').value = csvContent.trim().replace(/\s+/g, '');
+	};
+	reader.readAsText(file);
+});
+
+document.getElementById('email_blacklist_csv').addEventListener('change', function(e) {
+	const file = e.target.files[0];
+	if (!file) return;
+
+	const reader = new FileReader();
+	reader.onload = function(event) {
+		const csvContent = event.target.result;
+		document.getElementById('email_blacklist_input').value = csvContent.trim().replace(/\s+/g, '');
+	};
+	reader.readAsText(file);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+	const form = document.querySelector('form');
+	if (!form) return;
+
+	// When the custom "Save" button is clicked
+	document.getElementById('customSubmitBtn').addEventListener('click', function() {
+		// Get and sanitize input values (remove spaces, empty strings)
+		const emailWhitelist = document.getElementById('email_whitelist_input').value.split(',').map(x => x.trim()).filter(Boolean);
+		const emailBlacklist = document.getElementById('email_blacklist_input').value.split(',').map(x => x.trim()).filter(Boolean);
+
+		const domainWhitelist = document.querySelector('[name="domain_whitelist"]').value.split(',').map(x => x.trim()).filter(Boolean);
+		const domainBlacklist = document.querySelector('[name="domain_blacklist"]').value.split(',').map(x => x.trim()).filter(Boolean);
+
+		// Check for overlapping/conflicting values
+		const emailConflicts = emailWhitelist.filter(email => emailBlacklist.includes(email));
+		const domainConflicts = domainWhitelist.filter(domain => domainBlacklist.includes(domain));
+
+		if (emailConflicts.length > 0 || domainConflicts.length > 0) {
+			// If there are conflicts, show the modal and list the conflicts
+			const conflictList = document.getElementById('conflictList');
+			conflictList.innerHTML = '';
+
+			emailConflicts.forEach(email => {
+				const li = document.createElement('li');
+				li.textContent = `Email: ${email}`;
+				conflictList.appendChild(li);
+			});
+
+			domainConflicts.forEach(domain => {
+				const li = document.createElement('li');
+				li.textContent = `Domain: ${domain}`;
+				conflictList.appendChild(li);
+			});
+
+			// Show the Bootstrap modal
+			$('#conflictModal').modal('show');
+
+			// If the user confirms, proceed with form submission
+			document.getElementById('confirmSubmitBtn').onclick = function() {
+				$('#conflictModal').modal('hide');
+				form.requestSubmit(); // Triggers HTML5 form validation before submitting
+			};
+		} else {
+			// No conflicts: submit the form directly
+			form.requestSubmit();
+		}
+	});
+});
+</script>
