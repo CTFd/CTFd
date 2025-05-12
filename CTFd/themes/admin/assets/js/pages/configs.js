@@ -591,16 +591,36 @@ $(() => {
   document.getElementById('customSubmitBtn').addEventListener('click', function (e) {
     e.preventDefault(); // Prevent default form submission
 
-    // Get and sanitize input values
+    // Get input values and sanitize
     const emailWhitelist = document.getElementById('email_whitelist_input').value.split(',').map(x => x.trim()).filter(Boolean);
     const emailBlacklist = document.getElementById('email_blacklist_input').value.split(',').map(x => x.trim()).filter(Boolean);
     const domainWhitelist = document.querySelector('[name="domain_whitelist"]').value.split(',').map(x => x.trim()).filter(Boolean);
     const domainBlacklist = document.querySelector('[name="domain_blacklist"]').value.split(',').map(x => x.trim()).filter(Boolean);
 
-    // Detect conflicts
+    // Conflicts: exact match
     const emailConflicts = emailWhitelist.filter(email => emailBlacklist.includes(email));
     const domainConflicts = domainWhitelist.filter(domain => domainBlacklist.includes(domain));
 
+    // Conflicts: domain/email mismatch
+    const domainEmailConflicts = [];
+
+    // Check if an email's domain is blacklisted but email is whitelisted
+    emailWhitelist.forEach(email => {
+      const domain = email.split('@')[1];
+      if (domainBlacklist.includes(domain)) {
+        domainEmailConflicts.push(`Email ${email} vs Domain blacklist: ${domain}`);
+      }
+    });
+
+    // Check if an email's domain is whitelisted but email is blacklisted
+    emailBlacklist.forEach(email => {
+      const domain = email.split('@')[1];
+      if (domainWhitelist.includes(domain)) {
+        domainEmailConflicts.push(`Email ${email} vs Domain whitelist: ${domain}`);
+      }
+    });
+
+    // First modal: direct conflicts
     if (emailConflicts.length > 0 || domainConflicts.length > 0) {
       const conflictList = document.getElementById('conflictList');
       conflictList.innerHTML = '';
@@ -618,13 +638,29 @@ $(() => {
       });
 
       $('#conflictModal').modal('show');
-
       document.getElementById('modalConfirmSubmitBtn').onclick = function () {
         $('#conflictModal').modal('hide');
-        form.requestSubmit(); // Submit form with HTML5 validation
+        form.requestSubmit();
       };
-    } else {
-      form.requestSubmit();
+    }
+    // Second modal: email-domain logic conflict
+    else if (domainEmailConflicts.length > 0) {
+      const list = document.getElementById('domainEmailConflictList');
+      list.innerHTML = '';
+      domainEmailConflicts.forEach(conflict => {
+        const li = document.createElement('li');
+        li.textContent = conflict;
+        list.appendChild(li);
+      });
+
+      $('#domainEmailConflictModal').modal('show');
+      document.getElementById('modalDomainConflictSubmitBtn').onclick = function () {
+        $('#domainEmailConflictModal').modal('hide');
+        form.requestSubmit();
+      };
+    }
+    else {
+      form.requestSubmit(); // No conflicts
     }
   });
 });
