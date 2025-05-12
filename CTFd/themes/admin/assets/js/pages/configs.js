@@ -585,23 +585,23 @@ $(() => {
     reader.readAsText(file);
   });
 
-  // When the custom "Save" button is clicked
-  document.getElementById('customSubmitBtn').addEventListener('click', function () {
-    const form = document.querySelector('form');
-    if (!form) return;
-    // Get and sanitize input values (remove spaces, empty strings)
+  const form = document.querySelector('#accounts form');
+  if (!form) return;
+
+  document.getElementById('customSubmitBtn').addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent default form submission
+
+    // Get and sanitize input values
     const emailWhitelist = document.getElementById('email_whitelist_input').value.split(',').map(x => x.trim()).filter(Boolean);
     const emailBlacklist = document.getElementById('email_blacklist_input').value.split(',').map(x => x.trim()).filter(Boolean);
-
     const domainWhitelist = document.querySelector('[name="domain_whitelist"]').value.split(',').map(x => x.trim()).filter(Boolean);
     const domainBlacklist = document.querySelector('[name="domain_blacklist"]').value.split(',').map(x => x.trim()).filter(Boolean);
 
-    // Check for overlapping/conflicting values
+    // Detect conflicts
     const emailConflicts = emailWhitelist.filter(email => emailBlacklist.includes(email));
     const domainConflicts = domainWhitelist.filter(domain => domainBlacklist.includes(domain));
 
     if (emailConflicts.length > 0 || domainConflicts.length > 0) {
-      // If there are conflicts, show the modal and list the conflicts
       const conflictList = document.getElementById('conflictList');
       conflictList.innerHTML = '';
 
@@ -617,22 +617,14 @@ $(() => {
         conflictList.appendChild(li);
       });
 
-      // Show the Bootstrap modal
       $('#conflictModal').modal('show');
 
-      // If the user confirms, proceed with form submission
-      document.getElementById('confirmSubmitBtn').onclick = function () {
+      document.getElementById('modalConfirmSubmitBtn').onclick = function () {
         $('#conflictModal').modal('hide');
-        form.requestSubmit(); // Triggers HTML5 form validation before submitting
+        form.requestSubmit(); // Submit form with HTML5 validation
       };
     } else {
-      // No conflicts: submit the form directly
       form.requestSubmit();
     }
-  });
-
-  document.addEventListener('DOMContentLoaded', function () {
-
-
   });
 });
