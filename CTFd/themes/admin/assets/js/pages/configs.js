@@ -585,52 +585,54 @@ $(() => {
     reader.readAsText(file);
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
+  // When the custom "Save" button is clicked
+  document.getElementById('customSubmitBtn').addEventListener('click', function () {
     const form = document.querySelector('form');
     if (!form) return;
+    // Get and sanitize input values (remove spaces, empty strings)
+    const emailWhitelist = document.getElementById('email_whitelist_input').value.split(',').map(x => x.trim()).filter(Boolean);
+    const emailBlacklist = document.getElementById('email_blacklist_input').value.split(',').map(x => x.trim()).filter(Boolean);
 
-    // When the custom "Save" button is clicked
-    document.getElementById('customSubmitBtn').addEventListener('click', function () {
-      // Get and sanitize input values (remove spaces, empty strings)
-      const emailWhitelist = document.getElementById('email_whitelist_input').value.split(',').map(x => x.trim()).filter(Boolean);
-      const emailBlacklist = document.getElementById('email_blacklist_input').value.split(',').map(x => x.trim()).filter(Boolean);
+    const domainWhitelist = document.querySelector('[name="domain_whitelist"]').value.split(',').map(x => x.trim()).filter(Boolean);
+    const domainBlacklist = document.querySelector('[name="domain_blacklist"]').value.split(',').map(x => x.trim()).filter(Boolean);
 
-      const domainWhitelist = document.querySelector('[name="domain_whitelist"]').value.split(',').map(x => x.trim()).filter(Boolean);
-      const domainBlacklist = document.querySelector('[name="domain_blacklist"]').value.split(',').map(x => x.trim()).filter(Boolean);
+    // Check for overlapping/conflicting values
+    const emailConflicts = emailWhitelist.filter(email => emailBlacklist.includes(email));
+    const domainConflicts = domainWhitelist.filter(domain => domainBlacklist.includes(domain));
 
-      // Check for overlapping/conflicting values
-      const emailConflicts = emailWhitelist.filter(email => emailBlacklist.includes(email));
-      const domainConflicts = domainWhitelist.filter(domain => domainBlacklist.includes(domain));
+    if (emailConflicts.length > 0 || domainConflicts.length > 0) {
+      // If there are conflicts, show the modal and list the conflicts
+      const conflictList = document.getElementById('conflictList');
+      conflictList.innerHTML = '';
 
-      if (emailConflicts.length > 0 || domainConflicts.length > 0) {
-        // If there are conflicts, show the modal and list the conflicts
-        const conflictList = document.getElementById('conflictList');
-        conflictList.innerHTML = '';
+      emailConflicts.forEach(email => {
+        const li = document.createElement('li');
+        li.textContent = `Email: ${email}`;
+        conflictList.appendChild(li);
+      });
 
-        emailConflicts.forEach(email => {
-          const li = document.createElement('li');
-          li.textContent = `Email: ${email}`;
-          conflictList.appendChild(li);
-        });
+      domainConflicts.forEach(domain => {
+        const li = document.createElement('li');
+        li.textContent = `Domain: ${domain}`;
+        conflictList.appendChild(li);
+      });
 
-        domainConflicts.forEach(domain => {
-          const li = document.createElement('li');
-          li.textContent = `Domain: ${domain}`;
-          conflictList.appendChild(li);
-        });
+      // Show the Bootstrap modal
+      $('#conflictModal').modal('show');
 
-        // Show the Bootstrap modal
-        $('#conflictModal').modal('show');
+      // If the user confirms, proceed with form submission
+      document.getElementById('confirmSubmitBtn').onclick = function () {
+        $('#conflictModal').modal('hide');
+        form.requestSubmit(); // Triggers HTML5 form validation before submitting
+      };
+    } else {
+      // No conflicts: submit the form directly
+      form.requestSubmit();
+    }
+  });
 
-        // If the user confirms, proceed with form submission
-        document.getElementById('confirmSubmitBtn').onclick = function () {
-          $('#conflictModal').modal('hide');
-          form.requestSubmit(); // Triggers HTML5 form validation before submitting
-        };
-      } else {
-        // No conflicts: submit the form directly
-        form.requestSubmit();
-      }
-    });
+  document.addEventListener('DOMContentLoaded', function () {
+
+
   });
 });
