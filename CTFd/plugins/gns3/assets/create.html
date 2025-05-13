@@ -1,0 +1,14 @@
+<!-- /plugins/gns3/assets/create.html -->
+<div class="form-group">
+  <label for="challenge-project-id" class="form-label">GNS3 Project ID</label>
+  <input type="text" class="form-control"
+         name="project_id" id="challenge-project-id"
+         placeholder="Enter GNS3 project ID">
+</div>
+
+{% extends "admin/challenges/create.html" %}
+
+
+{% block type %}
+<input type="hidden" value="gns3" name="type" id="chaltype">
+{% endblock %}

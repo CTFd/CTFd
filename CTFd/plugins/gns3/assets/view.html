@@ -1,0 +1,7 @@
+<!-- /plugins/gns3/assets/view.html -->
+{% if challenge.extra and challenge.extra.project_id %}
+  <div class="form-group">
+    <button id="run-vm" data-project-id="{{ challenge.extra.project_id }}"
+            class="btn btn-primary">Run VM</button>
+  </div>
+{% endif %}
