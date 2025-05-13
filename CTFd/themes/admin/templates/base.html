@@ -11,7 +11,7 @@
 	{{ Assets.css("assets/css/fonts.scss", theme="admin") }}
 	{{ Assets.css("assets/css/admin.scss", theme="admin") }}
 	{{ Assets.css("assets/css/codemirror.scss", theme="admin") }}
-	<script type="text/javascript">
+	<script type="text/javascript" nonce="{{ csp_nonce }}">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
 			'csrfNonce': "{{ Session.nonce }}",

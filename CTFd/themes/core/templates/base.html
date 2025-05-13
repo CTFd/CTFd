@@ -12,7 +12,7 @@
 	{% endblock %}
 
 	{{ Plugins.styles }}
-	<script type="text/javascript">
+	<script type="text/javascript"  nonce="{{ csp_nonce }}">
 		var init = {
 			'urlRoot': "{{ request.script_root }}",
 			'csrfNonce': "{{ Session.nonce }}",

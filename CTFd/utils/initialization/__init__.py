@@ -2,8 +2,9 @@ import datetime
 import logging
 import os
 import sys
+import secrets
 
-from flask import abort, redirect, render_template, request, session, url_for
+from flask import abort, redirect, render_template, request, session, url_for, g
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
@@ -43,7 +44,6 @@ from CTFd.utils.user import (
     get_locale,
     is_admin,
 )
-
 
 def init_cli(app):
     from CTFd.cli import _cli
@@ -333,6 +333,10 @@ def init_request_processors(app):
             if request.content_type != "application/json":
                 if session["nonce"] != request.form.get("nonce"):
                     abort(403)
+    
+    @app.before_request
+    def inject_csp_nonce():
+        g.csp_nonce = secrets.token_urlsafe(16)
 
     @app.after_request
     def response_headers(response):
@@ -340,6 +344,24 @@ def init_request_processors(app):
             "CROSS_ORIGIN_OPENER_POLICY", default="same-origin-allow-popups"
         )
         return response
+    
+    @app.after_request
+    def set_csp(response):
+        nonce = getattr(g, 'csp_nonce', None)
+        if nonce:
+            response.headers['Content-Security-Policy'] = (
+                f"default-src 'self'; "
+                f"script-src 'self' 'nonce-{nonce}'; "
+                f"style-src 'self'; "
+                f"object-src 'none'; "
+                f"base-uri 'none'; "
+                f"frame-ancestors 'none';"
+            )
+        return response
+
+    @app.context_processor
+    def inject_nonce_into_template():
+        return dict(csp_nonce=g.get('csp_nonce', ''))
 
     application_root = app.config.get("APPLICATION_ROOT")
     if application_root != "/":

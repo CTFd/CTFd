@@ -16,7 +16,7 @@
 
   {{ Assets.js("assets/js/color_mode_switcher.js", type=None) }}
 
-  <script type="text/javascript">
+  <script type="text/javascript" nonce="{{ csp_nonce }}">
       window.init = {
           'urlRoot': "{{ request.script_root }}",
           'csrfNonce': "{{ Session.nonce }}",
