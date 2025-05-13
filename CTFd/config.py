@@ -135,7 +135,7 @@ class ServerConfig(object):
     # === SECURITY ===
     SESSION_COOKIE_HTTPONLY: bool = config_ini["security"].getboolean("SESSION_COOKIE_HTTPONLY", fallback=True)
 
-    SESSION_COOKIE_SECURE: bool = config_ini["security"].getboolean("SESSION_COOKIE_SECURE", fallback=True)
+    SESSION_COOKIE_SECURE: bool = config_ini["security"].getboolean("SESSION_COOKIE_SECURE", fallback=False)
 
     SESSION_COOKIE_SAMESITE: str = empty_str_cast(config_ini["security"]["SESSION_COOKIE_SAMESITE"]) \
         or "Lax"
@@ -145,6 +145,9 @@ class ServerConfig(object):
 
     CROSS_ORIGIN_OPENER_POLICY: str = empty_str_cast(config_ini["security"].get("CROSS_ORIGIN_OPENER_POLICY")) \
         or "same-origin-allow-popups"
+
+    CONTENT_SECURITY_POLICY: str = empty_str_cast(config_ini["security"].getboolean("CONTENT_SECURITY_POLICY", fallback=False)) 
+
 
     TRUSTED_HOSTS: list[str] | None = None
     if config_ini["security"].get("TRUSTED_HOSTS"):

@@ -347,18 +347,20 @@ def init_request_processors(app):
     
     @app.after_request
     def set_csp(response):
-        nonce = getattr(g, 'csp_nonce', None)
-        if nonce:
-            response.headers['Content-Security-Policy'] = (
-                f"default-src 'self'; "
-                f"script-src 'self' 'nonce-{nonce}';"
-                f"style-src 'self'; "
-                f"object-src 'none'; "
-                f"base-uri 'none'; "
-                f"frame-ancestors 'none';"
-                f"img-src 'self' data:"
-            )
+        if get_app_config("CONTENT_SECURITY_POLICY"):
+            nonce = getattr(g, 'csp_nonce', None)
+            if nonce:
+                response.headers['Content-Security-Policy'] = (
+                    f"default-src 'self'; "
+                    f"script-src 'self' 'nonce-{nonce}';"
+                    f"style-src 'self' 'nonce-{nonce}' ;"
+                    f"object-src 'none'; "
+                    f"base-uri 'none'; "
+                    f"frame-ancestors 'none';"
+                    f"img-src 'self' data:"
+                )
         return response
+        
 
     @app.context_processor
     def inject_nonce_into_template():
