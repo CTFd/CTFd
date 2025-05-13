@@ -351,11 +351,12 @@ def init_request_processors(app):
         if nonce:
             response.headers['Content-Security-Policy'] = (
                 f"default-src 'self'; "
-                f"script-src 'self' 'nonce-{nonce}'; "
+                f"script-src 'self' 'nonce-{nonce}';"
                 f"style-src 'self'; "
                 f"object-src 'none'; "
                 f"base-uri 'none'; "
                 f"frame-ancestors 'none';"
+                f"img-src 'self' data:"
             )
         return response
 
