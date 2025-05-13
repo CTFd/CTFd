@@ -205,9 +205,17 @@ def setup():
                 set_config("ctf_banner", f.location)
 
             # Splice in our banner
-            index = f"""<div class="row">
+            if get_app_config("CONTENT_SECURITY_POLICY"):
+                csp_nonce = getattr(g, 'csp_nonce', None)
+            index = f"""<style nonce="{csp_nonce}">
+            .bannerpic{{
+                max-width: 500px;
+                padding: 50px;
+                padding-top: 14vh;
+            }}
+            </style><div class="row">
     <div class="col-md-6 offset-md-3">
-        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="{default_ctf_banner_location}" />
+        <img class="w-100 mx-auto d-block bannerpic" src="{default_ctf_banner_location}" />
         <h3 class="text-center">
             <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
             <p>Follow us on social media:</p>
@@ -217,7 +225,7 @@ def setup():
         </h3>
         <br>
         <h4 class="text-center">
-            <a href="admin">Click here</a> to login and setup your CTF
+            <a href="admin">Click here</a> to login and setup your CTF AAAAAAAAAAAAAAAAA
         </h4>
     </div>
 </div>"""
