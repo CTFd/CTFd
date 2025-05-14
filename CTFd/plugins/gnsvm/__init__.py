@@ -8,9 +8,10 @@ from CTFd.plugins.migrations import upgrade
 
 class GNSChallenge(Challenges):
     __mapper_args__ = {"polymorphic_identity": "gns"}
-#    id = db.Column(
-#        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), primary_key=True
-#    )
+    id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), primary_key=True
+    )
+    project_id = db.Column(db.String(32), default="0")
     def __init__(self, *args, **kwargs):
         super(GNSChallenge, self).__init__(**kwargs)
 
@@ -37,6 +38,7 @@ class CTFdGnsvmChallenge(BaseChallenge):
     challenge_model = GNSChallenge
 
 def load(app):
+    db.create_all()
     upgrade(plugin_name="gns_challenge")
     # Register the new challenge class under the 'gnsvm' ID
     CHALLENGE_CLASSES['gns'] = CTFdGnsvmChallenge

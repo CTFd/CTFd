@@ -1,5 +1,25 @@
 {% extends "admin/challenges/create.html" %}
+{% block value %}
+<div class="form-group">
+    <label>
+        Value:<br>
+        <small class="form-text text-muted">
+            This is how many points are rewarded for solving this challenge.
+        </small>
+    </label>
+    <input type="number" class="form-control" name="value" placeholder="Enter value" required="">
+</div>
 
+<div class="form-group">
+   <label>
+      Project ID:<br>
+      <small class="form-text text-muted">
+         The Project ID of the GNS3 VM
+      </small>
+   </label>
+   <input type="text" class="form-control" name="project_id" placeholder="Enter Project ID">
+</div>
+{% endblock %}
 {% block type %}
 <input type="hidden" value="gns" name="type" id="chaltype">
 {% endblock %}

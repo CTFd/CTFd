@@ -1,1 +1,12 @@
 {% extends "admin/challenges/update.html" %}
+
+{% block value %}
+<div class="form-group">
+	<label>Project ID<br>
+		<small class="form-text text-muted">
+			This is the project id of this respective challenge.
+		</small>
+	</label>
+<input type="text" class="form-control chal-project-id" name="project_id" value="{{ challenge.project_id }}">
+</div>
+{% endblock %}
