@@ -1,4 +1,3 @@
-
 // Set up a MutationObserver to watch for new challenge modal content
 const observer = new MutationObserver(mutations => {
   for (let m of mutations) {
@@ -8,22 +7,23 @@ const observer = new MutationObserver(mutations => {
       // Find a new challenge tab pane
       const challengePane = node.querySelector?.('#challenge') || (node.id === 'challenge' ? node : null);
       if (challengePane && !challengePane.querySelector('#test-button')) {
+        const projectID = CTFd._internal.challenge.data?.project_id;
+        console.log("Loaded Project ID:", projectID);
         // Create the button
         const btn = document.createElement('button');
         btn.id = 'test-button';
         btn.className = 'btn btn-warning mt-3';
 	btn.textContent = 'Run VM';
-
 	btn.onclick = () => {
-	  fetch("https://franciscoalves.pt/plugins/gns3_controller/start/a443fc73-e345-461c-9776-a71c4b5b2353")
+	  fetch(`https://franciscoalves.pt/plugins/gns3_controller/start/${projectID}`)
 	    .then(response => {
 	      if (!response.ok) {
 	        throw new Error(`Request failed with status ${response.status}`);
 	      }
-	      alert("Request sent successfully!");
+	      alert(`Request sent successfully to ${projectID}!`);
 	    })
 	    .catch(error => {
-	      alert("Error sending request: " + error.message);
+	      alert(`Error sending request to ${projectID}: ` + error.message);
 	    });
 	};
 

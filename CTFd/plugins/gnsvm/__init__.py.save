@@ -13,7 +13,7 @@ class GNSChallenge(Challenges):
     id = db.Column(
         db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), primary_key=True
     )
-    project_id = db.Column(db.String(128), default="0")
+    project_id = db.Column(db.String(32), default="0")
     def __init__(self, *args, **kwargs):
         super(GNSChallenge, self).__init__(**kwargs)
 
@@ -38,16 +38,7 @@ class CTFdGnsvmChallenge(BaseChallenge):
     blueprint = Blueprint(
         "gns_challenge", __name__, template_folder="templates", static_folder="assets")
     challenge_model = GNSChallenge
-    @classmethod
-    def read(cls, challenge):
-        challenge = GNSChallenge.query.filter_by(id=challenge.id).first() 
-        data = super().read(challenge)
-        data.update(
-            {
-                "project_id": challenge.project_id
-            }
-        )
-        return data
+
 
 
 def load(app):

@@ -35,3 +35,4 @@ CTFd._internal.challenge.submit = function(preview) {
     return response;
   });
 };
+
