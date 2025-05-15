@@ -11,6 +11,7 @@ from CTFd.schemas.tokens import TokenSchema
 from CTFd.utils.decorators import authed_only, require_verified_emails
 from CTFd.utils.security.auth import generate_user_token
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
+from CTFd.utils import get_app_config
 
 tokens_namespace = Namespace("tokens", description="Endpoint to retrieve Tokens")
 
@@ -90,7 +91,7 @@ class TokenList(Resource):
             expiration = datetime.datetime.strptime(expiration, "%Y-%m-%d")
 
         user = get_current_user()
-        if is_admin() or user=="API":
+        if is_admin() or user=="API" or get_app_config("ALLOW_ACCESS_TOKENS_FOR_ALL"):
             # FRANK: Only admins and API user is allowed access to the API with access tokens
             token = generate_user_token(
                 user, expiration=expiration, description=description

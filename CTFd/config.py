@@ -155,6 +155,9 @@ class ServerConfig(object):
             h.strip() for h in empty_str_cast(config_ini["security"].get("TRUSTED_HOSTS")).split(",")
         ]
 
+    ALLOW_ACCESS_TOKENS_FOR_ALL: bool = config_ini["security"].getboolean("ALLOW_ACCESS_TOKENS_FOR_ALL", fallback=False)
+
+
     """
     TRUSTED_PROXIES:
     Defines a set of regular expressions used for finding a user's IP address if the CTFd instance

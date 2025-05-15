@@ -14,7 +14,7 @@
 		<div class="col-md-2 offset-md-1">
 			<div class="nav flex-column nav-pills" role="tablist">
 				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
-				{% if User.type == "admin" or User.name == "API" %}
+				{% if User.type == "admin" or User.name == "API" or get_app_config("ALLOW_ACCESS_TOKENS_FOR_ALL") %}
 					<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
 				{% endif %}
 			</div>
@@ -77,7 +77,7 @@
 					{% endwith %}
 				</div>
 				<div class="tab-pane fade" id="tokens" role="tabpanel">
-					{% if User.type == "admin" or User.name == "API" %}
+					{% if User.type == "admin" or User.name == "API" or get_app_config("ALLOW_ACCESS_TOKENS_FOR_ALL") %}
 						{% with form = Forms.self.TokensForm() %}
 						<form method="POST" id="user-token-form">
 							<div class="form-group">
