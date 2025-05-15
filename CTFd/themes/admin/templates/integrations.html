@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
     localStorage.removeItem('integrations');
     var params = {};
     var pieces = window.location.search

@@ -90,19 +90,22 @@ class TokenList(Resource):
             expiration = datetime.datetime.strptime(expiration, "%Y-%m-%d")
 
         user = get_current_user()
-        token = generate_user_token(
-            user, expiration=expiration, description=description
-        )
+        if is_admin() or user=="API":
+            # FRANK: Only admins and API user is allowed access to the API with access tokens
+            token = generate_user_token(
+                user, expiration=expiration, description=description
+            )
 
-        # Explicitly use admin view so that user's can see the value of their token
-        schema = TokenSchema(view="admin")
-        response = schema.dump(token)
+            # Explicitly use admin view so that user's can see the value of their token
+            schema = TokenSchema(view="admin")
+            response = schema.dump(token)
 
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
-
+            return {"success": True, "data": response.data}
+        else:
+            return {"success": False, "error": "Not authorized to request a token"}, 403
 
 @tokens_namespace.route("/<token_id>")
 @tokens_namespace.param("token_id", "A Token ID")

@@ -12,7 +12,7 @@ import "../compat/json";
 import { ezQuery, ezProgressBar, ezAlert } from "../compat/ezq";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
-import Vue from "vue";
+import * as Vue from "vue";
 import FieldList from "../components/configs/fields/FieldList.vue";
 import BracketList from "../components/configs/brackets/BracketList.vue";
 
@@ -538,14 +538,14 @@ $(() => {
   });
 
   // Insert FieldList element for users
-  const fieldList = Vue.extend(FieldList);
+  // const fieldList = Vue.extend(FieldList);
   let userVueContainer = document.createElement("div");
   document.querySelector("#user-field-list").appendChild(userVueContainer);
-  new fieldList({
-    propsData: {
-      type: "user",
-    },
-  }).$mount(userVueContainer);
+  Vue.createApp({
+    render: () => Vue.h(FieldList, {
+      type: "user"
+    })
+  }).mount(vueContainer);
 
   // Insert FieldList element for teams
   let teamVueContainer = document.createElement("div");
@@ -556,8 +556,10 @@ $(() => {
     },
   }).$mount(teamVueContainer);
 
-  const bracketList = Vue.extend(BracketList);
   let bracketListContainer = document.createElement("div");
   document.querySelector("#brackets-list").appendChild(bracketListContainer);
-  new bracketList({}).$mount(bracketListContainer);
+
+  Vue.createApp({
+    render: () => Vue.h(BracketList)
+  }).mount(bracketListContainer);
 });

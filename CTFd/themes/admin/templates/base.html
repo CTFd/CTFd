@@ -25,6 +25,10 @@
 			'end': {{ Configs.end | tojson }}
 		}
 	</script>
+	<!-- Franks Nasty hack to make creating dynamic script tags from the bundle work -->
+	<script nonce="{{ csp_nonce }}">
+			window.__cspNonce = "{{ csp_nonce }}";
+	</script>
 	{% block stylesheets %} {% endblock %}
 	{% for stylesheet in get_registered_admin_stylesheets() %}
 		{% if stylesheet.startswith('http') %}
@@ -35,6 +39,20 @@
 			<link rel="stylesheet" type="text/css" href="{{ stylesheet }}">
 		{% endif %}
 	{% endfor %}
+	<style nonce="{{ csp_nonce}}">
+		.visibility-hidden{
+			visibility: hidden;
+		}
+		.h80vh{
+    		height: 80vh;
+		}
+		.h600px{
+			height: 600px;
+		}
+		.right0{
+			right:0;
+		}
+	</style>
 </head>
 
 <body>

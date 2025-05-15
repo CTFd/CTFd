@@ -6,7 +6,7 @@ import CTFd from "../compat/CTFd";
 import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { ezAlert, ezQuery, ezBadge } from "../compat/ezq";
 import { createGraph, updateGraph } from "../compat/graphs";
-import Vue from "vue";
+import * as Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 import UserAddForm from "../components/teams/UserAddForm.vue";
 import { copyToClipboard } from "../compat/ui";
@@ -575,22 +575,27 @@ $(() => {
   $("#team-info-edit-form").submit(updateTeam);
 
   // Insert CommentBox element
-  const commentBox = Vue.extend(CommentBox);
+  // const commentBox = Vue.extend(CommentBox);
   let vueContainer = document.createElement("div");
   document.querySelector("#comment-box").appendChild(vueContainer);
-  new commentBox({
-    propsData: { type: "team", id: window.TEAM_ID },
-  }).$mount(vueContainer);
+  Vue.createApp({
+    render: () =>
+      Vue.h(CommentBox, { type: "team", id: window.TEAM_ID 
+      })
+    }).mount(vueContainer);
 
-  // Insert team member addition form
-  const userAddForm = Vue.extend(UserAddForm);
-  let memberFormContainer = document.createElement("div");
-  document
-    .querySelector("#team-add-modal .modal-body")
-    .appendChild(memberFormContainer);
-  new userAddForm({
-    propsData: { team_id: window.TEAM_ID },
-  }).$mount(memberFormContainer);
+    let memberFormContainer = document.createElement("div");
+    document
+      .querySelector("#team-add-modal .modal-body")
+      .appendChild(memberFormContainer);
+    
+    Vue.createApp({
+      render: () =>
+        Vue.h(UserAddForm, {
+          team_id: window.TEAM_ID,
+        }),
+    }).mount(memberFormContainer);
+    
 
   let type, id, name, account_id;
   ({ type, id, name, account_id } = window.stats_data);

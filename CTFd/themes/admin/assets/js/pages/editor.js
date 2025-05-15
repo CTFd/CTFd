@@ -6,7 +6,7 @@ import "../compat/json";
 import CodeMirror from "codemirror";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 import { ezAlert, ezToast } from "../compat/ezq";
-import Vue from "vue";
+import * as Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 
 function submit_form() {
@@ -101,11 +101,14 @@ $(() => {
 
   // Insert CommentBox element
   if (window.PAGE_ID) {
-    const commentBox = Vue.extend(CommentBox);
     let vueContainer = document.createElement("div");
     document.querySelector("#comment-box").appendChild(vueContainer);
-    new commentBox({
-      propsData: { type: "page", id: window.PAGE_ID },
-    }).$mount(vueContainer);
+
+    Vue.createApp({
+      render: () => Vue.h(CommentBox, {
+        type: "page",
+        id: window.PAGE_ID
+      })
+    }).mount(vueContainer);
   }
 });
