@@ -446,7 +446,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 var USER_ID = {{ user.id }};
 var USER_NAME = {{ user.name | tojson }};
 var TEAM_ID = {{ user.team_id | tojson }};

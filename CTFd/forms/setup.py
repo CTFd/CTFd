@@ -77,7 +77,7 @@ class SetupForm(BaseForm):
         description=_l("CTFd Theme to use. Can be changed later."),
         choices=list(zip(get_themes(), get_themes())),
         ## TODO: Replace back to DEFAULT_THEME (aka core) in CTFd 4.0
-        default="core-beta",
+        default="core",
         validators=[InputRequired()],
     )
     theme_color = HiddenField(

@@ -14,7 +14,7 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div class="modal-body" id="challenge-window" style="height: 80vh;">
+				<div class="modal-body h80vh" id="challenge-window" >
 				</div>
 				<div class="text-center">
 					<h5>
@@ -161,7 +161,7 @@
 {% endblock %}
 
 {% block scripts %}
-	<script>
+	<script nonce="{{ csp_nonce }}">
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
 	</script>

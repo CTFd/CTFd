@@ -1,24 +1,24 @@
 import "bootstrap/dist/js/bootstrap.bundle";
 import $ from "jquery";
 import EasyMDE from "easymde";
-import Vue from "vue";
+//import Vue from "vue";
+import * as Vue from "vue";
 import MediaLibrary from "./components/files/MediaLibrary.vue";
 import hljs from "highlight.js";
 
 export function showMediaLibrary(editor) {
-  const mediaModal = Vue.extend(MediaLibrary);
+  // const mediaModal = Vue.extend(MediaLibrary);
 
   // Create an empty div and append it to our <main>
   let vueContainer = document.createElement("div");
   document.querySelector("main").appendChild(vueContainer);
 
   // Create MediaLibrary component and pass it our editor
-  let m = new mediaModal({
-    propsData: {
-      editor: editor,
-    },
-    // Mount to the empty div
-  }).$mount(vueContainer);
+  Vue.createApp({
+    render: () => Vue.h(MediaLibrary, {
+      editor: editor
+    })
+  }).mount(vueContainer);
 
   // Destroy the Vue instance and the media modal when closed
   $("#media-modal").on("hidden.bs.modal", function (_e) {
