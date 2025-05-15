@@ -92,7 +92,6 @@ class TokenList(Resource):
 
         user = get_current_user()
         if is_admin() or user=="API" or get_app_config("ALLOW_ACCESS_TOKENS_FOR_ALL"):
-            # FRANK: Only admins and API user is allowed access to the API with access tokens
             token = generate_user_token(
                 user, expiration=expiration, description=description
             )

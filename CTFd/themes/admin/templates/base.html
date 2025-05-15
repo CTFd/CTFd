@@ -25,7 +25,7 @@
 			'end': {{ Configs.end | tojson }}
 		}
 	</script>
-	<!-- Franks Nasty hack to make creating dynamic script tags from the bundle work -->
+	<!-- Nasty hack to make creating dynamic script tags from the bundle work -->
 	<script nonce="{{ csp_nonce }}">
 			window.__cspNonce = "{{ csp_nonce }}";
 	</script>
