@@ -97,7 +97,8 @@ def clear_standings():
     from CTFd.api import api
     from CTFd.api.v1.scoreboard import ScoreboardDetail, ScoreboardList
     from CTFd.constants.static import CacheKeys
-    from CTFd.models import Brackets, Teams, Users  # noqa: I001
+    from CTFd.models import Teams, Users  # noqa: I001
+    from CTFd.utils.scoreboard import get_scoreboard_detail
     from CTFd.utils.scores import get_standings, get_team_standings, get_user_standings
     from CTFd.utils.user import (
         get_team_place,
@@ -110,6 +111,7 @@ def clear_standings():
     cache.delete_memoized(get_standings)
     cache.delete_memoized(get_team_standings)
     cache.delete_memoized(get_user_standings)
+    cache.delete_memoized(get_scoreboard_detail)
 
     # Clear out the individual helpers for accessing score via the model
     cache.delete_memoized(Users.get_score)
@@ -128,18 +130,6 @@ def clear_standings():
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardDetail.endpoint))
     cache.delete_memoized(ScoreboardList.get)
     cache.delete_memoized(ScoreboardDetail.get)
-
-    # Clear out scoreboard detail
-    keys = [()]  # Empty tuple to handle case with no parameters
-    brackets = Brackets.query.all()
-    for bracket in brackets:
-        keys.append((("bracket_id", str(bracket.id)),))
-    for k in keys:
-        cache_func = make_cache_key_with_query_string(
-            query_string_hash=calculate_param_hash(params=k)
-        )
-        cache_key = cache_func(path=api.name + "." + ScoreboardDetail.endpoint)
-        cache.delete(cache_key)
 
     # Clear out scoreboard templates
     cache.delete(make_template_fragment_key(CacheKeys.PUBLIC_SCOREBOARD_TABLE))

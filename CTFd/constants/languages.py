@@ -18,6 +18,11 @@ class Languages(str, RawEnum):
     ITALIAN = "it"
     VIETNAMESE = "vi"
     CATALAN = "ca"
+    GREEK = "el"
+    FINNISH = "fi"
+    ROMANIAN = "ro"
+    SLOVENIAN = "sl"
+    SWEDISH = "sv"
 
 
 LANGUAGE_NAMES = {
@@ -37,8 +42,16 @@ LANGUAGE_NAMES = {
     "it": "Italiano",
     "vi": "tiếng Việt",
     "ca": "Català",
+    "el": "Ελληνικά",
+    "fi": "Suomi",
+    "ro": "Română",
+    "sl": "Slovenščina",
+    "sv": "Svenska",
 }
 
 SELECT_LANGUAGE_LIST = [("", "")] + [
     (str(lang), LANGUAGE_NAMES.get(str(lang))) for lang in Languages
 ]
+
+Languages.names = LANGUAGE_NAMES
+Languages.select_list = SELECT_LANGUAGE_LIST

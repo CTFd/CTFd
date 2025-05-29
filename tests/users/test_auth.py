@@ -8,7 +8,6 @@ from freezegun import freeze_time
 from CTFd.models import Users, db
 from CTFd.utils import get_config, set_config
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.security.signing import serialize
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
 
@@ -108,6 +107,29 @@ def test_register_whitelisted_email():
     destroy_ctfd(app)
 
 
+def test_register_blacklisted_email():
+    """A user shouldn't be able to register with an email that is on the blacklist"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config(
+            "domain_blacklist", "blacklisted.com, blacklisted.org, blacklisted.net"
+        )
+        register_user(
+            app, name="blacklisted", email="user@blacklisted.com", raise_for_error=False
+        )
+        assert Users.query.count() == 1
+
+        register_user(app, name="user1", email="user@yep.com")
+        assert Users.query.count() == 2
+
+        register_user(app, name="user2", email="user@yay.org")
+        assert Users.query.count() == 3
+
+        register_user(app, name="user3", email="user@yipee.net")
+        assert Users.query.count() == 4
+    destroy_ctfd(app)
+
+
 def test_user_bad_login():
     """A user should not be able to login with an incorrect password"""
     app = create_ctfd()
@@ -190,17 +212,22 @@ def test_user_isnt_admin():
 def test_expired_confirmation_links():
     """Test that expired confirmation links are reported to the user"""
     app = create_ctfd()
-    with app.app_context(), freeze_time("2019-02-24 03:21:34"):
+    with app.app_context():
         set_config("verify_emails", True)
 
         register_user(app, email="user@user.com")
         client = login_as_user(app, name="user", password="password")
 
         # user@user.com "2012-01-14 03:21:34"
-        confirm_link = "http://localhost/confirm/InVzZXJAdXNlci5jb20i.TxD0vg.cAGwAy8cK1T0saEEbrDEBVF2plI"
+        confirm_link = (
+            "http://localhost/confirm/bb8a8526146e50778b211ae63074595880edbc0b"
+        )
         r = client.get(confirm_link)
 
-        assert "Your confirmation link has expired" in r.get_data(as_text=True)
+        assert (
+            "Your confirmation link is invalid, please generate a new one"
+            in r.get_data(as_text=True)
+        )
         user = Users.query.filter_by(email="user@user.com").first()
         assert user.verified is not True
     destroy_ctfd(app)
@@ -219,7 +246,10 @@ def test_invalid_confirmation_links():
         confirm_link = "http://localhost/confirm/a8375iyu<script>alert(1)<script>hn3048wueorighkgnsfg"
         r = client.get(confirm_link)
 
-        assert "Your confirmation token is invalid" in r.get_data(as_text=True)
+        assert (
+            "Your confirmation link is invalid, please generate a new one"
+            in r.get_data(as_text=True)
+        )
         user = Users.query.filter_by(email="user@user.com").first()
         assert user.verified is not True
     destroy_ctfd(app)
@@ -237,12 +267,14 @@ def test_expired_reset_password_link():
 
         register_user(app, name="user1", email="user@user.com")
 
-        with app.test_client() as client, freeze_time("2019-02-24 03:21:34"):
-            # user@user.com "2012-01-14 03:21:34"
-            forgot_link = "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.cAGwAy8cK1T0saEEbrDEBVF2plI"
+        with app.test_client() as client:
+            forgot_link = "http://localhost/reset_password/bb8a8526146e50778b211ae63074595880edbc0b"
             r = client.get(forgot_link)
 
-            assert "Your link has expired" in r.get_data(as_text=True)
+            assert (
+                "Your reset link is invalid, please generate a new one"
+                in r.get_data(as_text=True)
+            )
     destroy_ctfd(app)
 
 
@@ -263,7 +295,10 @@ def test_invalid_reset_password_link():
             forgot_link = "http://localhost/reset_password/5678ytfghjiu876tyfg<INVALID DATA>hvbnmkoi9u87y6trdf"
             r = client.get(forgot_link)
 
-            assert "Your reset token is invalid" in r.get_data(as_text=True)
+            assert (
+                "Your reset link is invalid, please generate a new one"
+                in r.get_data(as_text=True)
+            )
     destroy_ctfd(app)
 
 
@@ -309,8 +344,10 @@ def test_user_can_confirm_email(mock_smtp):
         mock_smtp.return_value.send_message.assert_called()
 
         with client.session_transaction() as sess:
-            data = {"nonce": sess.get("nonce")}
-            r = client.post("http://localhost/confirm", data=data)
+            urandom_value = b"\xff" * 32
+            with patch("os.urandom", return_value=urandom_value):
+                data = {"nonce": sess.get("nonce")}
+                r = client.post("http://localhost/confirm", data=data)
             assert "Confirmation email sent to" in r.get_data(as_text=True)
 
             r = client.get("/challenges")
@@ -318,7 +355,9 @@ def test_user_can_confirm_email(mock_smtp):
                 r.location == "http://localhost/confirm"
             )  # We got redirected to /confirm
 
-            r = client.get("http://localhost/confirm/" + serialize("user@user.com"))
+            r = client.get(
+                "http://localhost/confirm/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            )
             assert r.location == "http://localhost/challenges"
 
             # The team is now verified
@@ -336,7 +375,7 @@ def test_user_can_reset_password(mock_smtp):
     from email.message import EmailMessage
 
     app = create_ctfd()
-    with app.app_context(), freeze_time("2012-01-14 03:21:34"):
+    with app.app_context():
         # Set CTFd to send emails
         set_config("mail_server", "localhost")
         set_config("mail_port", 25)
@@ -355,7 +394,9 @@ def test_user_can_reset_password(mock_smtp):
                 data = {"nonce": sess.get("nonce"), "email": "user@user.com"}
 
             # Issue the password reset request
-            client.post("/reset_password", data=data)
+            urandom_value = b"\xff" * 32
+            with patch("os.urandom", return_value=urandom_value):
+                client.post("/reset_password", data=data)
 
             ctf_name = get_config("ctf_name")
             from_addr = get_config("mailfrom_addr") or app.config.get("MAILFROM_ADDR")
@@ -367,7 +408,7 @@ def test_user_can_reset_password(mock_smtp):
             msg = (
                 "Did you initiate a password reset on CTFd? If you didn't initiate this request you can ignore this email. "
                 "\n\nClick the following link to reset your password:\n"
-                "http://localhost/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U\n\n"
+                "http://localhost/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n\n"
                 "If the link is not clickable, try copying and pasting it into your browser."
             )
             ctf_name = get_config("ctf_name")
@@ -396,10 +437,10 @@ def test_user_can_reset_password(mock_smtp):
 
             # Do the password reset
             client.get(
-                "/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U"
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             )
             client.post(
-                "/reset_password/InVzZXJAdXNlci5jb20i.TxD0vg.28dY_Gzqb1TH9nrcE_H7W8YFM-U",
+                "/reset_password/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                 data=data,
             )
 
