@@ -33,7 +33,6 @@ cffi==1.17.1
     #   -r requirements.in
     #   cmarkgfm
     #   cryptography
-    #   pybluemonday
 charset-normalizer==2.0.12
     # via requests
 click==7.1.2
@@ -113,13 +112,13 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
+nh3==0.2.21
+    # via -r requirements.in
 packaging==24.2
     # via gunicorn
 passlib==1.7.4
     # via -r requirements.in
 pillow==10.1.0
-    # via -r requirements.in
-pybluemonday==0.0.14
     # via -r requirements.in
 pycparser==2.20
     # via cffi
