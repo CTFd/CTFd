@@ -200,13 +200,13 @@ class BaseChallenge(object):
                     team_id=team.id, challenge_id=challenge.id
                 ).all()
 
-                submitter_ids = [partial.user_id for partial in partials]
+                submitter_ids = {partial.user_id for partial in partials}
 
                 # Check if the user's submission is correct
                 for flag in flags:
                     try:
                         if get_flag_class(flag.type).compare(flag, submission):
-                            submitter_ids.append(user.id)
+                            submitter_ids.add(user.id)
                             break
                     except FlagException as e:
                         return ChallengeResponse(
