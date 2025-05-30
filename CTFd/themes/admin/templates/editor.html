@@ -170,7 +170,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 var PAGE_ID = {{ page.id if page is defined else "null"}};
 </script>
 {% endblock %}

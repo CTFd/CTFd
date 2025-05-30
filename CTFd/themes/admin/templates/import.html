@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 	// Reload every 5 seconds to poll import status
 	setTimeout(function(){
 		window.location.reload();

@@ -10,7 +10,6 @@
               </div>
             </div>
           </div>
-
           <button
             type="button"
             class="close"
@@ -20,36 +19,29 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+
         <div class="modal-body">
-          <div class="create-keys-select-div">
-            <label for="create-keys-select" class="control-label">
-              Choose Flag Type
-            </label>
-            <select
-              class="form-control custom-select"
-              @change="selectType($event)"
-            >
-              <option>--</option>
-              <option
-                v-for="type in Object.keys(types)"
-                :value="type"
-                :key="type"
-              >
-                {{ type }}
-              </option>
-            </select>
-          </div>
+          <label for="create-keys-select" class="control-label">
+            Choose Flag Type
+          </label>
+          <select
+            class="form-control custom-select"
+            v-model="selectedType"
+          >
+            <option disabled value="">--</option>
+            <option value="static">static</option>
+            <option value="regex">regex</option>
+            <!-- Add more as needed -->
+          </select>
+
           <br />
-          <form @submit.prevent="submitFlag">
-            <div id="create-flag-form" v-html="createForm"></div>
-            <button
-              class="btn btn-success float-right"
-              type="submit"
-              v-if="createForm"
-            >
-              Create Flag
-            </button>
-          </form>
+
+          <component
+            v-if="selectedTypeComponent"
+            :is="selectedTypeComponent"
+            :challenge_id="challenge_id"
+            @submit="submitFlag"
+          />
         </div>
       </div>
     </div>
@@ -57,66 +49,39 @@
 </template>
 
 <script>
-import $ from "jquery";
+import StaticFlagForm from "./StaticFlagForm.vue";
+import RegexFlagForm from "./RegexFlagForm.vue"; 
+
 import CTFd from "../../compat/CTFd";
-import nunjucks from "nunjucks";
-import "../../compat/json";
 
 export default {
   name: "FlagCreationForm",
   props: {
     challenge_id: Number,
   },
-  data: function () {
+  components: {
+    StaticFlagForm,
+    RegexFlagForm,
+  },
+  data() {
     return {
-      types: {},
-      selectedType: null,
-      createForm: "",
+      selectedType: "",
     };
   },
-  methods: {
-    selectType: function (event) {
-      let flagType = event.target.value;
-      if (this.types[flagType] === undefined) {
-        this.selectedType = null;
-        this.createForm = "";
-        return;
+  computed: {
+    selectedTypeComponent() {
+      switch (this.selectedType) {
+        case "static":
+          return "StaticFlagForm";
+        case "regex":
+          return "RegexFlagForm";
+        default:
+          return null;
       }
-      let createFormURL = this.types[flagType]["templates"]["create"];
-
-      $.get(CTFd.config.urlRoot + createFormURL, (template_data) => {
-        const template = nunjucks.compile(template_data);
-        this.selectedType = flagType;
-        this.createForm = template.render();
-
-        // TODO: See https://github.com/CTFd/CTFd/issues/1779
-        if (this.createForm.includes("<script")) {
-          setTimeout(() => {
-            $(`<div>` + this.createForm + `</div>`)
-              .find("script")
-              .each(function () {
-                eval($(this).html());
-              });
-          }, 100);
-        }
-      });
     },
-    loadTypes: function () {
-      CTFd.fetch("/api/v1/flags/types", {
-        method: "GET",
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          this.types = response.data;
-        });
-    },
-    submitFlag: function (event) {
-      let form = $(event.target);
-      let params = form.serializeJSON(true);
-      params["challenge"] = this.$props.challenge_id;
-
+  },
+  methods: {
+    submitFlag(params) {
       CTFd.fetch("/api/v1/flags", {
         method: "POST",
         credentials: "same-origin",
@@ -126,18 +91,12 @@ export default {
         },
         body: JSON.stringify(params),
       })
-        .then((response) => {
-          return response.json();
-        })
+        .then((response) => response.json())
         .then((_response) => {
           this.$emit("refreshFlags", this.$options.name);
         });
     },
   },
-  created() {
-    this.loadTypes();
-  },
 };
 </script>
 
-<style scoped></style>

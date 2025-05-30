@@ -10,7 +10,8 @@ export default defineConfig({
     alias: {
       "~": resolve(__dirname, "./node_modules/"),
       core: resolve(__dirname, "../core/assets/js/"),
-      vue: "@vue/compat"
+      vue: "vue/dist/vue.runtime.esm-bundler.js" 
+      //vue: "@vue/compat"
     }
   },
   build: {

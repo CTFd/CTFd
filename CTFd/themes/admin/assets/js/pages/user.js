@@ -6,7 +6,7 @@ import CTFd from "../compat/CTFd";
 import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { ezQuery, ezBadge } from "../compat/ezq";
 import { createGraph, updateGraph } from "../compat/graphs";
-import Vue from "vue";
+import * as Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 
 function createUser(event) {
@@ -501,13 +501,16 @@ $(() => {
   $("#user-award-form").submit(awardUser);
 
   // Insert CommentBox element
-  const commentBox = Vue.extend(CommentBox);
+  
   let vueContainer = document.createElement("div");
   document.querySelector("#comment-box").appendChild(vueContainer);
-  new commentBox({
-    propsData: { type: "user", id: window.USER_ID },
-  }).$mount(vueContainer);
-
+  Vue.createApp({
+    render: () => Vue.h(CommentBox, {
+      type: "user",
+      id: window.USER_ID
+    })
+  }).mount(vueContainer);
+  
   let type, id, name, account_id;
   ({ type, id, name, account_id } = window.stats_data);
 

@@ -3,10 +3,8 @@ import "../compat/json";
 import $ from "jquery";
 import CTFd from "../compat/CTFd";
 import { ezAlert } from "../compat/ezq";
-import Vue from "vue";
+import * as Vue from "vue";
 import Notification from "../components/notifications/Notification.vue";
-
-const notificationCard = Vue.extend(Notification);
 
 function submit(event) {
   event.preventDefault();
@@ -21,30 +19,34 @@ function submit(event) {
     $form.find(":input[name=content]").val("");
 
     // Admin should also see the notification sent out
-    setTimeout(function () {
+    setTimeout(() => {
       $form.find("button[type=submit]").attr("disabled", false);
     }, 1000);
+
     if (!response.success) {
       ezAlert({
         title: "Error",
         body: "Could not send notification. Please try again.",
         button: "OK",
       });
+      return;
     }
 
     let vueContainer = document.createElement("div");
     $("#notifications-list").prepend(vueContainer);
-    new notificationCard({
-      propsData: {
+
+    Vue.createApp({
+      render: () => Vue.h(Notification, {
         id: response.data.id,
         title: response.data.title,
         content: response.data.content,
         html: response.data.html,
-        date: response.data.date,
-      },
-    }).$mount(vueContainer);
+        date: response.data.date
+      })
+    }).mount(vueContainer);
   });
 }
+
 
 function deleteNotification(event) {
   event.preventDefault();
