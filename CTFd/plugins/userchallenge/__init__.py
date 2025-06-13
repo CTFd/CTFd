@@ -81,6 +81,46 @@ def registerTemplate(old_path, new_path):
     dir_path = Path(__file__).parent.resolve()
     template_path = dir_path/'templates'/new_path
     override_template(old_path,open(template_path).read())
+<<<<<<< HEAD
+=======
+def update_allow_challenges():
+    db.session.commit()
+    config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
+    if config:
+        value = config.value
+        if value == "true":
+            
+            config.value = "false"
+            db.session.commit()
+            return False
+        else:
+            config.value = "true"
+            db.session.commit()
+            return True
+    else:
+        conf = Configs(key="allowUserChallenges",value="true")
+        db.session.add(conf)
+        db.session.commit()
+        return True
+def owned_by_user(f):
+    """
+    Decorator that requires the accessed challenge to be registered under the user's name
+    :param f:
+    :return:
+    """
+    @functools.wraps(f)
+    def is_owned_wrapper(*args, **kwargs):
+        user = db.session.query(UserChallenges.user).filter(UserChallenges.challenge == kwargs.get("challenge_id")).first()
+        if (user and get_current_user() and user[0] == get_current_user().id) or is_admin():
+            return f(*args, **kwargs)
+        else:
+            if request.content_type == "application/json":
+                abort(403)
+            else:
+                return redirect(url_for("auth.login", next=request.full_path))
+    return is_owned_wrapper
+
+>>>>>>> userChallenge
 
 def userChallenge_allowed(f):
     """
@@ -293,6 +333,7 @@ def load(app):
     @app.route('/userchallenge/challenges/<int:challenge_id>',methods=['GET'])
     @owned_by_user
     @userChallenge_allowed
+    @owned_by_user
     def updateChallenge(challenge_id):
         #TODO: update logic to work with plugin   
         challenges = dict(
