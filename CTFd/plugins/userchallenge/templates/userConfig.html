@@ -1,21 +1,35 @@
+{% extends "admin/base.html" %}
 
+{% block stylesheets %}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('views.themes', theme='admin', path='css/codemirror.css') }}">
+{% endblock %}
+
+{% block content%}
 <head>
-  <script type="module" src="{{url_for('userchallenge.static',filename='assets/js/config-XUbz22XB.js')}}"></script>
+  {{UserChallengeAsset.js('assets/js/config.js')}}
 </head>
 
 
-<div class="form-group">
-  <label>
-    User Challenge Creation
-  </label>
-  <br>
-  <br>
-  <button id="toggle-button" class="btn btn-primary float-right mt-4">Update</button>
-  <br>
-  <br>
-  <label id="label-enable"> challenge creation is {{ enabled }}</label>
-  <br>
-  <small class="form-text text-muted">
-    Enableing user challenges gives all users right to create and edit their own challenges.
-  </small>
+<div class="form-group" >
+  <table class="table">
+    <tr>
+      <th scope="col">Function</th>
+      <th scope="col">Status</th>
+      <th scope="col">Description</th>
+    </tr>
+    <tr>
+      <td>User-Challenges</td>
+      {% if status == "enabled" %}
+        <td><button id="toggle-button" class="btn btn-primary rounded bg-success"><label class="align-self-center text-center" id ="label-enable">{{ status }}</label></button></td>
+      {% endif%}
+      {% if status == "disabled" %}
+          <td><button id="toggle-button" class="btn btn-primary rounded bg-danger"><label class="align-self-center text-center" id ="label-enable">{{ status }}</label></button></td>
+      {% endif %}
+      <td><small class="form-text text-muted text-center">
+      Enableing User-Challenges gives all users access to create and edit their own challenges.
+    </small></td>
+    </tr> 
+  </table>
+  
 </div>
+{% endblock %}

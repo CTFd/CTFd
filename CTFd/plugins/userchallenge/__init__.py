@@ -1,4 +1,6 @@
+from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.userchallenge.api_calls import challenges, comments, attempts, files, flags, hints, tags, topics
+from CTFd.utils.plugins import register_admin_script
 from flask import render_template,request,Blueprint, url_for, abort
 from sqlalchemy.sql import and_
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
@@ -10,7 +12,9 @@ userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',s
 
 def load(app):
 
+    from CTFd.plugins.userchallenge.utils import _UserChallengeAsset
     app.db.create_all()
+    app.jinja_env.globals.update(UserChallengeAsset=_UserChallengeAsset())
 
     app.register_blueprint(userChallenge,url_prefix='/userchallenge')
 
@@ -23,7 +27,7 @@ def load(app):
     registerTemplate('users/private.html','newUserPage.html')
     registerTemplate('admin/challenges/challenge.html','adminChallenge.html')
     
-
+    # config page admins
     @app.route('/admin/userChallenge')
     @admins_only
     def view_config():        
@@ -37,8 +41,9 @@ def load(app):
         else:
             enabled = "non-existant"
                 
-        return render_template('userConfig.html',enabled = enabled)
+        return render_template('userConfig.html',status = enabled)
     
+    # add creation date and user to listing
     @admins_only
     def challenges_listing():
         q = request.args.get("q")
@@ -71,6 +76,7 @@ def load(app):
 
     app.view_functions['admin.challenges_listing'] = challenges_listing
 
+    #config page api call
     @app.route('/userchallenge/api/config',methods=['GET','POST'])
     @admins_only
     def getConfig():
@@ -80,6 +86,7 @@ def load(app):
             data = "enabled"
         return {"success":True,"data":data}
 
+    #user view challenge list
     @app.route('/userchallenge/challenges',methods=['GET','POST'])
     @userChallenge_allowed
     def view_challenges():
@@ -97,18 +104,20 @@ def load(app):
         #return render_template('userChallenges.html',challenges=challenges,total=total,q=q,field=field)
         return render_template('userChallenges.html',challenges=challenges,total = total,q=q,field=field)    
      
+    #new challenge user
     @app.route('/userchallenge/challenges/new',methods=['GET'])
     @userChallenge_allowed
     def view_newChallenge():
         types = CHALLENGE_CLASSES.keys()
         return render_template('createUserChallenge.html',types=types)
     
+    #edit challenge
     @app.route('/userchallenge/challenges/<int:challenge_id>',methods=['GET'])
     @owned_by_user
     @userChallenge_allowed
     @owned_by_user
     def updateChallenge(challenge_id):
-        #TODO: update logic to work with plugin   
+        #TODO: update logic to work with plugin
         challenges = dict(
         Challenges.query.with_entities(Challenges.id, Challenges.name).all()
         )

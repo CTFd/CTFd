@@ -1,12 +1,14 @@
 import datetime
 import functools
+import os
 from pathlib import Path
 from CTFd.models import Challenges, Configs, db
-from CTFd.utils import get_config, set_config
+from CTFd.utils import get_asset_json, get_config, set_config
+from CTFd.utils.helpers import markup
 from CTFd.utils.user import get_current_user, get_user_attrs, is_admin
 from CTFd.utils.plugins import override_template
 
-from flask import render_template,request,Blueprint, url_for, abort,redirect,session
+from flask import request, url_for, abort,redirect,current_app
 
 class UserChallenges(db.Model):
     __tablename__ = "UserChallenges"
@@ -33,7 +35,45 @@ class UserChallenge:
         self.creation = creation
         self.lastChanged = lchange
 
+class _UserChallengeAsset():
+    def manifest(self, _return_none_on_load_failure=False):
+        file_path = os.path.join(
+            current_app.root_path, "plugins","userchallenge","staticAssets","manifest.json"
+        )
 
+        try:
+            manifest = get_asset_json(path=file_path)
+        except FileNotFoundError as e:
+            # This check allows us to determine if we are on a legacy theme and fallback if necessary
+            if _return_none_on_load_failure:
+                manifest = None
+            else:
+                raise e
+        return manifest
+
+    def js(self, asset_key, type="module", defer=False, extra=""):
+        asset = self.manifest()[asset_key]
+        entry = asset["file"]
+        imports = asset.get("imports", [])
+
+        # Add in extra attributes. Note that type="module" imples defer
+        _attrs = ""
+        if type:
+            _attrs = f'type="{type}" '
+        if defer:
+            _attrs += "defer "
+        if extra:
+            _attrs += extra
+
+        html = ""
+        for i in imports:
+            # TODO: Needs a better recursive solution
+            i = self.manifest()[i]["file"]
+            url = url_for("userchallenge.static", filename=i)
+            html += f'<script {_attrs} src="{url}"></script>'
+        url = url_for("userchallenge.static", filename=entry)
+        html += f'<script {_attrs} src="{url}"></script>'
+        return markup(html)
 
 def add_User_Link(challenge_id):
     userchallenge = UserChallenges(get_current_user().id,challenge_id,datetime.datetime.utcnow())

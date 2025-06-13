@@ -170,6 +170,5 @@
 
 
 {% block entrypoint %}
-<!--{{ Assets.js("assets/js/pages/challenge.js", theme="admin") }}-->
-<script type="module" src="{{url_for('userchallenge.static',filename='assets/js/adminChallenge-BEheRCrK.js')}}"></script>
+{{ UserChallengeAsset.js("assets/js/adminChallenge.js") }}
 {% endblock %}

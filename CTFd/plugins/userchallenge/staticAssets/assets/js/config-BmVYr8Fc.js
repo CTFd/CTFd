@@ -1,0 +1,1 @@
+import{$ as e}from"../jquery-BT3bhPE2.js";e("#toggle-button").click(()=>{e.get("/userchallenge/api/config",function(a){e("#label-enable").html(a.data),a.data==="enabled"?e("#toggle-button").removeClass("bg-danger").addClass("bg-success"):e("#toggle-button").removeClass("bg-success").addClass("bg-danger")})});
