@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
-<style>
+<style nonce="{{ csp_nonce }}">
 .card-radio:checked + .card {
 	background-color: transparent !important;
 	border-color: #a3d39c;
@@ -13,6 +13,14 @@
 }
 .card:hover {
 	cursor: pointer;
+}
+.visibility-hidden{
+	visibility: hidden;
+}
+
+.w100-h30{
+	width: 100px; 
+	height: 30px;
 }
 </style>
 {% endblock %}
@@ -89,7 +97,7 @@
 										<div class="card-body p-3">
 											<span class="card-title">
 												<div class="form-check">
-													<input class="form-check-input card-radio-clone" type="radio" style="visibility: hidden;" checked>
+													<input class="form-check-input card-radio-clone visibility-hidden" type="radio"  checked>
 													<span class="form-check-label text-center">
 														<h5>{{ radio.label }}</h5>
 													</span>
@@ -196,7 +204,7 @@
 							<div class="d-inline-block">
 								{{ form.theme_color(id="config-color-input") }}
 								<div class="btn-group">
-									<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="">
+									<input type="color" id="config-color-picker" class="pr-1 w100-h30" value="">
 								</div>
 								<div class="btn-group">
 									<button type="button" id="config-color-reset">Reset</button>
@@ -298,7 +306,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce }}">
 	var STATE = {{ state | tojson }};
 </script>
 {% endblock %}

@@ -365,7 +365,7 @@
 {% endblock %}
 
 {% block scripts %}
-	<script>
+	<script nonce="{{ csp_nonce }}">
 		var stats_data = {{ {
 			'type': 'team',
 			'id': team.id,

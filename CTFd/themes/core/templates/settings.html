@@ -14,7 +14,9 @@
 		<div class="col-md-2 offset-md-1">
 			<div class="nav flex-column nav-pills" role="tablist">
 				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
-				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
+				{% if User.type == "admin" or User.name == "API" or get_app_config("ALLOW_ACCESS_TOKENS_FOR_ALL") %}
+					<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
+				{% endif %}
 			</div>
 		</div>
 		<div class="col-md-8">
@@ -75,21 +77,23 @@
 					{% endwith %}
 				</div>
 				<div class="tab-pane fade" id="tokens" role="tabpanel">
-					{% with form = Forms.self.TokensForm() %}
-					<form method="POST" id="user-token-form">
-						<div class="form-group">
-							<b>{{ form.expiration.label }}</b>
-							{{ form.expiration(class="form-control") }}
-						</div>
-						<div class="form-group">
-							<b>{{ form.description.label }}</b>
-							{{ form.description(class="form-control", rows="3") }}
-						</div>
-						<div class="form-group text-right">
-							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
-						</div>
-					</form>
-					{% endwith %}
+					{% if User.type == "admin" or User.name == "API" or get_app_config("ALLOW_ACCESS_TOKENS_FOR_ALL") %}
+						{% with form = Forms.self.TokensForm() %}
+						<form method="POST" id="user-token-form">
+							<div class="form-group">
+								<b>{{ form.expiration.label }}</b>
+								{{ form.expiration(class="form-control") }}
+							</div>
+							<div class="form-group">
+								<b>{{ form.description.label }}</b>
+								{{ form.description(class="form-control", rows="3") }}
+							</div>
+							<div class="form-group text-right">
+								{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
+							</div>
+						</form>
+						{% endwith %}
+					{% endif %}
 
 					{% if tokens %}
 					<hr>

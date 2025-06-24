@@ -7,7 +7,7 @@ import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { ezQuery, ezAlert, ezToast } from "../compat/ezq";
 import { default as helpers } from "../compat/helpers";
 import { bindMarkdownEditors } from "../styles";
-import Vue from "vue";
+import * as Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
 import FlagList from "../components/flags/FlagList.vue";
 import Requirements from "../components/requirements/Requirements.vue";
@@ -254,84 +254,100 @@ $(() => {
 
   // Load FlagList component
   if (document.querySelector("#challenge-flags")) {
-    const flagList = Vue.extend(FlagList);
+    //const flagList = Vue.extend(FlagList);
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-flags").appendChild(vueContainer);
-    new flagList({
-      propsData: { challenge_id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(FlagList, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   // Load TopicsList component
   if (document.querySelector("#challenge-topics")) {
-    const topicsList = Vue.extend(TopicsList);
+    //const topicsList = Vue.extend(TopicsList);
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-topics").appendChild(vueContainer);
-    new topicsList({
-      propsData: { challenge_id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(TopicsList, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   // Load TagsList component
   if (document.querySelector("#challenge-tags")) {
-    const tagList = Vue.extend(TagsList);
+    //const tagList = Vue.extend(TagsList);
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-tags").appendChild(vueContainer);
-    new tagList({
-      propsData: { challenge_id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(TagsList, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   // Load Requirements component
   if (document.querySelector("#prerequisite-add-form")) {
-    const reqsComponent = Vue.extend(Requirements);
+    //const reqsComponent = Vue.extend(Requirements);
     let vueContainer = document.createElement("div");
     document.querySelector("#prerequisite-add-form").appendChild(vueContainer);
-    new reqsComponent({
-      propsData: { challenge_id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(Requirements, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   // Load ChallengeFilesList component
   if (document.querySelector("#challenge-files")) {
-    const challengeFilesList = Vue.extend(ChallengeFilesList);
+    //const challengeFilesList = Vue.extend(ChallengeFilesList);
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-files").appendChild(vueContainer);
-    new challengeFilesList({
-      propsData: { challenge_id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(ChallengeFilesList, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   // Load HintsList component
   if (document.querySelector("#challenge-hints")) {
-    const hintsList = Vue.extend(HintsList);
+    //const hintsList = Vue.extend(HintsList);
     let vueContainer = document.createElement("div");
     document.querySelector("#challenge-hints").appendChild(vueContainer);
-    new hintsList({
-      propsData: { challenge_id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(HintsList, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   // Load Next component
   if (document.querySelector("#next-add-form")) {
-    const nextChallenge = Vue.extend(NextChallenge);
+    //const nextChallenge = Vue.extend(NextChallenge);
     let vueContainer = document.createElement("div");
     document.querySelector("#next-add-form").appendChild(vueContainer);
-    new nextChallenge({
-      propsData: { challenge_id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(NextChallenge, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   // Because this JS is shared by a few pages,
   // we should only insert the CommentBox if it's actually in use
   if (document.querySelector("#comment-box")) {
     // Insert CommentBox element
-    const commentBox = Vue.extend(CommentBox);
+    //const commentBox = Vue.extend(CommentBox);
     let vueContainer = document.createElement("div");
     document.querySelector("#comment-box").appendChild(vueContainer);
-    new commentBox({
-      propsData: { type: "challenge", id: window.CHALLENGE_ID },
-    }).$mount(vueContainer);
+    Vue.createApp({
+      render: () => Vue.h(CommentBox, {
+        challenge_id: window.CHALLENGE_ID
+      })
+    }).mount(vueContainer);
   }
 
   $.get(CTFd.config.urlRoot + "/api/v1/challenges/types", function (response) {

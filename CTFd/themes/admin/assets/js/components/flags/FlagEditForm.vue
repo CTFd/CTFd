@@ -6,7 +6,7 @@
           <div class="container">
             <div class="row">
               <div class="col-md-12">
-                <h3 class="text-center">Edit Flag</h3>
+                <h3>Edit Flag</h3>
               </div>
             </div>
           </div>
@@ -20,11 +20,13 @@
           </button>
         </div>
         <div class="modal-body">
-          <form
-            method="POST"
-            v-html="editForm"
-            @submit.prevent="updateFlag"
-          ></form>
+          <component
+            v-if="flag && selectedTypeComponent"
+            :is="selectedTypeComponent"
+            :mode="'edit'"
+            :initialData="flag"
+            @submit="updateFlag"
+          />
         </div>
       </div>
     </div>
@@ -32,26 +34,41 @@
 </template>
 
 <script>
-import $ from "jquery";
+import StaticFlagForm from "./StaticFlagForm.vue";
+import RegexFlagForm from "./RegexFlagForm.vue";
 import CTFd from "../../compat/CTFd";
-import nunjucks from "nunjucks";
-import "../../compat/json";
 
 export default {
   name: "FlagEditForm",
   props: {
     flag_id: Number,
   },
-  data: function () {
+  components: {
+    StaticFlagForm,
+    RegexFlagForm,
+  },
+  data() {
     return {
-      flag: {},
-      editForm: "",
+      flag: null,
     };
+  },
+  computed: {
+    selectedTypeComponent() {
+      if (!this.flag) return null;
+      switch (this.flag.type) {
+        case "static":
+          return "StaticFlagForm";
+        case "regex":
+          return "RegexFlagForm";
+        default:
+          return null;
+      }
+    },
   },
   watch: {
     flag_id: {
       immediate: true,
-      handler(val, oldVal) {
+      handler(val) {
         if (val !== null) {
           this.loadFlag();
         }
@@ -59,39 +76,17 @@ export default {
     },
   },
   methods: {
-    loadFlag: function () {
-      CTFd.fetch(`/api/v1/flags/${this.$props.flag_id}`, {
+    loadFlag() {
+      CTFd.fetch(`/api/v1/flags/${this.flag_id}`, {
         method: "GET",
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          this.flag = response.data;
-          let editFormURL = this.flag["templates"]["update"];
-
-          $.get(CTFd.config.urlRoot + editFormURL, (template_data) => {
-            const template = nunjucks.compile(template_data);
-            this.editForm = template.render(this.flag);
-
-            // TODO: See https://github.com/CTFd/CTFd/issues/1779
-            if (this.editForm.includes("<script")) {
-              setTimeout(() => {
-                $(`<div>` + this.editForm + `</div>`)
-                  .find("script")
-                  .each(function () {
-                    eval($(this).html());
-                  });
-              }, 100);
-            }
-          });
+        .then((res) => res.json())
+        .then((res) => {
+          this.flag = res.data;
         });
     },
-    updateFlag: function (event) {
-      let form = $(event.target);
-      let params = form.serializeJSON(true);
-
-      CTFd.fetch(`/api/v1/flags/${this.$props.flag_id}`, {
+    updateFlag(params) {
+      CTFd.fetch(`/api/v1/flags/${this.flag_id}`, {
         method: "PATCH",
         credentials: "same-origin",
         headers: {
@@ -100,23 +95,11 @@ export default {
         },
         body: JSON.stringify(params),
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
+        .then((response) => response.json())
+        .then((_response) => {
           this.$emit("refreshFlags", this.$options.name);
         });
     },
-  },
-  mounted() {
-    if (this.flag_id) {
-      this.loadFlag();
-    }
-  },
-  created() {
-    if (this.flag_id) {
-      this.loadFlag();
-    }
   },
 };
 </script>

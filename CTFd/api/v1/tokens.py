@@ -11,6 +11,7 @@ from CTFd.schemas.tokens import TokenSchema
 from CTFd.utils.decorators import authed_only, require_verified_emails
 from CTFd.utils.security.auth import generate_user_token
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
+from CTFd.utils import get_app_config
 
 tokens_namespace = Namespace("tokens", description="Endpoint to retrieve Tokens")
 
@@ -90,19 +91,21 @@ class TokenList(Resource):
             expiration = datetime.datetime.strptime(expiration, "%Y-%m-%d")
 
         user = get_current_user()
-        token = generate_user_token(
-            user, expiration=expiration, description=description
-        )
+        if is_admin() or user=="API" or get_app_config("ALLOW_ACCESS_TOKENS_FOR_ALL"):
+            token = generate_user_token(
+                user, expiration=expiration, description=description
+            )
 
-        # Explicitly use admin view so that user's can see the value of their token
-        schema = TokenSchema(view="admin")
-        response = schema.dump(token)
+            # Explicitly use admin view so that user's can see the value of their token
+            schema = TokenSchema(view="admin")
+            response = schema.dump(token)
 
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
 
-        return {"success": True, "data": response.data}
-
+            return {"success": True, "data": response.data}
+        else:
+            return {"success": False, "error": "Not authorized to request a token"}, 403
 
 @tokens_namespace.route("/<token_id>")
 @tokens_namespace.param("token_id", "A Token ID")
