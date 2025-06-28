@@ -96,6 +96,8 @@ class FlagList(Resource):
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
 
+        # We only want to operate on flag types where are have
+        # high confidence a leading/trailing space was not intentional
         if response.data.type in ("static", "regex"):
             response.data.content = response.data.content.strip()
 
@@ -186,7 +188,9 @@ class Flag(Resource):
         schema = FlagSchema()
         req = request.get_json()
 
-        if flag.type in ("static", "regex"):
+        # We only want to operate on flag types where are have
+        # high confidence a leading/trailing space was not intentional
+        if flag.type in ("static", "regex") and req.get("content"):
             req["content"] = req["content"].strip()
 
         response = schema.load(req, session=db.session, instance=flag, partial=True)
