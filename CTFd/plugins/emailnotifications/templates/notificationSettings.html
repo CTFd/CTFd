@@ -82,6 +82,13 @@
                   {{ form.country(class="form-select", value=country) }}
                 </div>
 
+                <hr>
+                <div class="mb-3">
+                  <b>{{ notif.label(class="form-label") }}</b>
+                  {{ form.country(class="form-select", value=checked) }}
+                </div>
+                <hr>
+
                 {{ render_extra_fields(form.extra) }}
 
                 <div id="results" class="mb-3">

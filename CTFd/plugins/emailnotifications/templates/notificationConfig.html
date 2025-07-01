@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('views.themes', theme='admin', path='css/codemirror.css') }}">
+{% endblock %}
+
+{% block content%}
+<head>
+  {{EmailNotifAssets.js('assets/js/config.js')}}
+</head>
+
+
+<div class="form-group" >
+  <table class="table">
+    <tr>
+      <th scope="col">Function</th>
+      <th scope="col">Status</th>
+      <th scope="col">Description</th>
+    </tr>
+    {% for config in configs %}
+    <tr>
+      <td>{{config.name}}</td>
+      {% if config.toggle == "enabled" %}
+        <td><button value="{{config.config}}" class="toggle-button align-self-center text-center btn btn-primary align-self-center rounded bg-success">{{ config.toggle }}</button></td>
+      {% endif%}
+      {% if config.toggle == "disabled" %}
+        <td><button value="{{config.config}}" class="toggle-button align-self-center text-center btn btn-primary align-self-center rounded bg-danger">{{ config.toggle }}</button></td>
+      {% endif %}
+      <td><small class="form-text text-muted text-center">
+      {{config.desc}}
+    </small></td>
+    {% endfor %}
+    </tr> 
+  </table>
+  
+</div>
+{% endblock %}

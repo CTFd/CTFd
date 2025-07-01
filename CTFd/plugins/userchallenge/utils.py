@@ -1,14 +1,12 @@
 import datetime
 import functools
-import os
 from pathlib import Path
-from CTFd.models import Challenges, Configs, db
-from CTFd.utils import get_asset_json, get_config, set_config
-from CTFd.utils.helpers import markup
-from CTFd.utils.user import get_current_user, get_user_attrs, is_admin
 from CTFd.utils.plugins import override_template
+from CTFd.models import Challenges, db
+from CTFd.utils import get_config
+from CTFd.utils.user import get_current_user, get_user_attrs, is_admin
 
-from flask import request, url_for, abort,redirect,current_app
+from flask import request, url_for, abort,redirect
 
 class UserChallenges(db.Model):
     __tablename__ = "UserChallenges"
@@ -35,55 +33,11 @@ class UserChallenge:
         self.creation = creation
         self.lastChanged = lchange
 
-class _UserChallengeAsset():
-    def manifest(self, _return_none_on_load_failure=False):
-        file_path = os.path.join(
-            current_app.root_path, "plugins","userchallenge","staticAssets","manifest.json"
-        )
-
-        try:
-            manifest = get_asset_json(path=file_path)
-        except FileNotFoundError as e:
-            # This check allows us to determine if we are on a legacy theme and fallback if necessary
-            if _return_none_on_load_failure:
-                manifest = None
-            else:
-                raise e
-        return manifest
-
-    def js(self, asset_key, type="module", defer=False, extra=""):
-        asset = self.manifest()[asset_key]
-        entry = asset["file"]
-        imports = asset.get("imports", [])
-
-        # Add in extra attributes. Note that type="module" imples defer
-        _attrs = ""
-        if type:
-            _attrs = f'type="{type}" '
-        if defer:
-            _attrs += "defer "
-        if extra:
-            _attrs += extra
-
-        html = ""
-        for i in imports:
-            # TODO: Needs a better recursive solution
-            i = self.manifest()[i]["file"]
-            url = url_for("userchallenge.static", filename=i)
-            html += f'<script {_attrs} src="{url}"></script>'
-        url = url_for("userchallenge.static", filename=entry)
-        html += f'<script {_attrs} src="{url}"></script>'
-        return markup(html)
 
 def add_User_Link(challenge_id):
     userchallenge = UserChallenges(get_current_user().id,challenge_id,datetime.datetime.utcnow())
     db.session.add(userchallenge)
     db.session.commit()
-
-def registerTemplate(old_path, new_path):
-    dir_path = Path(__file__).parent.resolve()
-    template_path = dir_path/'templates'/new_path
-    override_template(old_path,open(template_path).read())
 
 def userChallenge_allowed(f):
     """
@@ -104,26 +58,6 @@ def userChallenge_allowed(f):
             else:
                 return redirect(url_for("auth.login", next=request.full_path))
     return userChallenge_wrapper
-
-def update_allow_challenges():
-
-    #flip submission code
-
-    db.session.commit()
-    config = Configs.query.filter(Configs.key == "allowUserChallenges").first()
-    if config:
-        value = get_config('allowUserChallenges')
-        if value:
-            set_config('allowUserChallenges','false')
-            return False
-        else:
-            set_config('allowUserChallenges','true')
-            return True
-    else:
-        conf = Configs(key="allowUserChallenges",value="true")
-        db.session.add(conf)
-        db.session.commit()
-        return True
 
 def owned_by_user(f):
     """
@@ -195,3 +129,9 @@ def setLastChanged(id):
     if(query != None):
         setattr(query,'changed',time)
     db.session.commit()
+
+
+def registerTemplate(old_path, new_path):
+    dir_path = Path(__file__).parent.resolve()
+    template_path = dir_path/'templates'/new_path
+    override_template(old_path,open(template_path).read())

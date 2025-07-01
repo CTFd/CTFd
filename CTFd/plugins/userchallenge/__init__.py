@@ -1,20 +1,18 @@
-from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.userchallenge.api_calls import challenges, comments, attempts, files, flags, hints, tags, topics
-from CTFd.utils.plugins import register_admin_script
 from flask import render_template,request,Blueprint, url_for, abort
 from sqlalchemy.sql import and_
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.models import Challenges, Solves, Flags, db, Configs,Flags
 from CTFd.utils.decorators import admins_only
 from CTFd.plugins.userchallenge.utils import *
-
+from CTFd.plugins.LuaUtils import _LuaAsset,toggle_config
 userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',static_folder ='staticAssets')
 
 def load(app):
 
-    from CTFd.plugins.userchallenge.utils import _UserChallengeAsset
+    
     app.db.create_all()
-    app.jinja_env.globals.update(UserChallengeAsset=_UserChallengeAsset())
+    app.jinja_env.globals.update(UserChallengeAsset=_LuaAsset("userchallenge"))
 
     app.register_blueprint(userChallenge,url_prefix='/userchallenge')
 
@@ -80,7 +78,7 @@ def load(app):
     @app.route('/userchallenge/api/config',methods=['GET','POST'])
     @admins_only
     def getConfig():
-        newstate = update_allow_challenges()
+        newstate = toggle_config('allowUserChallenges')
         data = "disabled"
         if newstate:
             data = "enabled"
