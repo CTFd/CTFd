@@ -122,6 +122,16 @@ export default {
     };
   },
   methods: {
+    clearForm: function () {
+      this.$refs.title.value = "";
+      if (this.$refs.content && this.$refs.content.mde) {
+        this.$refs.content.mde.value("");
+        this.$refs.content.mde.codemirror.refresh();
+      }
+      this.$refs.content.value = "";
+      this.cost = 0;
+      this.selectedHints = [];
+    },
     getCost: function () {
       return this.cost || 0;
     },
@@ -154,6 +164,7 @@ export default {
         .then((response) => {
           if (response.success) {
             this.$emit("refreshHints", this.$options.name);
+            this.clearForm();
           }
         });
     },
