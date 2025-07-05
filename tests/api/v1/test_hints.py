@@ -91,3 +91,59 @@ def test_users_cannot_preview_hints():
         hint = r.get_json()
         assert hint["data"].get("content") is None
     destroy_ctfd(app)
+
+
+def test_admin_cannot_unlock_hint_with_prerequisite():
+    """
+    Test that admins cannot unlock hints that have a prerequisite unless the prerequisite is unlocked.
+    Allow admin preview access with ?preview=true
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Create a challenge and two hints, where hint2 requires hint1 as a prerequisite
+        chal = gen_challenge(app.db)
+        hint1 = gen_hint(app.db, challenge_id=chal.id, content="First hint")
+        hint1_id = hint1.id
+        hint2 = gen_hint(
+            app.db,
+            challenge_id=chal.id,
+            content="Second hint",
+        )
+        hint2.requirements = {"prerequisites": [1]}
+        hint2_id = hint2.id
+        app.db.session.commit()
+
+        # Login as admin
+        client = login_as_user(app, name="admin")
+
+        # Try to access the second hint without unlocking the prerequisite
+        r = client.get(f"/api/v1/hints/{hint2_id}")
+        assert r.status_code == 403
+        data = r.get_json()
+        assert "requirements" in data.get("errors", {})
+
+        # Try to access with preview=true (should succeed for admin)
+        r = client.get(f"/api/v1/hints/{hint2_id}?preview=true")
+        assert r.status_code == 200
+        data = r.get_json()
+        assert data["data"]["content"] == "Second hint"
+
+        # Unlock the first hint
+        r = client.post("/api/v1/unlocks", json={"target": hint1_id, "type": "hints"})
+        assert r.status_code == 200
+
+        # Now try to access the second hint (should fail b/c missing unlock)
+        r = client.get(f"/api/v1/hints/{hint2_id}")
+        data = r.get_json()
+        assert data["data"].get("content") is None
+
+        # Unlock the second hint
+        r = client.post("/api/v1/unlocks", json={"target": hint2_id, "type": "hints"})
+        assert r.status_code == 200
+
+        # Now try to access the second hint (should succeed)
+        r = client.get(f"/api/v1/hints/{hint2_id}")
+        assert r.status_code == 200
+        data = r.get_json()
+        assert data["data"]["content"] == "Second hint"
+    destroy_ctfd(app)
