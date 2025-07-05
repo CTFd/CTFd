@@ -264,8 +264,8 @@ def test_challenges_with_max_attempts():
         assert r.status_code == 403
 
         resp = r.get_json()["data"]
-        assert resp.get("status") == "incorrect"
-        assert resp.get("message") == "You have 0 tries remaining"
+        assert resp.get("status") == "ratelimited"
+        assert resp.get("message") == "Not accepted. You have 0 tries remaining"
 
         solves = Solves.query.count()
         assert solves == 0
