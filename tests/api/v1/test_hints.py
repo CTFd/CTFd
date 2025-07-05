@@ -102,13 +102,12 @@ def test_admin_cannot_unlock_hint_with_prerequisite():
     with app.app_context():
         # Create a challenge and two hints, where hint2 requires hint1 as a prerequisite
         chal = gen_challenge(app.db)
-        hint1 = gen_hint(app.db, challenge_id=chal.id, content="First hint", cost=10)
+        hint1 = gen_hint(app.db, challenge_id=chal.id, content="First hint")
         hint1_id = hint1.id
         hint2 = gen_hint(
             app.db,
             challenge_id=chal.id,
             content="Second hint",
-            cost=20,
         )
         hint2.requirements = {"prerequisites": [1]}
         hint2_id = hint2.id
@@ -131,6 +130,15 @@ def test_admin_cannot_unlock_hint_with_prerequisite():
 
         # Unlock the first hint
         r = client.post("/api/v1/unlocks", json={"target": hint1_id, "type": "hints"})
+        assert r.status_code == 200
+
+        # Now try to access the second hint (should fail b/c missing unlock)
+        r = client.get(f"/api/v1/hints/{hint2_id}")
+        data = r.get_json()
+        assert data["data"].get("content") is None
+
+        # Unlock the second hint
+        r = client.post("/api/v1/unlocks", json={"target": hint2_id, "type": "hints"})
         assert r.status_code == 200
 
         # Now try to access the second hint (should succeed)
