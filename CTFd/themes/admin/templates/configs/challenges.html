@@ -1,11 +1,28 @@
 <div role="tabpanel" class="tab-pane config-section" id="challenges">
     {% set hints_free_public_access = "true" if hints_free_public_access == True else "false" %}
+	{% set max_attempts_behavior = "timeout" if max_attempts_behavior == "timeout" else "lockout" %}
 	{% 
 		with form = Forms.config.ChallengeSettingsForm(
-			hints_free_public_access=hints_free_public_access,
+			hints_free_public_access=hints_free_public_access, 
+			max_attempts_behavior=max_attempts_behavior,
+			max_attempts_timeout_duration=max_attempts_timeout_duration,
 		) 
 	%}
 	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			{{ form.max_attempts_behavior.label }}
+			{{ form.max_attempts_behavior(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.max_attempts_behavior.description }}
+			</small>
+		</div>
+		<div class="form-group">
+			{{ form.max_attempts_timeout_duration.label }}
+			{{ form.max_attempts_timeout_duration(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.max_attempts_timeout_duration.description }}
+			</small>
+		</div>
 		<div class="form-group">
 			{{ form.hints_free_public_access.label }}
 			{{ form.hints_free_public_access(class="form-control custom-select") }}

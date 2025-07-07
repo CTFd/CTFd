@@ -640,10 +640,7 @@ class ChallengeAttempt(Resource):
                 fails_query = Fails.query.filter_by(
                     account_id=user.account_id, challenge_id=challenge_id
                 )
-                if max_attempts_behavior == "lockout":  # Use lockout behavior
-                    fails = fails_query.count()
-                    response = "Not accepted. You have 0 tries remaining"
-                else:  # Use timeout behavior
+                if max_attempts_behavior == "timeout":  # Use timeout behavior
                     max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
                     max_attempts_timeout_mins = max_attempts_timeout // 60
                     timeout_delta = datetime.utcnow() - timedelta(
@@ -653,6 +650,9 @@ class ChallengeAttempt(Resource):
                     response = "Not accepted. Try again in {} minutes".format(
                         max_attempts_timeout_mins
                     )
+                else:  # Use lockout behavior
+                    fails = fails_query.count()
+                    response = "Not accepted. You have 0 tries remaining"
 
                 if fails >= max_tries:
                     return (
