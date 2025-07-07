@@ -436,9 +436,8 @@ class Challenge(Resource):
             max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
             if max_attempts_behavior == "timeout":
                 max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
-                max_attempts_timeout_mins = max_attempts_timeout // 60
                 timeout_delta = datetime.utcnow() - timedelta(
-                    minutes=max_attempts_timeout_mins
+                    seconds=max_attempts_timeout
                 )
                 attempts_query = attempts_query.filter(Fails.date >= timeout_delta)
             attempts = attempts_query.count()
