@@ -31,6 +31,13 @@ Alpine.data("Hint", () => ({
   async showHint(event) {
     if (event.target.open) {
       let response = await CTFd.pages.challenge.loadHint(this.id);
+
+      // Hint has some kind of prerequisite or access prevention
+      if (response.errors) {
+        event.target.open = false;
+        CTFd._functions.challenge.displayUnlockError(response);
+        return;
+      }
       let hint = response.data;
       if (hint.content) {
         this.html = addTargetBlank(hint.html);
@@ -177,7 +184,11 @@ Alpine.data("Challenge", () => ({
     }
 
     // Increment attempts counter
-    if (this.max_attempts > 0 && this.response.data.status != "already_solved") {
+    if (
+      this.max_attempts > 0 &&
+      this.response.data.status != "already_solved" &&
+      this.response.data.status != "ratelimited"
+    ) {
       this.attempts += 1;
     }
 
