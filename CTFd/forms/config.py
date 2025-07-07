@@ -145,7 +145,7 @@ class ChallengeSettingsForm(BaseForm):
         choices=[("lockout", "lockout"), ("timeout", "timeout")],
         default="lockout",
     )
-    max_attempts_timeout_duration = IntegerField(
+    max_attempts_timeout = IntegerField(
         "Max Attempts Timeout Duration",
         description="How long the timeout lasts in seconds for max attempts (if set to timeout). Default is 300 seconds",
         default=300,
