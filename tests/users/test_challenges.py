@@ -303,7 +303,7 @@ def test_challenges_with_max_attempts_timeout_behavior():
         assert resp.get("status") == "ratelimited"
         assert "Not accepted. Try again in 5 minutes" in resp.get("message")
 
-        # Use freeze_time to advance time by 299 seconds
+        # Use freeze_time to advance time by 290 seconds
         with freeze_time(timedelta(seconds=290)):
             data = {"submission": "flag", "challenge_id": chal_id}
             r = client.post("/api/v1/challenges/attempt", json=data)
