@@ -1,3 +1,4 @@
+import math
 from datetime import datetime, timedelta
 from typing import List  # noqa: I001
 
@@ -439,7 +440,9 @@ class Challenge(Resource):
                 timeout_delta = datetime.utcnow() - timedelta(
                     seconds=max_attempts_timeout
                 )
-                attempts_query = attempts_query.filter(Fails.date >= timeout_delta)
+                attempts_query = attempts_query.filter(
+                    Submissions.date >= timeout_delta
+                )
             attempts = attempts_query.count()
         else:
             attempts = 0
@@ -641,14 +644,11 @@ class ChallengeAttempt(Resource):
                 )
                 if max_attempts_behavior == "timeout":  # Use timeout behavior
                     max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
-                    max_attempts_timeout_mins = max_attempts_timeout // 60
                     timeout_delta = datetime.utcnow() - timedelta(
-                        minutes=max_attempts_timeout_mins
+                        seconds=max_attempts_timeout
                     )
                     fails = fails_query.filter(Fails.date >= timeout_delta).count()
-                    response = "Not accepted. Try again in {} minutes".format(
-                        max_attempts_timeout_mins
-                    )
+                    response = f"Not accepted. Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
                 else:  # Use lockout behavior
                     fails = fails_query.count()
                     response = "Not accepted. You have 0 tries remaining"
@@ -721,10 +721,7 @@ class ChallengeAttempt(Resource):
                             max_attempts_timeout = int(
                                 get_config("max_attempts_timeout", 300)
                             )
-                            max_attempts_timeout_mins = max_attempts_timeout // 60
-                            message += (
-                                f" Try again in {max_attempts_timeout_mins} minutes."
-                            )
+                            message += f" Try again in {math.ceil(max_attempts_timeout / 60)} minutes."
                     return {
                         "success": True,
                         "data": {
