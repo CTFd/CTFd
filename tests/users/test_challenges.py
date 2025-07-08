@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from datetime import timedelta
 
 from freezegun import freeze_time
 
@@ -264,11 +265,62 @@ def test_challenges_with_max_attempts():
         assert r.status_code == 403
 
         resp = r.get_json()["data"]
-        assert resp.get("status") == "incorrect"
-        assert resp.get("message") == "You have 0 tries remaining"
+        assert resp.get("status") == "ratelimited"
+        assert resp.get("message") == "Not accepted. You have 0 tries remaining"
 
         solves = Solves.query.count()
         assert solves == 0
+    destroy_ctfd(app)
+
+
+def test_challenges_with_max_attempts_timeout_behavior():
+    """Test that users are temporarily locked out of a challenge after reaching max_attempts with timeout behavior"""
+
+    app = create_ctfd()
+    with app.app_context():
+        set_config("max_attempts_behavior", "timeout")
+        set_config("max_attempts_timeout", 300)  # 300 seconds timeout for test
+
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        chal = Challenges.query.filter_by(id=chal.id).first()
+        chal_id = chal.id
+        chal.max_attempts = 2
+        app.db.session.commit()
+
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
+        for _ in range(2):
+            data = {"submission": "notflag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 200
+
+        # Should be locked out now
+        data = {"submission": "flag", "challenge_id": chal_id}
+        r = client.post("/api/v1/challenges/attempt", json=data)
+        assert r.status_code == 403
+        resp = r.get_json()["data"]
+        assert resp.get("status") == "ratelimited"
+        assert "Not accepted. Try again in 5 minutes" in resp.get("message")
+
+        # Use freeze_time to advance time by 290 seconds
+        with freeze_time(timedelta(seconds=290)):
+            data = {"submission": "flag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 403
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "ratelimited"
+            assert "Not accepted. Try again in 5 minutes" in resp.get("message")
+
+        # Use freeze_time to advance time by 301 seconds
+        with freeze_time(timedelta(seconds=301)):
+            data = {"submission": "flag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 200
+            resp = r.get_json()["data"]
+            # Should be correct now
+            assert resp.get("status") == "correct"
+            assert resp.get("message") == "Correct"
     destroy_ctfd(app)
 
 
