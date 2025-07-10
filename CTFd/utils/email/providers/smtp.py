@@ -6,10 +6,9 @@ from socket import timeout
 from CTFd.utils import get_app_config, get_config
 from CTFd.utils.email.providers import EmailProvider
 
-
 class SMTPEmailProvider(EmailProvider):
     @staticmethod
-    def sendmail(addr, text, subject):
+    def sendmail(addr, text, subject, content_type="plain"):
         ctf_name = get_config("ctf_name")
         mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
         mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
@@ -39,16 +38,29 @@ class SMTPEmailProvider(EmailProvider):
             smtp = get_smtp(**data)
 
             msg = EmailMessage()
-            msg.set_content(text)
+            
+           
+            is_html = content_type.lower() == "html" or (
+                "<html" in text.lower() and "</html>" in text.lower()
+            )
+
+            if is_html:
+               
+                plain_text = text.replace('<[^<]+?>', '')
+                msg.set_content(plain_text)
+                
+                msg.add_alternative(text, subtype='html')
+            else:
+                msg.set_content(text)
 
             msg["Subject"] = subject
             msg["From"] = mailfrom_addr
             msg["To"] = addr
 
-            # Check whether we are using an admin-defined SMTP server
+            
             custom_smtp = bool(get_config("mail_server"))
 
-            # We should only consider the MAILSENDER_ADDR value on servers defined in config
+            
             if custom_smtp:
                 smtp.send_message(msg)
             else:
@@ -63,6 +75,9 @@ class SMTPEmailProvider(EmailProvider):
             return False, "SMTP server connection timed out"
         except Exception as e:
             return False, str(e)
+
+
+
 
 
 def get_smtp(host, port, username=None, password=None, TLS=None, SSL=None, auth=None):
