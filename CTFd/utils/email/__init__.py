@@ -170,3 +170,31 @@ def check_email_is_whitelisted(email_address):
 
     # whitelist is not specified - allow all emails
     return True
+
+
+def check_email_is_blacklisted(email_address):
+    local_id, _, domain = email_address.partition("@")
+    domain_blacklist = get_config("domain_blacklist")
+
+    if domain_blacklist:
+        domain_blacklist = [d.strip() for d in domain_blacklist.split(",")]
+
+        for disallowed_domain in domain_blacklist:
+            if disallowed_domain.startswith("*."):
+                # domains should never container the "*" char
+                if "*" in domain:
+                    return True
+
+                # Handle wildcard domain case
+                suffix = disallowed_domain[1:]  # Remove the "*" prefix
+                if domain.endswith(suffix):
+                    return True
+
+            elif domain == disallowed_domain:
+                return True
+
+        # blacklist is specified but the email is not blacklisted
+        return False
+
+    # blacklist is not specified - no emails are blacklisted
+    return False
