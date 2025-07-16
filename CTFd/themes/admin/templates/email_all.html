@@ -37,5 +37,8 @@
       </div>
     </div>
   </div>
-  <script src="{{ url_for('views.themes', theme='admin', path='js/pages/email_all.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+  {{ Assets.js("assets/js/pages/email_all.js", theme="admin") }}
 {% endblock %}
