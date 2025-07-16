@@ -3,10 +3,11 @@ import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import { ezAlert } from "../compat/ezq";
 
-// Configurable constants for batching and rate limiting
-const BATCH_SIZE = 50;
-const DELAY_MS = 10000;
-const PER_PAGE = 100; // Adjust based on API limits; CTFd defaults vary
+// Configuration
+const BATCH_SIZE = 1;
+const DELAY_MS = 7000;
+const PER_PAGE = 100;
+const MAX_PAGES = 100;
 
 $(() => {
   const form = $("#email-all-form");
@@ -15,11 +16,20 @@ $(() => {
   const status = $("#status");
 
   form.on("submit", async (e) => {
-    e.preventDefault(); // Prevent native form submit to avoid unintended POST requests
+    e.preventDefault();
 
-    const subject = form.find("input[name='subject']").val();
-    const body = form.find("textarea[name='body']").val();
+    const subject = form.find("input[name='subject']").val().trim();
+    const body = form.find("textarea[name='body']").val().trim();
     const html = form.find("input[name='html']").is(":checked");
+
+    if (subject.length === 0 || body.length === 0) {
+      ezAlert({
+        title: "Error",
+        body: "Subject and body are required.",
+        button: "Close",
+      });
+      return;
+    }
 
     progressContainer.show();
     updateProgress(0, 0);
@@ -28,76 +38,69 @@ $(() => {
     let sent = 0;
     let failed = [];
     let page = 1;
-    let totalPages = 1; // Initialize to 1; will update from meta
+    let totalPages = 1;
 
     try {
-      // Loop over pages using pagination metadata for safety (avoids while(true))
-      do {
-        // Fetch users for the current page (admin-only API)
-        const response = await CTFd.api.get("/api/v1/users", {
-          params: { page, per_page: PER_PAGE },
+      for (page = 1; page <= totalPages && page <= MAX_PAGES; page++) {
+        const response = await CTFd.api.get_user_list({
+          page,
+          per_page: PER_PAGE,
         });
-        const data = response.data || {};
-        const meta = data.meta || {};
-        const user_list = data.data || [];
 
-        // Update total and totalPages on first fetch
+        const responseData = response.data || {};
+        const user_list = responseData.data || responseData || [];
+        const meta = responseData.meta || {};
+        const pagination = meta.pagination || {};
+
         if (page === 1) {
-          total = meta.pagination ? meta.pagination.total : user_list.length;
-          totalPages = meta.pagination ? meta.pagination.pages : 1;
+          total = pagination.total || meta.count || user_list.length || 0;
+          totalPages = Math.ceil(total / PER_PAGE) || 1;
           updateProgress(0, total);
         }
 
-        // If no users on this page, break early (safety net)
         if (user_list.length === 0) {
           break;
         }
 
-        // Process users in batches to respect rate limits
         let users = [...user_list];
         while (users.length > 0) {
           const batch = users.splice(0, BATCH_SIZE);
 
-          // Send batch concurrently but await all
-          const reqs = batch.map((user) =>
-            sendEmail(user.id, { subject, body, html })
-              .then(() => sent++)
-              .catch((err) => {
-                console.error(`Error sending to user ${user.id}:`, err);
-                if (err.response && err.response.status === 403) {
-                  throw new Error("Permission denied: Admin access required.");
-                }
+          for (const user of batch) {
+            const payload = { subject, body };
+            if (html) payload.html = true;
+
+            try {
+              const emailResponse = await sendEmail(user.id, payload);
+
+              if (emailResponse.success === true) {
+                sent++;
+              } else {
                 failed.push(user.id);
-              })
-          );
+              }
+            } catch (err) {
+              failed.push(user.id);
+            }
 
-          await Promise.all(reqs);
-          updateProgress(sent, total);
-
-          // Delay only if there are more batches on this page
-          if (users.length > 0) {
             await delay(DELAY_MS);
+            updateProgress(sent, total);
           }
         }
-
-        page++;
-      } while (page <= totalPages);
+      }
     } catch (error) {
-      console.error("Failed to fetch users or send emails:", error);
       ezAlert({
         title: "Error",
-        body: error.message || "Failed to process emails. Check console for details (e.g., permissions or API issues).",
+        body: error.message || "Failed to process emails.",
         button: "Close",
       });
       return;
     }
 
-    // Display final status with partial failure handling
     let alertTitle = "Success";
     let alertBody = `Emails sent to ${sent} / ${total} users.`;
     if (failed.length > 0) {
       alertTitle = "Partial Success";
-      alertBody += ` Failed for ${failed.length} users (IDs: ${failed.join(", ")}). Check console.`;
+      alertBody += ` Failed for ${failed.length} users (IDs: ${failed.join(", ")}).`;
     }
     ezAlert({
       title: alertTitle,
@@ -106,12 +109,33 @@ $(() => {
     });
   });
 
-  // Helper function to send email to a single user (using CTFd.api)
-  function sendEmail(userId, payload) {
-    return CTFd.api.post(`/api/v1/users/${userId}/email`, { data: payload });
+  // Helpers
+  async function sendEmail(userId, payload) {
+    const response = await CTFd.fetch(`/api/v1/users/${userId}/email`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    let result;
+    try {
+      result = await response.json();
+    } catch (parseErr) {
+      result = { success: false };
+    }
+
+    if (!response.ok) {
+      const err = new Error(`HTTP error! Status: ${response.status}`);
+      err.status = response.status;
+      throw err;
+    }
+    return result;
   }
 
-  // Helper function for progress update
   function updateProgress(sent, total) {
     const percent = total > 0 ? (sent / total) * 100 : 0;
     progressBar.css("width", `${percent}%`);
@@ -119,7 +143,6 @@ $(() => {
     status.text(`${sent} / ${total} sent`);
   }
 
-  // Helper function for async delay
   function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
