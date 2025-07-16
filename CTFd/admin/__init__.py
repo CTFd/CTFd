@@ -35,6 +35,7 @@ from CTFd.cache import (
     clear_pages,
     clear_standings,
 )
+from CTFd.forms.email import EmailAllForm
 from CTFd.models import (
     Awards,
     Challenges,
@@ -65,6 +66,14 @@ def view():
     if is_admin():
         return redirect(url_for("admin.statistics"))
     return redirect(url_for("auth.login"))
+
+
+@admin.route("/admin/email_all", methods=["GET", "POST"])
+@admins_only
+def email_all():
+    form = EmailAllForm()
+    return render_template("admin/email_all.html", form=form)
+
 
 
 @admin.route("/admin/plugins/<plugin>", methods=["GET", "POST"])
