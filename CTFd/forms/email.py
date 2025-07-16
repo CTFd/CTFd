@@ -1,5 +1,6 @@
 from wtforms import StringField, TextAreaField
 from wtforms.validators import DataRequired, InputRequired
+
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 

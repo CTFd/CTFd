@@ -3,7 +3,10 @@ import datetime
 import os
 from io import StringIO
 
-from flask import Blueprint, abort
+from flask import (
+    Blueprint,
+    abort,
+)
 from flask import current_app as app
 from flask import (
     jsonify,
@@ -73,7 +76,6 @@ def view():
 def email_all():
     form = EmailAllForm()
     return render_template("admin/email_all.html", form=form)
-
 
 
 @admin.route("/admin/plugins/<plugin>", methods=["GET", "POST"])
