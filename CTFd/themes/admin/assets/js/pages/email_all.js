@@ -5,7 +5,7 @@ import { ezAlert } from "../compat/ezq";
 
 // Configuration
 const BATCH_SIZE = 1;
-const DELAY_MS = 7000;
+const DELAY_MS = 2000;
 const PER_PAGE = 100;
 const MAX_PAGES = 100;
 
@@ -18,14 +18,12 @@ $(() => {
   form.on("submit", async (e) => {
     e.preventDefault();
 
-    const subject = form.find("input[name='subject']").val().trim();
-    const body = form.find("textarea[name='body']").val().trim();
-    const html = form.find("input[name='html']").is(":checked");
-
-    if (subject.length === 0 || body.length === 0) {
+    let text = form.find("textarea[name='body']").val() || '';
+    text = text.trim();
+    if (text.length === 0) {
       ezAlert({
         title: "Error",
-        body: "Subject and body are required.",
+        body: "Email content is required.",
         button: "Close",
       });
       return;
@@ -67,8 +65,7 @@ $(() => {
           const batch = users.splice(0, BATCH_SIZE);
 
           for (const user of batch) {
-            const payload = { subject, body };
-            if (html) payload.html = true;
+            const payload = { text };
 
             try {
               const emailResponse = await sendEmail(user.id, payload);
@@ -76,10 +73,18 @@ $(() => {
               if (emailResponse.success === true) {
                 sent++;
               } else {
-                failed.push(user.id);
+                failed.push({
+                  id: user.id,
+                  reason: emailResponse.errors
+                    ? Object.values(emailResponse.errors).flat().join(", ")
+                    : "Unknown error",
+                });
               }
             } catch (err) {
-              failed.push(user.id);
+              failed.push({
+                id: user.id,
+                reason: err.message || "Request failed",
+              });
             }
 
             await delay(DELAY_MS);
@@ -100,7 +105,10 @@ $(() => {
     let alertBody = `Emails sent to ${sent} / ${total} users.`;
     if (failed.length > 0) {
       alertTitle = "Partial Success";
-      alertBody += ` Failed for ${failed.length} users (IDs: ${failed.join(", ")}).`;
+      alertBody += ` Failed for ${failed.length} users:`;
+      failed.forEach((f) => {
+        alertBody += `\n- User ID ${f.id}: ${f.reason}`;
+      });
     }
     ezAlert({
       title: alertTitle,
@@ -128,11 +136,7 @@ $(() => {
       result = { success: false };
     }
 
-    if (!response.ok) {
-      const err = new Error(`HTTP error! Status: ${response.status}`);
-      err.status = response.status;
-      throw err;
-    }
+    // Do not throw here; return the result so the caller can handle success/errors
     return result;
   }
 

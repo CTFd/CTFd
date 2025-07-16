@@ -18,12 +18,7 @@
           {{ form.csrf_token }}
 
           <div class="form-group">
-            <label for="subject">Subject</label>
-            {{ form.subject(class="form-control") }}
-          </div>
-
-          <div class="form-group">
-            <label for="body">Body (Plain Text Only)</label>
+            <label for="text">Email Content</label>
             {{ form.body(class="form-control", rows=10) }}
           </div>
 
