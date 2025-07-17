@@ -76,6 +76,7 @@ export default defineConfig({
         "pages/teams": resolve(__dirname, "assets/js/pages/teams.js"),
         "pages/user": resolve(__dirname, "assets/js/pages/user.js"),
         "pages/users": resolve(__dirname, "assets/js/pages/users.js"),
+        "pages/email_all": resolve(__dirname, "assets/js/pages/email_all.js"),
         "main-css": resolve(__dirname, "assets/css/main.scss"),
         "fonts-css": resolve(__dirname, "assets/css/fonts.scss"),
         "admin-css": resolve(__dirname, "assets/css/admin.scss"),
