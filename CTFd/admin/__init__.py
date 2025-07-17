@@ -209,7 +209,7 @@ def config():
         "admin/config.html",
         themes=themes,
         **configs,
-        force_html_sanitization=force_html_sanitization
+        force_html_sanitization=force_html_sanitization,
     )
 
 

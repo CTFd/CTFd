@@ -18,7 +18,7 @@ $(() => {
   form.on("submit", async (e) => {
     e.preventDefault();
 
-    let text = form.find("textarea[name='body']").val() || '';
+    let text = form.find("textarea[name='body']").val() || "";
     text = text.trim();
     if (text.length === 0) {
       ezAlert({
