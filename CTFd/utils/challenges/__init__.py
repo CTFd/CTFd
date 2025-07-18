@@ -5,7 +5,8 @@ from sqlalchemy import func as sa_func
 from sqlalchemy.sql import and_, false, true
 
 from CTFd.cache import cache
-from CTFd.models import Challenges, Solves, Users, db
+from CTFd.models import Challenges, Solves, Submissions, Users, db
+from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
@@ -84,6 +85,21 @@ def get_solves_for_challenge_id(challenge_id, freeze=False):
             }
         )
     return results
+
+
+@cache.memoize(timeout=60)
+def get_submissions_for_user_id_for_challenge_id(user_id, challenge_id):
+    user = Users.query.filter_by(id=user_id).first()
+    submissions = (
+        Submissions.query.join(Users)
+        .filter(
+            Submissions.challenge_id == challenge_id,
+            Submissions.account_id == user.account_id,
+        )
+        .order_by(Submissions.date.desc())
+    )
+    response = SubmissionSchema(view="self", many=True).dump(submissions)
+    return response
 
 
 @cache.memoize(timeout=60)
