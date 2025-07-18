@@ -25,7 +25,7 @@ from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.users import UserSchema
 from CTFd.utils.challenges import get_submissions_for_user_id_for_challenge_id
-from CTFd.utils.config import get_mail_provider
+from CTFd.utils.config import get_config, get_mail_provider
 from CTFd.utils.decorators import admins_only, authed_only, ratelimit
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
@@ -346,9 +346,12 @@ class UserPrivate(Resource):
 
 
 @users_namespace.route("/me/submissions")
-class UserPrivateSolves(Resource):
+class UserPrivateSubmissions(Resource):
     @authed_only
     def get(self):
+        # TODO: CTFd 4.0 Self viewing submissions should not be enabled by default until further notice
+        if bool(get_config("view_self_submissions")) is False:
+            abort(403)
         user = get_current_user()
         challenge_id = request.args.get("challenge_id")
         response = get_submissions_for_user_id_for_challenge_id(
