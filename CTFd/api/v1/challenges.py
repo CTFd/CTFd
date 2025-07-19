@@ -750,9 +750,7 @@ class ChallengeAttempt(Resource):
                 "success": True,
                 "data": {
                     "status": "already_solved",
-                    "message": "{} but you already solved this".format(
-                        message
-                    ),
+                    "message": f"{message} but you already solved this",
                 },
             }
 
