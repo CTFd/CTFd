@@ -746,13 +746,11 @@ class ChallengeAttempt(Resource):
                 kpm=kpm,
             )
             status, message = chal_class.attempt(challenge, request)
-            if message[-1] not in "!().;?[]{}":
-                message = message + "."
             return {
                 "success": True,
                 "data": {
                     "status": "already_solved",
-                    "message": "{} You already solved this.".format(
+                    "message": "{} but ou already solved this.".format(
                         message
                     ),
                 },
