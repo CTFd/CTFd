@@ -68,6 +68,7 @@ Alpine.data("Challenge", () => ({
   submission: "",
   tab: null,
   solves: [],
+  submissions: [],
   response: null,
   share_url: null,
   max_attempts: 0,
@@ -117,6 +118,16 @@ Alpine.data("Challenge", () => ({
     this.solves.forEach(solve => {
       solve.date = dayjs(solve.date).format("MMMM Do, h:mm:ss A");
       return solve;
+    });
+    new Tab(this.$el).show();
+  },
+
+  async showSubmissions() {
+    let response = await CTFd.pages.users.userSubmissions("me", this.id);
+    this.submissions = response.data;
+    this.submissions.forEach(s => {
+      s.date = dayjs(s.date).format("MMMM Do, h:mm:ss A");
+      return s;
     });
     new Tab(this.$el).show();
   },
