@@ -128,6 +128,7 @@ class Challenges(db.Model):
     flags = db.relationship("Flags", backref="challenge")
     comments = db.relationship("ChallengeComments", backref="challenge")
     topics = db.relationship("ChallengeTopics", backref="challenge")
+    solution = db.relationship("Solutions", back_populates="challenge", uselist=False)
 
     class alt_defaultdict(defaultdict):
         """
@@ -290,6 +291,31 @@ class ChallengeTopics(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(ChallengeTopics, self).__init__(**kwargs)
+
+
+class Solutions(db.Model):
+    __tablename__ = "solutions"
+    id = db.Column(db.Integer, primary_key=True)
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), unique=True
+    )
+    content = db.Column(db.Text)
+    state = db.Column(db.String(80), nullable=False, default="visible")
+
+    challenge = db.relationship("Challenges", back_populates="solution", uselist=False)
+
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_markdown
+        from CTFd.utils.helpers import markup
+
+        return markup(build_markdown(self.content))
+
+    def __init__(self, *args, **kwargs):
+        super(Solutions, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<Solution %r for challenge %r>" % (self.id, self.challenge_id)
 
 
 class Files(db.Model):
