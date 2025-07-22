@@ -300,7 +300,7 @@ class Solutions(db.Model):
         db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), unique=True
     )
     content = db.Column(db.Text)
-    state = db.Column(db.String(80), nullable=False, default="visible")
+    state = db.Column(db.String(80), nullable=False, default="hidden")
 
     challenge = db.relationship("Challenges", back_populates="solution", uselist=False)
 
