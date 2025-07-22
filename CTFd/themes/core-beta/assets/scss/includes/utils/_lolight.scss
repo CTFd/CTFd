@@ -15,16 +15,39 @@
   color: #032f62;
 }
 .ll-pct {
-  /* operators, punctation */
-  color: #0550ae;
+  /* operators, punctuation */
+  color: #24292f;
 }
 .ll-key {
   /* keywords */
   color: #d73a49;
-  font-weight: normal;
 }
 .ll-com {
   /* comments */
   color: #6a737d;
   font-style: italic;
+}
+
+[data-bs-theme="dark"] {
+  .ll-nam {
+    color: #c9d1d9;
+  }
+  .ll-num {
+    color: #79c0ff;
+  }
+  .ll-str {
+    color: #a5d6ff;
+  }
+  .ll-rex {
+    color: #96cefb;
+  }
+  .ll-pct {
+    color: #c9d1d9;
+  }
+  .ll-key {
+    color: #ff7b72;
+  }
+  .ll-com {
+    color: #8b949e;
+  }
 }

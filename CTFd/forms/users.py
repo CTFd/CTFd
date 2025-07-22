@@ -130,8 +130,8 @@ def attach_user_bracket_field(form_cls):
             for bracket in brackets
         ]
         select_field = SelectField(
-            "Bracket",
-            description="Competition bracket for your user",
+            _l("Bracket"),
+            description=_l("Competition bracket for your user"),
             choices=choices,
             validators=[InputRequired()],
         )

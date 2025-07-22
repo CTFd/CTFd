@@ -9,10 +9,16 @@
       </thead>
       <tbody>
         <tr v-for="file in files" :key="file.id">
-          <td class="text-center">
+          <td class="text-left">
             <a :href="`${urlRoot}/files/${file.location}`">{{
               file.location.split("/").pop()
             }}</a>
+            <div class="d-flex flex-row align-items-center">
+              <strong class="mr-2 small"> SHA1: </strong>
+              <span class="d-inline-block mr-2 small text-muted">
+                {{ file.sha1sum || "null" }}
+              </span>
+            </div>
           </td>
 
           <td class="text-center">

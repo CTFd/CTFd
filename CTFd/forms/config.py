@@ -40,6 +40,10 @@ class AccountSettingsForm(BaseForm):
         "Email Domain Allowlist",
         description="Comma-seperated list of allowable email domains which users can register under (e.g. examplectf.com, example.com, *.example.com)",
     )
+    domain_blacklist = StringField(
+        "Email Domain Blocklist",
+        description="Comma-seperated list of disallowed email domains which users cannot register under (e.g. examplectf.com, example.com, *.example.com)",
+    )
     team_creation = SelectField(
         "Team Creation",
         description="Control whether users can create their own teams (Teams mode only)",

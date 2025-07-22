@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from werkzeug.exceptions import SecurityError
+
 from CTFd.config import TestingConfig
 from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
 
@@ -57,4 +59,30 @@ def test_server_sent_events_config():
         client = login_as_user(app)
         r = client.get("/events")
         assert r.status_code == 204
+    destroy_ctfd(app)
+
+
+def test_trusted_hosts_config():
+    """Test that TRUSTED_HOSTS configuration behaves properly"""
+
+    class TrustedHostsConfig(TestingConfig):
+        SERVER_NAME = "example.com"
+        TRUSTED_HOSTS = ["example.com"]
+
+    app = create_ctfd(config=TrustedHostsConfig)
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        r = client.get("/", headers={"Host": "example.com"})
+        assert r.status_code == 200
+
+        # TODO: We need to allow either a 500 or a 400 because Flask-RestX
+        # seems to be overriding Flask's error handler
+        try:
+            r = client.get("/", headers={"Host": "evil.com"})
+        except SecurityError:
+            pass
+        else:
+            if r.status_code != 400:
+                raise SecurityError("Responded to untrusted request")
     destroy_ctfd(app)

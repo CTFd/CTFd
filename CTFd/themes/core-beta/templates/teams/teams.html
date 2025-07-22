@@ -43,13 +43,13 @@
 
     <div class="row">
       <div class="col-md-12">
-        <table class="table table-striped">
+        <table class="table table-striped align-middle">
           <thead>
           <tr>
-            <td class="text-md-start"><b>{% trans %}Team{% endtrans %}</b></td>
-            <td><b>{% trans %}Website{% endtrans %}</b></td>
-            <td class="d-none d-md-table-cell"><b>{% trans %}Affiliation{% endtrans %}</b></td>
-            <td class="d-none d-md-table-cell"><b>{% trans %}Country{% endtrans %}</b></td>
+            <th class="text-md-start">{% trans %}Team{% endtrans %}</th>
+            <th>{% trans %}Website{% endtrans %}</th>
+            <th class="d-none d-md-table-cell">{% trans %}Affiliation{% endtrans %}</th>
+            <th class="d-none d-md-table-cell">{% trans %}Country{% endtrans %}</th>
           </tr>
           </thead>
           <tbody>
@@ -61,6 +61,10 @@
                   <a href="{{ url_for('teams.public', team_id=team.id) }}">{{ team.name | truncate(50) }}</a>
                 {% else %}
                   <span>{{ team.name | truncate(50) }}</span>
+                {% endif %}
+
+                {% if team.bracket_id %}
+                  <span class="badge bg-secondary ms-2">{{ team.bracket.name }}</span>
                 {% endif %}
 
                 {% if team.oauth_id %}

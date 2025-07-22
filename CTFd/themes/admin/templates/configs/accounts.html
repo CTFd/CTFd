@@ -28,6 +28,14 @@
 							{{ form.domain_whitelist.description }}
 						</small>
 					</div>
+
+					<div class="form-group">
+						{{ form.domain_blacklist.label }}
+						{{ form.domain_blacklist(class="form-control", value=domain_blacklist or "") }}
+						<small class="form-text text-muted">
+							{{ form.domain_blacklist.description }}
+						</small>
+					</div>
 			
 					<div class="form-group">
 						{{ form.verify_emails.label }}

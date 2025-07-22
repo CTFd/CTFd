@@ -112,6 +112,7 @@ class Challenges(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     description = db.Column(db.Text)
+    attribution = db.Column(db.Text)
     connection_info = db.Column(db.Text)
     next_id = db.Column(db.Integer, db.ForeignKey("challenges.id", ondelete="SET NULL"))
     max_attempts = db.Column(db.Integer, default=0)
@@ -146,6 +147,13 @@ class Challenges(db.Model):
     }
 
     @property
+    def byline(self):
+        from CTFd.utils.config.pages import build_markdown
+        from CTFd.utils.helpers import markup
+
+        return markup(build_markdown(self.attribution))
+
+    @property
     def html(self):
         from CTFd.utils.config.pages import build_markdown
         from CTFd.utils.helpers import markup
@@ -168,6 +176,7 @@ class Challenges(db.Model):
 class Hints(db.Model):
     __tablename__ = "hints"
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80))
     type = db.Column(db.String(80), default="standard")
     challenge_id = db.Column(
         db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
@@ -365,6 +374,9 @@ class Users(db.Model):
 
     # Relationship for Teams
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"))
+
+    # Relationship for Brackets
+    bracket = db.relationship("Brackets", foreign_keys=[bracket_id], lazy="joined")
 
     field_entries = db.relationship(
         "UserFieldEntries",
@@ -589,6 +601,9 @@ class Teams(db.Model):
     # Relationship for Users
     captain_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="SET NULL"))
     captain = db.relationship("Users", foreign_keys=[captain_id])
+
+    # Relationship for Brackets
+    bracket = db.relationship("Brackets", foreign_keys=[bracket_id], lazy="joined")
 
     field_entries = db.relationship(
         "TeamFieldEntries",

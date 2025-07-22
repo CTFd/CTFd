@@ -1,0 +1,38 @@
+---
+name: Theme Verification
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    name: Theme Verification
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19
+
+      - name: Verify admin theme
+        run: |
+            pwd
+            yarn install --non-interactive
+            yarn verify 
+        working-directory: ./CTFd/themes/admin
+
+      # TODO: Replace in 4.0 with deprecation of previous core theme
+      - name: Verify core-beta theme
+        run: |
+            pwd
+            yarn install --non-interactive
+            yarn verify
+        working-directory: ./CTFd/themes/core-beta

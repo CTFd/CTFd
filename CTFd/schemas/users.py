@@ -7,7 +7,7 @@ from CTFd.models import Brackets, UserFieldEntries, UserFields, Users, ma
 from CTFd.schemas.fields import UserFieldEntriesSchema
 from CTFd.utils import get_config, string_types
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.email import check_email_is_whitelisted
+from CTFd.utils.email import check_email_is_blacklisted, check_email_is_whitelisted
 from CTFd.utils.user import get_current_user, is_admin
 from CTFd.utils.validators import validate_country_code, validate_language
 
@@ -155,6 +155,11 @@ class UserSchema(ma.ModelSchema):
                         "Email address is not from an allowed domain",
                         field_names=["email"],
                     )
+                if check_email_is_blacklisted(email) is True:
+                    raise ValidationError(
+                        "Email address is not from an allowed domain",
+                        field_names=["email"],
+                    )
                 if get_config("verify_emails"):
                     current_user.verified = False
 
@@ -167,16 +172,14 @@ class UserSchema(ma.ModelSchema):
         if is_admin():
             pass
         else:
+            # If the user has no password set, allow them to set their password
+            if target_user.password is None:
+                return
+
             if password and (bool(confirm) is False):
                 raise ValidationError(
                     "Please confirm your current password", field_names=["confirm"]
                 )
-
-            if target_user.password is None:
-                # Prevent password from being set but allow other data through
-                data.pop("password", None)
-                data.pop("confirm", None)
-                return
 
             if password and confirm:
                 test = verify_password(
@@ -195,10 +198,6 @@ class UserSchema(ma.ModelSchema):
     @pre_load
     def validate_bracket_id(self, data):
         bracket_id = data.get("bracket_id")
-        if bracket_id is None:
-            return
-
-        current_user = get_current_user()
         if is_admin():
             bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
             if bracket is None:
@@ -206,6 +205,12 @@ class UserSchema(ma.ModelSchema):
                     "Please provide a valid bracket id", field_names=["bracket_id"]
                 )
         else:
+            current_user = get_current_user()
+            # Users are not allowed to switch their bracket
+            if bracket_id is None:
+                # Remove bracket_id and short circuit processing
+                data.pop("bracket_id", None)
+                return
             if (
                 current_user.bracket_id == int(bracket_id)
                 or current_user.bracket_id is None

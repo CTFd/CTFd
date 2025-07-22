@@ -34,6 +34,18 @@
 	</div>
 	{% endblock %}
 
+	{% block attribution %}
+	<div class="form-group">
+		<label>
+			Attribution:<br>
+			<small class="form-text text-muted">
+				Attribution for your challenge <small>(supports markdown)</small>
+			</small>
+		</label>
+		<input type="text" class="form-control" name="attribution" value="{{ challenge.attribution }}">
+	</div>
+	{% endblock %}
+
 	{% block connection_info %}
 	<div class="form-group">
 		<label>

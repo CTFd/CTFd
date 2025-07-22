@@ -19,11 +19,21 @@
 
       {% if team.country %}
         <h3 class="d-inline-block mx-1">
-					<span class="badge bg-primary rounded-pill">
-						<i class="flag-{{ team.country.lower() }}"></i>
-						{{ lookup_country_code(team.country) }}
-					</span>
+          <span class="badge bg-primary rounded-pill">
+            <i class="flag-{{ team.country.lower() }}"></i>
+            {{ lookup_country_code(team.country) }}
+          </span>
         </h3>
+      {% endif %}
+
+      {% if team.bracket_id %}
+        <div class="pt-2">
+          <h2>
+            <span class="badge text-bg-light">
+              {{ team.bracket.name }}
+            </span>
+          </h2>
+        </div>
       {% endif %}
 
       <div class="pt-2">
@@ -51,7 +61,7 @@
 
       <h2 id="team-place" class="text-center">
         {# This intentionally hides the team's place when scores are hidden because this can be
-				  their internal profile and we don't want to leak their place in the CTF. #}
+          their internal profile and we don't want to leak their place in the CTF. #}
 
         {# Public page hiding is done at the route level #}
         {% if scores_visible() %}
@@ -79,11 +89,11 @@
     <div class="row">
       <div class="col-md-12">
         <h3>{% trans %}Members{% endtrans %}</h3>
-        <table class="table table-striped">
+        <table class="table table-striped align-middle">
           <thead>
           <tr>
-            <td><b>{% trans %}User Name{% endtrans %}</b></td>
-            <td><b>{% trans %}Score{% endtrans %}</b></td>
+            <th>{% trans %}User Name{% endtrans %}</th>
+            <th>{% trans %}Score{% endtrans %}</th>
           </tr>
           </thead>
           <tbody>
@@ -93,6 +103,12 @@
                 <a href="{{ url_for('users.public', user_id=member.id) }}">
                   {{ member.name }}
                 </a>
+                {% if member.bracket_id %}
+                  <span class="badge bg-secondary ms-2">{{ member.bracket.name }}</span>
+                {% endif %}
+                {% if team.captain_id == member.id %}
+                  <span class="badge bg-primary ms-2">{% trans %}Captain{% endtrans %}</span>
+                {% endif %}
               </td>
               <td>{{ member.score }}</td>
             </tr>
@@ -135,13 +151,13 @@
       <div class="row">
         <div class="col-md-12">
           <h3>{% trans %}Solves{% endtrans %}</h3>
-          <table class="table table-striped">
+          <table class="table table-striped align-middle">
             <thead>
             <tr>
-              <td class="text-center"><b>{% trans %}Challenge{% endtrans %}</b></td>
-              <td class="d-none d-md-block d-lg-block"><b>{% trans %}Category{% endtrans %}</b></td>
-              <td><b>{% trans %}Value{% endtrans %}</b></td>
-              <td><b>{% trans %}Time{% endtrans %}</b></td>
+              <th class="text-center">{% trans %}Challenge{% endtrans %}</th>
+              <th class="d-none d-md-block d-lg-block">{% trans %}Category{% endtrans %}</th>
+              <th>{% trans %}Value{% endtrans %}</th>
+              <th>{% trans %}Time{% endtrans %}</th>
             </tr>
             </thead>
             <tbody>

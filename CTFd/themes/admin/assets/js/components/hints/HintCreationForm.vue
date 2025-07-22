@@ -26,6 +26,19 @@
                 <div class="col-md-12">
                   <div class="form-group">
                     <label>
+                      Title<br />
+                      <small>Content displayed before hint unlocking</small>
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="title"
+                      ref="title"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label>
                       Hint<br />
                       <small>Markdown &amp; HTML are supported</small>
                     </label>
@@ -115,11 +128,15 @@ export default {
     getContent: function () {
       return this.$refs.content.value;
     },
+    getTitle: function () {
+      return this.$refs.title.value;
+    },
     submitHint: function () {
       let params = {
         challenge_id: this.$props.challenge_id,
         content: this.getContent(),
         cost: this.getCost(),
+        title: this.getTitle(),
         requirements: { prerequisites: this.selectedHints },
       };
       CTFd.fetch("/api/v1/hints", {

@@ -144,6 +144,9 @@ class TeamSchema(ma.ModelSchema):
                     field_names=["captain_id"],
                 )
 
+            if current_team.password is None:
+                return
+
             if password and (bool(confirm) is False):
                 raise ValidationError(
                     "Please confirm your current password", field_names=["confirm"]
@@ -204,9 +207,6 @@ class TeamSchema(ma.ModelSchema):
     @pre_load
     def validate_bracket_id(self, data):
         bracket_id = data.get("bracket_id")
-        if bracket_id is None:
-            return
-
         if is_admin():
             bracket = Brackets.query.filter_by(id=bracket_id).first()
             if bracket is None:
@@ -215,6 +215,11 @@ class TeamSchema(ma.ModelSchema):
                 )
         else:
             current_team = get_current_team()
+            # Teams are not allowed to switch their bracket
+            if bracket_id is None:
+                # Remove bracket_id and short circuit processing
+                data.pop("bracket_id", None)
+                return
             if (
                 current_team.bracket_id == int(bracket_id)
                 or current_team.bracket_id is None

@@ -7,4 +7,4 @@ docker run \
     -v $ROOTDIR:/mnt/CTFd \
     -e CUSTOM_COMPILE_COMMAND='./scripts/pip-compile.sh' \
     -it python:3.11-slim-bookworm \
-    -c 'cd /mnt/CTFd && pip install pip-tools==6.13.0 && pip-compile'
+    -c 'cd /mnt/CTFd && pip install pip-tools==7.4.1 && pip-compile'

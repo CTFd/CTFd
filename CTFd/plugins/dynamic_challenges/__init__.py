@@ -1,5 +1,9 @@
 from flask import Blueprint
 
+from CTFd.exceptions.challenges import (
+    ChallengeCreateException,
+    ChallengeUpdateException,
+)
 from CTFd.models import Challenges, db
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
@@ -19,7 +23,10 @@ class DynamicChallenge(Challenges):
 
     def __init__(self, *args, **kwargs):
         super(DynamicChallenge, self).__init__(**kwargs)
-        self.value = kwargs["initial"]
+        try:
+            self.value = kwargs["initial"]
+        except KeyError:
+            raise ChallengeCreateException("Missing initial value for challenge")
 
 
 class DynamicValueChallenge(BaseChallenge):
@@ -66,28 +73,15 @@ class DynamicValueChallenge(BaseChallenge):
         :return: Challenge object, data dictionary to be returned to the user
         """
         challenge = DynamicChallenge.query.filter_by(id=challenge.id).first()
-        data = {
-            "id": challenge.id,
-            "name": challenge.name,
-            "value": challenge.value,
-            "initial": challenge.initial,
-            "decay": challenge.decay,
-            "minimum": challenge.minimum,
-            "function": challenge.function,
-            "description": challenge.description,
-            "connection_info": challenge.connection_info,
-            "next_id": challenge.next_id,
-            "category": challenge.category,
-            "state": challenge.state,
-            "max_attempts": challenge.max_attempts,
-            "type": challenge.type,
-            "type_data": {
-                "id": cls.id,
-                "name": cls.name,
-                "templates": cls.templates,
-                "scripts": cls.scripts,
-            },
-        }
+        data = super().read(challenge)
+        data.update(
+            {
+                "initial": challenge.initial,
+                "decay": challenge.decay,
+                "minimum": challenge.minimum,
+                "function": challenge.function,
+            }
+        )
         return data
 
     @classmethod
@@ -105,7 +99,10 @@ class DynamicValueChallenge(BaseChallenge):
         for attr, value in data.items():
             # We need to set these to floats so that the next operations don't operate on strings
             if attr in ("initial", "minimum", "decay"):
-                value = float(value)
+                try:
+                    value = float(value)
+                except (ValueError, TypeError):
+                    raise ChallengeUpdateException(f"Invalid input for '{attr}'")
             setattr(challenge, attr, value)
 
         return DynamicValueChallenge.calculate_value(challenge)

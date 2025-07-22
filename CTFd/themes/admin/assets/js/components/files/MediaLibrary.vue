@@ -254,7 +254,7 @@ export default {
       return CTFd.config.urlRoot + "/files/" + this.selectedFile.location;
     },
     deleteSelectedFile: function () {
-      var file_id = this.selectedFile.id;
+      const file_id = this.selectedFile.id;
 
       if (confirm("Are you sure you want to delete this file?")) {
         CTFd.fetch("/api/v1/files/" + file_id, {
@@ -276,14 +276,14 @@ export default {
       if (editor.hasOwnProperty("codemirror")) {
         editor = editor.codemirror;
       }
-      let doc = editor.getDoc();
-      let cursor = doc.getCursor();
+      const doc = editor.getDoc();
+      const cursor = doc.getCursor();
 
-      let url = this.buildSelectedFileUrl();
-      let img =
+      const url = this.buildSelectedFileUrl();
+      const img =
         this.getIconClass(this.selectedFile.location) === "far fa-file-image";
-      let filename = url.split("/").pop();
-      link = "[{0}]({1})".format(filename, url);
+      const filename = url.split("/").pop();
+      let link = "[{0}]({1})".format(filename, url);
       if (img) {
         link = "!" + link;
       }
@@ -291,11 +291,11 @@ export default {
       doc.replaceRange(link, cursor);
     },
     downloadSelectedFile: function () {
-      var link = this.buildSelectedFileUrl();
+      const link = this.buildSelectedFileUrl();
       window.open(link, "_blank");
     },
     getIconClass: function (filename) {
-      var mapping = {
+      const mapping = {
         // Image Files
         png: "far fa-file-image",
         jpg: "far fa-file-image",
@@ -340,7 +340,7 @@ export default {
         go: "far fa-file-code",
       };
 
-      var ext = filename.split(".").pop();
+      const ext = filename.split(".").pop();
       return mapping[ext] || "far fa-file";
     },
   },

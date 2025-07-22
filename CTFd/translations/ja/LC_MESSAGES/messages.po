@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2024-03-21 23:53\n"
+"PO-Revision-Date: 2025-02-14 21:47\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -38,7 +38,7 @@ msgstr "パスワード"
 #: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147
 msgid "Submit"
-msgstr ""
+msgstr "送信"
 
 #: CTFd/forms/auth.py:39
 msgid "User Name or Email"
@@ -296,13 +296,13 @@ msgstr "Powered by CTFd"
 #: CTFd/themes/core-beta/templates/users/private.html:114
 #: CTFd/themes/core-beta/templates/users/public.html:113
 msgid "Challenge"
-msgstr ""
+msgstr "チャレンジ"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
 #, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] ""
+msgstr[0] "%(num)d 解決"
 
 #: CTFd/themes/core-beta/templates/challenge.html:73
 msgid "View Hint"
@@ -354,7 +354,7 @@ msgstr "ログイン"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
-msgstr ""
+msgstr "パスワードをお忘れですか？"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:97
 #: CTFd/themes/core-beta/templates/notifications.html:7
@@ -632,7 +632,7 @@ msgstr "チームのプロフィールが更新されました"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:104
 msgid "Choose Captain"
-msgstr ""
+msgstr "キャプテンを選択"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
@@ -676,7 +676,7 @@ msgstr "公式"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:250
 msgid "place"
-msgstr ""
+msgstr "位"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:258
 msgid "points"
@@ -694,7 +694,7 @@ msgstr "スコア"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:332
 msgid "Captain"
-msgstr ""
+msgstr "キャプテン"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:348
 #: CTFd/themes/core-beta/templates/teams/public.html:109
@@ -721,7 +721,7 @@ msgstr "カテゴリー"
 #: CTFd/themes/core-beta/templates/users/private.html:116
 #: CTFd/themes/core-beta/templates/users/public.html:115
 msgid "Value"
-msgstr ""
+msgstr "ポイント"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:468
 #: CTFd/themes/core-beta/templates/teams/public.html:232
