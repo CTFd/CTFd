@@ -139,6 +139,12 @@ class LegalSettingsForm(BaseForm):
 
 
 class ChallengeSettingsForm(BaseForm):
+    view_self_submissions = SelectField(
+        "View Self Submissions",
+        description="Allow users to view their previous submissions",
+        choices=[("true", "Enabled"), ("false", "Disabled")],
+        default="false",
+    )
     max_attempts_behavior = SelectField(
         "Max Attempts Behavior",
         description="Set Max Attempts behavior to be a lockout or a timeout",

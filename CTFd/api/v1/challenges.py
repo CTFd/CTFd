@@ -745,11 +745,12 @@ class ChallengeAttempt(Resource):
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
+            status, message = chal_class.attempt(challenge, request)
             return {
                 "success": True,
                 "data": {
                     "status": "already_solved",
-                    "message": "You already solved this",
+                    "message": f"{message} but you already solved this",
                 },
             }
 

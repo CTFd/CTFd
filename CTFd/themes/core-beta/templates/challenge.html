@@ -12,6 +12,18 @@
             </button>
           </li>
 
+          {% block submissions %}
+            {% if Configs.view_self_submissions %}
+            <li class="nav-item">
+              <button class="nav-link challenge-submissions" data-bs-target="#submissions" @click="showSubmissions()">
+                {% if solves != None %}
+                  Submissions
+                {% endif %}
+              </button>
+            </li>
+            {% endif %}
+          {% endblock %}
+
           {% block solves %}
             <li class="nav-item">
               <button class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
@@ -197,6 +209,36 @@
                     </div>
                   </div>
                 </template>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane fade" id="submissions">
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table table-striped align-middle text-center">
+                  <thead>
+                  <tr>
+                    <th>{% trans %}Submission{% endtrans %}</th>
+                    <th>{% trans %}Type{% endtrans %}</th>
+                    <th>{% trans %}Date{% endtrans %}</th>
+                  </tr>
+                  </thead>
+                  <tbody id="challenge-submission-names">
+                  <template x-for="submission in submissions">
+                    <tr>
+                      <td x-data="{ truncate: true }">
+                        <code x-text="truncate ? '*'.repeat(submission.provided.length) : submission.provided"></code>
+                        <button class="btn btn-link p-0 pl-1" @click="truncate = !truncate">
+                          <i :class="truncate ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+                        </button>
+                      </td>
+                      <td x-text="submission.type"></td>
+                      <td x-text="submission.date"></td>
+                    </tr>
+                  </template>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
