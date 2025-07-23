@@ -1,7 +1,6 @@
 from marshmallow import fields
 
 from CTFd.models import Solutions, ma
-from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.utils import string_types
 
 
@@ -10,21 +9,15 @@ class SolutionSchema(ma.ModelSchema):
         model = Solutions
         include_fk = True
         dump_only = ("id",)
-        # Don't include the challenge field in response as by default it is the same as challenge_id
-        exclude = ("challenge",)
 
     views = {
         "admin": [
             "id",
-            "challenge_id",
-            "challenge",
             "content",
             "state",
         ],
         "user": [
             "id",
-            "challenge_id",
-            "challenge",
             "content",
             "state",
         ],

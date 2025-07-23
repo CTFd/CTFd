@@ -121,6 +121,9 @@ class Challenges(db.Model):
     type = db.Column(db.String(80))
     state = db.Column(db.String(80), nullable=False, default="visible")
     requirements = db.Column(db.JSON)
+    solution_id = db.Column(
+        db.Integer, db.ForeignKey("solutions.id", ondelete="SET NULL")
+    )
 
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
@@ -128,7 +131,7 @@ class Challenges(db.Model):
     flags = db.relationship("Flags", backref="challenge")
     comments = db.relationship("ChallengeComments", backref="challenge")
     topics = db.relationship("ChallengeTopics", backref="challenge")
-    solution = db.relationship("Solutions", back_populates="challenge", uselist=False)
+    solution = db.relationship("Solutions", backref="challenge")
 
     class alt_defaultdict(defaultdict):
         """
@@ -296,13 +299,8 @@ class ChallengeTopics(db.Model):
 class Solutions(db.Model):
     __tablename__ = "solutions"
     id = db.Column(db.Integer, primary_key=True)
-    challenge_id = db.Column(
-        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), unique=True
-    )
     content = db.Column(db.Text)
     state = db.Column(db.String(80), nullable=False, default="hidden")
-
-    challenge = db.relationship("Challenges", back_populates="solution", uselist=False)
 
     @property
     def html(self):
@@ -315,7 +313,7 @@ class Solutions(db.Model):
         super(Solutions, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "<Solution %r for challenge %r>" % (self.id, self.challenge_id)
+        return "<Solution %r>" % self.id
 
 
 class Files(db.Model):

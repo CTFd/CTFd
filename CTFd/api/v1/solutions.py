@@ -53,14 +53,12 @@ class SolutionsList(Resource):
     )
     @validate_args(
         {
-            "challenge_id": (int, None),
             "state": (str, None),
             "q": (str, None),
             "field": (
                 RawEnum(
                     "SolutionFields",
                     {
-                        "challenge_id": "challenge_id",
                         "state": "state",
                     },
                 ),
@@ -106,7 +104,7 @@ class SolutionsList(Resource):
     )
     @validate_args(
         {
-            "challenge_id": (int, True),
+            "content": (str, False),
             "state": (str, False),
         },
         location="json",
@@ -171,7 +169,6 @@ class Solution(Resource):
     )
     @validate_args(
         {
-            "challenge_id": (int, False),
             "content": (str, False),
             "state": (str, False),
         },
