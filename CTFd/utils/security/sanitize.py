@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 import nh3
+from nh3 import Cleaner
 
 HTML_ALLOWED_ATTRIBUTES = deepcopy(nh3.ALLOWED_ATTRIBUTES)
 ALLOWED_TAGS = deepcopy(nh3.ALLOWED_TAGS)
@@ -83,13 +84,15 @@ HTML_ALLOWED_ATTRIBUTES["*"].add("class")
 HTML_ALLOWED_ATTRIBUTES["*"].add("style")
 
 
+SANITIZER = Cleaner(
+    tags=ALLOWED_TAGS,
+    attributes=HTML_ALLOWED_ATTRIBUTES,
+    link_rel="noopener noreferrer nofollow",
+    strip_comments=False,
+    generic_attribute_prefixes={"data-", "aria-"},
+    url_schemes={"data", "http", "https", "tel", "mailto"},
+)
+
+
 def sanitize_html(html):
-    return nh3.clean(
-        html,
-        tags=ALLOWED_TAGS,
-        attributes=HTML_ALLOWED_ATTRIBUTES,
-        link_rel="noopener noreferrer nofollow",
-        strip_comments=False,
-        generic_attribute_prefixes={"data-", "aria-"},
-        url_schemes={"data", "http", "https", "tel", "mailto"},
-    )
+    return SANITIZER.clean(html)
