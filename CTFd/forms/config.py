@@ -139,6 +139,23 @@ class LegalSettingsForm(BaseForm):
 
 
 class ChallengeSettingsForm(BaseForm):
+    view_self_submissions = SelectField(
+        "View Self Submissions",
+        description="Allow users to view their previous submissions",
+        choices=[("true", "Enabled"), ("false", "Disabled")],
+        default="false",
+    )
+    max_attempts_behavior = SelectField(
+        "Max Attempts Behavior",
+        description="Set Max Attempts behavior to be a lockout or a timeout",
+        choices=[("lockout", "lockout"), ("timeout", "timeout")],
+        default="lockout",
+    )
+    max_attempts_timeout = IntegerField(
+        "Max Attempts Timeout Duration",
+        description="How long the timeout lasts in seconds for max attempts (if set to timeout). Default is 300 seconds",
+        default=300,
+    )
     hints_free_public_access = SelectField(
         "Hints Free Public Access",
         description="Control whether users must be logged in to see free hints (hints without cost or requirements)",
