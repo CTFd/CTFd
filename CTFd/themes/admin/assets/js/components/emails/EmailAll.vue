@@ -27,7 +27,7 @@
               class="btn btn-primary"
               :disabled="isProcessing"
             >
-              {{ isProcessing ? 'Sending...' : 'Send Emails' }}
+              {{ isProcessing ? "Sending..." : "Send Emails" }}
             </button>
           </form>
 
@@ -51,18 +51,18 @@
 </template>
 
 <script>
-import CTFd from '../../compat/CTFd';
-import { ezAlert } from '../../compat/ezq';
+import CTFd from "../../compat/CTFd";
+import { ezAlert } from "../../compat/ezq";
 
 const DELAY_MS = 2000;
 const PER_PAGE = 100;
 const MAX_PAGES = 100;
 
 export default {
-  name: 'EmailAll',
+  name: "EmailAll",
   data() {
     return {
-      body: '',
+      body: "",
       isProcessing: false,
       total: 0,
       sent: 0,
@@ -79,16 +79,16 @@ export default {
   },
   methods: {
     delay(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
 
     async sendEmail(userId, payload) {
       const response = await CTFd.fetch(`/api/v1/users/${userId}/email`, {
-        method: 'POST',
-        credentials: 'same-origin',
+        method: "POST",
+        credentials: "same-origin",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
@@ -106,9 +106,9 @@ export default {
     async handleSubmit() {
       if (this.body.trim().length === 0) {
         return ezAlert({
-          title: 'Error',
-          body: 'Email content is required.',
-          button: 'Close',
+          title: "Error",
+          body: "Email content is required.",
+          button: "Close",
         });
       }
 
@@ -154,8 +154,8 @@ export default {
               this.failed.push({
                 id: user.id,
                 reason: emailResponse.errors
-                  ? Object.values(emailResponse.errors).flat().join(', ')
-                  : 'Unknown error',
+                  ? Object.values(emailResponse.errors).flat().join(", ")
+                  : "Unknown error",
               });
             }
             await this.delay(DELAY_MS);
@@ -164,21 +164,21 @@ export default {
         }
       } catch (error) {
         ezAlert({
-          title: 'Fatal Error',
-          body: error.message || 'Failed to process emails.',
-          button: 'Close',
+          title: "Fatal Error",
+          body: error.message || "Failed to process emails.",
+          button: "Close",
         });
       } finally {
-        let alertTitle = 'Success';
+        let alertTitle = "Success";
         let alertBody = `Finished sending emails. ${this.sent} / ${this.total} sent.`;
         if (this.failed.length > 0) {
-          alertTitle = 'Partial Success';
+          alertTitle = "Partial Success";
           alertBody += `\n\nFailed attempts (${this.failed.length}):`;
           this.failed.forEach(
-            f => (alertBody += `\n- User ID ${f.id}: ${f.reason}`),
+            (f) => (alertBody += `\n- User ID ${f.id}: ${f.reason}`),
           );
         }
-        ezAlert({ title: alertTitle, body: alertBody, button: 'Close' });
+        ezAlert({ title: alertTitle, body: alertBody, button: "Close" });
         this.isProcessing = false;
       }
     },
