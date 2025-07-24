@@ -57,7 +57,7 @@ import { ezAlert } from "../../compat/ezq";
 const DELAY_MS = 60000;
 const PER_PAGE = 100;
 const MAX_PAGES = 100;
-const CONCURRENCY = 10;
+const CONCURRENCY = 100;
 
 // States
 const state = reactive({
