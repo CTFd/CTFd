@@ -9,7 +9,6 @@ from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessRespon
 from CTFd.constants import RawEnum
 from CTFd.models import Solutions, db
 from CTFd.schemas.solutions import SolutionSchema
-from CTFd.utils import user as current_user
 from CTFd.utils.decorators import admins_only, authed_only
 from CTFd.utils.helpers.models import build_model_filters
 
@@ -148,7 +147,7 @@ class Solution(Resource):
     )
     def get(self, solution_id):
         solution = Solutions.query.filter_by(id=solution_id).first_or_404()
-        schema = SolutionSchema()
+        schema = SolutionSchema(view="user")
         response = schema.dump(solution)
 
         if response.errors:

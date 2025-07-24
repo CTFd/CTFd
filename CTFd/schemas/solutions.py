@@ -1,5 +1,3 @@
-from marshmallow import fields
-
 from CTFd.models import Solutions, ma
 from CTFd.utils import string_types
 
@@ -14,11 +12,13 @@ class SolutionSchema(ma.ModelSchema):
         "admin": [
             "id",
             "content",
+            "html",
             "state",
         ],
         "user": [
             "id",
             "content",
+            "html",
             "state",
         ],
     }
