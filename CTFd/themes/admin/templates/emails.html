@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div id="email-all-view"></div>
+{% endblock %}
+
+{% block entrypoint %}
+{{ Assets.js("assets/js/pages/emails.js", theme="admin") }}
+{% endblock %}
