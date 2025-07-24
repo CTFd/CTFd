@@ -167,28 +167,18 @@ class Solution(Resource):
             ),
         },
     )
-    @validate_args(
-        {
-            "content": (str, False),
-            "state": (str, False),
-        },
-        location="json",
-    )
-    def patch(self, solution_id, json_args):
+    def patch(self, solution_id):
         solution = Solutions.query.filter_by(id=solution_id).first_or_404()
 
-        req = json_args
-        schema = SolutionSchema()
+        req = request.get_json()
+        schema = SolutionSchema(partial=True)
 
-        try:
-            for key, value in req.items():
-                if hasattr(solution, key):
-                    setattr(solution, key, value)
+        response = schema.load(req, instance=solution, partial=True)
 
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            return {"success": False, "errors": str(e)}, 400
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+
+        db.session.commit()
 
         response = schema.dump(solution)
         db.session.close()

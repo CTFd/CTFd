@@ -79,12 +79,13 @@
 		</div>
 	</div>
 
-	<div class="container">
+	<div class="container-fluid" style="width: 80%;">
 		<div class="row">
 			<div class="col-md-6">
 				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
 					<a class="nav-item nav-link small active" data-toggle="tab" href="#files" role="tab">Files</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#flags" role="tab">Flags</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#solution" role="tab">Solution</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#topics" role="tab">Topics</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#tags" role="tab">Tags</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#hints" role="tab">Hints</a>
@@ -106,6 +107,14 @@
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Flags</h3>
 								{% include "admin/modals/challenges/flags.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="solution" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Solution</h3>
+								{% include "admin/modals/challenges/solution.html" %}
 							</div>
 						</div>
 					</div>
@@ -164,6 +173,7 @@
 	<script>
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
+        var CHALLENGE_SOLUTION_ID = {{ challenge.solution_id | tojson }};
 	</script>
 	<script defer src="{{ request.script_root }}{{ update_script }}"></script>
 {% endblock %}

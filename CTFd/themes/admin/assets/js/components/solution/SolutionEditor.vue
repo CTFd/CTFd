@@ -1,0 +1,239 @@
+<template>
+  <div>
+    <form method="POST" @submit.prevent="submitSolution">
+      <div class="form-group">
+        <label>
+          Content<br />
+          <small>Markdown &amp; HTML are supported</small>
+        </label>
+        <textarea
+          type="text"
+          class="form-control"
+          name="content"
+          rows="10"
+          :value="this.content"
+          ref="content"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>
+          State<br />
+          <small>Controls who can view this solution</small>
+        </label>
+        <select class="form-control custom-select" name="state" v-model="state">
+          <option value="hidden">Hidden</option>
+          <option value="visible">Visible</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+      <button class="btn btn-primary float-right" type="submit">
+        {{ solution_id ? "Update" : "Create" }} Solution
+      </button>
+      <div
+        v-if="loading"
+        class="spinner-border spinner-border-sm ml-2"
+        role="status"
+      >
+        <span class="sr-only">Loading...</span>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+import CTFd from "../../compat/CTFd";
+import { bindMarkdownEditor } from "../../styles";
+
+export default {
+  name: "SolutionEditor",
+  props: {
+    challenge_id: Number,
+    solution_id: Number,
+  },
+  data: function () {
+    return {
+      content: "",
+      state: "hidden",
+      loading: false,
+    };
+  },
+  watch: {
+    solution_id: {
+      immediate: true,
+      handler(val, oldVal) {
+        if (val !== null) {
+          this.loadSolution();
+        } else {
+          this.resetForm();
+        }
+      },
+    },
+  },
+  methods: {
+    loadSolution: function () {
+      CTFd.fetch(`/api/v1/solutions/${this.solution_id}`, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          if (response.success) {
+            let solution = response.data;
+            this.content = solution.content || "";
+            this.state = solution.state || "hidden";
+
+            // Initialize markdown editor
+            let editor = this.$refs.content;
+            bindMarkdownEditor(editor);
+            setTimeout(() => {
+              if (editor.mde) {
+                editor.mde.codemirror.getDoc().setValue(this.content);
+                this._forceRefresh();
+              }
+            }, 200);
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading solution:", error);
+        });
+    },
+    resetForm: function () {
+      this.content = "";
+      this.state = "hidden";
+
+      // Initialize markdown editor for new solution
+      setTimeout(() => {
+        let editor = this.$refs.content;
+        if (editor) {
+          bindMarkdownEditor(editor);
+          setTimeout(() => {
+            if (editor.mde) {
+              editor.mde.codemirror.getDoc().setValue("");
+              this._forceRefresh();
+            }
+          }, 200);
+        }
+      }, 100);
+    },
+    _forceRefresh: function () {
+      // Temporary function while we are relying on CodeMirror + MDE
+      let editor = this.$refs.content;
+      if (editor && editor.mde) {
+        editor.mde.codemirror.refresh();
+      }
+    },
+    getContent: function () {
+      this._forceRefresh();
+      let editor = this.$refs.content;
+      if (editor && editor.mde) {
+        return editor.mde.codemirror.getDoc().getValue();
+      }
+      return editor.value;
+    },
+    submitSolution: function () {
+      this.loading = true;
+
+      let params = {
+        content: this.getContent(),
+        state: this.state,
+      };
+
+      let url, method;
+      if (this.solution_id) {
+        // Update existing solution
+        url = `/api/v1/solutions/${this.solution_id}`;
+        method = "PATCH";
+      } else {
+        // Create new solution
+        url = "/api/v1/solutions";
+        method = "POST";
+      }
+
+      CTFd.fetch(url, {
+        method: method,
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          if (response.success) {
+            // If we created a new solution, update the challenge to reference it
+            if (!this.solution_id && this.challenge_id) {
+              this.linkSolutionToChallenge(response.data.id);
+            } else {
+              this.loading = false;
+              this.$emit("refreshSolution", this.$options.name, response.data);
+            }
+          } else {
+            this.loading = false;
+            console.error("Error submitting solution:", response.errors);
+          }
+        })
+        .catch((error) => {
+          this.loading = false;
+          console.error("Network error:", error);
+        });
+    },
+    linkSolutionToChallenge: function (solutionId) {
+      // Update the challenge to reference the new solution
+      CTFd.fetch(`/api/v1/challenges/${this.challenge_id}`, {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          solution_id: solutionId,
+        }),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          this.loading = false;
+          if (response.success) {
+            // Update local solution_id and emit refresh event
+            this.solution_id = solutionId;
+            this.$emit("refreshSolution", this.$options.name, {
+              id: solutionId,
+            });
+          } else {
+            console.error(
+              "Error linking solution to challenge:",
+              response.errors,
+            );
+          }
+        })
+        .catch((error) => {
+          this.loading = false;
+          console.error("Network error linking solution:", error);
+        });
+    },
+  },
+  created() {
+    $("a[href='#solution']").on("shown.bs.tab", (_e) => {
+      this._forceRefresh();
+    });
+    if (this.solution_id) {
+      this.loadSolution();
+    }
+  },
+};
+</script>
+
+<style scoped>
+</style>

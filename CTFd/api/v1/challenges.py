@@ -349,6 +349,7 @@ class Challenge(Resource):
                                 "value": 0,
                                 "solves": None,
                                 "solved_by_me": False,
+                                "solution_id": None,
                                 "category": "???",
                                 "tags": [],
                                 "template": "",
