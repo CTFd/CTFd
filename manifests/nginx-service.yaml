@@ -9,5 +9,5 @@ spec:
     protocol: TCP
     targetPort: 80
   selector:
-    io.kompose.service: nginx
+    app: nginx
   type: ClusterIP
