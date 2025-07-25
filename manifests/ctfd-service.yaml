@@ -3,13 +3,6 @@ kind: Service
 metadata:
   name: ctfd-svc
 spec:
-  clusterIP: 10.233.15.130
-  clusterIPs:
-  - 10.233.15.130
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
   ports:
   - name: "8000"
     port: 8000
