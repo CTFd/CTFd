@@ -57,6 +57,3 @@ kind: ConfigMap
 metadata:
   creationTimestamp: "2025-07-25T10:55:50Z"
   name: nginx-config
-  namespace: ctfd
-  resourceVersion: "1052337"
-  uid: e6d849f7-85df-460b-8e19-59b598585ff2
