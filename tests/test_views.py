@@ -312,7 +312,7 @@ def test_admin_access_files_with_auth_token():
                 # Confirm that challenges aren't visible
                 with login_as_user(app) as user_client:
                     req = user_client.get("/challenges")
-                    req.status_code == 403
+                    assert req.status_code == 403
 
                 # Get admin token for file download
                 with login_as_user(app, "admin") as admin_client:
