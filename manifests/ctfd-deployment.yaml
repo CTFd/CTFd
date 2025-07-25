@@ -1,13 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  generation: 1
   name: ctfd-deploy
+  namespace: ctfd
+  labels:
+    app: ctfd
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: ctfd
   strategy:
     type: Recreate
   template:
+    metadata:
+      labels:
+        app: ctfd
     spec:
       containers:
       - env:
@@ -20,7 +28,7 @@ spec:
         - name: LOG_FOLDER
           value: /var/log/CTFd
         - name: REDIS_URL
-          value: redis://cache:6379
+          value: redis://cache-redis:6379  # Changed from 'cache' to match your service name
         - name: REVERSE_PROXY
           value: "true"
         - name: UPLOAD_FOLDER
@@ -33,23 +41,22 @@ spec:
         ports:
         - containerPort: 8000
           protocol: TCP
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+        resources: 
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
         volumeMounts:
         - mountPath: /var/log/CTFd
-          name: ctfd-claim0
+          name: ctfd-logs
         - mountPath: /var/uploads
-          name: ctfd-claim1
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
+          name: ctfd-uploads
       volumes:
-      - name: ctfd-claim00
+      - name: ctfd-logs
         persistentVolumeClaim:
-          claimName: ctfd-claim000
-      - name: ctfd-claim01
+          claimName: ctfd-logs-pvc
+      - name: ctfd-uploads
         persistentVolumeClaim:
-          claimName: ctfd-claim01
+          claimName: ctfd-uploads-pvc
