@@ -25,13 +25,6 @@ spec:
         ports:
         - containerPort: 80
           protocol: TCP
-        resources:
-          requests:
-            cpu: "0.4"
-            memory: "128Mi"
-          limits:
-            cpu: "1"
-            memory: "256Mi"
         volumeMounts:
         - mountPath: /etc/nginx/nginx.conf
           name: nginx-config

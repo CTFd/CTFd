@@ -41,13 +41,6 @@ spec:
         ports:
         - containerPort: 8000
           protocol: TCP
-        resources: 
-          requests:
-            cpu: "0.5"
-            memory: "256Mi"
-          limits:
-            cpu: "1"
-            memory: "512Mi"
         volumeMounts:
         - mountPath: /var/log/CTFd
           name: ctfd-logs
