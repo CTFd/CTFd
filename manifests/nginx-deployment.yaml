@@ -1,34 +1,27 @@
+# nginx-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx
-  labels:
-    app: nginx  # Added consistent label
+  namespace: ctfd-system
 spec:
-  progressDeadlineSeconds: 600
   replicas: 1
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: nginx  # Required selector
-  strategy:
-    type: Recreate
+      app: nginx
   template:
     metadata:
       labels:
-        app: nginx  # Must match selector
+        app: nginx
     spec:
       containers:
-      - image: nginx:stable
-        imagePullPolicy: IfNotPresent
-        name: nginx
+      - name: nginx
+        image: nginx:stable
         ports:
         - containerPort: 80
-          protocol: TCP
         volumeMounts:
-        - mountPath: /etc/nginx/nginx.conf
-          name: nginx-config
-
+        - name: nginx-config
+          mountPath: /etc/nginx
       volumes:
       - name: nginx-config
         configMap:
