@@ -4,9 +4,6 @@ metadata:
   name: cache-redis
   namespace: ctfd
 spec:
-  clusterIP: 10.233.26.105
-  clusterIPs:
-  - 10.233.26.105
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
