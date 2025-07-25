@@ -27,10 +27,10 @@ spec:
           protocol: TCP
         resources:
           requests:
-            cpu: "100m"
+            cpu: "0.4"
             memory: "128Mi"
           limits:
-            cpu: "500m"
+            cpu: "1"
             memory: "256Mi"
         volumeMounts:
         - mountPath: /etc/nginx/nginx.conf

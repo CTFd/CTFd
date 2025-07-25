@@ -43,10 +43,10 @@ spec:
           protocol: TCP
         resources: 
           requests:
-            cpu: "100m"
+            cpu: "0.5"
             memory: "256Mi"
           limits:
-            cpu: "500m"
+            cpu: "1"
             memory: "512Mi"
         volumeMounts:
         - mountPath: /var/log/CTFd
