@@ -9,7 +9,7 @@ spec:
     protocol: TCP
     targetPort: 8000
   selector:
-    io.kompose.service: ctfd
+    app: ctfd
   sessionAffinity: None
   type: ClusterIP
 status:
