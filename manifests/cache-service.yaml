@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"cache","namespace":"ctfd"},"spec":{"ports":[{"port":6379,"protocol":"TCP","targetPort":6379}],"selector":{"app":"redis"}}}
+  creationTimestamp: "2025-07-24T22:06:59Z"
+  name: cache
+  namespace: ctfd
+  resourceVersion: "723291"
+  uid: 54f2689b-dd61-4a82-9161-66b22d07c9d3
+spec:
+  clusterIP: 10.233.26.105
+  clusterIPs:
+  - 10.233.26.105
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app: redis
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
