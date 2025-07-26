@@ -331,7 +331,6 @@ $(() => {
     new solutionEditor({
       propsData: {
         challenge_id: window.CHALLENGE_ID,
-        solution_id: window.CHALLENGE_SOLUTION_ID,
       },
     }).$mount(vueContainer);
   }

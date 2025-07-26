@@ -12,6 +12,9 @@
           name="content"
           rows="10"
           :value="this.content"
+          media-type="solution"
+          media-id-title="solution_id"
+          :media-id="this.solution_id"
           ref="content"
         ></textarea>
       </div>
@@ -24,7 +27,6 @@
         <select class="form-control custom-select" name="state" v-model="state">
           <option value="hidden">Hidden</option>
           <option value="visible">Visible</option>
-          <option value="draft">Draft</option>
         </select>
       </div>
       <button class="btn btn-primary float-right" type="submit">
@@ -49,10 +51,10 @@ export default {
   name: "SolutionEditor",
   props: {
     challenge_id: Number,
-    solution_id: Number,
   },
   data: function () {
     return {
+      solution_id: null,
       content: "",
       state: "hidden",
       loading: false,
@@ -60,12 +62,9 @@ export default {
   },
   watch: {
     solution_id: {
-      immediate: true,
       handler(val, oldVal) {
-        if (val !== null) {
+        if (oldVal == null) {
           this.loadSolution();
-        } else {
-          this.resetForm();
         }
       },
     },
@@ -175,7 +174,6 @@ export default {
               this.linkSolutionToChallenge(response.data.id);
             } else {
               this.loading = false;
-              this.$emit("refreshSolution", this.$options.name, response.data);
             }
           } else {
             this.loading = false;
@@ -208,9 +206,6 @@ export default {
           if (response.success) {
             // Update local solution_id and emit refresh event
             this.solution_id = solutionId;
-            this.$emit("refreshSolution", this.$options.name, {
-              id: solutionId,
-            });
           } else {
             console.error(
               "Error linking solution to challenge:",
@@ -223,17 +218,59 @@ export default {
           console.error("Network error linking solution:", error);
         });
     },
+    createSolution: function () {
+      this.loading = true;
+
+      let params = {
+        content: "",
+        state: "hidden",
+      };
+
+      CTFd.fetch("/api/v1/solutions", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          if (response.success) {
+            // Link the new solution to the challenge
+            if (this.challenge_id) {
+              this.linkSolutionToChallenge(response.data.id);
+            } else {
+              this.solution_id = response.data.id;
+              this.loading = false;
+            }
+          } else {
+            this.loading = false;
+            console.error("Error creating solution:", response.errors);
+          }
+        })
+        .catch((error) => {
+          this.loading = false;
+          console.error("Network error creating solution:", error);
+        });
+    },
   },
   created() {
+    this.solution_id = window.CHALLENGE_SOLUTION_ID;
     $("a[href='#solution']").on("shown.bs.tab", (_e) => {
       this._forceRefresh();
     });
     if (this.solution_id) {
       this.loadSolution();
+    } else {
+      // Create a blank solution
+      this.createSolution();
     }
   },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
