@@ -1,6 +1,8 @@
 import re
 
-from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins import get_plugin_folder, register_plugin_assets_directory
+
+PLUGIN_PATH = get_plugin_folder()
 
 
 class FlagException(Exception):
@@ -23,8 +25,8 @@ class BaseFlag(object):
 class CTFdStaticFlag(BaseFlag):
     name = "static"
     templates = {  # Nunjucks templates used for key editing & viewing
-        "create": "/plugins/flags/assets/static/create.html",
-        "update": "/plugins/flags/assets/static/edit.html",
+        "create": f"{PLUGIN_PATH}/assets/static/create.html",
+        "update": f"{PLUGIN_PATH}/assets/static/edit.html",
     }
 
     @staticmethod
@@ -48,8 +50,8 @@ class CTFdStaticFlag(BaseFlag):
 class CTFdRegexFlag(BaseFlag):
     name = "regex"
     templates = {  # Nunjucks templates used for key editing & viewing
-        "create": "/plugins/flags/assets/regex/create.html",
-        "update": "/plugins/flags/assets/regex/edit.html",
+        "create": f"{PLUGIN_PATH}/assets/regex/create.html",
+        "update": f"{PLUGIN_PATH}/assets/regex/edit.html",
     }
 
     @staticmethod
@@ -80,4 +82,4 @@ def get_flag_class(class_id):
 
 
 def load(app):
-    register_plugin_assets_directory(app, base_path="/plugins/flags/assets/")
+    register_plugin_assets_directory(app, base_path=f"{PLUGIN_PATH}/assets")

@@ -5,10 +5,12 @@ from CTFd.exceptions.challenges import (
     ChallengeUpdateException,
 )
 from CTFd.models import Challenges, db
-from CTFd.plugins import register_plugin_assets_directory
+from CTFd.plugins import get_plugin_folder, register_plugin_assets_directory
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
 from CTFd.plugins.dynamic_challenges.decay import DECAY_FUNCTIONS, logarithmic
 from CTFd.plugins.migrations import upgrade
+
+PLUGIN_PATH = get_plugin_folder()
 
 
 class DynamicChallenge(Challenges):
@@ -34,18 +36,18 @@ class DynamicValueChallenge(BaseChallenge):
     name = "dynamic"  # Name of a challenge type
     templates = (
         {  # Handlebars templates used for each aspect of challenge editing & viewing
-            "create": "/plugins/dynamic_challenges/assets/create.html",
-            "update": "/plugins/dynamic_challenges/assets/update.html",
-            "view": "/plugins/dynamic_challenges/assets/view.html",
+            "create": f"{PLUGIN_PATH}/assets/create.html",
+            "update": f"{PLUGIN_PATH}/assets/update.html",
+            "view": f"{PLUGIN_PATH}/assets/view.html",
         }
     )
     scripts = {  # Scripts that are loaded when a template is loaded
-        "create": "/plugins/dynamic_challenges/assets/create.js",
-        "update": "/plugins/dynamic_challenges/assets/update.js",
-        "view": "/plugins/dynamic_challenges/assets/view.js",
+        "create": f"{PLUGIN_PATH}/assets/create.js",
+        "update": f"{PLUGIN_PATH}/assets/update.js",
+        "view": f"{PLUGIN_PATH}/assets/view.js",
     }
     # Route at which files are accessible. This must be registered using register_plugin_assets_directory()
-    route = "/plugins/dynamic_challenges/assets/"
+    route = f"{PLUGIN_PATH}/assets"
     # Blueprint used to access the static_folder directory.
     blueprint = Blueprint(
         "dynamic_challenges",
@@ -117,6 +119,4 @@ class DynamicValueChallenge(BaseChallenge):
 def load(app):
     upgrade(plugin_name="dynamic_challenges")
     CHALLENGE_CLASSES["dynamic"] = DynamicValueChallenge
-    register_plugin_assets_directory(
-        app, base_path="/plugins/dynamic_challenges/assets/"
-    )
+    register_plugin_assets_directory(app, base_path=f"{PLUGIN_PATH}/assets")
