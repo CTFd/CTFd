@@ -352,6 +352,11 @@ class PageFiles(Files):
         super(PageFiles, self).__init__(**kwargs)
 
 
+class SolutionFiles(Files):
+    __mapper_args__ = {"polymorphic_identity": "solution"}
+    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id"))
+
+
 class Flags(db.Model):
     __tablename__ = "flags"
     id = db.Column(db.Integer, primary_key=True)
