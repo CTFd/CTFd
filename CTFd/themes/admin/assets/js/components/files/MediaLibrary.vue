@@ -242,11 +242,13 @@ export default {
     uploadChosenFiles: function () {
       // TODO: We should reduce the need to interact with the DOM directly.
       // This looks jank and we should be able to remove it.
-      let mediaIdTitle = this.editor.element.getAttribute("media-id-title");
-      let mediaId = this.editor.element.getAttribute("media-id");
       let extra = {};
-      if (mediaId) {
-        extra[mediaIdTitle] = mediaId;
+      if (this.editor.element) {
+        let mediaIdTitle = this.editor.element.getAttribute("media-id-title");
+        let mediaId = this.editor.element.getAttribute("media-id");
+        if (mediaId) {
+          extra[mediaIdTitle] = mediaId;
+        }
       }
       let form = document.querySelector("#media-library-upload");
       helpers.files.upload(form, extra, (_data) => {
