@@ -150,7 +150,8 @@ export default {
         url = `/api/v1/solutions/${this.solution_id}`;
         method = "PATCH";
       } else {
-        // Create new solution
+        // Create new solution with challenge_id
+        params.challenge_id = this.challenge_id;
         url = "/api/v1/solutions";
         method = "POST";
       }
@@ -169,12 +170,11 @@ export default {
         })
         .then((response) => {
           if (response.success) {
-            // If we created a new solution, update the challenge to reference it
-            if (!this.solution_id && this.challenge_id) {
-              this.linkSolutionToChallenge(response.data.id);
-            } else {
-              this.loading = false;
+            // If we created a new solution, update the solution_id
+            if (!this.solution_id) {
+              this.solution_id = response.data.id;
             }
+            this.loading = false;
           } else {
             this.loading = false;
             console.error("Error submitting solution:", response.errors);
@@ -185,78 +185,6 @@ export default {
           console.error("Network error:", error);
         });
     },
-    linkSolutionToChallenge: function (solutionId) {
-      // Update the challenge to reference the new solution
-      CTFd.fetch(`/api/v1/challenges/${this.challenge_id}`, {
-        method: "PATCH",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          solution_id: solutionId,
-        }),
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          this.loading = false;
-          if (response.success) {
-            // Update local solution_id and emit refresh event
-            this.solution_id = solutionId;
-          } else {
-            console.error(
-              "Error linking solution to challenge:",
-              response.errors,
-            );
-          }
-        })
-        .catch((error) => {
-          this.loading = false;
-          console.error("Network error linking solution:", error);
-        });
-    },
-    createSolution: function () {
-      this.loading = true;
-
-      let params = {
-        content: "",
-        state: "hidden",
-      };
-
-      CTFd.fetch("/api/v1/solutions", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          if (response.success) {
-            // Link the new solution to the challenge
-            if (this.challenge_id) {
-              this.linkSolutionToChallenge(response.data.id);
-            } else {
-              this.solution_id = response.data.id;
-              this.loading = false;
-            }
-          } else {
-            this.loading = false;
-            console.error("Error creating solution:", response.errors);
-          }
-        })
-        .catch((error) => {
-          this.loading = false;
-          console.error("Network error creating solution:", error);
-        });
-    },
   },
   created() {
     this.solution_id = window.CHALLENGE_SOLUTION_ID;
@@ -265,9 +193,6 @@ export default {
     });
     if (this.solution_id) {
       this.loadSolution();
-    } else {
-      // Create a blank solution
-      this.createSolution();
     }
   },
 };

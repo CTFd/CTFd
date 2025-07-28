@@ -1,16 +1,22 @@
 from typing import List
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.constants import RawEnum
-from CTFd.models import Solutions, db
+from CTFd.models import Solutions, SolutionUnlocks, db
 from CTFd.schemas.solutions import SolutionSchema
-from CTFd.utils.decorators import admins_only, authed_only
+from CTFd.utils.decorators import (
+    admins_only,
+    authed_only,
+    during_ctf_time_only,
+    require_verified_emails,
+)
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.user import get_current_user, is_admin
 
 solutions_namespace = Namespace(
     "solutions", description="Endpoint to retrieve and create Solutions"
@@ -102,10 +108,7 @@ class SolutionsList(Resource):
         },
     )
     @validate_args(
-        {
-            "content": (str, False),
-            "state": (str, False),
-        },
+        {"content": (str, False), "state": (str, False), "challenge_id": (int, False)},
         location="json",
     )
     def post(self, json_args):
@@ -113,7 +116,7 @@ class SolutionsList(Resource):
 
         # Set default state if not provided
         if "state" not in req or req["state"] is None:
-            req["state"] = "draft"
+            req["state"] = "hidden"
 
         solution = Solutions(**req)
         schema = SolutionSchema()
@@ -134,6 +137,8 @@ class SolutionsList(Resource):
 @solutions_namespace.route("/<solution_id>")
 @solutions_namespace.param("solution_id", "A Solution ID")
 class Solution(Resource):
+    @during_ctf_time_only
+    @require_verified_emails
     @authed_only
     @solutions_namespace.doc(
         description="Endpoint to get a solution object",
@@ -147,7 +152,20 @@ class Solution(Resource):
     )
     def get(self, solution_id):
         solution = Solutions.query.filter_by(id=solution_id).first_or_404()
-        schema = SolutionSchema(view="user")
+
+        user = get_current_user()
+
+        if is_admin():
+            view = "admin"
+        else:
+            view = "locked"
+            unlocked = SolutionUnlocks.query.filter_by(
+                account_id=user.account_id, target=solution.id
+            ).first()
+            if unlocked:
+                view = "unlocked"
+
+        schema = SolutionSchema(view=view)
         response = schema.dump(solution)
 
         if response.errors:

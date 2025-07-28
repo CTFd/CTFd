@@ -9,14 +9,21 @@ class SolutionSchema(ma.ModelSchema):
         dump_only = ("id",)
 
     views = {
-        "admin": [
+        "locked": [
             "id",
+            "challenge_id",
+            "state",
+        ],
+        "unlocked": [
+            "id",
+            "challenge_id",
             "content",
             "html",
             "state",
         ],
-        "user": [
+        "admin": [
             "id",
+            "challenge_id",
             "content",
             "html",
             "state",
