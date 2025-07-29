@@ -121,12 +121,8 @@ class SolutionsList(Resource):
         solution = Solutions(**req)
         schema = SolutionSchema()
 
-        try:
-            db.session.add(solution)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            return {"success": False, "errors": str(e)}, 400
+        db.session.add(solution)
+        db.session.commit()
 
         response = schema.dump(solution)
         db.session.close()
@@ -216,13 +212,7 @@ class Solution(Resource):
     def delete(self, solution_id):
         solution = Solutions.query.filter_by(id=solution_id).first_or_404()
 
-        try:
-            db.session.delete(solution)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            return {"success": False, "errors": str(e)}, 400
-
-        db.session.close()
+        db.session.delete(solution)
+        db.session.commit()
 
         return {"success": True}

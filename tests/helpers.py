@@ -35,6 +35,7 @@ from CTFd.models import (
     PageComments,
     PageFiles,
     Pages,
+    Solutions,
     Solves,
     Tags,
     TeamComments,
@@ -547,6 +548,16 @@ def gen_comment(db, content="comment", author_id=None, type="challenge", **kwarg
     db.session.add(comment)
     db.session.commit()
     return comment
+
+
+def gen_solution(db, challenge_id, content="test solution", state="hidden", **kwargs):
+    """Helper function to generate a solution"""
+    solution = Solutions(
+        challenge_id=challenge_id, content=content, state=state, **kwargs
+    )
+    db.session.add(solution)
+    db.session.commit()
+    return solution
 
 
 def gen_field(
