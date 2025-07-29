@@ -44,7 +44,7 @@ solutions_namespace.schema_model(
 
 
 @solutions_namespace.route("")
-class SolutionsList(Resource):
+class SolutionList(Resource):
     @admins_only
     @solutions_namespace.doc(
         description="Endpoint to get solution objects in bulk",
