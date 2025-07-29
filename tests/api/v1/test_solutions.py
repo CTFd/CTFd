@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Solutions, SolutionUnlocks
+from CTFd.models import Challenges, Solutions, SolutionUnlocks
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -578,5 +578,69 @@ def test_api_solutions_cannot_be_viewed_before_ctf_starts():
                     assert r.status_code == 200
                     data = r.get_json()
                     assert data["success"] is True
+
+    destroy_ctfd(app)
+
+
+def test_api_solutions_cannot_be_viewed_if_challenge_is_hidden():
+    """Test that solutions cannot be viewed if the associated challenge is hidden"""
+    app = create_ctfd()
+    with app.app_context():
+        # Create a hidden challenge and solution
+        hidden_challenge = gen_challenge(app.db, state="hidden")
+        hidden_solution = gen_solution(
+            app.db,
+            challenge_id=hidden_challenge.id,
+            content="Hidden challenge solution",
+            state="visible",
+        )
+        hidden_solution_id = hidden_solution.id
+
+        # Create a regular user
+        user = gen_user(app.db, name="testuser", email="test@example.com")
+        user_id = user.id
+
+        # Regular user cannot access solution for hidden challenge
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{hidden_solution_id}")
+            assert r.status_code == 403
+
+        # Admin can access solution for hidden challenge
+        with login_as_user(app, "admin") as admin_client:
+            r = admin_client.get(f"/api/v1/solutions/{hidden_solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "content" in data["data"]
+            assert data["data"]["content"] == "Hidden challenge solution"
+
+        # Even if user unlocks the solution, they still can't see it if challenge is hidden
+        # First, unlock the solution for the hidden challenge
+        unlock = SolutionUnlocks(user_id=user_id, target=hidden_solution_id)
+        app.db.session.add(unlock)
+        app.db.session.commit()
+
+        # User still cannot access the solution because the challenge is hidden
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{hidden_solution_id}")
+            assert r.status_code == 403
+
+        # Make the challenge visible, now user should be able to see the unlocked solution
+        challenge = Challenges.query.filter_by(id=1).first()
+        challenge.state = "visible"
+        app.db.session.commit()
+
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{hidden_solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            # Should show unlocked fields since user has unlocked it and challenge is now visible
+            assert "id" in data["data"]
+            assert "challenge_id" in data["data"]
+            assert "state" in data["data"]
+            assert "content" in data["data"]
+            assert "html" in data["data"]
+            assert data["data"]["content"] == "Hidden challenge solution"
 
     destroy_ctfd(app)

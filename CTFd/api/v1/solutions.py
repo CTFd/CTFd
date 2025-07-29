@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -154,6 +154,8 @@ class Solution(Resource):
         if is_admin():
             view = "admin"
         else:
+            if solution.challenge.state == "hidden":
+                abort(403)
             view = "locked"
             unlocked = SolutionUnlocks.query.filter_by(
                 account_id=user.account_id, target=solution.id
