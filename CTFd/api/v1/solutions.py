@@ -108,7 +108,7 @@ class SolutionList(Resource):
         },
     )
     @validate_args(
-        {"content": (str, False), "state": (str, False), "challenge_id": (int, False)},
+        TransientSolutionModel,
         location="json",
     )
     def post(self, json_args):

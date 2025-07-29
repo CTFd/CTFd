@@ -193,6 +193,8 @@ export default {
     });
     if (this.solution_id) {
       this.loadSolution();
+    } else {
+      this.resetForm();
     }
   },
 };
