@@ -10,37 +10,118 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      dockerhub_image: ${{ steps.image.outputs.dockerhub_image }}
+      ghcrio_image: ${{ steps.image.outputs.ghcrio_image }}
+      digest: ${{ steps.build.outputs.digest }}
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+
       - name: Set repo name lowercase
         id: repo
         uses: ASzc/change-string-case-action@v2
         with:
           string: ${{ github.repository }}
-      - name: Checkout
-        uses: actions/checkout@v3
+
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.0.2
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/setup-buildx-action@c47758b77c9736f4b2ef4073d4d51994fabfe349 # v3.7.1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ github.actor }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v3
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
         with:
-          context: .
-          platforms: linux/amd64,linux/arm64
+          images: ${{ steps.repo.outputs.lowercase }}
+
+      - name: Fan the tags to other registries
+        id: fan
+        run: |
+          # Read tags from the previous step which stored them in environment variables
+          readarray -t tags_list <<<"$DOCKER_METADATA_OUTPUT_TAGS"
+
+          # Repeat the following as many time as necessary
+          # ghcr.io
+          ghcrio_list=()
+          for item in "${tags_list[@]}"; do
+            ghcrio_list+=("ghcr.io/${item}")
+          done
+
+          combined_list=("${tags_list[@]}" "${ghcrio_list[@]}")
+
+          # Combine all duplicated+prefixed lists in 1 output
+          {
+            echo "tags<<EOF"
+            printf "%s\n" "${combined_list[@]}"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75 # v6.9.0
+        id: build
+        with:
           push: true
-          tags: |
-            ${{ steps.repo.outputs.lowercase }}:latest
-            ghcr.io/${{ steps.repo.outputs.lowercase }}:latest
-            ${{ steps.repo.outputs.lowercase }}:${{ github.event.release.tag_name }}
-            ghcr.io/${{ steps.repo.outputs.lowercase }}:${{ github.event.release.tag_name }}
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.fan.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Output image
+        id: image
+        run: |
+          # NOTE: Set the image as an output because the `env` context is not
+          # available to the inputs of a reusable workflow call.
+
+          dockerhub_image_name="${{ steps.repo.outputs.lowercase }}"
+          echo "dockerhub_image=$dockerhub_image_name" >> "$GITHUB_OUTPUT"
+
+          ghcrio_image_name="ghcr.io/${{ steps.repo.outputs.lowercase }}"
+          echo "ghcrio_image=$ghcrio_image_name" >> "$GITHUB_OUTPUT"
+
+  # This step calls the container workflow to generate provenance and push it to
+  # the container registry.
+  provenance_dockerhub:
+    needs: [docker]
+    permissions:
+      actions: read # for detecting the Github Actions environment.
+      id-token: write # for creating OIDC tokens for signing.
+      packages: write # for uploading attestations.
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.0.0
+    with:
+      image: ${{ needs.docker.outputs.dockerhub_image }}
+      digest: ${{ needs.docker.outputs.digest }}
+      registry-username: ${{ github.actor }}
+    secrets:
+      registry-password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  # This step calls the container workflow to generate provenance and push it to
+  # the container registry.
+  provenance_ghcrio:
+    needs: [docker]
+    permissions:
+      actions: read # for detecting the Github Actions environment.
+      id-token: write # for creating OIDC tokens for signing.
+      packages: write # for uploading attestations.
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.0.0
+    with:
+      image: ${{ needs.docker.outputs.ghcrio_image }}
+      digest: ${{ needs.docker.outputs.digest }}
+      registry-username: ${{ github.actor }}
+    secrets:
+      registry-password: ${{ secrets.GITHUB_TOKEN }}
