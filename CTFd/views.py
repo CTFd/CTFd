@@ -506,7 +506,7 @@ def files(path):
 
     elif f.type == "solution":
         s = Solutions.query.filter_by(id=f.solution_id).first_or_404()
-        if s.state != "visible":
+        if s.state != "visible" or s.challenge.state != "visible":
             # Admins can see solution files for preview purposes
             if current_user.is_admin() is True:
                 pass
