@@ -69,6 +69,7 @@ Alpine.data("Challenge", () => ({
   tab: null,
   solves: [],
   submissions: [],
+  solution: null,
   response: null,
   share_url: null,
   max_attempts: 0,
@@ -130,6 +131,20 @@ Alpine.data("Challenge", () => ({
       return s;
     });
     new Tab(this.$el).show();
+  },
+
+  getSolutionId() {
+    let data = Alpine.store("challenge").data;
+    return data.solution_id;
+  },
+
+  async showSolution() {
+    let solution_id = this.getSolutionId();
+    CTFd._functions.challenge.displaySolution = solution => {
+      this.solution = solution.html;
+      new Tab(this.$el).show();
+    };
+    await CTFd.pages.challenge.displaySolution(solution_id);
   },
 
   getNextId() {
