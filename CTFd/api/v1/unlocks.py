@@ -101,65 +101,105 @@ class UnlockList(Resource):
         req = request.get_json()
         user = get_current_user()
 
+        target_type = req["type"]
+
         req["user_id"] = user.id
         req["team_id"] = user.team_id
 
         Model = get_class_by_tablename(req["type"])
         target = Model.query.filter_by(id=req["target"]).first_or_404()
 
-        # We should use the team's score if in teams mode
-        # user.account gives the appropriate account based on team mode
-        # Use get_score with admin to get the account's full score value
-        if target.cost > user.account.get_score(admin=True):
-            return (
-                {
-                    "success": False,
-                    "errors": {
-                        "score": "You do not have enough points to unlock this hint"
+        if target_type == "hints":
+            # We should use the team's score if in teams mode
+            # user.account gives the appropriate account based on team mode
+            # Use get_score with admin to get the account's full score value
+            if target.cost > user.account.get_score(admin=True):
+                return (
+                    {
+                        "success": False,
+                        "errors": {
+                            "score": "You do not have enough points to unlock this hint"
+                        },
                     },
-                },
-                400,
-            )
+                    400,
+                )
 
-        schema = UnlockSchema()
-        response = schema.load(req, session=db.session)
+            schema = UnlockSchema()
+            response = schema.load(req, session=db.session)
 
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
 
-        # Search for an existing unlock that matches the target and type
-        # And matches either the requesting user id or the requesting team id
-        existing = Unlocks.query.filter(
-            Unlocks.target == req["target"],
-            Unlocks.type == req["type"],
-            Unlocks.account_id == user.account_id,
-        ).first()
-        if existing:
+            # Search for an existing unlock that matches the target and type
+            # And matches either the requesting user id or the requesting team id
+            existing = Unlocks.query.filter(
+                Unlocks.target == req["target"],
+                Unlocks.type == req["type"],
+                Unlocks.account_id == user.account_id,
+            ).first()
+            if existing:
+                return (
+                    {
+                        "success": False,
+                        "errors": {"target": "You've already unlocked this target"},
+                    },
+                    400,
+                )
+
+            db.session.add(response.data)
+
+            award_schema = AwardSchema()
+            award = {
+                "user_id": user.id,
+                "team_id": user.team_id,
+                "name": target.name,
+                "description": target.description,
+                "value": (-target.cost),
+                "category": target.category,
+            }
+
+            award = award_schema.load(award)
+            db.session.add(award.data)
+            db.session.commit()
+            clear_standings()
+
+            response = schema.dump(response.data)
+
+            return {"success": True, "data": response.data}
+        elif target_type == "solutions":
+            schema = UnlockSchema()
+            response = schema.load(req, session=db.session)
+
+            if response.errors:
+                return {"success": False, "errors": response.errors}, 400
+
+            # Search for an existing unlock that matches the target and type
+            # And matches either the requesting user id or the requesting team id
+            existing = Unlocks.query.filter(
+                Unlocks.target == req["target"],
+                Unlocks.type == req["type"],
+                Unlocks.account_id == user.account_id,
+            ).first()
+            if existing:
+                return (
+                    {
+                        "success": False,
+                        "errors": {"target": "You've already unlocked this target"},
+                    },
+                    400,
+                )
+
+            db.session.add(response.data)
+            db.session.commit()
+
+            response = schema.dump(response.data)
+
+            return {"success": True, "data": response.data}
+        else:
             return (
                 {
                     "success": False,
-                    "errors": {"target": "You've already unlocked this target"},
+                    "errors": {"type": "Unknown target type"},
                 },
                 400,
             )
-
-        db.session.add(response.data)
-
-        award_schema = AwardSchema()
-        award = {
-            "user_id": user.id,
-            "team_id": user.team_id,
-            "name": target.name,
-            "description": target.description,
-            "value": (-target.cost),
-            "category": target.category,
-        }
-
-        award = award_schema.load(award)
-        db.session.add(award.data)
-        db.session.commit()
-        clear_standings()
-
-        response = schema.dump(response.data)
-
-        return {"success": True, "data": response.data}

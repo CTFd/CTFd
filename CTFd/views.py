@@ -29,6 +29,7 @@ from CTFd.models import (
     Files,
     Notifications,
     Pages,
+    Solutions,
     Teams,
     Users,
     UserTokens,
@@ -502,6 +503,15 @@ def files(path):
             # Check that the token properly refers to the file
             if file_id != f.id:
                 abort(403)
+
+    elif f.type == "solution":
+        s = Solutions.query.filter_by(id=f.solution_id).first_or_404()
+        if s.state != "visible" or s.challenge.state != "visible":
+            # Admins can see solution files for preview purposes
+            if current_user.is_admin() is True:
+                pass
+            else:
+                abort(404)
 
     uploader = get_uploader()
     try:
