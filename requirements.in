@@ -33,4 +33,4 @@ Flask-Babel==2.0.0
 Pillow==10.1.0
 cffi==1.17.1
 six==1.16.0
-urllib3==1.26.20
+urllib3==2.5.0
