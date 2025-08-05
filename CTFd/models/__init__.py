@@ -128,6 +128,7 @@ class Challenges(db.Model):
     flags = db.relationship("Flags", backref="challenge")
     comments = db.relationship("ChallengeComments", backref="challenge")
     topics = db.relationship("ChallengeTopics", backref="challenge")
+    solution = db.relationship("Solutions", backref="challenge", uselist=False)
 
     class alt_defaultdict(defaultdict):
         """
@@ -159,6 +160,12 @@ class Challenges(db.Model):
         from CTFd.utils.helpers import markup
 
         return markup(build_markdown(self.description))
+
+    @property
+    def solution_id(self):
+        if self.solution:
+            return self.solution.id
+        return None
 
     @property
     def plugin_class(self):
@@ -292,6 +299,29 @@ class ChallengeTopics(db.Model):
         super(ChallengeTopics, self).__init__(**kwargs)
 
 
+class Solutions(db.Model):
+    __tablename__ = "solutions"
+    id = db.Column(db.Integer, primary_key=True)
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), unique=True
+    )
+    content = db.Column(db.Text)
+    state = db.Column(db.String(80), nullable=False, default="hidden")
+
+    @property
+    def html(self):
+        from CTFd.utils.config.pages import build_markdown
+        from CTFd.utils.helpers import markup
+
+        return markup(build_markdown(self.content))
+
+    def __init__(self, *args, **kwargs):
+        super(Solutions, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<Solution %r>" % self.id
+
+
 class Files(db.Model):
     __tablename__ = "files"
     id = db.Column(db.Integer, primary_key=True)
@@ -326,6 +356,11 @@ class PageFiles(Files):
 
     def __init__(self, *args, **kwargs):
         super(PageFiles, self).__init__(**kwargs)
+
+
+class SolutionFiles(Files):
+    __mapper_args__ = {"polymorphic_identity": "solution"}
+    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id"))
 
 
 class Flags(db.Model):
@@ -946,6 +981,10 @@ class Unlocks(db.Model):
 
 class HintUnlocks(Unlocks):
     __mapper_args__ = {"polymorphic_identity": "hints"}
+
+
+class SolutionUnlocks(Unlocks):
+    __mapper_args__ = {"polymorphic_identity": "solutions"}
 
 
 class Tracking(db.Model):

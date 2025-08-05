@@ -112,7 +112,7 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
-nh3==0.2.21
+nh3==0.3.0
     # via -r requirements.in
 packaging==24.2
     # via gunicorn
