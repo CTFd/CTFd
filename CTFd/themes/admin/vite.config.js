@@ -10,8 +10,8 @@ export default defineConfig({
     alias: {
       "~": resolve(__dirname, "./node_modules/"),
       core: resolve(__dirname, "../core/assets/js/"),
-      vue: "@vue/compat",
-    },
+      vue: "@vue/compat"
+    }
   },
   build: {
     manifest: "manifest.json",
@@ -27,32 +27,32 @@ export default defineConfig({
             },
             {
               src: "./node_modules/@fontsource/lato/files/**/*400*-normal*",
-              dest: "static/webfonts",
+              dest: "static/webfonts"
             },
             {
               src: "./node_modules/@fontsource/lato/files/**/*700*-normal*",
-              dest: "static/webfonts",
+              dest: "static/webfonts"
             },
             {
               src: "./node_modules/@fontsource/raleway/files/**/*500*-normal*",
-              dest: "static/webfonts",
+              dest: "static/webfonts"
             },
             {
               src: "./node_modules/@ctfdio/ctfd-js/assets/images/**",
-              dest: "static/img",
+              dest: "static/img"
             },
             {
               src: "./node_modules/@ctfdio/ctfd-js/assets/sounds/**",
-              dest: "static/sounds",
-            },
+              dest: "static/sounds"
+            }
           ],
-          hook: "writeBundle",
-        }),
+          hook: "writeBundle"
+        })
       ],
       output: {
         manualChunks: {
-          echarts: ["echarts", "zrender"],
-        },
+          echarts: ["echarts", "zrender"]
+        }
       },
       input: {
         "pages/main": resolve(__dirname, "assets/js/pages/main.js"),
@@ -61,7 +61,7 @@ export default defineConfig({
         "pages/configs": resolve(__dirname, "assets/js/pages/configs.js"),
         "pages/notifications": resolve(
           __dirname,
-          "assets/js/pages/notifications.js",
+          "assets/js/pages/notifications.js"
         ),
         "pages/editor": resolve(__dirname, "assets/js/pages/editor.js"),
         "pages/pages": resolve(__dirname, "assets/js/pages/pages.js"),
@@ -70,7 +70,7 @@ export default defineConfig({
         "pages/statistics": resolve(__dirname, "assets/js/pages/statistics.js"),
         "pages/submissions": resolve(
           __dirname,
-          "assets/js/pages/submissions.js",
+          "assets/js/pages/submissions.js"
         ),
         "pages/team": resolve(__dirname, "assets/js/pages/team.js"),
         "pages/teams": resolve(__dirname, "assets/js/pages/teams.js"),
@@ -83,9 +83,9 @@ export default defineConfig({
         "codemirror-css": resolve(__dirname, "assets/css/codemirror.scss"),
         "challenge-board-css": resolve(
           __dirname,
-          "assets/css/challenge-board.scss",
-        ),
-      },
-    },
-  },
+          "assets/css/challenge-board.scss"
+        )
+      }
+    }
+  }
 });
