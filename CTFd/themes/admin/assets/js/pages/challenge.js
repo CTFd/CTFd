@@ -16,6 +16,7 @@ import TagsList from "../components/tags/TagsList.vue";
 import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
 import HintsList from "../components/hints/HintsList.vue";
 import NextChallenge from "../components/next/NextChallenge.vue";
+import SolutionEditor from "../components/solution/SolutionEditor.vue";
 
 function loadChalTemplate(challenge) {
   CTFd._internal.challenge = {};
@@ -319,6 +320,18 @@ $(() => {
     document.querySelector("#next-add-form").appendChild(vueContainer);
     new nextChallenge({
       propsData: { challenge_id: window.CHALLENGE_ID },
+    }).$mount(vueContainer);
+  }
+
+  // Load SolutionEditor component
+  if (document.querySelector("#challenge-solution")) {
+    const solutionEditor = Vue.extend(SolutionEditor);
+    let vueContainer = document.createElement("div");
+    document.querySelector("#challenge-solution").appendChild(vueContainer);
+    new solutionEditor({
+      propsData: {
+        challenge_id: window.CHALLENGE_ID,
+      },
     }).$mount(vueContainer);
   }
 

@@ -31,6 +31,13 @@ Alpine.data("Hint", () => ({
   async showHint(event) {
     if (event.target.open) {
       let response = await CTFd.pages.challenge.loadHint(this.id);
+
+      // Hint has some kind of prerequisite or access prevention
+      if (response.errors) {
+        event.target.open = false;
+        CTFd._functions.challenge.displayUnlockError(response);
+        return;
+      }
       let hint = response.data;
       if (hint.content) {
         this.html = addTargetBlank(hint.html);
@@ -61,6 +68,8 @@ Alpine.data("Challenge", () => ({
   submission: "",
   tab: null,
   solves: [],
+  submissions: [],
+  solution: null,
   response: null,
   share_url: null,
   max_attempts: 0,
@@ -112,6 +121,30 @@ Alpine.data("Challenge", () => ({
       return solve;
     });
     new Tab(this.$el).show();
+  },
+
+  async showSubmissions() {
+    let response = await CTFd.pages.users.userSubmissions("me", this.id);
+    this.submissions = response.data;
+    this.submissions.forEach(s => {
+      s.date = dayjs(s.date).format("MMMM Do, h:mm:ss A");
+      return s;
+    });
+    new Tab(this.$el).show();
+  },
+
+  getSolutionId() {
+    let data = Alpine.store("challenge").data;
+    return data.solution_id;
+  },
+
+  async showSolution() {
+    let solution_id = this.getSolutionId();
+    CTFd._functions.challenge.displaySolution = solution => {
+      this.solution = solution.html;
+      new Tab(this.$el).show();
+    };
+    await CTFd.pages.challenge.displaySolution(solution_id);
   },
 
   getNextId() {
@@ -177,7 +210,11 @@ Alpine.data("Challenge", () => ({
     }
 
     // Increment attempts counter
-    if (this.max_attempts > 0 && this.response.data.status != "already_solved") {
+    if (
+      this.max_attempts > 0 &&
+      this.response.data.status != "already_solved" &&
+      this.response.data.status != "ratelimited"
+    ) {
       this.attempts += 1;
     }
 

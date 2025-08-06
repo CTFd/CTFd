@@ -9,7 +9,7 @@ SQLAlchemy==1.4.48
 SQLAlchemy-Utils==0.41.1
 passlib==1.7.4
 bcrypt==4.0.1
-requests==2.32.3
+requests==2.32.4
 PyMySQL[rsa]==1.0.2
 gunicorn==23.0.0
 dataset==1.6.2
@@ -27,7 +27,7 @@ WTForms==2.3.1
 python-geoacumen-city==2023.4.15
 maxminddb==1.5.4
 tenacity==6.2.0
-nh3==0.2.21
+nh3==0.3.0
 freezegun==1.2.2
 Flask-Babel==2.0.0
 Pillow==10.1.0

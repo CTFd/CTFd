@@ -190,7 +190,7 @@
                 </div>
               </div>
             </div>
-            <input type="hidden" value="page" name="type" />
+            <input type="hidden" :value="this.media_type" name="type" />
           </form>
         </div>
         <div class="modal-footer">
@@ -213,8 +213,8 @@
 import CTFd from "../../compat/CTFd";
 import { default as helpers } from "../../compat/helpers";
 
-function get_page_files() {
-  return CTFd.fetch("/api/v1/files?type=page", {
+function get_page_files(type = "page") {
+  return CTFd.fetch(`/api/v1/files?type=${type}`, {
     credentials: "same-origin",
   }).then(function (response) {
     return response.json();
@@ -229,11 +229,12 @@ export default {
     return {
       files: [],
       selectedFile: null,
+      media_type: "page",
     };
   },
   methods: {
     getPageFiles: function () {
-      get_page_files().then((response) => {
+      get_page_files(this.media_type).then((response) => {
         this.files = response.data;
         return this.files;
       });
@@ -241,8 +242,16 @@ export default {
     uploadChosenFiles: function () {
       // TODO: We should reduce the need to interact with the DOM directly.
       // This looks jank and we should be able to remove it.
+      let extra = {};
+      if (this.editor.element) {
+        let mediaIdTitle = this.editor.element.getAttribute("media-id-title");
+        let mediaId = this.editor.element.getAttribute("media-id");
+        if (mediaId) {
+          extra[mediaIdTitle] = mediaId;
+        }
+      }
       let form = document.querySelector("#media-library-upload");
-      helpers.files.upload(form, {}, (_data) => {
+      helpers.files.upload(form, extra, (_data) => {
         this.getPageFiles();
       });
     },
@@ -345,6 +354,14 @@ export default {
     },
   },
   created() {
+    let element = this.editor.element;
+    let media_type = null;
+    if (element) {
+      media_type = element.getAttribute("media-type");
+    }
+    if (media_type) {
+      this.media_type = media_type;
+    }
     return this.getPageFiles();
   },
 };

@@ -1,3 +1,5 @@
+import math
+from datetime import datetime, timedelta
 from typing import List  # noqa: I001
 
 from flask import abort, render_template, request, url_for
@@ -347,6 +349,7 @@ class Challenge(Resource):
                                 "value": 0,
                                 "solves": None,
                                 "solved_by_me": False,
+                                "solution_id": None,
                                 "category": "???",
                                 "tags": [],
                                 "template": "",
@@ -429,9 +432,19 @@ class Challenge(Resource):
 
         if authed():
             # Get current attempts for the user
-            attempts = Submissions.query.filter_by(
+            attempts_query = Submissions.query.filter_by(
                 account_id=user.account_id, challenge_id=challenge_id
-            ).count()
+            )
+            max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
+            if max_attempts_behavior == "timeout":
+                max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
+                timeout_delta = datetime.utcnow() - timedelta(
+                    seconds=max_attempts_timeout
+                )
+                attempts_query = attempts_query.filter(
+                    Submissions.date >= timeout_delta
+                )
+            attempts = attempts_query.count()
         else:
             attempts = 0
 
@@ -441,6 +454,11 @@ class Challenge(Resource):
         response["files"] = files
         response["tags"] = tags
         response["hints"] = hints
+
+        solution_id = None
+        if chal.solution_id and chal.solution.state == "visible":
+            solution_id = chal.solution.id
+        response["solution_id"] = solution_id
 
         response["view"] = render_template(
             chal_class.templates["view"].lstrip("/"),
@@ -558,10 +576,6 @@ class ChallengeAttempt(Resource):
         if config.is_teams_mode() and team is None:
             abort(403)
 
-        fails = Fails.query.filter_by(
-            account_id=user.account_id, challenge_id=challenge_id
-        ).count()
-
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
         if challenge.state == "hidden":
@@ -622,22 +636,40 @@ class ChallengeAttempt(Resource):
         solves = Solves.query.filter_by(
             account_id=user.account_id, challenge_id=challenge_id
         ).first()
+        # We default fails to 0 as it's not needed unless we are working with max attempts
+        fails = 0
 
         # Challenge not solved yet
         if not solves:
             # Hit max attempts
             max_tries = challenge.max_attempts
-            if max_tries and fails >= max_tries > 0:
-                return (
-                    {
-                        "success": True,
-                        "data": {
-                            "status": "incorrect",
-                            "message": "You have 0 tries remaining",
-                        },
-                    },
-                    403,
+            if max_tries and max_tries > 0:
+                max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
+                fails_query = Fails.query.filter_by(
+                    account_id=user.account_id, challenge_id=challenge_id
                 )
+                if max_attempts_behavior == "timeout":  # Use timeout behavior
+                    max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
+                    timeout_delta = datetime.utcnow() - timedelta(
+                        seconds=max_attempts_timeout
+                    )
+                    fails = fails_query.filter(Fails.date >= timeout_delta).count()
+                    response = f"Not accepted. Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
+                else:  # Use lockout behavior
+                    fails = fails_query.count()
+                    response = "Not accepted. You have 0 tries remaining"
+
+                if fails >= max_tries:
+                    return (
+                        {
+                            "success": True,
+                            "data": {
+                                "status": "ratelimited",
+                                "message": response,
+                            },
+                        },
+                        403,
+                    )
 
             status, message = chal_class.attempt(challenge, request)
             if status:  # The challenge plugin says the input is right
@@ -684,13 +716,23 @@ class ChallengeAttempt(Resource):
                     # Add a punctuation mark if there isn't one
                     if message[-1] not in "!().;?[]{}":
                         message = message + "."
+                    message = "{} You have {} {} remaining.".format(
+                        message, attempts_left, tries_str
+                    )
+                    if attempts_left == 0:
+                        max_attempts_behavior = get_config(
+                            "max_attempts_behavior", "lockout"
+                        )
+                        if max_attempts_behavior == "timeout":
+                            max_attempts_timeout = int(
+                                get_config("max_attempts_timeout", 300)
+                            )
+                            message += f" Try again in {math.ceil(max_attempts_timeout / 60)} minutes."
                     return {
                         "success": True,
                         "data": {
                             "status": "incorrect",
-                            "message": "{} You have {} {} remaining.".format(
-                                message, attempts_left, tries_str
-                            ),
+                            "message": message,
                         },
                     }
                 else:
@@ -709,11 +751,12 @@ class ChallengeAttempt(Resource):
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
+            status, message = chal_class.attempt(challenge, request)
             return {
                 "success": True,
                 "data": {
                     "status": "already_solved",
-                    "message": "You already solved this",
+                    "message": f"{message} but you already solved this",
                 },
             }
 

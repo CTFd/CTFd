@@ -159,20 +159,23 @@ class Hint(Resource):
             prereqs = set(requirements).intersection(all_hint_ids)
 
             # If the user has the necessary unlocks or is admin we should allow them to view
-            if unlock_ids >= prereqs or is_admin():
+            if unlock_ids >= prereqs:
                 pass
             else:
-                return (
-                    {
-                        "success": False,
-                        "errors": {
-                            "requirements": [
-                                "You must unlock other hints before accessing this hint"
-                            ]
+                if is_admin() and request.args.get("preview", False):
+                    pass
+                else:
+                    return (
+                        {
+                            "success": False,
+                            "errors": {
+                                "requirements": [
+                                    "You must unlock other hints before accessing this hint"
+                                ]
+                            },
                         },
-                    },
-                    403,
-                )
+                        403,
+                    )
 
         view = "locked"
         unlocked = HintUnlocks.query.filter_by(

@@ -112,7 +112,7 @@ maxminddb==1.5.4
     # via
     #   -r requirements.in
     #   python-geoacumen-city
-nh3==0.2.21
+nh3==0.3.0
     # via -r requirements.in
 packaging==24.2
     # via gunicorn
@@ -147,7 +147,7 @@ pytz==2020.4
     #   flask-restx
 redis==4.5.5
     # via -r requirements.in
-requests==2.32.3
+requests==2.32.4
     # via -r requirements.in
 s3transfer==0.10.0
     # via boto3
