@@ -1,11 +1,15 @@
 <template>
   <div>
-    <div v-if="isProcessing" class="alert alert-warning alert-dismissible mb-3" role="alert">
+    <div
+      v-if="isProcessing"
+      class="alert alert-warning alert-dismissible mb-3"
+      role="alert"
+    >
       <i class="fas fa-exclamation-triangle me-2"></i>&nbsp;
       <strong>Email Sending in Progress</strong>
-      <br>
-      Please do not close this page or disconnect from the internet while emails are being sent. 
-      This process may take several minutes to complete.
+      <br />
+      Please do not close this page or disconnect from the internet while emails
+      are being sent. This process may take several minutes to complete.
     </div>
 
     <form @submit.prevent="handleSubmit">
@@ -73,7 +77,8 @@ const handleBeforeUnload = (event: BeforeUnloadEvent) => {
   if (isProcessing.value) {
     event.preventDefault();
     // Note that this message doesn't actually get shown in the browser
-    event.returnValue = "Emails are currently being sent. Are you sure you want to leave?";
+    event.returnValue =
+      "Emails are currently being sent. Are you sure you want to leave?";
     return "Emails are currently being sent. Are you sure you want to leave?";
   }
 };
@@ -110,7 +115,7 @@ async function sendEmail(userId: number, text: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text }),
   });
-  
+
   // Handle rate limiting
   if (res.status === 429) {
     console.log("Rate limit hit (429), waiting for 1 minute...");
@@ -129,7 +134,7 @@ async function sendEmail(userId: number, text: string) {
       return false;
     }
   }
-  
+
   try {
     const json = await res.json();
     return json.success === true;
@@ -142,10 +147,9 @@ async function handleSubmit() {
   if (!body.value) return;
 
   // Show preview and confirmation dialog
-  const emailPreview = body.value.length > 200 
-    ? body.value.substring(0, 200) + "..." 
-    : body.value;
-  
+  const emailPreview =
+    body.value.length > 200 ? body.value.substring(0, 200) + "..." : body.value;
+
   ezQuery({
     title: "Confirm Email Send",
     body: `
@@ -157,7 +161,7 @@ async function handleSubmit() {
     `,
     success: function () {
       startEmailSending();
-    }
+    },
   });
 }
 
@@ -182,20 +186,20 @@ async function startEmailSending() {
       // Send emails in batches of BATCH_SIZE
       for (let i = 0; i < data.length; i += BATCH_SIZE) {
         const batch = data.slice(i, i + BATCH_SIZE);
-        
+
         // Send emails in current batch serially
         for (const user of batch) {
           const ok = await sendEmail(user.id, body.value);
           if (ok) state.sent++;
           else state.failed.push({ id: user.id, reason: "Unknown error" });
         }
-        
+
         // Sleep after each batch (except the last one in the page)
         if (i + BATCH_SIZE < data.length) {
           await sleep(DELAY_MS);
         }
       }
-      
+
       page++;
     }
   } catch (e: any) {
