@@ -157,16 +157,10 @@ if __name__ == "__main__":
             solution = Solutions(
                 content=" ".join([gen_sentence() for _ in range(5)]),
                 state="visible",
+                challenge_id=x + 1,
             )
             db.session.add(solution)
             solutions.append(solution)
-        db.session.commit()
-
-        # Linking challenges to solutions
-        for x in range(CHAL_AMOUNT):
-            challenge = Challenges.query.filter_by(id=x + 1).first()
-            if challenge and x < len(solutions):
-                challenge.solution_id = solutions[x].id
         db.session.commit()
 
         # Generating Files

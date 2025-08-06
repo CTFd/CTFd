@@ -2,6 +2,7 @@ import requests
 from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
+from flask_babel import lazy_gettext as _l
 
 from CTFd.cache import clear_team_session, clear_user_session
 from CTFd.exceptions.email import (
@@ -134,7 +135,19 @@ def reset_password(data=None):
             pass_short = len(password) == 0
             if pass_short:
                 return render_template(
-                    "reset_password.html", errors=["Please pick a longer password"]
+                    "reset_password.html", errors=[_l("Please pick a longer password")]
+                )
+
+            password_min_length = int(get_config("password_min_length", default=0))
+            pass_min = len(password) < password_min_length
+            if pass_min:
+                return render_template(
+                    "reset_password.html",
+                    errors=[
+                        _l(
+                            f"Password must be at least {password_min_length} characters"
+                        )
+                    ],
                 )
 
             user.password = password
@@ -160,7 +173,9 @@ def reset_password(data=None):
             return render_template(
                 "reset_password.html",
                 infos=[
-                    "If that account exists you will receive an email, please check your inbox"
+                    _l(
+                        "If that account exists you will receive an email, please check your inbox"
+                    )
                 ],
             )
 
@@ -168,7 +183,9 @@ def reset_password(data=None):
             return render_template(
                 "reset_password.html",
                 infos=[
-                    "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                    _l(
+                        "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                    )
                 ],
             )
 
@@ -177,7 +194,9 @@ def reset_password(data=None):
         return render_template(
             "reset_password.html",
             infos=[
-                "If that account exists you will receive an email, please check your inbox"
+                _l(
+                    "If that account exists you will receive an email, please check your inbox"
+                )
             ],
         )
     return render_template("reset_password.html")
@@ -224,12 +243,15 @@ def register():
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
+        password_min_length = int(get_config("password_min_length", default=0))
+        pass_min = len(password) < password_min_length
+
         if get_config("registration_code"):
             if (
                 registration_code.lower()
                 != str(get_config("registration_code", default="")).lower()
             ):
-                errors.append("The registration code you entered was incorrect")
+                errors.append(_l("The registration code you entered was incorrect"))
 
         # Process additional user fields
         fields = {}
@@ -240,7 +262,7 @@ def register():
         for field_id, field in fields.items():
             value = request.form.get(f"fields[{field_id}]", "").strip()
             if field.required is True and (value is None or value == ""):
-                errors.append("Please provide all required fields")
+                errors.append(_l("Please provide all required fields"))
                 break
 
             if field.field_type == "boolean":
@@ -278,31 +300,37 @@ def register():
                 valid_bracket = True
 
         if not valid_email:
-            errors.append("Please enter a valid email address")
+            errors.append(_l("Please enter a valid email address"))
         if email.check_email_is_whitelisted(email_address) is False:
-            errors.append("Your email address is not from an allowed domain")
+            errors.append(_l("Your email address is not from an allowed domain"))
         if email.check_email_is_blacklisted(email_address) is True:
-            errors.append("Your email address is not from an allowed domain")
+            errors.append(_l("Your email address is not from an allowed domain"))
         if names:
-            errors.append("That user name is already taken")
+            errors.append(_l("That user name is already taken"))
         if team_name_email_check is True:
-            errors.append("Your user name cannot be an email address")
+            errors.append(_l("Your user name cannot be an email address"))
         if emails:
-            errors.append("That email has already been used")
+            errors.append(_l("That email has already been used"))
         if pass_short:
-            errors.append("Pick a longer password")
+            errors.append(_l("Pick a longer password"))
+        if password_min_length and pass_min:
+            errors.append(
+                _l(f"Password must be at least {password_min_length} characters")
+            )
         if pass_long:
-            errors.append("Pick a shorter password")
+            errors.append(_l("Pick a shorter password"))
         if name_len:
-            errors.append("Pick a longer user name")
+            errors.append(_l("Pick a longer user name"))
         if valid_website is False:
-            errors.append("Websites must be a proper URL starting with http or https")
+            errors.append(
+                _l("Websites must be a proper URL starting with http or https")
+            )
         if valid_country is False:
-            errors.append("Invalid country")
+            errors.append(_l("Invalid country"))
         if valid_affiliation is False:
-            errors.append("Please provide a shorter affiliation")
+            errors.append(_l("Please provide a shorter affiliation"))
         if valid_bracket is False:
-            errors.append("Please provide a valid bracket")
+            errors.append(_l("Please provide a valid bracket"))
 
         if len(errors) > 0:
             return render_template(
