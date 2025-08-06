@@ -535,3 +535,68 @@ def test_registration_code_allows_numeric():
             assert r.status_code == 302
             assert r.location.startswith("http://localhost/challenges")
     destroy_ctfd(app)
+
+
+def test_registration_password_minimum_length():
+    """
+    Test that registration enforces minimum password length when configured
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Set a minimum password length
+        set_config("password_min_length", 8)
+
+        with app.test_client() as client:
+            # Load CSRF nonce
+            r = client.get("/register")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user1@examplectf.com",
+                    "password": "short",  # Only 5 characters
+                    "nonce": sess.get("nonce"),
+                }
+
+            # Attempt registration with password too short
+            r = client.post("/register", data=data)
+            resp = r.get_data(as_text=True)
+            assert "Password must be at least 8 characters" in resp
+            assert r.status_code == 200  # Should stay on registration page
+
+            # Verify user was not created
+            user_count = Users.query.count()
+            assert user_count == 1  # Only admin user exists
+
+            # Attempt registration with password meeting minimum length
+            data["password"] = "validpassword"  # 13 characters, meets minimum
+            r = client.post("/register", data=data)
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/challenges")
+
+            # Verify user was created
+            user_count = Users.query.count()
+            assert user_count == 2  # Admin user + new user
+
+        # Test with minimum length set to 0 (disabled)
+        set_config("password_min_length", 0)
+
+        with app.test_client() as client:
+            # Load CSRF nonce
+            r = client.get("/register")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user2",
+                    "email": "user2@examplectf.com",
+                    "password": "x",  # Only 1 character
+                    "nonce": sess.get("nonce"),
+                }
+
+            # Should allow short password when minimum length is 0
+            r = client.post("/register", data=data)
+            assert r.status_code == 302
+            assert r.location.startswith("http://localhost/challenges")
+
+            # Verify user was created
+            user_count = Users.query.count()
+            assert user_count == 3  # Admin user + 2 new users
+    destroy_ctfd(app)
