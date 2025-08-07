@@ -362,11 +362,11 @@ def settings():
     prevent_name_change = get_config("prevent_name_change")
 
     if can_send_mail() and not user.verified:
-        confirm_url = markup(url_for("auth.confirm"))
+        confirm_url = markup(url_for("auth.confirm", flow="init"))
         infos.append(
             markup(
                 "Your email address isn't confirmed!<br>"
-                f'To have the confirmation email resent please <a href="{confirm_url}">click here</a>.'
+                f'To confirm your email address please <a href="{confirm_url}">click here</a>.'
             )
         )
 

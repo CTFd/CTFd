@@ -71,7 +71,7 @@ class LoginForm(BaseForm):
 
 
 class ConfirmForm(BaseForm):
-    submit = SubmitField(_l("Resend Confirmation Email"))
+    submit = SubmitField(_l("Send Confirmation Email"))
 
 
 class ResetPasswordRequestForm(BaseForm):
