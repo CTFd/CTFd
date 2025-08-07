@@ -408,6 +408,11 @@ def test_confirm_links_single_use():
     """Test that confirm links are single use"""
     app = create_ctfd()
     with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
         set_config("verify_emails", True)
         register_user(app)
         client = login_as_user(app)

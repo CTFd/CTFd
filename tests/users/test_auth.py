@@ -213,6 +213,11 @@ def test_expired_confirmation_links():
     """Test that expired confirmation links are reported to the user"""
     app = create_ctfd()
     with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
         set_config("verify_emails", True)
 
         register_user(app, email="user@user.com")
@@ -237,6 +242,11 @@ def test_invalid_confirmation_links():
     """Test that invalid confirmation links are reported to the user"""
     app = create_ctfd()
     with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
         set_config("verify_emails", True)
 
         register_user(app, email="user@user.com")
