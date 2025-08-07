@@ -13,7 +13,7 @@ from CTFd.models import Brackets, Teams, UserFieldEntries, UserFields, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
-from CTFd.utils.config import is_teams_mode
+from CTFd.utils.config import can_send_mail, is_teams_mode
 from CTFd.utils.config.integrations import mlc_registration
 from CTFd.utils.config.visibility import registration_visible
 from CTFd.utils.crypto import verify_password
@@ -38,7 +38,7 @@ auth = Blueprint("auth", __name__)
 @auth.route("/confirm/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def confirm(data=None):
-    if not get_config("verify_emails"):
+    if not can_send_mail():
         # If the CTF doesn't care about confirming email addresses then redierct to challenges
         return redirect(url_for("challenges.listing"))
 

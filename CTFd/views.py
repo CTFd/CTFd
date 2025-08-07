@@ -38,7 +38,7 @@ from CTFd.models import (
 from CTFd.utils import config, get_config, set_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
-from CTFd.utils.config import is_setup, is_teams_mode
+from CTFd.utils.config import can_send_mail, is_setup, is_teams_mode
 from CTFd.utils.config.pages import build_markdown, get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
@@ -361,13 +361,12 @@ def settings():
 
     prevent_name_change = get_config("prevent_name_change")
 
-    if get_config("verify_emails") and not user.verified:
-        confirm_url = markup(url_for("auth.confirm"))
+    if can_send_mail() and not user.verified:
+        confirm_url = markup(url_for("auth.confirm", flow="init"))
         infos.append(
             markup(
                 "Your email address isn't confirmed!<br>"
-                "Please check your email to confirm your email address.<br><br>"
-                f'To have the confirmation email resent please <a href="{confirm_url}">click here</a>.'
+                f'To confirm your email address please <a href="{confirm_url}">click here</a>.'
             )
         )
 
