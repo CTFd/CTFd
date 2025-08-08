@@ -58,7 +58,6 @@ def test_all_flags_challenge_logic():
         # After all flags are submitted, the challenge should be marked as solved
         r = client.get(f"/api/v1/challenges/{challenge_id}/solves")
         solves = r.get_json()["data"]
-        print(solves)
         assert len(solves) == 1
         assert solves[0]["account_id"] == 2  # user1's ID (admin is 1)
     destroy_ctfd(app)
