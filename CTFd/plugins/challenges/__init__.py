@@ -19,10 +19,8 @@ from CTFd.plugins.challenges.logic import (
     challenge_attempt_any,
     challenge_attempt_group,
 )
-from CTFd.plugins.flags import FlagException, get_flag_class
-from CTFd.utils.config import is_teams_mode
 from CTFd.utils.uploads import delete_file
-from CTFd.utils.user import get_current_team, get_current_user, get_ip
+from CTFd.utils.user import get_ip
 
 
 @dataclass
