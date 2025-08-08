@@ -17,7 +17,7 @@ from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges.logic import (
     challenge_attempt_all,
     challenge_attempt_any,
-    challenge_attempt_group,
+    challenge_attempt_team,
 )
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
@@ -140,8 +140,8 @@ class BaseChallenge(object):
             return challenge_attempt_any(submission, challenge, flags)
         elif challenge.logic == "all":
             return challenge_attempt_all(submission, challenge, flags)
-        elif challenge.logic == "group":
-            return challenge_attempt_group(submission, challenge, flags)
+        elif challenge.logic == "team":
+            return challenge_attempt_team(submission, challenge, flags)
         else:
             return ChallengeResponse(
                 status="incorrect",

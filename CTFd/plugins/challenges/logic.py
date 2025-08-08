@@ -69,7 +69,7 @@ def challenge_attempt_all(submission, challenge, flags):
     )
 
 
-def challenge_attempt_group(submission, challenge, flags):
+def challenge_attempt_team(submission, challenge, flags):
     from CTFd.plugins.challenges import ChallengeResponse
 
     if is_teams_mode():
