@@ -347,6 +347,7 @@ class Challenge(Resource):
                                 "type": "hidden",
                                 "name": "???",
                                 "value": 0,
+                                "logic": None,
                                 "solves": None,
                                 "solved_by_me": False,
                                 "solution_id": None,

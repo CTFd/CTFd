@@ -72,6 +72,7 @@ class BaseChallenge(object):
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
+            "logic": challenge.logic,
             "type": challenge.type,
             "type_data": {
                 "id": cls.id,
