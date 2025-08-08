@@ -790,7 +790,14 @@ class ChallengeAttempt(Resource):
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
-            status, message = chal_class.attempt(challenge, request)
+            response = chal_class.attempt(challenge, request)
+            # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+            if type(response) == tuple:
+                status = response[0]
+                message = response[1]
+            else:
+                status = response.status
+                message = response.message
             return {
                 "success": True,
                 "data": {
