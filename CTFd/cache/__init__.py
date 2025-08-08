@@ -141,10 +141,12 @@ def clear_challenges():
         get_solve_counts_for_challenges,
         get_solve_ids_for_user_id,
         get_solves_for_challenge_id,
+        get_submissions_for_user_id_for_challenge_id,
     )
 
     cache.delete_memoized(get_all_challenges)
     cache.delete_memoized(get_solves_for_challenge_id)
+    cache.delete_memoized(get_submissions_for_user_id_for_challenge_id)
     cache.delete_memoized(get_solve_ids_for_user_id)
     cache.delete_memoized(get_solve_counts_for_challenges)
 

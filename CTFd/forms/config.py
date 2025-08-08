@@ -64,6 +64,11 @@ class AccountSettingsForm(BaseForm):
         widget=NumberInput(min=0),
         description="Maximum number of user accounts allowed to register with this CTF",
     )
+    password_min_length = IntegerField(
+        "Minimum Password Length for Users",
+        widget=NumberInput(min=0),
+        description="Minimum Password Length for Users",
+    )
     verify_emails = SelectField(
         "Verify Emails",
         description="Control whether users must confirm their email addresses before playing",
@@ -139,6 +144,12 @@ class LegalSettingsForm(BaseForm):
 
 
 class ChallengeSettingsForm(BaseForm):
+    view_self_submissions = SelectField(
+        "View Self Submissions",
+        description="Allow users to view their previous submissions",
+        choices=[("true", "Enabled"), ("false", "Disabled")],
+        default="false",
+    )
     max_attempts_behavior = SelectField(
         "Max Attempts Behavior",
         description="Set Max Attempts behavior to be a lockout or a timeout",

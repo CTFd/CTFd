@@ -19,6 +19,7 @@ from CTFd.models import (
     Solves,
     Tracking,
     Brackets,
+    Solutions,
 )
 from faker import Faker
 
@@ -148,6 +149,19 @@ if __name__ == "__main__":
             f = Flags(challenge_id=x + 1, content=word, type="static")
             db.session.add(f)
             db.session.commit()
+
+        # Generating Solutions
+        print("GENERATING SOLUTIONS")
+        solutions = []
+        for x in range(CHAL_AMOUNT):
+            solution = Solutions(
+                content=" ".join([gen_sentence() for _ in range(5)]),
+                state="visible",
+                challenge_id=x + 1,
+            )
+            db.session.add(solution)
+            solutions.append(solution)
+        db.session.commit()
 
         # Generating Files
         print("GENERATING FILES")

@@ -12,14 +12,36 @@
             </button>
           </li>
 
-          {% block solves %}
+          {% block submissions %}
+            {% if Configs.view_self_submissions %}
             <li class="nav-item">
-              <button class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
+              <button class="nav-link challenge-submissions" data-bs-target="#submissions" @click="showSubmissions()">
                 {% if solves != None %}
-                  {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
+                  Submissions
                 {% endif %}
               </button>
             </li>
+            {% endif %}
+          {% endblock %}
+
+          {% block solution %}
+            {% if challenge.solution_id %}
+            <li class="nav-item" x-show="getSolutionId()">
+              <button class="nav-link challenge-solution" data-bs-target="#solution" @click="showSolution()">
+                {% trans %}Solution{% endtrans %}
+              </button>
+            </li>
+            {% endif %}
+          {% endblock %}
+
+          {% block solves %}
+            {% if solves != None %}
+            <li class="nav-item">
+              <button class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
+                  {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
+              </button>
+            </li>
+            {% endif %}
           {% endblock %}
         </ul>
       </div>
@@ -201,6 +223,36 @@
             </div>
           </div>
 
+          <div role="tabpanel" class="tab-pane fade" id="submissions">
+            <div class="row">
+              <div class="col-md-12">
+                <table class="table table-striped align-middle text-center">
+                  <thead>
+                  <tr>
+                    <th>{% trans %}Submission{% endtrans %}</th>
+                    <th>{% trans %}Type{% endtrans %}</th>
+                    <th>{% trans %}Date{% endtrans %}</th>
+                  </tr>
+                  </thead>
+                  <tbody id="challenge-submission-names">
+                  <template x-for="submission in submissions">
+                    <tr>
+                      <td x-data="{ truncate: true }">
+                        <code x-text="truncate ? '*'.repeat(submission.provided.length) : submission.provided"></code>
+                        <button class="btn btn-link p-0 pl-1" @click="truncate = !truncate">
+                          <i :class="truncate ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+                        </button>
+                      </td>
+                      <td x-text="submission.type"></td>
+                      <td x-text="submission.date"></td>
+                    </tr>
+                  </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           <div role="tabpanel" class="tab-pane fade" id="solves">
             <div class="row">
               <div class="col-md-12">
@@ -225,6 +277,20 @@
               </div>
             </div>
           </div>
+
+          <div role="tabpanel" class="tab-pane fade" id="solution">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="challenge-solution-content pt-3">
+                  <template x-if="solution">
+                    <div x-html="solution" style="white-space: pre-wrap;">
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

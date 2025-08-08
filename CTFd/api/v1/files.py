@@ -99,6 +99,8 @@ class FilesList(Resource):
             "challenge": (int, None),
             "page_id": (int, None),
             "page": (int, None),
+            "solution_id": (int, None),
+            "solution": (int, None),
             "type": (str, None),
             "location": (str, None),
         },
