@@ -236,11 +236,10 @@ class BaseChallenge(object):
                 for flag in flags:
                     try:
                         if get_flag_class(flag.type).compare(flag, submission):
-                            if challenge.logic == "any":
-                                return ChallengeResponse(
-                                    status="correct",
-                                    message="Correct",
-                                )
+                            return ChallengeResponse(
+                                status="correct",
+                                message="Correct",
+                            )
                     except FlagException as e:
                         return ChallengeResponse(
                             status="incorrect",
