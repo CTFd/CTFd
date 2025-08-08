@@ -550,7 +550,7 @@ class ChallengeAttempt(Resource):
                 chal_class = get_chal_class(challenge.type)
                 response = chal_class.attempt(challenge, request)
                 # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
-                if type(response) == tuple:
+                if isinstance(response, tuple):
                     status = "correct" if response[0] else "incorrect"
                     message = response[1]
                 else:
@@ -681,7 +681,7 @@ class ChallengeAttempt(Resource):
 
             response = chal_class.attempt(challenge, request)
             # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
-            if type(response) == tuple:
+            if isinstance(response, tuple):
                 status = response[0]
                 message = response[1]
             else:
@@ -792,7 +792,7 @@ class ChallengeAttempt(Resource):
             )
             response = chal_class.attempt(challenge, request)
             # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
-            if type(response) == tuple:
+            if isinstance(response, tuple):
                 status = response[0]
                 message = response[1]
             else:

@@ -189,7 +189,6 @@ def test_group_flags_challenge_logic_teams_mode():
         client1 = login_as_user(app, name=user1_name, password="password")
         submission = {"challenge_id": challenge_id, "submission": "flag{group_one}"}
         r = client1.post("/api/v1/challenges/attempt", json=submission)
-        print(r.get_data())
         assert r.get_json()["data"]["status"] == "partial"
 
         # User2 submits any flag (can be different) - still partial since user3 hasn't submitted
