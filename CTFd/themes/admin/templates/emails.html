@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>Emails</h1>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Email All Users</h3>
+                <div id="email-all-view"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block entrypoint %}
+{{ Assets.js("assets/js/pages/emails.js", theme="admin") }}
+{% endblock %}

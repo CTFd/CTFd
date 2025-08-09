@@ -19,6 +19,7 @@ admin = Blueprint("admin", __name__)
 
 # isort:imports-firstparty
 from CTFd.admin import challenges  # noqa: F401,I001
+from CTFd.admin import emails  # noqa: F401,I001
 from CTFd.admin import notifications  # noqa: F401,I001
 from CTFd.admin import pages  # noqa: F401,I001
 from CTFd.admin import scoreboard  # noqa: F401,I001
@@ -198,7 +199,7 @@ def config():
         "admin/config.html",
         themes=themes,
         **configs,
-        force_html_sanitization=force_html_sanitization
+        force_html_sanitization=force_html_sanitization,
     )
 
 
