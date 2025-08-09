@@ -70,6 +70,21 @@
 	</div>
 	{% endblock %}
 
+	{% block logic %}
+	<div class="form-group">
+		<label>
+			Logic<br>
+			<small class="form-text text-muted">Determines how this challenge is solved</small>
+		</label>
+
+		<select class="form-control custom-select" name="logic">
+			<option value="any" {% if challenge.logic == "any" or not challenge.logic %}selected{% endif %}>Require Any Flag</option>
+			<option value="all" {% if challenge.logic == "all" %}selected{% endif %}>Require All Flags</option>
+			<option value="team" {% if challenge.logic == "team" %}selected{% endif %}>Require Any Flags by All Team Members</option>
+		</select>
+	</div>
+	{% endblock %}
+
 	{% block max_attempts %}
 	<div class="form-group">
 		<label>

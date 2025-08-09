@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from flask import Blueprint
 
 from CTFd.models import (
@@ -6,14 +8,25 @@ from CTFd.models import (
     Fails,
     Flags,
     Hints,
+    Partials,
     Solves,
     Tags,
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.flags import FlagException, get_flag_class
+from CTFd.plugins.challenges.logic import (
+    challenge_attempt_all,
+    challenge_attempt_any,
+    challenge_attempt_team,
+)
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
+
+
+@dataclass
+class ChallengeResponse:
+    status: str
+    message: str
 
 
 class BaseChallenge(object):
@@ -59,6 +72,7 @@ class BaseChallenge(object):
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
+            "logic": challenge.logic,
             "type": challenge.type,
             "type_data": {
                 "id": cls.id,
@@ -120,14 +134,34 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
         submission = data["submission"].strip()
+
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
-        for flag in flags:
-            try:
-                if get_flag_class(flag.type).compare(flag, submission):
-                    return True, "Correct"
-            except FlagException as e:
-                return False, str(e)
-        return False, "Incorrect"
+
+        if challenge.logic == "any":
+            return challenge_attempt_any(submission, challenge, flags)
+        elif challenge.logic == "all":
+            return challenge_attempt_all(submission, challenge, flags)
+        elif challenge.logic == "team":
+            return challenge_attempt_team(submission, challenge, flags)
+        else:
+            return ChallengeResponse(
+                status="incorrect",
+                message="Challenge logic is not defined",
+            )
+
+    @classmethod
+    def partial(cls, user, team, challenge, request):
+        data = request.form or request.get_json()
+        submission = data["submission"].strip()
+        partial = Partials(
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(req=request),
+            provided=submission,
+        )
+        db.session.add(partial)
+        db.session.commit()
 
     @classmethod
     def solve(cls, user, team, challenge, request):

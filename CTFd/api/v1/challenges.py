@@ -347,6 +347,7 @@ class Challenge(Resource):
                                 "type": "hidden",
                                 "name": "???",
                                 "value": 0,
+                                "logic": None,
                                 "solves": None,
                                 "solved_by_me": False,
                                 "solution_id": None,
@@ -547,12 +548,19 @@ class ChallengeAttempt(Resource):
             if preview:
                 challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
                 chal_class = get_chal_class(challenge.type)
-                status, message = chal_class.attempt(challenge, request)
+                response = chal_class.attempt(challenge, request)
+                # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+                if isinstance(response, tuple):
+                    status = "correct" if response[0] else "incorrect"
+                    message = response[1]
+                else:
+                    status = response.status
+                    message = response.message
 
                 return {
                     "success": True,
                     "data": {
-                        "status": "correct" if status else "incorrect",
+                        "status": status,
                         "message": message,
                     },
                 }
@@ -671,8 +679,17 @@ class ChallengeAttempt(Resource):
                         403,
                     )
 
-            status, message = chal_class.attempt(challenge, request)
-            if status:  # The challenge plugin says the input is right
+            response = chal_class.attempt(challenge, request)
+            # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+            if isinstance(response, tuple):
+                status = response[0]
+                message = response[1]
+            else:
+                status = response.status
+                message = response.message
+
+            if status == "correct" or status is True:
+                # The challenge plugin says the input is right
                 if ctftime() or current_user.is_admin():
                     chal_class.solve(
                         user=user, team=team, challenge=challenge, request=request
@@ -692,7 +709,29 @@ class ChallengeAttempt(Resource):
                     "success": True,
                     "data": {"status": "correct", "message": message},
                 }
-            else:  # The challenge plugin says the input is wrong
+            elif status == "partial":
+                # The challenge plugin says that the input is a partial solve
+                if ctftime() or current_user.is_admin():
+                    chal_class.partial(
+                        user=user, team=team, challenge=challenge, request=request
+                    )
+                    clear_standings()
+                    clear_challenges()
+
+                log(
+                    "submissions",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [PARTIAL]",
+                    name=user.name,
+                    submission=request_data.get("submission", "").encode("utf-8"),
+                    challenge_id=challenge_id,
+                    kpm=kpm,
+                )
+                return {
+                    "success": True,
+                    "data": {"status": "partial", "message": message},
+                }
+            elif status == "incorrect" or status is False:
+                # The challenge plugin says the input is wrong
                 if ctftime() or current_user.is_admin():
                     chal_class.fail(
                         user=user, team=team, challenge=challenge, request=request
@@ -751,7 +790,14 @@ class ChallengeAttempt(Resource):
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
-            status, message = chal_class.attempt(challenge, request)
+            response = chal_class.attempt(challenge, request)
+            # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+            if isinstance(response, tuple):
+                status = response[0]
+                message = response[1]
+            else:
+                status = response.status
+                message = response.message
             return {
                 "success": True,
                 "data": {
