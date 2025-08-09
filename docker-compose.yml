@@ -1,64 +1,84 @@
-services:
-  ctfd:
-    build: .
-    user: root
-    restart: always
-    ports:
-      - "8000:8000"
-    environment:
-      - UPLOAD_FOLDER=/var/uploads
-      - DATABASE_URL=mysql+pymysql://ctfd:ctfd@db/ctfd
-      - REDIS_URL=redis://cache:6379
-      - WORKERS=1
-      - LOG_FOLDER=/var/log/CTFd
-      - ACCESS_LOG=-
-      - ERROR_LOG=-
-      - REVERSE_PROXY=true
-    volumes:
-      - .data/CTFd/logs:/var/log/CTFd
-      - .data/CTFd/uploads:/var/uploads
-      - .:/opt/CTFd:ro
-    depends_on:
-      - db
-    networks:
-        default:
-        internal:
+name: ctfd
 
-  nginx:
-    image: nginx:stable
+services:
+  cache:
+    image: redis:4
     restart: always
+    networks:
+      - internal
     volumes:
-      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
-    ports:
-      - 80:80
-    depends_on:
-      - ctfd
+      - /srv/ctfd/.data/redis:/data
 
   db:
     image: mariadb:10.11
     restart: always
+    command:
+      - mysqld
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --wait_timeout=28800
+      - --log-warnings=0
     environment:
-      - MARIADB_ROOT_PASSWORD=ctfd
-      - MARIADB_USER=ctfd
-      - MARIADB_PASSWORD=ctfd
-      - MARIADB_DATABASE=ctfd
-      - MARIADB_AUTO_UPGRADE=1
-    volumes:
-      - .data/mysql:/var/lib/mysql
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_DATABASE: ctfd
+      MARIADB_PASSWORD: ctfd
+      MARIADB_ROOT_PASSWORD: ctfd
+      MARIADB_USER: ctfd
     networks:
-        internal:
-    # This command is required to set important mariadb defaults
-    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+      - internal
+    volumes:
+      - /srv/ctfd/.data/mysql:/var/lib/mysql
 
-  cache:
-    image: redis:4
+  ctfd:
+    # Se usar GIT no Portainer (recomendado), deixe context: .
+    # Se usar Web editor, troque para o caminho ABSOLUTO no host (ex.: /srv/ctfd)
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
-    volumes:
-    - .data/redis:/data
+    depends_on:
+      - db
+    environment:
+      ACCESS_LOG: '-'
+      DATABASE_URL: mysql+pymysql://ctfd:ctfd@db/ctfd
+      ERROR_LOG: '-'
+      LOG_FOLDER: /var/log/CTFd
+      MAIL_DEFAULT_SENDER: "CTF <ctf.adm@cecyber.com>"
+      MAIL_PASSWORD: "j+38rk1wtq32k"     # ideal mover p/ Secret do Portainer
+      MAIL_PORT: "587"
+      MAIL_SERVER: smtp.office365.com
+      MAIL_USE_TLS: "True"
+      MAIL_USERNAME: ctf.adm@cecyber.com
+      REDIS_URL: redis://cache:6379
+      REVERSE_PROXY: "true"
+      UPLOAD_FOLDER: /var/uploads
+      WORKERS: "1"
+    ports:
+      - "8000:8000"
+    user: root
     networks:
-        internal:
+      - default
+      - internal
+    volumes:
+      - /srv/ctfd/.data/CTFd/logs:/var/log/CTFd
+      - /srv/ctfd/.data/CTFd/uploads:/var/uploads
+
+  nginx:
+    image: nginx:stable
+    restart: always
+    depends_on:
+      - ctfd
+    ports:
+      - "80:80"
+    networks:
+      - default
+    # Garanta que esse arquivo exista no HOST nesse caminho:
+    volumes:
+      - /srv/ctfd/conf/nginx/http.conf:/etc/nginx/nginx.conf:ro
 
 networks:
-    default:
-    internal:
-        internal: true
+  default:
+    name: ctfd_default
+  internal:
+    name: ctfd_internal
+    internal: true
