@@ -61,8 +61,8 @@ def confirm(data=None):
             and request.args.get("interaction") is None
         ):
             button = """<button onclick="
-                let u = new window.URL(window.location.href); 
-                u.searchParams.set('interaction', '1'); 
+                let u = new window.URL(window.location.href);
+                u.searchParams.set('interaction', '1');
                 window.location.href = u;">Confirm Email</button>"""
             return render_template("page.html", content=button)
 
