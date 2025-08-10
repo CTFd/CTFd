@@ -248,6 +248,8 @@ class ServerConfig(object):
 
     SAFE_MODE: bool = process_boolean_str(empty_str_cast(config_ini["optional"].get("SAFE_MODE", False), default=False))
 
+    EMAIL_CONFIRMATION_REQUIRE_INTERACTION: bool = process_boolean_str(empty_str_cast(config_ini["optional"].get("EMAIL_CONFIRMATION_REQUIRE_INTERACTION", False), default=False))
+
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
             "max_overflow": int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=20)),  # noqa: E131

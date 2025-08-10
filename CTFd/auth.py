@@ -56,6 +56,16 @@ def confirm(data=None):
         if user.verified:
             return redirect(url_for("views.settings"))
 
+        if (
+            get_app_config("EMAIL_CONFIRMATION_REQUIRE_INTERACTION")
+            and request.args.get("interaction") is None
+        ):
+            button = """<button onclick="
+                let u = new window.URL(window.location.href); 
+                u.searchParams.set('interaction', '1'); 
+                window.location.href = u;">Confirm Email</button>"""
+            return render_template("page.html", content=button)
+
         user.verified = True
         log(
             "registrations",
