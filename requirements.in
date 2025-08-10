@@ -15,7 +15,7 @@ gunicorn==23.0.0
 dataset==1.6.2
 cmarkgfm==2024.1.14
 redis==4.5.5
-gevent==23.9.1
+gevent==25.5.1
 python-dotenv==0.13.0
 flask-restx==1.1.0
 flask-marshmallow==0.10.1
@@ -28,9 +28,9 @@ python-geoacumen-city==2023.4.15
 maxminddb==1.5.4
 tenacity==6.2.0
 nh3==0.3.0
-freezegun==1.2.2
+freezegun==1.5.5
 Flask-Babel==2.0.0
-Pillow==10.1.0
+Pillow==11.3.0
 cffi==1.17.1
 six==1.16.0
 urllib3==1.26.20
