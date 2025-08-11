@@ -49,6 +49,12 @@
 			{{ form.banned.label(class="form-check-label") }}
 		</div>
 	</div>
+	<div class="form-group">
+		<div class="form-check form-check-inline">
+			{{ form.change_password(class="form-check-input", autocomplete="off") }}
+			{{ form.change_password.label(class="form-check-label") }}
+		</div>
+	</div>
 	<div id="results">
 	</div>
 	{{ form.submit(class="btn btn-primary btn-outlined float-right modal-action") }}

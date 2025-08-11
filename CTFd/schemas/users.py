@@ -399,6 +399,7 @@ class UserSchema(ma.ModelSchema):
             "password",
             "type",
             "verified",
+            "change_password",
             "fields",
             "team_id",
         ],
