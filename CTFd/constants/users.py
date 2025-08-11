@@ -19,6 +19,7 @@ UserAttrs = namedtuple(
         "language",
         "team_id",
         "created",
+        "change_password",
     ],
 )
 
