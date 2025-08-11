@@ -9,6 +9,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from CTFd.cache import clear_user_recent_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
+from CTFd.exceptions.email import UserResetPasswordTokenInvalidException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_app_config, get_config, import_in_progress, markdown
 from CTFd.utils.config import (
@@ -34,6 +35,10 @@ from CTFd.utils.plugins import (
 )
 from CTFd.utils.security.auth import login_user, logout_user, lookup_user_token
 from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.email import (
+    generate_password_reset_token,
+    verify_reset_password_token,
+)
 from CTFd.utils.user import (
     authed,
     get_current_team_attrs,
@@ -289,6 +294,32 @@ def init_request_processors(app):
                     ),
                     403,
                 )
+
+    @app.before_request
+    def change_password():
+        if request.endpoint in ("views.themes", "auth.logout", "auth.reset_password"):
+            return
+
+        if authed():
+            user = get_current_user_attrs()
+
+            if user and user.change_password:
+                reset_token = session.get("reset_password")
+                valid = False
+
+                if reset_token:
+                    try:
+                        verify_reset_password_token(reset_token)
+                        valid = True
+                    except UserResetPasswordTokenInvalidException:
+                        session.pop("reset_password")
+                        valid = False
+
+                if not valid:
+                    reset_token = generate_password_reset_token(user.email)
+                    session["reset_password"] = reset_token
+
+                return redirect(url_for("auth.reset_password", data=reset_token))
 
     @app.before_request
     def tokens():

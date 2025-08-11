@@ -602,3 +602,181 @@ def test_registration_password_minimum_length():
             user_count = Users.query.count()
             assert user_count == 3  # Admin user + 2 new users
     destroy_ctfd(app)
+
+
+def test_user_change_password_required():
+    """
+    Test that users with change_password=True are redirected to reset password
+    and cannot access other pages until they change their password
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Create a user with change_password=True
+        register_user(
+            app, name="testuser", email="test@example.com", password="oldpassword"
+        )
+        user = Users.query.filter_by(name="testuser").first()
+        user.change_password = True
+        db.session.commit()
+
+        with app.test_client() as client:
+            # Login as the user
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "testuser",
+                    "password": "oldpassword",
+                    "nonce": sess.get("nonce"),
+                }
+
+            # Get login page first to get nonce
+            client.get("/login")
+            with client.session_transaction() as sess:
+                data["nonce"] = sess.get("nonce")
+
+            # Login
+            r = client.post("/login", data=data)
+            assert r.status_code == 302
+
+            # Test that user is redirected to reset_password when accessing various pages
+            protected_routes = [
+                "/",
+                "/challenges",
+                "/scoreboard",
+                "/profile",
+                "/settings",
+                "/api/v1/challenges",
+            ]
+
+            for route in protected_routes:
+                r = client.get(route, follow_redirects=False)
+                # Should be redirected to reset_password with a token
+                assert r.status_code == 302
+                assert "/reset_password/" in r.location
+
+            # Test that the user can access the reset_password page directly
+            r = client.get(route, follow_redirects=True)
+            # Should end up on reset_password page
+            final_url = r.request.path
+            assert "/reset_password/" in final_url
+
+            # Get redirected to reset password page with token
+            r = client.get("/challenges", follow_redirects=False)
+            assert r.status_code == 302
+            assert "/reset_password/" in r.location
+
+            # Extract the token from the redirect URL
+            reset_url = r.location
+            token = reset_url.split("/reset_password/")[-1]
+
+            # Access the reset password page with the token
+            r = client.get(f"/reset_password/{token}")
+            assert r.status_code == 200
+
+            # Actually reset the password using the reset password form
+            with client.session_transaction() as sess:
+                reset_data = {"password": "newpassword123", "nonce": sess.get("nonce")}
+
+            # Submit the password reset form
+            r = client.post(f"/reset_password/{token}", data=reset_data)
+            assert r.status_code == 302  # Should redirect after successful reset
+
+            # Verify the password was actually changed and change_password flag was cleared
+            user = Users.query.filter_by(name="testuser").first()
+            assert user.change_password is False
+            assert verify_password("newpassword123", user.password)
+
+            client.get("/login")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "testuser",
+                    "password": "newpassword123",
+                    "nonce": sess.get("nonce"),
+                }
+
+            r = client.post("/login", data=data)
+            assert r.status_code == 302
+
+            # Now user should be able to access protected routes normally
+            r = client.get("/challenges")
+            assert r.status_code == 200
+            assert r.location is None  # No redirect
+
+            r = client.get("/profile")
+            assert r.status_code == 200
+            assert r.location is None  # No redirect
+
+    destroy_ctfd(app)
+
+
+def test_admin_can_set_change_password_via_api():
+    """
+    Test that admins can set the change_password attribute via the API
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Login as admin
+        client = login_as_user(app, name="admin", password="password")
+
+        # Create a user via API with change_password=True
+        r = client.post(
+            "/api/v1/users",
+            json={
+                "name": "apiuser",
+                "email": "apiuser@example.com",
+                "password": "password123",
+                "change_password": True,
+            },
+        )
+        assert r.status_code == 200
+
+        # Verify the user was created with change_password=True
+        response_data = r.get_json()
+        assert response_data["success"] is True
+        user_id = response_data["data"]["id"]
+
+        user = Users.query.filter_by(id=user_id).first()
+        assert user is not None
+        assert user.change_password is True
+
+        # Update user via API to set change_password=False
+        r = client.patch(f"/api/v1/users/{user_id}", json={"change_password": False})
+        assert r.status_code == 200
+
+        # Verify the change_password was updated
+        user = Users.query.filter_by(id=user_id).first()
+        assert user.change_password is False
+
+        # Test that non-admin users cannot set change_password via API
+        register_user(app, name="normaluser", email="normal@example.com")
+        normal_client = login_as_user(app, name="normaluser", password="password")
+
+        # Try to modify change_password on their own account (should fail)
+        normal_user = Users.query.filter_by(name="normaluser").first()
+        r = normal_client.patch(
+            f"/api/v1/users/{normal_user.id}",
+            json={
+                "change_password": True,
+            },
+        )
+        # Normal users shouldn't be able to modify change_password field
+        assert r.status_code == 403  # Forbidden
+
+        # Verify that change_password was not modified
+        normal_user = Users.query.filter_by(name="normaluser").first()
+        assert normal_user.change_password is False
+
+        # Also test via the /me endpoint
+        r = normal_client.patch(
+            "/api/v1/users/me",
+            json={
+                "change_password": True,
+            },
+        )
+        # Request goes through but doesn't actually modify the attribute
+        assert r.status_code == 200
+
+        # Verify that change_password was still not modified
+        normal_user = Users.query.filter_by(name="normaluser").first()
+        assert normal_user.change_password is False
+
+    destroy_ctfd(app)
