@@ -83,7 +83,7 @@ def test_page_requiring_auth():
         with app.test_client() as client:
             r = client.get("/this-is-a-route")
             assert r.status_code == 302
-            assert r.location == "http://localhost/login?next=%2Fthis-is-a-route%3F"
+            assert r.location == "/login?next=%2Fthis-is-a-route%3F"
 
         register_user(app)
         client = login_as_user(app)
