@@ -166,7 +166,7 @@ six==1.16.0
     #   -r requirements.in
     #   flask-marshmallow
     #   python-dateutil
-sqlalchemy==1.4.48
+sqlalchemy==1.4.54
     # via
     #   -r requirements.in
     #   alembic

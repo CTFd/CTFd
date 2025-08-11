@@ -5,7 +5,7 @@ Flask-SQLAlchemy==2.5.1
 Flask-Caching==2.3.1
 Flask-Migrate==2.5.3
 Flask-Script==2.0.6
-SQLAlchemy==1.4.48
+SQLAlchemy==1.4.54
 SQLAlchemy-Utils==0.41.1
 passlib==1.7.4
 bcrypt==4.0.1
@@ -32,5 +32,5 @@ freezegun==1.5.5
 Flask-Babel==2.0.0
 Pillow==11.3.0
 cffi==1.17.1
-six==1.16.0
+six==1.17.0
 urllib3==2.5.0
