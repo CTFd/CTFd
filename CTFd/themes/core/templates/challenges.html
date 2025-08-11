@@ -15,12 +15,15 @@
 </div>
 
 <div class="container">
+    {% block challenges_header %}
 	<div class="row">
 		<div class="col-md-12">
 			{% include "components/errors.html" %}
 		</div>
 	</div>
+    {% endblock challenges_header %}
 
+    {% block challenge_content %}
 	<div id='challenges-board'>
 		<div class="min-vh-50 d-flex align-items-center">
 			<div class="text-center w-100">
@@ -28,6 +31,10 @@
 			</div>
 		</div>
 	</div>
+    {% endblock challenge_content %}
+
+    {% block challenge_footer %}
+    {% endblock challenge_footer %}
 </div>
 {% endblock %}
 
