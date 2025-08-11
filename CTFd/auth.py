@@ -110,7 +110,7 @@ def confirm(data=None):
 @auth.route("/reset_password/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def reset_password(data=None):
-    if config.can_send_mail() is False:
+    if config.can_send_mail() is False and data is None:
         return render_template(
             "reset_password.html",
             errors=[
@@ -161,6 +161,7 @@ def reset_password(data=None):
                 )
 
             user.password = password
+            user.change_password = False
             db.session.commit()
             remove_reset_password_token(data)
             clear_user_session(user_id=user.id)

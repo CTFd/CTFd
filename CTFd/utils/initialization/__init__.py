@@ -9,7 +9,7 @@ from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from CTFd.cache import clear_user_recent_ips
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
-from CTFd.exceptions.email import UserConfirmTokenInvalidException
+from CTFd.exceptions.email import UserResetPasswordTokenInvalidException
 from CTFd.models import Tracking, db
 from CTFd.utils import config, get_app_config, get_config, import_in_progress, markdown
 from CTFd.utils.config import (
@@ -311,7 +311,7 @@ def init_request_processors(app):
                     try:
                         verify_reset_password_token(reset_token)
                         valid = True
-                    except UserConfirmTokenInvalidException:
+                    except UserResetPasswordTokenInvalidException:
                         session.pop("reset_password")
                         valid = False
 
