@@ -161,7 +161,7 @@ rpds-py==0.27.0
     #   referencing
 s3transfer==0.10.4
     # via boto3
-six==1.16.0
+six==1.17.0
     # via
     #   -r requirements.in
     #   flask-marshmallow
