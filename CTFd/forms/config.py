@@ -12,6 +12,7 @@ from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.csv import get_dumpable_tables
+from CTFd.utils.social import BASE_TEMPLATE
 
 
 class ResetInstanceForm(BaseForm):
@@ -119,6 +120,11 @@ class SocialSettingsForm(BaseForm):
         description="Enable or Disable social sharing links for challenge solves",
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="true",
+    )
+    social_share_solve_template = TextAreaField(
+        "Social Share Solve Template",
+        description="HTML for Share Template",
+        default=BASE_TEMPLATE,
     )
     submit = SubmitField("Update")
 
