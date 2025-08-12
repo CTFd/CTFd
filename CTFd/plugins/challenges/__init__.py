@@ -144,10 +144,7 @@ class BaseChallenge(object):
         elif challenge.logic == "team":
             return challenge_attempt_team(submission, challenge, flags)
         else:
-            return ChallengeResponse(
-                status="incorrect",
-                message="Challenge logic is not defined",
-            )
+            return challenge_attempt_any(submission, challenge, flags)
 
     @classmethod
     def partial(cls, user, team, challenge, request):
