@@ -310,7 +310,7 @@ def test_challenges_with_max_attempts_timeout_behavior():
             assert r.status_code == 403
             resp = r.get_json()["data"]
             assert resp.get("status") == "ratelimited"
-            assert "Not accepted. Try again in 5 minutes" in resp.get("message")
+            assert "Not accepted. Try again in 1 minutes" in resp.get("message")
 
         # Use freeze_time to advance time by 301 seconds
         with freeze_time(timedelta(seconds=301)):
