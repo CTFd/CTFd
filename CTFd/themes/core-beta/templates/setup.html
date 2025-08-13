@@ -348,17 +348,15 @@
 					</div>
 					<div class="tab-pane fade" id="integrations" role="tabpanel">
 						<div class="mb-3">
-							<h4>MajorLeagueCyber Integration</h4>
-							<p>
-							MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.
-							Set up MLC integration to:
-							<ul>
-								<li>display your event on the MLC website and mailing list</li>
-								<li>share and track participant statistics</li>
-								<li>provide live updates in team Slack or Discord groups</li>
-								<li>archive challenges, team participation &amp; more</li>
-							</ul>
-							</p>
+							<b>{{ form.social_shares.label }}</b>
+							{{ form.social_shares(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.social_shares.description }}
+							</small>
+						</div>
+						<div class="mb-3">
+							<b>MajorLeagueCyber Integration</b>
+							<p>MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.</p>
 							<button type="button" id="integration-mlc" class="btn btn-primary btn-block" @click="mlcSetup()">
 								Setup
 							</button>
