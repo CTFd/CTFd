@@ -662,7 +662,21 @@ class ChallengeAttempt(Resource):
                         seconds=max_attempts_timeout
                     )
                     fails = fails_query.filter(Fails.date >= timeout_delta).count()
+                    # Calculate actual time remaining for the most recent fail
                     response = f"Not accepted. Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
+                    if fails > 0:
+                        most_recent_fail = (
+                            fails_query.filter(Fails.date >= timeout_delta)
+                            .order_by(Fails.date.asc())
+                            .first()
+                        )
+                        if most_recent_fail:
+                            time_since_fail = (
+                                datetime.utcnow() - most_recent_fail.date
+                            ).total_seconds()
+                            remaining_seconds = max_attempts_timeout - time_since_fail
+                            remaining_minutes = math.ceil(remaining_seconds / 60)
+                            response = f"Not accepted. Try again in {remaining_minutes} minutes"
                 else:  # Use lockout behavior
                     fails = fails_query.count()
                     response = "Not accepted. You have 0 tries remaining"
@@ -766,7 +780,30 @@ class ChallengeAttempt(Resource):
                             max_attempts_timeout = int(
                                 get_config("max_attempts_timeout", 300)
                             )
-                            message += f" Try again in {math.ceil(max_attempts_timeout / 60)} minutes."
+                            # Calculate actual time remaining based on the most recent fail
+                            timeout_delta = datetime.utcnow() - timedelta(
+                                seconds=max_attempts_timeout
+                            )
+                            most_recent_fail = (
+                                Fails.query.filter_by(
+                                    account_id=user.account_id,
+                                    challenge_id=challenge_id,
+                                )
+                                .filter(Fails.date >= timeout_delta)
+                                .order_by(Fails.date.asc())
+                                .first()
+                            )
+                            if most_recent_fail:
+                                time_since_fail = (
+                                    datetime.utcnow() - most_recent_fail.date
+                                ).total_seconds()
+                                remaining_seconds = (
+                                    max_attempts_timeout - time_since_fail
+                                )
+                                remaining_minutes = math.ceil(remaining_seconds / 60)
+                                message += f" Try again in {remaining_minutes} minutes"
+                            else:
+                                message += f" Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
                     return {
                         "success": True,
                         "data": {
