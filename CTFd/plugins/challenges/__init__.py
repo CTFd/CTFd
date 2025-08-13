@@ -28,6 +28,11 @@ class ChallengeResponse:
     status: str
     message: str
 
+    def __iter__(self):
+        """Allow tuple-like unpacking for backwards compatibility."""
+        yield (True if self.status == "correct" else False)
+        yield self.message
+
 
 class BaseChallenge(object):
     id = None
