@@ -30,6 +30,7 @@ class ChallengeResponse:
 
     def __iter__(self):
         """Allow tuple-like unpacking for backwards compatibility."""
+        # TODO: CTFd 4.0 remove this behavior as we should move away from the tuple strategy
         yield (True if self.status == "correct" else False)
         yield self.message
 
