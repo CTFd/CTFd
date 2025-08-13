@@ -109,6 +109,7 @@ def setup():
                 )
             )
             verify_emails = request.form.get("verify_emails")
+            social_shares = request.form.get("social_shares")
             team_size = request.form.get("team_size")
 
             # Style
@@ -232,6 +233,9 @@ def setup():
 
             # Verify emails
             set_config("verify_emails", verify_emails)
+
+            # Social shares
+            set_config("social_shares", social_shares)
 
             # Team Size
             set_config("team_size", team_size)
