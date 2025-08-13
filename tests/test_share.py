@@ -20,6 +20,9 @@ def test_share_endpoints():
         register_user(app)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
 
+        # social_shares are enabled by default now
+        set_config("social_shares", False)
+
         # Test disabled shares dont work
         with login_as_user(app) as client:
             r = client.post(
