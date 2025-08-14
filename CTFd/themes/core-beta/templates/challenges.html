@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
   <div class="jumbotron">
     <div class="container">
@@ -8,14 +7,49 @@
       </h1>
     </div>
   </div>
-
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         {% include "components/errors.html" %}
       </div>
     </div>
-
+    
+    <!-- Challenge Filters -->
+    <div class="card mb-4" style="border-left: 4px solid #007bff;">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-filter"></i> Challenge Filters</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3">
+            <label>Status:</label>
+            <select class="form-control" id="status-filter">
+              <option value="all">All Challenges</option>
+              <option value="solved">Solved Only</option>
+              <option value="unsolved">Unsolved Only</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label>Category:</label>
+            <select class="form-control" id="category-filter">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label>Search:</label>
+            <input type="text" class="form-control" id="search-filter" placeholder="Search challenges...">
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <small class="text-muted">
+              <span id="filter-stats">Loading challenges...</span>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div 
       x-data="ChallengeBoard" 
       @load-challenges.window="loadChallenges()" 
@@ -25,7 +59,6 @@
           x-ref="challengeWindow" id="challenge-window" class="modal fade" tabindex="-1" role="dialog" x-data=""
           x-html="$store.challenge.data.view"
       ></div>
-
       <div x-show="!loaded">
         <div class="min-vh-50 d-flex align-items-center">
           <div class="text-center w-100">
@@ -33,18 +66,18 @@
           </div>
         </div>
       </div>
-
       <div x-show="loaded">
         <template x-for="(category, idx) in getCategories()" :key="idx">
-          <div class="pt-5">
+          <div class="pt-5 challenge-category">
             <div class="category-header mb-3">
               <h3 x-text="category"></h3>
             </div>
-
             <div class="category-challenges d-flex flex-column">
               <div class="challenges-row row">
                 <template x-for="(c, idx) in getChallenges(category)" :key="c.id">
-                  <div class="col-sm-6 col-md-4 col-lg-3 my-3">
+                  <div class="col-sm-6 col-md-4 col-lg-3 my-3 challenge-item" 
+                       :data-solved="c.solved_by_me"
+                       :data-name="c.name.toLowerCase()">
                     <button
                         class="challenge-button btn btn-dark w-100 h-100"
                         :class="[
@@ -53,7 +86,6 @@
                         ];"
                         :value="c.id" @click="loadChallenge(c.id)"
                     >
-
                       <div class="challenge-inner my-3">
                         <p x-text="c.name"></p>
                         <span x-text="c.value"></span>
@@ -68,8 +100,113 @@
       </div>
     </div>
   </div>
-{% endblock %}
 
+<script>
+document.addEventListener('alpine:init', () => {
+  
+  // Wait for challenges to load, then setup filtering
+  let filterSetup = false;
+  function setupFiltering() {
+    if (filterSetup) return;
+    
+    const challengeItems = document.querySelectorAll('.challenge-item');
+    if (challengeItems.length === 0) {
+      setTimeout(setupFiltering, 500);
+      return;
+    }
+    
+    filterSetup = true;
+    
+    // Get categories from section headers
+    const categories = [...new Set(Array.from(document.querySelectorAll('.challenge-category h3')).map(h3 => {
+      const text = h3.textContent.trim();
+      const match = text.match(/\[([^\]]+)\]/);
+      return match ? match[1] : text;
+    }))].sort();
+        
+    // Populate category filter
+    const categorySelect = document.getElementById('category-filter');
+    categories.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat;
+      option.textContent = cat;
+      categorySelect.appendChild(option);
+    });
+    
+    // Filter function
+    function applyFilters() {
+      const status = document.getElementById('status-filter').value;
+      const category = document.getElementById('category-filter').value;
+      const search = document.getElementById('search-filter').value.toLowerCase();
+      
+      let visibleCount = 0;
+      let totalCount = 0;
+      
+      // Hide/show categories
+      document.querySelectorAll('.challenge-category').forEach(categoryDiv => {
+        let categoryHasVisible = false;
+        
+        // Get category from this section's header
+        const headerText = categoryDiv.querySelector('h3').textContent.trim();
+        const match = headerText.match(/\[([^\]]+)\]/);
+        const sectionCategory = match ? match[1] : headerText;
+        
+        // Hide/show entire category section based on category filter
+        if (category !== 'all' && sectionCategory !== category) {
+          categoryDiv.style.display = 'none';
+          return;
+        }
+        
+        categoryDiv.querySelectorAll('.challenge-item').forEach(item => {
+          totalCount++;
+          let show = true;
+          
+          const nameElement = item.querySelector('p');
+          const challengeName = nameElement ? nameElement.textContent : '';
+          const itemSolved = item.getAttribute('data-solved') === 'true';
+          const itemName = challengeName.toLowerCase();
+          
+          // Apply filters
+          if (status === 'solved' && !itemSolved) show = false;
+          if (status === 'unsolved' && itemSolved) show = false;
+          if (search && !itemName.includes(search)) show = false;
+          
+          if (show) {
+            item.style.display = '';
+            visibleCount++;
+            categoryHasVisible = true;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+        
+        // Show/hide category section
+        categoryDiv.style.display = categoryHasVisible ? '' : 'none';
+      });
+      
+      document.getElementById('filter-stats').textContent = 
+        `Showing ${visibleCount} of ${totalCount} challenges`;
+    }
+    
+    // Attach event listeners
+    document.getElementById('status-filter').addEventListener('change', applyFilters);
+    document.getElementById('category-filter').addEventListener('change', applyFilters);
+    document.getElementById('search-filter').addEventListener('input', applyFilters);
+    
+    // Initial application
+    applyFilters();
+    }
+  
+  // Setup filters when page loads
+  setTimeout(setupFiltering, 2000);
+  
+  // Also try when Alpine finishes loading
+  document.addEventListener('alpine:initialized', () => {
+    setTimeout(setupFiltering, 1000);
+  });
+});
+</script>
+{% endblock %}
 {% block scripts %}
   {{ Assets.js("assets/js/challenges.js") }}
 {% endblock %}
