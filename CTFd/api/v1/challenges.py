@@ -9,7 +9,7 @@ from sqlalchemy.sql import and_
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
-from CTFd.cache import clear_challenges, clear_standings
+from CTFd.cache import clear_challenges, clear_ratings, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.exceptions.challenges import (
     ChallengeCreateException,
@@ -18,7 +18,17 @@ from CTFd.exceptions.challenges import (
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import Challenges
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
-from CTFd.models import Fails, Flags, Hints, HintUnlocks, Solves, Submissions, Tags, db
+from CTFd.models import (
+    Fails,
+    Flags,
+    Hints,
+    HintUnlocks,
+    Ratings,
+    Solves,
+    Submissions,
+    Tags,
+    db,
+)
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
@@ -28,6 +38,7 @@ from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.challenges import (
     get_all_challenges,
+    get_rating_for_challenge_id,
     get_solve_counts_for_challenges,
     get_solve_ids_for_user_id,
     get_solves_for_challenge_id,
@@ -456,6 +467,13 @@ class Challenge(Resource):
         response["tags"] = tags
         response["hints"] = hints
 
+        # Get rating information for this challenge
+        rating_info = get_rating_for_challenge_id(challenge_id)
+        response["ratings"] = {
+            "average": rating_info.average,
+            "count": rating_info.count,
+        }
+
         solution_id = None
         if chal.solution_id and chal.solution.state == "visible":
             solution_id = chal.solution.id
@@ -468,6 +486,7 @@ class Challenge(Resource):
             files=files,
             tags=tags,
             hints=[Hints(**h) for h in hints],
+            ratings=rating_info,
             max_attempts=chal.max_attempts,
             attempts=attempts,
             challenge=chal,
@@ -964,3 +983,108 @@ class ChallengeRequirements(Resource):
     def get(self, challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         return {"success": True, "data": challenge.requirements}
+
+
+@challenges_namespace.route("/<challenge_id>/ratings")
+class ChallengeRatings(Resource):
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @require_verified_emails
+    def get(self, challenge_id):
+        """Get the average rating for a challenge"""
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        # Check if challenge is visible to the user (if authenticated)
+        if challenge.state == "hidden" and not is_admin():
+            abort(404)
+
+        # Use cached utility function to get rating statistics
+        rating_info = get_rating_for_challenge_id(challenge_id)
+
+        return {
+            "success": True,
+            "data": {
+                "average": rating_info.average,
+                "count": rating_info.count,
+            },
+        }
+
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @require_verified_emails
+    def put(self, challenge_id):
+        """Create or update a rating for a challenge"""
+        if not authed():
+            return {"success": False, "errors": {"": ["Authentication required"]}}, 403
+
+        user = get_current_user()
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        # Check if challenge is visible to the user
+        if challenge.state == "hidden" and not is_admin():
+            abort(404)
+
+        # Check if user/team has solved this challenge (only allow rating if solved)
+        if not is_admin():
+            user_solves = get_solve_ids_for_user_id(user_id=user.id)
+            if challenge_id not in user_solves:
+                return {
+                    "success": False,
+                    "errors": {"": ["You must solve this challenge before rating it"]},
+                }, 403
+
+        data = request.get_json()
+        if not data or "value" not in data:
+            return {
+                "success": False,
+                "errors": {"value": ["Rating value is required"]},
+            }, 400
+
+        try:
+            rating_value = int(data["value"])
+        except (ValueError, TypeError):
+            return {
+                "success": False,
+                "errors": {"value": ["Rating value must be an integer"]},
+            }, 400
+
+        # Validate rating value (1-5 scale)
+        if rating_value < 1 or rating_value > 5:
+            return {
+                "success": False,
+                "errors": {"value": ["Rating value must be between 1 and 5"]},
+            }, 400
+
+        # Find existing rating or create new one
+        rating = Ratings.query.filter_by(
+            user_id=user.id, challenge_id=challenge_id
+        ).first()
+
+        if rating:
+            # Update existing rating
+            rating.value = rating_value
+            rating.date = datetime.utcnow()
+            action = "updated"
+        else:
+            # Create new rating
+            rating = Ratings(
+                user_id=user.id, challenge_id=challenge_id, value=rating_value
+            )
+            db.session.add(rating)
+            action = "created"
+
+        db.session.commit()
+
+        # Clear cached rating data since we just created/updated a rating
+        clear_ratings()
+
+        return {
+            "success": True,
+            "data": {
+                "id": rating.id,
+                "challenge_id": rating.challenge_id,
+                "value": rating.value,
+                "date": rating.date.isoformat(),
+                "action": action,
+            },
+        }
