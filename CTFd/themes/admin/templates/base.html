@@ -19,7 +19,7 @@
 			'userId': {{ Session.id }},
 			'userName': {{ User.name | tojson }},
 			'userEmail': {{ User.email | tojson }},
-			'teamId': {{ Team.id | tojson }}, 
+			'teamId': {{ Team.id | tojson }},
 			'teamName': {{ Team.name | tojson }},
 			'start': {{ Configs.start | tojson }},
 			'end': {{ Configs.end | tojson }}
@@ -49,6 +49,7 @@
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.statistics') }}">Statistics</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.notifications') }}">Notifications</a>
+					<li class="nav-item"><a class="nav-link" href="{{ url_for('admin.emails') }}">Emails</a></li>
 					</li>
 					<li class="nav-item dropdown">
 						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Pages</a>
