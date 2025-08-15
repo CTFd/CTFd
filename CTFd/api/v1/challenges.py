@@ -480,7 +480,7 @@ class Challenge(Resource):
             response["rating"] = None
 
         # If ratings are public then we show the aggregated ratings
-        if get_config("challenge_ratings", default="public"):
+        if get_config("challenge_ratings", default="public") == "public":
             # Get rating information for this challenge
             rating_info = get_rating_for_challenge_id(challenge_id)
             response["ratings"] = {
@@ -488,6 +488,7 @@ class Challenge(Resource):
                 "count": rating_info.count,
             }
         else:
+            rating_info = None
             response["ratings"] = None
 
         solution_id = None
@@ -1057,7 +1058,7 @@ class ChallengeRatings(Resource):
         # Check if user/team has solved this challenge (only allow rating if solved)
         if not is_admin():
             user_solves = get_solve_ids_for_user_id(user_id=user.id)
-            if challenge_id not in user_solves:
+            if int(challenge_id) not in user_solves:
                 return {
                     "success": False,
                     "errors": {"": ["You must solve this challenge before rating it"]},
