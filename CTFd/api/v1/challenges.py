@@ -457,8 +457,14 @@ class Challenge(Resource):
                     Submissions.date >= timeout_delta
                 )
             attempts = attempts_query.count()
+            rating = Ratings.query.filter_by(
+                user_id=user.id, challenge_id=challenge_id
+            ).first()
+            if rating:
+                rating = rating.value
         else:
             attempts = 0
+            rating = None
 
         response["solves"] = solve_count
         response["solved_by_me"] = solved_by_user
@@ -467,12 +473,22 @@ class Challenge(Resource):
         response["tags"] = tags
         response["hints"] = hints
 
-        # Get rating information for this challenge
-        rating_info = get_rating_for_challenge_id(challenge_id)
-        response["ratings"] = {
-            "average": rating_info.average,
-            "count": rating_info.count,
-        }
+        # If we didn't disable ratings then we should allow the user to see their own challenge rating
+        if get_config("challenge_ratings", default="public") != "disabled":
+            response["rating"] = rating
+        else:
+            response["rating"] = None
+
+        # If ratings are public then we show the aggregated ratings
+        if get_config("challenge_ratings", default="public"):
+            # Get rating information for this challenge
+            rating_info = get_rating_for_challenge_id(challenge_id)
+            response["ratings"] = {
+                "average": rating_info.average,
+                "count": rating_info.count,
+            }
+        else:
+            response["ratings"] = None
 
         solution_id = None
         if chal.solution_id and chal.solution.state == "visible":
@@ -486,6 +502,7 @@ class Challenge(Resource):
             files=files,
             tags=tags,
             hints=[Hints(**h) for h in hints],
+            rating=rating,
             ratings=rating_info,
             max_attempts=chal.max_attempts,
             attempts=attempts,
@@ -992,6 +1009,14 @@ class ChallengeRatings(Resource):
     @require_verified_emails
     def get(self, challenge_id):
         """Get the average rating for a challenge"""
+
+        # If challenge ratings are not public then we should not display aggregated ratings
+        if get_config("challenge_ratings", default="public") != "public":
+            if is_admin():
+                pass
+            else:
+                abort(403)
+
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
         # Check if challenge is visible to the user (if authenticated)
@@ -1014,6 +1039,11 @@ class ChallengeRatings(Resource):
     @require_verified_emails
     def put(self, challenge_id):
         """Create or update a rating for a challenge"""
+        # If challenge ratings are disabled we should not receive any ratings information
+        # If they are public or private we still want to collect the data
+        if get_config("challenge_ratings") == "disabled":
+            abort(403)
+
         if not authed():
             return {"success": False, "errors": {"": ["Authentication required"]}}, 403
 

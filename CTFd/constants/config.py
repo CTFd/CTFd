@@ -100,5 +100,9 @@ class _ConfigsWrapper:
     def social_shares(self):
         return get_config("social_shares", default=True)
 
+    @property
+    def challenge_ratings(self):
+        return get_config("challenge_ratings", default="public")
+
 
 Configs = _ConfigsWrapper()
