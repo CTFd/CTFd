@@ -21,7 +21,7 @@
       </div>
       <div class="card-body">
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label>Status:</label>
             <select class="form-control" id="status-filter">
               <option value="all">All Challenges</option>
@@ -29,15 +29,20 @@
               <option value="unsolved">Unsolved Only</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label>Category:</label>
             <select class="form-control" id="category-filter">
               <option value="all">All Categories</option>
             </select>
           </div>
-          <div class="col-md-6">
-            <label>Search:</label>
-            <input type="text" class="form-control" id="search-filter" placeholder="Search challenges...">
+          <div class="col-md-4">
+            <label>Difficulty:</label>
+            <select class="form-control" id="difficulty-filter">
+              <option value="all">All Difficulties</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
           </div>
         </div>
         <div class="row mt-2">
@@ -77,7 +82,8 @@
                 <template x-for="(c, idx) in getChallenges(category)" :key="c.id">
                   <div class="col-sm-6 col-md-4 col-lg-3 my-3 challenge-item" 
                        :data-solved="c.solved_by_me"
-                       :data-name="c.name.toLowerCase()">
+                       :data-name="c.name.toLowerCase()"
+                       :data-difficulty="getDifficultyFromTags(c.tags)">
                     <button
                         class="challenge-button btn btn-dark w-100 h-100"
                         :class="[
@@ -104,7 +110,19 @@
 <script>
 document.addEventListener('alpine:init', () => {
   
-  // Wait for challenges to load, then setup filtering
+  window.getDifficultyFromTags = function(tags) {
+    if (!tags || !Array.isArray(tags)) return '';
+    
+    for (let tag of tags) {
+      const tagValue = tag.value || tag;
+      if (typeof tagValue === 'string' && tagValue.toLowerCase().includes('lab difficulty:')) {
+        const difficulty = tagValue.toLowerCase().replace('lab difficulty:', '').trim();
+        return difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+      }
+    }
+    return '';
+  };
+  
   let filterSetup = false;
   function setupFiltering() {
     if (filterSetup) return;
@@ -116,15 +134,13 @@ document.addEventListener('alpine:init', () => {
     }
     
     filterSetup = true;
-    
-    // Get categories from section headers
+      
     const categories = [...new Set(Array.from(document.querySelectorAll('.challenge-category h3')).map(h3 => {
       const text = h3.textContent.trim();
       const match = text.match(/\[([^\]]+)\]/);
       return match ? match[1] : text;
     }))].sort();
         
-    // Populate category filter
     const categorySelect = document.getElementById('category-filter');
     categories.forEach(cat => {
       const option = document.createElement('option');
@@ -133,25 +149,21 @@ document.addEventListener('alpine:init', () => {
       categorySelect.appendChild(option);
     });
     
-    // Filter function
     function applyFilters() {
       const status = document.getElementById('status-filter').value;
       const category = document.getElementById('category-filter').value;
-      const search = document.getElementById('search-filter').value.toLowerCase();
+      const difficulty = document.getElementById('difficulty-filter').value;
       
       let visibleCount = 0;
       let totalCount = 0;
       
-      // Hide/show categories
       document.querySelectorAll('.challenge-category').forEach(categoryDiv => {
         let categoryHasVisible = false;
         
-        // Get category from this section's header
         const headerText = categoryDiv.querySelector('h3').textContent.trim();
         const match = headerText.match(/\[([^\]]+)\]/);
         const sectionCategory = match ? match[1] : headerText;
         
-        // Hide/show entire category section based on category filter
         if (category !== 'all' && sectionCategory !== category) {
           categoryDiv.style.display = 'none';
           return;
@@ -165,11 +177,11 @@ document.addEventListener('alpine:init', () => {
           const challengeName = nameElement ? nameElement.textContent : '';
           const itemSolved = item.getAttribute('data-solved') === 'true';
           const itemName = challengeName.toLowerCase();
+          const itemDifficulty = item.getAttribute('data-difficulty') || '';
           
-          // Apply filters
           if (status === 'solved' && !itemSolved) show = false;
           if (status === 'unsolved' && itemSolved) show = false;
-          if (search && !itemName.includes(search)) show = false;
+          if (difficulty !== 'all' && itemDifficulty !== difficulty) show = false;
           
           if (show) {
             item.style.display = '';
@@ -180,7 +192,6 @@ document.addEventListener('alpine:init', () => {
           }
         });
         
-        // Show/hide category section
         categoryDiv.style.display = categoryHasVisible ? '' : 'none';
       });
       
@@ -188,19 +199,15 @@ document.addEventListener('alpine:init', () => {
         `Showing ${visibleCount} of ${totalCount} challenges`;
     }
     
-    // Attach event listeners
     document.getElementById('status-filter').addEventListener('change', applyFilters);
     document.getElementById('category-filter').addEventListener('change', applyFilters);
-    document.getElementById('search-filter').addEventListener('input', applyFilters);
+    document.getElementById('difficulty-filter').addEventListener('change', applyFilters);
     
-    // Initial application
     applyFilters();
     }
   
-  // Setup filters when page loads
   setTimeout(setupFiltering, 2000);
   
-  // Also try when Alpine finishes loading
   document.addEventListener('alpine:initialized', () => {
     setTimeout(setupFiltering, 1000);
   });
