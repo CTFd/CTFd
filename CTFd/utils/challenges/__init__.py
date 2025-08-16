@@ -149,7 +149,7 @@ def get_solve_counts_for_challenges(challenge_id=None, admin=False):
 
 
 @cache.memoize(timeout=60)
-def get_rating_for_challenge_id(challenge_id):
+def get_rating_average_for_challenge_id(challenge_id):
     ratings = Ratings.query.filter_by(challenge_id=challenge_id).all()
 
     if ratings:

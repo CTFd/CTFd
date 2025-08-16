@@ -38,7 +38,7 @@ from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.challenges import (
     get_all_challenges,
-    get_rating_for_challenge_id,
+    get_rating_average_for_challenge_id,
     get_solve_counts_for_challenges,
     get_solve_ids_for_user_id,
     get_solves_for_challenge_id,
@@ -486,7 +486,7 @@ class Challenge(Resource):
         # If ratings are public then we show the aggregated ratings
         if get_config("challenge_ratings", default="public") == "public":
             # Get rating information for this challenge
-            rating_info = get_rating_for_challenge_id(challenge_id)
+            rating_info = get_rating_average_for_challenge_id(challenge_id)
             response["ratings"] = {
                 "average": rating_info.average,
                 "count": rating_info.count,
@@ -1029,7 +1029,7 @@ class ChallengeRatings(Resource):
             abort(404)
 
         # Use cached utility function to get rating statistics
-        rating_info = get_rating_for_challenge_id(challenge_id)
+        rating_info = get_rating_average_for_challenge_id(challenge_id)
 
         return {
             "success": True,

@@ -138,7 +138,7 @@ def clear_standings():
 def clear_challenges():
     from CTFd.utils.challenges import get_all_challenges  # noqa: I001
     from CTFd.utils.challenges import (
-        get_rating_for_challenge_id,
+        get_rating_average_for_challenge_id,
         get_solve_counts_for_challenges,
         get_solve_ids_for_user_id,
         get_solves_for_challenge_id,
@@ -150,13 +150,13 @@ def clear_challenges():
     cache.delete_memoized(get_submissions_for_user_id_for_challenge_id)
     cache.delete_memoized(get_solve_ids_for_user_id)
     cache.delete_memoized(get_solve_counts_for_challenges)
-    cache.delete_memoized(get_rating_for_challenge_id)
+    cache.delete_memoized(get_rating_average_for_challenge_id)
 
 
 def clear_ratings():
-    from CTFd.utils.challenges import get_rating_for_challenge_id
+    from CTFd.utils.challenges import get_rating_average_for_challenge_id
 
-    cache.delete_memoized(get_rating_for_challenge_id)
+    cache.delete_memoized(get_rating_average_for_challenge_id)
 
 
 def clear_pages():
