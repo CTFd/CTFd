@@ -461,7 +461,10 @@ class Challenge(Resource):
                 user_id=user.id, challenge_id=challenge_id
             ).first()
             if rating:
-                rating = rating.value
+                rating = {
+                    "value": rating.value,
+                    "review": rating.review,
+                }
         else:
             attempts = 0
             rating = None
@@ -478,6 +481,7 @@ class Challenge(Resource):
             response["rating"] = rating
         else:
             response["rating"] = None
+            rating = None
 
         # If ratings are public then we show the aggregated ratings
         if get_config("challenge_ratings", default="public") == "public":
@@ -1086,6 +1090,14 @@ class ChallengeRatings(Resource):
                 "errors": {"value": ["Rating value must be between 1 and 5"]},
             }, 400
 
+        # Get review text (optional)
+        review_text = data.get("review", "")
+        if review_text and len(review_text) > 2000:
+            return {
+                "success": False,
+                "errors": {"review": ["Review text cannot exceed 2000 characters"]},
+            }, 400
+
         # Find existing rating or create new one
         rating = Ratings.query.filter_by(
             user_id=user.id, challenge_id=challenge_id
@@ -1094,15 +1106,17 @@ class ChallengeRatings(Resource):
         if rating:
             # Update existing rating
             rating.value = rating_value
+            rating.review = review_text
             rating.date = datetime.utcnow()
-            action = "updated"
         else:
             # Create new rating
             rating = Ratings(
-                user_id=user.id, challenge_id=challenge_id, value=rating_value
+                user_id=user.id,
+                challenge_id=challenge_id,
+                value=rating_value,
+                review=review_text,
             )
             db.session.add(rating)
-            action = "created"
 
         db.session.commit()
 
@@ -1115,7 +1129,7 @@ class ChallengeRatings(Resource):
                 "id": rating.id,
                 "challenge_id": rating.challenge_id,
                 "value": rating.value,
+                "review": rating.review,
                 "date": rating.date.isoformat(),
-                "action": action,
             },
         }

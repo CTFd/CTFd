@@ -1168,6 +1168,7 @@ class Ratings(db.Model):
         db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE")
     )
     value = db.Column(db.Integer)
+    review = db.Column(db.String(2000), nullable=True)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     # Ensure one rating per user per challenge
