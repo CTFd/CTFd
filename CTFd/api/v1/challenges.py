@@ -33,6 +33,7 @@ from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.hints import HintSchema
+from CTFd.schemas.ratings import RatingSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
@@ -1009,34 +1010,48 @@ class ChallengeRequirements(Resource):
 
 @challenges_namespace.route("/<challenge_id>/ratings")
 class ChallengeRatings(Resource):
-    @check_challenge_visibility
-    @during_ctf_time_only
-    @require_verified_emails
+    @admins_only
     def get(self, challenge_id):
-        """Get the average rating for a challenge"""
+        """Get paginated ratings for a challenge"""
+        # Get pagination parameters
+        page = request.args.get("page", 1)
 
-        # If challenge ratings are not public then we should not display aggregated ratings
-        if get_config("challenge_ratings", default="public") != "public":
-            if is_admin():
-                pass
-            else:
-                abort(403)
+        # Get paginated ratings with user information
+        ratings_query = Ratings.query.filter(
+            Ratings.challenge_id == challenge_id
+        ).order_by(Ratings.id.desc())
 
-        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        paginated_ratings = ratings_query.paginate(
+            page=page, max_per_page=50, error_out=False
+        )
 
-        # Check if challenge is visible to the user (if authenticated)
-        if challenge.state == "hidden" and not is_admin():
-            abort(404)
+        # Use schema to serialize the ratings data
+        schema = RatingSchema(view="admin", many=True)
+        ratings_data = schema.dump(paginated_ratings.items)
 
-        # Use cached utility function to get rating statistics
+        if ratings_data.errors:
+            return {"success": False, "errors": ratings_data.errors}, 400
+
+        # Use cached utility function to get rating statistics for meta
         rating_info = get_rating_average_for_challenge_id(challenge_id)
 
         return {
-            "success": True,
-            "data": {
-                "average": rating_info.average,
-                "count": rating_info.count,
+            "meta": {
+                "pagination": {
+                    "page": paginated_ratings.page,
+                    "next": paginated_ratings.next_num,
+                    "prev": paginated_ratings.prev_num,
+                    "pages": paginated_ratings.pages,
+                    "per_page": paginated_ratings.per_page,
+                    "total": paginated_ratings.total,
+                },
+                "summary": {
+                    "average": rating_info.average,
+                    "count": rating_info.count,
+                },
             },
+            "success": True,
+            "data": ratings_data.data,
         }
 
     @check_challenge_visibility

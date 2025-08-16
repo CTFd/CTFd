@@ -1171,6 +1171,8 @@ class Ratings(db.Model):
     review = db.Column(db.String(2000), nullable=True)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
+    user = db.relationship("Users", foreign_keys="Ratings.user_id", lazy="select")
+
     # Ensure one rating per user per challenge
     __table_args__ = (db.UniqueConstraint("user_id", "challenge_id"),)
 
