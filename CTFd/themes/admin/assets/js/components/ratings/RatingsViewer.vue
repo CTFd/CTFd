@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <!-- Loading State -->
         <div v-if="loading" class="text-center">
-          <i class="fa fa-spinner fa-spin"></i> Loading ratings...
+          <i class="fas fa-circle-notch fa-spin spinner"></i> Loading ratings...
         </div>
 
         <!-- Error State -->
@@ -31,25 +31,23 @@
           </div>
           <!-- Rating Summary -->
           <div v-if="meta.summary.count > 0" class="mb-3">
-            <div>
-              <div class="row">
-                <div class="col-md-6 text-center">
-                  <h5>
-                    <strong>
-                      Average Rating:
-                      {{
-                        meta.summary.average
-                          ? meta.summary.average.toFixed(2)
-                          : "N/A"
-                      }}/5
-                    </strong>
-                  </h5>
-                </div>
-                <div class="col-md-6 text-center">
-                  <h5>
-                    <strong> Total Ratings: {{ meta.summary.count }} </strong>
-                  </h5>
-                </div>
+            <div class="row">
+              <div class="col-md-6 text-center">
+                <h5>
+                  <strong>
+                    Average Rating:
+                    {{
+                      meta.summary.average
+                        ? meta.summary.average.toFixed(2)
+                        : "N/A"
+                    }}/5
+                  </strong>
+                </h5>
+              </div>
+              <div class="col-md-6 text-center">
+                <h5>
+                  <strong> Total Ratings: {{ meta.summary.count }} </strong>
+                </h5>
               </div>
             </div>
           </div>
