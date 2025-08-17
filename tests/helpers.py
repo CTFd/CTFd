@@ -480,7 +480,6 @@ def gen_rating(db, user_id, challenge_id, value=5, review="Great challenge!", **
     rating = Ratings(
         user_id=user_id, challenge_id=challenge_id, value=value, review=review, **kwargs
     )
-    rating.date = datetime.datetime.utcnow()
     db.session.add(rating)
     db.session.commit()
     clear_ratings()
