@@ -146,6 +146,7 @@ export default {
           total: 0,
         },
       },
+      urlRoot: CTFd.config.urlRoot,
     };
   },
   created() {
