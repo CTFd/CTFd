@@ -78,6 +78,7 @@ def test_ratings_public_config():
             data["data"]["rating"]["review"]
             == "Great challenge! Really enjoyed solving it."
         )
+        assert len(Ratings.query.all()) == 2
 
     destroy_ctfd(app)
 
@@ -149,6 +150,8 @@ def test_ratings_private_config():
         assert data["meta"]["summary"]["average"] == 4.0  # (3+5)/2
         assert data["meta"]["summary"]["count"] == 2
 
+        assert len(Ratings.query.all()) == 2
+
     destroy_ctfd(app)
 
 
@@ -201,6 +204,8 @@ def test_ratings_disabled_config():
         r = admin_client.get(f"/api/v1/challenges/{challenge_id}/ratings", json=True)
         data = r.get_json()
         assert len(data["data"]) == 0
+
+        assert len(Ratings.query.all()) == 0
 
     destroy_ctfd(app)
 
@@ -369,6 +374,10 @@ def test_rating_update():
         assert data["data"]["review"] == "Updated review after thinking more about it"
         assert data["data"]["id"] == initial_id  # Same rating record, just updated
         assert len(Ratings.query.all()) == 1
+
+        r = Ratings.query.get(1)
+        assert r.value == 5
+        assert r.review == "Updated review after thinking more about it"
 
         # Verify only one rating exists in database
         ratings = Ratings.query.filter_by(user_id=user_id, challenge_id=chal_id).all()
