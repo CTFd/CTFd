@@ -180,7 +180,7 @@ class ChallengeSettingsForm(BaseForm):
             ("public", "Public (users can submit ratings and see aggregated ratings)"),
             (
                 "private",
-                "Private (users can submit ratings but not see aggregated ratings)",
+                "Private (users can submit ratings but cannot see aggregated ratings)",
             ),
             (
                 "disabled",
