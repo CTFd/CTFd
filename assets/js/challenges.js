@@ -74,6 +74,11 @@ Alpine.data("Challenge", () => ({
   share_url: null,
   max_attempts: 0,
   attempts: 0,
+  ratingValue: 0,
+  hoveredRating: 0,
+  selectedRating: 0,
+  ratingReview: "",
+  ratingSubmitted: false,
 
   async init() {
     highlight();
@@ -220,6 +225,20 @@ Alpine.data("Challenge", () => ({
 
     // Dispatch load-challenges event to call loadChallenges in the ChallengeBoard
     this.$dispatch("load-challenges");
+  },
+
+  async submitRating() {
+    const response = await CTFd.pages.challenge.submitRating(
+      this.id,
+      this.selectedRating,
+      this.ratingReview,
+    );
+    if (response.value) {
+      this.ratingValue = this.selectedRating;
+      this.ratingSubmitted = true;
+    } else {
+      alert("Error submitting rating");
+    }
   },
 }));
 
