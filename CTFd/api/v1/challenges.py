@@ -1014,7 +1014,7 @@ class ChallengeRatings(Resource):
     def get(self, challenge_id):
         """Get paginated ratings for a challenge"""
         # Get pagination parameters
-        page = request.args.get("page", 1)
+        page = int(request.args.get("page", 1))
 
         # Get paginated ratings with user information
         ratings_query = Ratings.query.filter(

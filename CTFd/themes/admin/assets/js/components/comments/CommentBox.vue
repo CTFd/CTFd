@@ -52,34 +52,33 @@
       </div>
     </div>
     <div class="comments">
-      <transition-group name="comment-card">
+      <transition-group name="comment-item">
         <div
-          class="comment-card card mb-2"
+          class="comment-item border rounded p-3 mb-2"
           v-for="comment in comments"
           :key="comment.id"
         >
-          <div class="card-body pl-0 pb-0 pt-2 pr-2">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div></div>
             <button
               type="button"
-              class="close float-right"
+              class="close"
               aria-label="Close"
               @click="deleteComment(comment.id)"
             >
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="card-body">
-            <div class="card-text" v-html="comment.html"></div>
-            <small class="text-muted float-left">
-              <span>
+          <div class="comment-content">
+            <div class="mb-2" v-html="comment.html"></div>
+            <div class="d-flex justify-content-between">
+              <small class="text-muted">
                 <a :href="`${urlRoot}/admin/users/${comment.author_id}`">{{
                   comment.author.name
                 }}</a>
-              </span>
-            </small>
-            <small class="text-muted float-right">
-              <span class="float-right">{{ toLocalTime(comment.date) }}</span>
-            </small>
+              </small>
+              <small class="text-muted">{{ toLocalTime(comment.date) }}</small>
+            </div>
           </div>
         </div>
       </transition-group>
@@ -213,29 +212,14 @@ export default {
 </script>
 
 <style scoped>
-.card .close {
+.comment-item .close {
   opacity: 0;
   transition: 0.2s;
 }
-.card:hover .close {
+.comment-item:hover .close {
   opacity: 0.5;
 }
 .close:hover {
   opacity: 0.75 !important;
-}
-
-.comment-card-leave {
-  max-height: 200px;
-}
-.comment-card-leave-to {
-  max-height: 0;
-}
-.comment-card-active {
-  position: absolute;
-}
-.comment-card-enter-active,
-.comment-card-move,
-.comment-card-leave-active {
-  transition: all 0.3s;
 }
 </style>
