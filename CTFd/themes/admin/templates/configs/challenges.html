@@ -3,12 +3,14 @@
     {% set hints_free_public_access = "true" if hints_free_public_access == True else "false" %}
 	{% set max_attempts_behavior = "timeout" if max_attempts_behavior == "timeout" else "lockout" %}
 	{% set max_attempts_timeout = 300 if max_attempts_timeout is not defined else max_attempts_timeout %}
+	{% set challenge_ratings = public if challenge_ratings is not defined else challenge_ratings %}
 	{% 
 		with form = Forms.config.ChallengeSettingsForm(
 			view_self_submissions=view_self_submissions,
 			hints_free_public_access=hints_free_public_access, 
 			max_attempts_behavior=max_attempts_behavior,
 			max_attempts_timeout=max_attempts_timeout,
+			challenge_ratings=challenge_ratings,
 		) 
 	%}
 	<form method="POST" autocomplete="off" class="w-100">
@@ -38,6 +40,13 @@
 			{{ form.hints_free_public_access(class="form-control custom-select") }}
 			<small class="form-text text-muted">
 				{{ form.hints_free_public_access.description }}
+			</small>
+		</div>
+		<div class="form-group">
+			{{ form.challenge_ratings.label }}
+			{{ form.challenge_ratings(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.challenge_ratings.description }}
 			</small>
 		</div>
 

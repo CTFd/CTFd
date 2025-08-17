@@ -5,7 +5,7 @@ from sqlalchemy import func as sa_func
 from sqlalchemy.sql import and_, false, true
 
 from CTFd.cache import cache
-from CTFd.models import Challenges, Solves, Submissions, Users, db
+from CTFd.models import Challenges, Ratings, Solves, Submissions, Users, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import get_config
@@ -16,6 +16,8 @@ from CTFd.utils.modes import generate_account_url, get_model
 Challenge = namedtuple(
     "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
 )
+
+Rating = namedtuple("Rating", ["average", "count"])
 
 
 @cache.memoize(timeout=60)
@@ -144,3 +146,17 @@ def get_solve_counts_for_challenges(challenge_id=None, admin=False):
     for chal_id, solve_count in solves_q:
         solve_counts[chal_id] = solve_count
     return solve_counts
+
+
+@cache.memoize(timeout=60)
+def get_rating_average_for_challenge_id(challenge_id):
+    ratings = Ratings.query.filter_by(challenge_id=challenge_id).all()
+
+    if ratings:
+        # Calculate average rating
+        total_value = sum(rating.value for rating in ratings)
+        average_rating = total_value / len(ratings)
+
+        return Rating(average=round(average_rating, 1), count=len(ratings))
+    else:
+        return Rating(average=None, count=0)

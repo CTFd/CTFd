@@ -15,7 +15,7 @@ from sqlalchemy_utils import drop_database
 from werkzeug.datastructures import Headers
 
 from CTFd import create_app
-from CTFd.cache import cache, clear_challenges, clear_standings
+from CTFd.cache import cache, clear_challenges, clear_ratings, clear_standings
 from CTFd.config import TestingConfig
 from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import (
@@ -35,6 +35,7 @@ from CTFd.models import (
     PageComments,
     PageFiles,
     Pages,
+    Ratings,
     Solutions,
     Solves,
     Tags,
@@ -473,6 +474,16 @@ def gen_solve(
     clear_standings()
     clear_challenges()
     return solve
+
+
+def gen_rating(db, user_id, challenge_id, value=5, review="Great challenge!", **kwargs):
+    rating = Ratings(
+        user_id=user_id, challenge_id=challenge_id, value=value, review=review, **kwargs
+    )
+    db.session.add(rating)
+    db.session.commit()
+    clear_ratings()
+    return rating
 
 
 def gen_fail(

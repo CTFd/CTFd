@@ -25,16 +25,37 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="challenge-comments-window" role="dialog">
+	<div class="modal fade" id="challenge-ratings-window" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-action text-center w-100">Comments</h2>
+					<h2 class="modal-title text-center w-100">Ratings</h2>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div class="modal-body clearfix">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div id="ratings-box">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="challenge-comments-window" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title text-center w-100">Comments</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
 					<div class="row">
 						<div class="col-md-12">
 							<div id="comment-box">
@@ -66,6 +87,10 @@
 				<a class="no-decoration" href="{{ url_for('admin.submissions_listing', submission_type='correct', field='challenge_id', q=challenge.id) }}">
 					<i class="btn-fa fas fa-tasks fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Correct Submissions"></i>
+				</a>
+				<a class="ratings-challenge" id="ratings-viewer-load">
+					<i class="btn-fa fa-regular fa-star fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Challenge Ratings"></i>
 				</a>
 				<a class="comments-challenge">
 					<i class="btn-fa fas fa-comments fa-2x px-2" data-toggle="tooltip" data-placement="top"

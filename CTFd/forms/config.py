@@ -173,6 +173,22 @@ class ChallengeSettingsForm(BaseForm):
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="false",
     )
+    challenge_ratings = SelectField(
+        "Challenge Ratings",
+        description="Control who can see and submit challenge ratings",
+        choices=[
+            ("public", "Public (users can submit ratings and see aggregated ratings)"),
+            (
+                "private",
+                "Private (users can submit ratings but cannot see aggregated ratings)",
+            ),
+            (
+                "disabled",
+                "Disabled (users cannot submit ratings or see aggregated ratings)",
+            ),
+        ],
+        default="public",
+    )
 
 
 class VisibilitySettingsForm(BaseForm):
