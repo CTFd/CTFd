@@ -49,9 +49,10 @@ from CTFd.utils.config.visibility import (
     challenges_visible,
     scores_visible,
 )
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime, isoformat
 from CTFd.utils.decorators import (
     admins_only,
+    authed_only,
     during_ctf_time_only,
     require_verified_emails,
 )
@@ -1056,6 +1057,7 @@ class ChallengeRatings(Resource):
 
     @check_challenge_visibility
     @during_ctf_time_only
+    @authed_only
     @require_verified_emails
     def put(self, challenge_id):
         """Create or update a rating for a challenge"""
@@ -1063,9 +1065,6 @@ class ChallengeRatings(Resource):
         # If they are public or private we still want to collect the data
         if get_config("challenge_ratings") == "disabled":
             abort(403)
-
-        if not authed():
-            return {"success": False, "errors": {"": ["Authentication required"]}}, 403
 
         user = get_current_user()
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
@@ -1142,9 +1141,10 @@ class ChallengeRatings(Resource):
             "success": True,
             "data": {
                 "id": rating.id,
+                "user_id": rating.user_id,
                 "challenge_id": rating.challenge_id,
                 "value": rating.value,
                 "review": rating.review,
-                "date": rating.date.isoformat(),
+                "date": isoformat(rating.date),
             },
         }
