@@ -1,4 +1,4 @@
-<div :class="getStyles()" role="document" x-data="Challenge" x-init="id = {{ challenge.id }}; max_attempts = {{ max_attempts }}; attempts = {{ attempts }}">
+<div :class="getStyles()" role="document" x-data="Challenge" x-init='id = {{ challenge.id }}; max_attempts = {{ max_attempts }}; attempts = {{ attempts }}; ratingValue = {{ (rating.get('value') if rating else None) | tojson }}; ratingReview = {{ (rating.get('review', '') if rating else None) | tojson }};'>
   <div class="modal-content">
     <div class="modal-body py-4 px-4 px-sm-5">
 
@@ -70,6 +70,22 @@
             <small class="challenge-attribution text-center text-muted">
               {% block attribution %}{{ challenge.byline }}{% endblock %}
             </small>
+
+            {% if Configs.challenge_ratings == "public" %}
+            <small class="challenge-ratings text-center text-muted d-block">
+              {% block ratings %}
+                {% if ratings.average %}
+                  <span class="text-right">{{ ratings.average }}</span>
+                  <span class="text-center px-1">
+                  {% for _ in range((ratings.average | round(0) | int)) %}
+                    <i class="fa-solid fa-star"></i>
+                  {% endfor %}
+                  </span>
+                  <span class="text-left">{{ ratings.count }} {% trans c=ratings.count %}rating{% pluralize %}ratings{% endtrans %}</span>
+                {% endif %}
+              {% endblock %}
+            </small>
+            {% endif %}
 
             <span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
 
@@ -195,6 +211,7 @@
                           {% trans %}Next Challenge{% endtrans %}
                         </button>
                       </div>
+
                       {% if Configs.social_shares %}
                       <div>
                         <button x-show="!share_url" @click="getShareUrl()" class="btn btn-sm btn-outline-info mt-3">
@@ -213,6 +230,47 @@
                           <a :href="'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
                             <i class="fa-brands fa-linkedin-in"></i>
                           </a>
+                        </div>
+                      </div>
+                      {% endif %}
+
+                      {% if Configs.challenge_ratings != "disabled" %}
+                      <div class="mt-3">
+                        <hr>
+                        <div class="text-center">
+                          <p class="mb-2">{% trans %}Rate this challenge:{% endtrans %}</p>
+                          <div class="rating-stars mb-2" x-init="selectedRating = ratingValue || 0;">
+                            <template x-for="star in [1,2,3,4,5]" :key="star">
+                              <i 
+                                class="fa-solid fa-star rating-star m-0 p-1" 
+                                :style="'font-size: 1.3rem; margin: 0 0.2rem; transition: color 0.2s ease, transform 0.1s ease; color: ' + (star <= (hoveredRating || selectedRating || 0) ? '#ffc107' : '#6c757d') + '; ' + 'cursor: pointer;'"
+                                @mouseover="hoveredRating = star"
+                                @mouseleave="hoveredRating = 0"
+                                @click="selectedRating = star"
+                              ></i>
+                            </template>
+                          </div>
+                          <div class="mt-3">
+                            <textarea 
+                              class="form-control" 
+                              rows="2" 
+                              x-model="ratingReview"
+                              placeholder="{% trans %}Write a review (optional){% endtrans %}"
+                              maxlength="2000"
+                            ></textarea>
+                          </div>
+                          <div class="mt-3">
+                            <button 
+                              @click="submitRating()"
+                              class="btn btn-primary"
+                              :disabled="!selectedRating"
+                            >
+                              {% trans %}Submit{% endtrans %}
+                            </button>
+                          </div>
+                          <div x-show="ratingSubmitted" class="text-success mt-2">
+                            <small>{% trans %}Thank you for your rating!{% endtrans %}</small>
+                          </div>
                         </div>
                       </div>
                       {% endif %}
