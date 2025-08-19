@@ -270,7 +270,7 @@ class ServerConfig(object):
     if PRESET_CONFIGS and SAFE_MODE is False:
         try:
             PRESET_CONFIGS = json.loads(PRESET_CONFIGS)
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             print("Exception occurred during PRESET_CONFIGS loading")
             PRESET_CONFIGS = {}
     else:
