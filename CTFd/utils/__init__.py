@@ -62,6 +62,11 @@ def _get_config(key):
 
 
 def get_config(key, default=None):
+    # Look up the config in the local PRESET_CONFIGS store first
+    preset_configs = app.config.get("PRESET_CONFIGS")
+    if preset_configs and key in app.config.get("PRESET_CONFIGS"):
+        return app.config["PRESET_CONFIGS"][key]
+
     # Convert enums to raw string values to cache better
     if isinstance(key, Enum):
         key = str(key)
