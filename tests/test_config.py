@@ -175,7 +175,7 @@ def test_preset_admin_token_config():
         # Test that wrong token fails
         client = app.test_client()
         wrong_headers = {
-            "Authorization": f"Token wrong_token_123",
+            "Authorization": "Token wrong_token_123",
             "Content-Type": "application/json",
         }
         r = client.get("/api/v1/users/me", headers=wrong_headers)
@@ -188,7 +188,7 @@ def test_preset_admin_token_config():
 
         # Test API access with preset admin token
         headers = {
-            "Authorization": f"Token preset_secret_token_12345",
+            "Authorization": "Token preset_secret_token_12345",
             "Content-Type": "application/json",
         }
         r = client.get("/api/v1/users/me", headers=headers, json=True)
@@ -223,7 +223,7 @@ def test_preset_admin_token_config():
 
         # Test that wrong token fails
         wrong_headers = {
-            "Authorization": f"Token wrong_token_123",
+            "Authorization": "Token wrong_token_123",
             "Content-Type": "application/json",
         }
         r = client.get("/api/v1/users/me", headers=wrong_headers, json=True)

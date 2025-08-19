@@ -7,6 +7,7 @@ from flask import current_app as app
 
 # isort:imports-firstparty
 from CTFd.cache import cache
+from CTFd.constants.setup import DEFAULTS
 from CTFd.models import Configs, db
 
 string_types = (str,)
@@ -73,6 +74,8 @@ def get_config(key, default=None):
 
     value = _get_config(key)
     if value is KeyError:
+        if default is None and key in DEFAULTS:
+            return DEFAULTS.get(key)
         return default
     else:
         return value
