@@ -4,7 +4,16 @@
 from werkzeug.exceptions import SecurityError
 
 from CTFd.config import TestingConfig
-from tests.helpers import create_ctfd, destroy_ctfd, login_as_user, register_user
+from CTFd.models import Configs, Users, db
+from CTFd.utils import get_config
+from CTFd.utils.crypto import verify_password
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_user,
+    login_as_user,
+    register_user,
+)
 
 
 def test_reverse_proxy_config():
@@ -98,8 +107,6 @@ def test_preset_admin_config():
 
     app = create_ctfd(config=PresetAdminConfig)
     with app.app_context():
-        from CTFd.models import Users
-
         # Verify no preset admin exists initially
         preset_admin = Users.query.filter_by(name="preset_admin").first()
         assert preset_admin is None
@@ -123,9 +130,6 @@ def test_preset_admin_config():
         assert preset_admin.email == "preset@example.com"
         assert preset_admin.type == "admin"
         assert preset_admin.verified is True
-
-        # Verify the password matches the configured password
-        from CTFd.utils.crypto import verify_password
 
         assert verify_password("preset_password_123", preset_admin.password) is True
 
@@ -165,8 +169,6 @@ def test_preset_admin_token_config():
 
     app = create_ctfd(config=PresetAdminTokenConfig)
     with app.app_context():
-        from CTFd.models import Users
-
         # Verify no preset admin exists initially
         preset_admin = Users.query.filter_by(name="preset_token_admin").first()
         assert preset_admin is None
@@ -202,9 +204,6 @@ def test_preset_admin_token_config():
         assert preset_admin.type == "admin"
         assert preset_admin.verified is True
 
-        # Verify the password matches the configured password
-        from CTFd.utils.crypto import verify_password
-
         assert (
             verify_password("preset_token_password_123", preset_admin.password) is True
         )
@@ -233,6 +232,92 @@ def test_preset_admin_token_config():
     destroy_ctfd(app)
 
 
+def test_preset_admin_no_promotion_existing_user():
+    """Test that existing regular users with preset credentials don't get promoted to admin"""
+
+    class PresetAdminConfig(TestingConfig):
+        PRESET_ADMIN_NAME = "existing_user"
+        PRESET_ADMIN_EMAIL = "existing@example.com"
+        PRESET_ADMIN_PASSWORD = "preset_password_123"
+
+    app = create_ctfd(config=PresetAdminConfig)
+    with app.app_context():
+        # Create a regular user with the same credentials as preset admin
+        gen_user(
+            app.db,
+            name="existing_user",
+            email="existing@example.com",
+            password="preset_password_123",
+            type="user",  # Regular user, not admin
+        )
+
+        # Verify user exists and is not admin
+        user = Users.query.filter_by(name="existing_user").first()
+        assert user is not None
+        assert user.type == "user"
+        assert user.email == "existing@example.com"
+
+        # Attempt login with preset admin credentials
+        client = app.test_client()
+        login_data = {"name": "existing_user", "password": "preset_password_123"}
+        # Get login page first to get nonce
+        client.get("/login")
+        with client.session_transaction() as sess:
+            login_data["nonce"] = sess.get("nonce")
+        r = client.post("/login", data=login_data)
+
+        # Should fail in logging in
+        assert r.status_code == 200
+        assert (
+            "Preset admin user could not be created. Please contact an administrator"
+            in r.get_data(as_text=True)
+        )
+
+        # Test that the user is not an admin
+        r = client.get("/api/v1/challenges/types", json=True)
+        assert r.status_code in [
+            401,
+            403,
+        ]  # Should be unauthorized/forbidden for regular user
+
+        # Verify user is still not admin (no promotion)
+        user = Users.query.filter_by(name="existing_user").first()
+        assert user is not None
+        assert user.type == "user"  # Should still be regular user
+        assert user.email == "existing@example.com"
+
+        # Also test login via email
+        client = app.test_client()
+        login_data = {"name": "existing@example.com", "password": "preset_password_123"}
+        client.get("/login")
+        with client.session_transaction() as sess:
+            login_data["nonce"] = sess.get("nonce")
+        r = client.post("/login", data=login_data)
+        # Should fail in logging in
+        assert r.status_code == 200
+        assert (
+            "Preset admin user could not be created. Please contact an administrator"
+            in r.get_data(as_text=True)
+        )
+
+        # Test that the user is not an admin
+        r = client.get("/api/v1/challenges/types", json=True)
+        assert r.status_code in [
+            401,
+            403,
+        ]  # Should be unauthorized/forbidden for regular user
+
+        # User should still be regular user after email login
+        user = Users.query.filter_by(name="existing_user").first()
+        assert user.type == "user"
+
+        # Verify only one admin exists (the default setup admin)
+        admin_count = Users.query.filter_by(type="admin").count()
+        assert admin_count == 1
+
+    destroy_ctfd(app)
+
+
 def test_preset_configs():
     """Test that PRESET_CONFIGS are loaded and accessible via get_config"""
 
@@ -250,8 +335,6 @@ def test_preset_configs():
 
     app = create_ctfd(config=PresetConfigsConfig)
     with app.app_context():
-        from CTFd.utils import get_config
-
         # Test that preset configs are accessible via get_config
         assert get_config("ctf_name") == "Test CTF Name"
         assert get_config("ctf_description") == "This is a test CTF description"
@@ -268,9 +351,6 @@ def test_preset_configs():
             get_config("non_existent_config", default="default_value")
             == "default_value"
         )
-
-        # Test that PRESET_CONFIGS take precedence over database configs
-        from CTFd.models import Configs, db
 
         # Add a database config that conflicts with a preset config
         db_config = Configs(key="ctf_name", value="Database CTF Name")
