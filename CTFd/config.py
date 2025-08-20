@@ -266,7 +266,12 @@ class ServerConfig(object):
     PRESET_ADMIN_EMAIL: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_EMAIL", "")) if config_ini.has_section("management") else None
     PRESET_ADMIN_PASSWORD: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_PASSWORD", "")) if config_ini.has_section("management") else None
     PRESET_ADMIN_TOKEN: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_TOKEN", "")) if config_ini.has_section("management") else None
-    PRESET_CONFIGS: str = empty_str_cast(config_ini["management"].get("PRESET_CONFIGS", "")) if config_ini.has_section("management") else None
+    has_management_section = config_ini.has_section("management")
+    PRESET_ADMIN_NAME: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_NAME", "")) if has_management_section else None
+    PRESET_ADMIN_EMAIL: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_EMAIL", "")) if has_management_section else None
+    PRESET_ADMIN_PASSWORD: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_PASSWORD", "")) if has_management_section else None
+    PRESET_ADMIN_TOKEN: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_TOKEN", "")) if has_management_section else None
+    PRESET_CONFIGS: str = empty_str_cast(config_ini["management"].get("PRESET_CONFIGS", "")) if has_management_section else None
     if PRESET_CONFIGS and SAFE_MODE is False:
         try:
             PRESET_CONFIGS = json.loads(PRESET_CONFIGS)
