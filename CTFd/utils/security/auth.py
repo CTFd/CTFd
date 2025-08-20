@@ -47,10 +47,6 @@ def generate_preset_admin():
         name=preset_admin_name, email=preset_admin_email
     ).first()
 
-    # If there's already a user, promoting it to an admin represents a mild security risk.
-    if user.type != "admin":
-        return None
-
     if not user:
         # Create the preset admin user
         user = Users(
@@ -67,6 +63,10 @@ def generate_preset_admin():
             "[{date}] {ip} - preset admin {name} created",
             name=user.name,
         )
+
+    # If there's already a user, promoting it to an admin represents a mild security risk.
+    if user.type != "admin":
+        return None
 
     return user
 
