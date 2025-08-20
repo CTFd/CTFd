@@ -114,7 +114,6 @@ def test_preset_admin_config():
         r = client.post("/login", data=login_data)
 
         # Should redirect to challenges page after successful login
-        print(r.get_data())
         assert r.status_code == 302
         assert "/challenges" in r.location or r.location.endswith("/")
 
