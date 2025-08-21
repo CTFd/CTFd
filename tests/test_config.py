@@ -111,6 +111,19 @@ def test_preset_admin_config():
         preset_admin = Users.query.filter_by(name="preset_admin").first()
         assert preset_admin is None
 
+        # Attempt login with incorrect preset admin credentials via name
+        client = app.test_client()
+        login_data = {"name": "preset_admin", "password": "wrong_preset_password_123"}
+        # Get login page first to get nonce
+        client.get("/login")
+        with client.session_transaction() as sess:
+            login_data["nonce"] = sess.get("nonce")
+        r = client.post("/login", data=login_data)
+        assert r.status_code == 200
+        assert "incorrect" in r.get_data(as_text=True)
+        preset_admin = Users.query.filter_by(name="preset_admin").first()
+        assert preset_admin is None
+
         # Attempt login with preset admin credentials via name
         client = app.test_client()
         login_data = {"name": "preset_admin", "password": "preset_password_123"}
