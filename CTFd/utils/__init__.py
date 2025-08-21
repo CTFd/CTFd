@@ -74,6 +74,7 @@ def get_config(key, default=None):
 
     value = _get_config(key)
     if value is KeyError:
+        # These defaults are used in situations where setup was skipped or partially completed
         if default is None and key in DEFAULTS:
             return DEFAULTS.get(key)
         return default
