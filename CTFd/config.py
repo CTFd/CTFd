@@ -1,4 +1,5 @@
 import configparser
+import json
 import os
 from distutils.util import strtobool
 from typing import Union
@@ -259,6 +260,21 @@ class ServerConfig(object):
     # === OAUTH ===
     OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
     OAUTH_CLIENT_SECRET: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
+
+    # === MANAGEMENT ===
+    PRESET_ADMIN_NAME: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_NAME", "")) if config_ini.has_section("management") else None
+    PRESET_ADMIN_EMAIL: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_EMAIL", "")) if config_ini.has_section("management") else None
+    PRESET_ADMIN_PASSWORD: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_PASSWORD", "")) if config_ini.has_section("management") else None
+    PRESET_ADMIN_TOKEN: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_TOKEN", "")) if config_ini.has_section("management") else None
+    PRESET_CONFIGS: str = empty_str_cast(config_ini["management"].get("PRESET_CONFIGS", "")) if config_ini.has_section("management") else None
+    if PRESET_CONFIGS and SAFE_MODE is False:
+        try:
+            PRESET_CONFIGS = json.loads(PRESET_CONFIGS)
+        except (ValueError, TypeError):
+            print("Exception occurred during PRESET_CONFIGS loading")
+            PRESET_CONFIGS = {}
+    else:
+        PRESET_CONFIGS = {}
 
     # === EXTRA ===
     # Since the configurations in section "[extra]" will be loaded later, it is not necessary to declare them here.

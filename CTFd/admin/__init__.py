@@ -35,6 +35,7 @@ from CTFd.cache import (
     clear_pages,
     clear_standings,
 )
+from CTFd.constants.setup import DEFAULTS
 from CTFd.models import (
     Awards,
     Challenges,
@@ -183,6 +184,11 @@ def config():
 
     configs = Configs.query.all()
     configs = {c.key: get_config(c.key) for c in configs}
+
+    # Load in defaults that would normally exist on UI setup
+    for k, v in DEFAULTS.items():
+        if k not in configs:
+            configs[k] = v
 
     themes = ctf_config.get_themes()
 

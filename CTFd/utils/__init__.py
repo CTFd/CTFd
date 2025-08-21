@@ -7,6 +7,7 @@ from flask import current_app as app
 
 # isort:imports-firstparty
 from CTFd.cache import cache
+from CTFd.constants.setup import DEFAULTS
 from CTFd.models import Configs, db
 
 string_types = (str,)
@@ -62,12 +63,20 @@ def _get_config(key):
 
 
 def get_config(key, default=None):
+    # Look up the config in the local PRESET_CONFIGS store first
+    preset_configs = app.config.get("PRESET_CONFIGS")
+    if preset_configs and key in app.config.get("PRESET_CONFIGS"):
+        return app.config["PRESET_CONFIGS"][key]
+
     # Convert enums to raw string values to cache better
     if isinstance(key, Enum):
         key = str(key)
 
     value = _get_config(key)
     if value is KeyError:
+        # These defaults are used in situations where setup was skipped or partially completed
+        if default is None and key in DEFAULTS:
+            return DEFAULTS.get(key)
         return default
     else:
         return value
