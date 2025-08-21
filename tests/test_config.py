@@ -331,6 +331,72 @@ def test_preset_admin_no_promotion_existing_user():
     destroy_ctfd(app)
 
 
+def test_preset_admin_empty_credentials():
+    """Test that empty preset credentials don't allow login"""
+
+    # Test empty password
+    class PresetAdminEmptyPasswordConfig(TestingConfig):
+        PRESET_ADMIN_NAME = "preset_admin_empty"
+        PRESET_ADMIN_EMAIL = "preset_empty@example.com"
+        PRESET_ADMIN_PASSWORD = ""  # Empty password
+
+    app = create_ctfd(config=PresetAdminEmptyPasswordConfig)
+    with app.app_context():
+        # Verify no preset admin exists initially
+        preset_admin = Users.query.filter_by(name="preset_admin_empty").first()
+        assert preset_admin is None
+
+        # Attempt login with empty password (should fail)
+        client = app.test_client()
+        login_data = {"name": "preset_admin_empty", "password": ""}
+        client.get("/login")
+        with client.session_transaction() as sess:
+            login_data["nonce"] = sess.get("nonce")
+        r = client.post("/login", data=login_data)
+
+        # Should not create user or allow login
+        assert r.status_code == 200
+        assert "incorrect" in r.get_data(as_text=True).lower()
+
+        # Verify no admin user was created
+        preset_admin = Users.query.filter_by(name="preset_admin_empty").first()
+        assert preset_admin is None
+
+    destroy_ctfd(app)
+
+    # Test empty token
+    class PresetAdminEmptyTokenConfig(TestingConfig):
+        PRESET_ADMIN_NAME = "preset_admin_empty_token"
+        PRESET_ADMIN_EMAIL = "preset_empty_token@example.com"
+        PRESET_ADMIN_PASSWORD = "some_password"
+        PRESET_ADMIN_TOKEN = ""  # Empty token
+
+    app = create_ctfd(config=PresetAdminEmptyTokenConfig)
+    with app.app_context():
+        # Verify no preset admin exists initially
+        preset_admin = Users.query.filter_by(name="preset_admin_empty_token").first()
+        assert preset_admin is None
+
+        # Test API access with empty token (should fail)
+        client = app.test_client()
+        empty_headers = {
+            "Authorization": "Token  ",
+            "Content-Type": "application/json",
+        }
+        r = client.get("/api/v1/users/me", headers=empty_headers)
+        assert r.status_code in [401, 403]  # Should be unauthorized
+
+        # Test API access without Authorization header (should also fail)
+        r = client.get("/api/v1/users/me", json=True)
+        assert r.status_code in [401, 403]  # Should be unauthorized
+
+        # Verify no admin user was created
+        preset_admin = Users.query.filter_by(name="preset_admin_empty_token").first()
+        assert preset_admin is None
+
+    destroy_ctfd(app)
+
+
 def test_preset_configs():
     """Test that PRESET_CONFIGS are loaded and accessible via get_config"""
 
