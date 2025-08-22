@@ -43,16 +43,6 @@ from CTFd.utils.config.pages import build_markdown, get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
 from CTFd.utils.decorators import authed_only
-from CTFd.utils.email import (
-    DEFAULT_PASSWORD_RESET_BODY,
-    DEFAULT_PASSWORD_RESET_SUBJECT,
-    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
-    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
-    DEFAULT_USER_CREATION_EMAIL_BODY,
-    DEFAULT_USER_CREATION_EMAIL_SUBJECT,
-    DEFAULT_VERIFICATION_EMAIL_BODY,
-    DEFAULT_VERIFICATION_EMAIL_SUBJECT,
-)
 from CTFd.utils.health import check_config, check_database
 from CTFd.utils.helpers import get_errors, get_infos, markup
 from CTFd.utils.modes import USERS_MODE
