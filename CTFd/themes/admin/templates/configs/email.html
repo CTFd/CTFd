@@ -10,20 +10,22 @@
 	{% set mailgun_base_url = mailgun_base_url if mailgun_base_url is defined and mailgun_base_url != None else "" %}
 	{% set mailgun_api_key = mailgun_api_key if mailgun_api_key is defined and mailgun_api_key != None else "" %}
 
-	{% set successful_registration_email_subject = successful_registration_email_subject if successful_registration_email_subject is defined and successful_registration_email_subject != None else Forms.config.EmailSettingsForm.successful_registration_email_subject.kwargs['default'] %}
-	{% set successful_registration_email_body = successful_registration_email_body if successful_registration_email_body is defined and successful_registration_email_body != None else Forms.config.EmailSettingsForm.successful_registration_email_body.kwargs['default'] %}
+	{% set formcls = Forms.config.EmailSettingsForm %}
+
+	{% set successful_registration_email_subject = successful_registration_email_subject if successful_registration_email_subject is defined and successful_registration_email_subject != None else formcls.successful_registration_email_subject.kwargs['default'] %}
+	{% set successful_registration_email_body = successful_registration_email_body if successful_registration_email_body is defined and successful_registration_email_body != None else formcls.successful_registration_email_body.kwargs['default'] %}
 	
-	{% set verification_email_subject = verification_email_subject if verification_email_subject is defined and verification_email_subject != None else Forms.config.EmailSettingsForm.verification_email_subject.kwargs['default'] %}
-	{% set verification_email_body = verification_email_body if verification_email_body is defined and verification_email_body != None else Forms.config.EmailSettingsForm.verification_email_body.kwargs['default'] %}
+	{% set verification_email_subject = verification_email_subject if verification_email_subject is defined and verification_email_subject != None else formcls.verification_email_subject.kwargs['default'] %}
+	{% set verification_email_body = verification_email_body if verification_email_body is defined and verification_email_body != None else formcls.verification_email_body.kwargs['default'] %}
 
-	{% set user_creation_email_subject = user_creation_email_subject if user_creation_email_subject is defined and user_creation_email_subject != None else Forms.config.EmailSettingsForm.user_creation_email_subject.kwargs['default'] %}
-	{% set user_creation_email_body = user_creation_email_body if user_creation_email_body is defined and user_creation_email_body != None else Forms.config.EmailSettingsForm.user_creation_email_body.kwargs['default'] %}
+	{% set user_creation_email_subject = user_creation_email_subject if user_creation_email_subject is defined and user_creation_email_subject != None else formcls.user_creation_email_subject.kwargs['default'] %}
+	{% set user_creation_email_body = user_creation_email_body if user_creation_email_body is defined and user_creation_email_body != None else formcls.user_creation_email_body.kwargs['default'] %}
 
-	{% set password_reset_subject = password_reset_subject if password_reset_subject is defined and password_reset_subject != None else Forms.config.EmailSettingsForm.password_reset_subject.kwargs['default'] %}
-	{% set password_reset_body = password_reset_body if password_reset_body is defined and password_reset_body != None else Forms.config.EmailSettingsForm.password_reset_body.kwargs['default'] %}
+	{% set password_reset_subject = password_reset_subject if password_reset_subject is defined and password_reset_subject != None else formcls.password_reset_subject.kwargs['default'] %}
+	{% set password_reset_body = password_reset_body if password_reset_body is defined and password_reset_body != None else formcls.password_reset_body.kwargs['default'] %}
 
-	{% set password_change_alert_subject = password_change_alert_subject if password_change_alert_subject is defined and password_change_alert_subject != None else Forms.config.EmailSettingsForm.password_change_alert_subject.kwargs['default'] %}
-	{% set password_change_alert_body = password_change_alert_body if password_change_alert_body is defined and password_change_alert_body != None else Forms.config.EmailSettingsForm.password_change_alert_body.kwargs['default'] %}
+	{% set password_change_alert_subject = password_change_alert_subject if password_change_alert_subject is defined and password_change_alert_subject != None else formcls.password_change_alert_subject.kwargs['default'] %}
+	{% set password_change_alert_body = password_change_alert_body if password_change_alert_body is defined and password_change_alert_body != None else formcls.password_change_alert_body.kwargs['default'] %}
 
 	{% with form = Forms.config.EmailSettingsForm(
 		mailfrom_addr=mailfrom_addr, 
