@@ -3,9 +3,9 @@
 	{% set mail_server = mail_server if mail_server is defined and mail_server != None else "" %}
 	{% set mail_port = mail_port if mail_port is defined and mail_port != None else "" %}
 
-	{% set mail_useauth = true if mail_useauth is defined and mail_useauth != None else false %}
-	{% set mail_ssl = true if mail_ssl is defined and mail_ssl != False else false %}
-	{% set mail_tls = true if mail_tls is defined and mail_tls != False else false %}
+	{% set mail_useauth = true if mail_useauth is defined and mail_useauth == True else false %}
+	{% set mail_ssl = true if mail_ssl is defined and mail_ssl == True else false %}
+	{% set mail_tls = true if mail_tls is defined and mail_tls == True else false %}
 
 	{% set mailgun_base_url = mailgun_base_url if mailgun_base_url is defined and mailgun_base_url != None else "" %}
 	{% set mailgun_api_key = mailgun_api_key if mailgun_api_key is defined and mailgun_api_key != None else "" %}
