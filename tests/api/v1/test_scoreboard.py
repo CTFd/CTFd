@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from flask import jsonify
-from flask_caching import make_template_fragment_key
 
 from CTFd.cache import clear_standings
 from CTFd.models import Users
