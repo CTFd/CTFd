@@ -32,6 +32,7 @@ def upgrade():
         "core-beta": "core",
         "hacker-beta-theme": "hacker-theme",
         "learning-beta-theme": "learning-theme",
+        "learning": "learning-theme",
     }
 
     # Find the ctf_theme config entry
