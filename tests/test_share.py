@@ -14,7 +14,7 @@ from tests.helpers import (
 
 def test_share_endpoints():
     """Test that social share endpoints and disabling are working"""
-    app = create_ctfd(ctf_theme="core-beta")
+    app = create_ctfd(ctf_theme="core")
     with app.app_context():
         chal_id = gen_challenge(app.db).id
         register_user(app)
@@ -67,7 +67,7 @@ def test_share_endpoints():
 
 def test_share_security():
     """Test that shares and their assets do not load without a valid mac"""
-    app = create_ctfd(ctf_theme="core-beta")
+    app = create_ctfd(ctf_theme="core")
     with app.app_context():
         chal_id = gen_challenge(app.db).id
         register_user(app)

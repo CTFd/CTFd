@@ -174,7 +174,7 @@ def test_theme_fallback_config():
             except TemplateNotFound:
                 pass
             try:
-                r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
+                r = client.get("/themes/foo_fallback/static/manifest.json")
             except TemplateNotFound:
                 pass
     destroy_ctfd(app)
@@ -186,7 +186,7 @@ def test_theme_fallback_config():
         with app.test_client() as client:
             r = client.get("/")
             assert r.status_code == 200
-            r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
+            r = client.get("/themes/foo_fallback/static/manifest.json")
             assert r.status_code == 200
     destroy_ctfd(app)
 
