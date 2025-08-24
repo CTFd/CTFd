@@ -75,7 +75,9 @@ def confirm(data=None):
         db.session.commit()
         remove_email_confirm_token(data)
         clear_user_session(user_id=user.id)
-        email.successful_registration_notification(user.email)
+        # Only send this registration notification if we are preventing access to registered users only
+        if get_config("verify_emails"):
+            email.successful_registration_notification(user.email)
         db.session.close()
         if current_user.authed():
             return redirect(url_for("challenges.listing"))
