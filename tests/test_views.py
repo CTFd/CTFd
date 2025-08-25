@@ -135,7 +135,7 @@ def test_themes_handler():
     app = create_ctfd()
     with app.app_context():
         with app.test_client() as client:
-            r = client.get("/themes/core/static/css/main.min.css")
+            r = client.get("/themes/core/static/manifest.json")
             assert r.status_code == 200
             r = client.get("/themes/core/static/css/404_NOT_FOUND")
             assert r.status_code == 404

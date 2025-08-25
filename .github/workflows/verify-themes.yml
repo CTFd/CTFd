@@ -30,9 +30,9 @@ jobs:
         working-directory: ./CTFd/themes/admin
 
       # TODO: Replace in 4.0 with deprecation of previous core theme
-      - name: Verify core-beta theme
+      - name: Verify core theme
         run: |
             pwd
             yarn install --non-interactive
             yarn verify
-        working-directory: ./CTFd/themes/core-beta
+        working-directory: ./CTFd/themes/core

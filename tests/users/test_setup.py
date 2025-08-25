@@ -14,8 +14,8 @@ def test_ctfd_setup_redirect():
             assert r.location == "/setup"
 
             # Files in /themes load properly
-            r = client.get("/themes/core/static/css/main.dev.css")
-            r = client.get("/themes/core/static/css/main.min.css")
+            r = client.get("/themes/core/static/manifest.json")
+            r = client.get("/themes/core/static/img/favicon.ico")
             assert r.status_code == 200
     destroy_ctfd(app)
 
