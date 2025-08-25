@@ -22,7 +22,7 @@ from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.helpers import error_for, get_errors, markup
 from CTFd.utils.logging import log
 from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.security.auth import login_user, logout_user
+from CTFd.utils.security.auth import generate_preset_admin, login_user, logout_user
 from CTFd.utils.security.email import (
     remove_email_confirm_token,
     remove_reset_password_token,
@@ -75,7 +75,9 @@ def confirm(data=None):
         db.session.commit()
         remove_email_confirm_token(data)
         clear_user_session(user_id=user.id)
-        email.successful_registration_notification(user.email)
+        # Only send this registration notification if we are preventing access to registered users only
+        if get_config("verify_emails"):
+            email.successful_registration_notification(user.email)
         db.session.close()
         if current_user.authed():
             return redirect(url_for("challenges.listing"))
@@ -425,6 +427,27 @@ def login():
     errors = get_errors()
     if request.method == "POST":
         name = request.form["name"]
+
+        # Check for preset admin credentials first
+        preset_admin_name = get_app_config("PRESET_ADMIN_NAME")
+        preset_admin_email = get_app_config("PRESET_ADMIN_EMAIL")
+        preset_admin_password = get_app_config("PRESET_ADMIN_PASSWORD")
+
+        if preset_admin_name and preset_admin_email and preset_admin_password:
+            password = request.form.get("password", "")
+            # Check if credentials match preset admin
+            if (
+                name == preset_admin_name or name == preset_admin_email
+            ) and password == preset_admin_password:
+                admin = generate_preset_admin()
+                if admin:
+                    login_user(user=admin)
+                    return redirect(url_for("challenges.listing"))
+                else:
+                    errors.append(
+                        "Preset admin user could not be created. Please contact an administrator"
+                    )
+                    return render_template("login.html", errors=errors)
 
         # Check if the user submitted an email address or a team name
         if validators.validate_email(name) is True:
