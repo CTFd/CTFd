@@ -58,8 +58,8 @@
 							</td>
 							<td class="font-weight-bold" style="background-color: white;">{{ user.score }}</td>
 							{% for challenge in all_challenges %}
-								{% set is_solved = challenge.id in user_solves[user.account_id]['solved_challenges'] %}
-								{% set is_attempted = challenge.id in user_solves[user.account_id]['attempted_challenges'] %}
+								{% set is_solved = challenge.id in account_solves[user.account_id]['solved_challenges'] %}
+								{% set is_attempted = challenge.id in account_solves[user.account_id]['attempted_challenges'] %}
 								{% if is_solved %}
 									{% set bg_color = '#28a745' %}
 									{% set text_color = 'white' %}

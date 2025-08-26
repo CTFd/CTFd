@@ -159,5 +159,5 @@ def statistics():
         least_solved=least_solved,
         top_users=account_scores,
         all_challenges=all_challenges,
-        user_solves=account_solves,
+        account_solves=account_solves,
     )
