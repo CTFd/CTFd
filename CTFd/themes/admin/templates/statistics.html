@@ -58,24 +58,24 @@
 							</td>
 							<td class="font-weight-bold" style="background-color: white;">{{ user.score }}</td>
 							{% for challenge in all_challenges %}
-							{% set is_solved = challenge.id in user_solves[user.account_id]['solved_challenges'] %}
-							{% set is_attempted = challenge.id in user_solves[user.account_id]['attempted_challenges'] %}
-							{% if is_solved %}
-								{% set bg_color = '#28a745' %}
-								{% set text_color = 'white' %}
-								{% set symbol = '✓' %}
-							{% elif is_attempted and not is_solved %}
-								{% set bg_color = '#ffc107' %}
-								{% set text_color = '#212529' %}
-								{% set symbol = '-' %}
-							{% else %}
-								{% set bg_color = '#f8f9fa' %}
-								{% set text_color = '#6c757d' %}
-								{% set symbol = '-' %}
-							{% endif %}
-							<td class="text-center" style="width: 30px; height: 30px; border: 1px solid #dee2e6; background-color: {{ bg_color }}; color: {{ text_color }};">
-								{{ symbol }}
-							</td>
+								{% set is_solved = challenge.id in user_solves[user.account_id]['solved_challenges'] %}
+								{% set is_attempted = challenge.id in user_solves[user.account_id]['attempted_challenges'] %}
+								{% if is_solved %}
+									{% set bg_color = '#28a745' %}
+									{% set text_color = 'white' %}
+									{% set symbol = '✓' %}
+								{% elif is_attempted and not is_solved %}
+									{% set bg_color = '#ffc107' %}
+									{% set text_color = '#212529' %}
+									{% set symbol = '-' %}
+								{% else %}
+									{% set bg_color = '#f8f9fa' %}
+									{% set text_color = '#6c757d' %}
+									{% set symbol = '-' %}
+								{% endif %}
+								<td class="text-center" style="width: 30px; height: 30px; border: 1px solid #dee2e6; background-color: {{ bg_color }}; color: {{ text_color }};">
+									{{ symbol }}
+								</td>
 							{% endfor %}
 						</tr>
 						{% endfor %}
@@ -83,7 +83,6 @@
 				</table>
 			</div>
 			
-			<!-- Legend -->
 			<div class="mt-3 float-right">
 				<div class="d-flex flex-wrap">
 					<div class="mr-4 mb-2">
