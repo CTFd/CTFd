@@ -1424,7 +1424,7 @@ def test_api_challenge_tracking_first_open_only():
             tracking_count = Tracking.query.filter_by(
                 user_id=2, type="challenges.open", target=1
             ).count()
-            # Subsequent challenge opens should not create additional tracking entries"
+            # Subsequent challenge opens should not create additional tracking entries
             assert tracking_count == 1
 
             # Third request to ensure consistency
