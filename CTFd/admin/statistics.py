@@ -2,6 +2,7 @@ from flask import render_template
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Fails, Solves, Teams, Tracking, Users, db
+from CTFd.utils.config import get_config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.modes import get_model
 from CTFd.utils.scores import get_standings
@@ -119,6 +120,52 @@ def statistics():
             .all()
         )
 
+        # Get challenge opens matrix data for top 100 accounts
+        # Need to handle mapping from user_id (in Tracking) to account_id (user or team)
+        if get_config("user_mode") == "teams":
+            # In teams mode, map user_id to team_id (account_id)
+            opens_matrix_data = (
+                db.session.query(
+                    Teams.id.label("account_id"),
+                    Tracking.target.label("challenge_id"),
+                )
+                .join(Users, Users.id == Tracking.user_id)
+                .join(Teams, Teams.id == Users.team_id)
+                .join(Challenges, Challenges.id == Tracking.target)
+                .filter(
+                    Teams.id.in_(top_account_ids),
+                    Users.banned == False,
+                    Users.hidden == False,
+                    Teams.banned == False,
+                    Teams.hidden == False,
+                    Challenges.state == "visible",
+                    Tracking.target.isnot(None),  # Ensure target is not null
+                    Tracking.type == "challenges.open",  # Only track challenge opens
+                )
+                .distinct()  # Remove duplicates if user opened same challenge multiple times
+                .all()
+            )
+        else:
+            # In users mode, user_id maps directly to account_id
+            opens_matrix_data = (
+                db.session.query(
+                    Tracking.user_id.label("account_id"),
+                    Tracking.target.label("challenge_id"),
+                )
+                .join(Users, Users.id == Tracking.user_id)
+                .join(Challenges, Challenges.id == Tracking.target)
+                .filter(
+                    Tracking.user_id.in_(top_account_ids),
+                    Users.banned == False,
+                    Users.hidden == False,
+                    Challenges.state == "visible",
+                    Tracking.target.isnot(None),  # Ensure target is not null
+                    Tracking.type == "challenges.open",  # Only track challenge opens
+                )
+                .distinct()  # Remove duplicates if user opened same challenge multiple times
+                .all()
+            )
+
         # Build matrix data structure
         account_solves = {}
         for account in account_scores:
@@ -127,6 +174,7 @@ def statistics():
                 "score": account.score,
                 "solved_challenges": set(),
                 "attempted_challenges": set(),
+                "opened_challenges": set(),
             }
 
         for solve in solve_matrix_data:
@@ -139,6 +187,12 @@ def statistics():
             if attempt.account_id in account_solves:
                 account_solves[attempt.account_id]["attempted_challenges"].add(
                     attempt.challenge_id
+                )
+
+        for opens in opens_matrix_data:
+            if opens.account_id in account_solves:
+                account_solves[opens.account_id]["opened_challenges"].add(
+                    int(opens.challenge_id)  # Ensure it's an integer for consistency
                 )
     else:
         account_solves = {}

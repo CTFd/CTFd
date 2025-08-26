@@ -999,6 +999,7 @@ class Tracking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))
     ip = db.Column(db.String(46))
+    target = db.Column(db.Integer, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 

@@ -60,6 +60,7 @@
 							{% for challenge in all_challenges %}
 								{% set is_solved = challenge.id in account_solves[user.account_id]['solved_challenges'] %}
 								{% set is_attempted = challenge.id in account_solves[user.account_id]['attempted_challenges'] %}
+								{% set is_opened = challenge.id in account_solves[user.account_id]['opened_challenges'] %}
 								{% if is_solved %}
 									{% set bg_color = '#28a745' %}
 									{% set text_color = 'white' %}
@@ -67,6 +68,10 @@
 								{% elif is_attempted and not is_solved %}
 									{% set bg_color = '#ffc107' %}
 									{% set text_color = '#212529' %}
+									{% set symbol = '-' %}
+								{% elif is_opened and not is_attempted and not is_solved %}
+									{% set bg_color = '#17a2b8' %}
+									{% set text_color = 'white' %}
 									{% set symbol = '-' %}
 								{% else %}
 									{% set bg_color = '#f8f9fa' %}
@@ -91,11 +96,15 @@
 					</div>
 					<div class="mr-4 mb-2">
 						<span class="badge px-2 py-1" style="background-color: #ffc107; color: #212529;">-</span>
-						<small class="ml-2">Attempted (not solved)</small>
+						<small class="ml-2">Attempted</small>
+					</div>
+					<div class="mr-4 mb-2">
+						<span class="badge px-2 py-1" style="background-color: #17a2b8; color: white;">-</span>
+						<small class="ml-2">Opened</small>
 					</div>
 					<div class="mr-4 mb-2">
 						<span class="badge px-2 py-1" style="background-color: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6;">-</span>
-						<small class="ml-2">Not attempted</small>
+						<small class="ml-2">Not viewed</small>
 					</div>
 				</div>
 			</div>
