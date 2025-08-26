@@ -4,6 +4,7 @@ from CTFd.admin import admin
 from CTFd.models import Challenges, Fails, Solves, Teams, Tracking, Users, db
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.modes import get_model
+from CTFd.utils.scores import get_standings
 from CTFd.utils.updates import update_check
 
 
@@ -70,6 +71,78 @@ def statistics():
         most_solved = max(solve_data, key=solve_data.get)
         least_solved = min(solve_data, key=solve_data.get)
 
+    account_scores = get_standings(count=100, admin=True)
+
+    # Get all challenges ordered by category and value
+    all_challenges = (
+        Challenges.query.filter(Challenges.state == "visible")
+        .order_by(Challenges.value.asc(), Challenges.category)
+        .all()
+    )
+
+    # Get solve matrix data for top 100 accounts
+    top_account_ids = [account.account_id for account in account_scores]
+
+    if top_account_ids:
+        solve_matrix_data = (
+            db.session.query(
+                Solves.account_id,
+                Solves.challenge_id,
+                Challenges.name.label("challenge_name"),
+            )
+            .join(Challenges, Challenges.id == Solves.challenge_id)
+            .join(Model, Model.id == Solves.account_id)
+            .filter(
+                Solves.account_id.in_(top_account_ids),
+                Model.banned == False,
+                Model.hidden == False,
+                Challenges.state == "visible",
+            )
+            .all()
+        )
+
+        # Get attempt matrix data (fails) for top 100 accounts
+        attempt_matrix_data = (
+            db.session.query(
+                Fails.account_id,
+                Fails.challenge_id,
+                Challenges.name.label("challenge_name"),
+            )
+            .join(Challenges, Challenges.id == Fails.challenge_id)
+            .join(Model, Model.id == Fails.account_id)
+            .filter(
+                Fails.account_id.in_(top_account_ids),
+                Model.banned == False,
+                Model.hidden == False,
+                Challenges.state == "visible",
+            )
+            .all()
+        )
+
+        # Build matrix data structure
+        account_solves = {}
+        for account in account_scores:
+            account_solves[account.account_id] = {
+                "name": account.name,
+                "score": account.score,
+                "solved_challenges": set(),
+                "attempted_challenges": set(),
+            }
+
+        for solve in solve_matrix_data:
+            if solve.account_id in account_solves:
+                account_solves[solve.account_id]["solved_challenges"].add(
+                    solve.challenge_id
+                )
+
+        for attempt in attempt_matrix_data:
+            if attempt.account_id in account_solves:
+                account_solves[attempt.account_id]["attempted_challenges"].add(
+                    attempt.challenge_id
+                )
+    else:
+        account_solves = {}
+
     db.session.close()
 
     return render_template(
@@ -84,4 +157,7 @@ def statistics():
         solve_data=solve_data,
         most_solved=most_solved,
         least_solved=least_solved,
+        top_users=account_scores,
+        all_challenges=all_challenges,
+        user_solves=account_solves,
     )
