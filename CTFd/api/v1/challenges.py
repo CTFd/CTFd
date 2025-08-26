@@ -534,6 +534,7 @@ class Challenge(Resource):
             )
             db.session.add(track)
             db.session.commit()
+            db.session.close()
 
         return {"success": True, "data": response}
 

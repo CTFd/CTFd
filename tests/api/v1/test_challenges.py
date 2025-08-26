@@ -1413,7 +1413,7 @@ def test_api_challenge_tracking_first_open_only():
             tracking_count = Tracking.query.filter_by(
                 user_id=2, type="challenges.open", target=1
             ).count()
-            # "First challenge open should create tracking entry"
+            # First challenge open should create tracking entry
             assert tracking_count == 1
 
             # Second request to same challenge - should NOT create another tracking entry
@@ -1434,7 +1434,7 @@ def test_api_challenge_tracking_first_open_only():
             tracking_count = Tracking.query.filter_by(
                 user_id=2, type="challenges.open", target=1
             ).count()
-            # "Multiple opens should still only have one tracking entry"
+            # Multiple opens should still only have one tracking entry
             assert tracking_count == 1
 
     destroy_ctfd(app)
