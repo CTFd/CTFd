@@ -192,7 +192,7 @@ def statistics():
         for opens in opens_matrix_data:
             if opens.account_id in account_solves:
                 account_solves[opens.account_id]["opened_challenges"].add(
-                    int(opens.challenge_id)  # Ensure it's an integer for consistency
+                    opens.challenge_id
                 )
     else:
         account_solves = {}
