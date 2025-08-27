@@ -2,7 +2,7 @@ import math
 from datetime import datetime, timedelta
 from typing import List  # noqa: I001
 
-from flask import abort, render_template, request, url_for
+from flask import abort, render_template, request, session, url_for
 from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
 
@@ -27,6 +27,7 @@ from CTFd.models import (
     Solves,
     Submissions,
     Tags,
+    Tracking,
     db,
 )
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
@@ -70,6 +71,7 @@ from CTFd.utils.user import (
     get_current_team_attrs,
     get_current_user,
     get_current_user_attrs,
+    get_ip,
     is_admin,
 )
 
@@ -516,7 +518,24 @@ class Challenge(Resource):
             challenge=chal,
         )
 
-        db.session.close()
+        if (
+            authed() is True
+            and is_admin() is False
+            and Tracking.query.filter_by(
+                type="challenges.open", user_id=session["id"], target=challenge_id
+            ).first()
+            is None
+        ):
+            track = Tracking(
+                ip=get_ip(),
+                user_id=session["id"],
+                type="challenges.open",
+                target=challenge_id,
+            )
+            db.session.add(track)
+            db.session.commit()
+            db.session.close()
+
         return {"success": True, "data": response}
 
     @admins_only
