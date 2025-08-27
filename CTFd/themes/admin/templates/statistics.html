@@ -32,13 +32,15 @@
 					<thead class="thead-dark">
 						<tr>
 							<th class="text-white" style="background-color: #343a40; z-index: 10; width: 60px;">Rank</th>
-							<th class="sticky-col text-white" style="left: 0; background-color: #343a40; z-index: 10; width: 200px;">{% if get_config('user_mode') == 'teams' %}Team{% else %}User{% endif %}</th>
+							<th class="sticky-col text-white" style="left: 0; background-color: #343a40; z-index: 10; min-width: 200px; max-width: 200px;">{% if get_config('user_mode') == 'teams' %}Team{% else %}User{% endif %}</th>
 							<th class="text-white" style="background-color: #343a40; z-index: 10; width: 80px;">Score</th>
 							{% for challenge in all_challenges %}
-							<th class="text-center text-white" style="min-width: 80px; background-color: #343a40;" title="{{ challenge.name }} ({{ challenge.category }})">
+							<th class="text-center text-white" style="min-width: 120px; max-width: 120px; background-color: #343a40;">
 								<a href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}" class="text-white text-decoration-none">
-									<div style="font-size: 10px; margin-top: 5px;">
-										{{ challenge.name | truncate(20) }} - {{ challenge.value }}pt
+									<div style="font-size: 10px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis;">
+										{{ challenge.name }}
+										<br>
+										{{ challenge.value }}pt
 									</div>
 								</a>
 							</th>
@@ -78,7 +80,7 @@
 									{% set text_color = '#6c757d' %}
 									{% set symbol = '-' %}
 								{% endif %}
-								<td class="text-center" style="width: 30px; height: 30px; border: 1px solid #dee2e6; background-color: {{ bg_color }}; color: {{ text_color }};">
+								<td class="text-center" style="height: 30px; border: 1px solid #dee2e6; background-color: {{ bg_color }}; color: {{ text_color }};">
 									{{ symbol }}
 								</td>
 							{% endfor %}
