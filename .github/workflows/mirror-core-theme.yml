@@ -1,4 +1,4 @@
-name: Mirror subdir
+name: Mirror core-theme
 on:
   push:
     branches: 
