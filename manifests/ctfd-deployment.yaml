@@ -28,7 +28,7 @@ spec:
         - name: LOG_FOLDER
           value: /var/log/CTFd
         - name: REDIS_URL
-          value: redis://cache-redis:6379  # Changed from 'cache' to match your service name
+          value: redis://admin:V13I4dT4n9wt@10.0.1.40:6379
         - name: REVERSE_PROXY
           value: "true"
         - name: UPLOAD_FOLDER
