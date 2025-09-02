@@ -1,3 +1,50 @@
+# 3.8.0 / UNRELEASED
+
+**General**
+
+- Max Attempts can now behave as a timeout instead of a lockout
+  - For example a user who submits 3 attempts may then be prevented from submitting another attempt for 5 minutes.
+- Admins can now configure whether users can see their past submissions
+- Extra attempts on challenges will now show if the submissions is correct/incorrect
+- Fixes issue where admins could not download challenge files before CTF start when downloading anonymously
+- Add ability for CTFd to store solutions for challenges
+- If email sending is available, email confirmation is enabled by default and users are nudged to complete email verification.
+- Challenges now have the logic field which allows for challenge developers to control the flag collection behavior of a challenge:
+  - `any` flag is accepted
+  - `all` flags must be submitted
+  - `team` where all team members must submit any flag
+- Users can be required to change their password upon login
+- Social Shares are now enabled by default and admins may now control the social share template page
+- Challenges can now collect challenge feedback of a rating as well as reviews
+- Hints now always require unlocking even if they require no cost. This prevents accidental viewing and better tracking of hint consumption
+- Admins must now unlock hints instead of automatically receiving them
+
+**Admin Panel**
+
+- Brackets are now shown in the Admin Panel scoreboard
+- Add a config for admins to specify a minimum password length
+- A matrix scoreboard showing player progression through the CTF has been added to the Statistics page of the Admin Panel
+
+**API**
+
+- Added /api/v1/users/me/submissions for users to get their own submissions
+- Added /api/v1/challenges/[challenge_id]/solutions for users to get challenge solutions
+
+**Deployment**
+
+- pybluemonday has been removed from CTFd and replaced with nh3
+- FLask has been updated to 2.1.3
+- Werkzeug has been updated to 2.2.3
+- `EMAIL_CONFIRMATION_REQUIRE_INTERACTION` has been added to config.ini to configure whether confirmation links require a button click or automatically confirm accounts. This can help CTFd work with certain anti-phishing defenses.
+- `PRESET_ADMIN_NAME`, `PRESET_ADMIN_EMAIL`, `PRESET_ADMIN_PASSWORD`, `PRESET_ADMIN_TOKEN` have been aded to config.ini to allow for the pre-creation of an admin user. This can assist with automating deployments of CTFd and ensuring that a known token will be associated with an admin user.
+- `PRESET_CONFIGS` has been added to config.ini to allow for the setting of server side configs without having to complete the setup process or interact with the API
+
+**Themes**
+
+- `core-beta` has promoted to the `core` theme
+  - The previous core-beta repo has been replaced with the [core-theme repo](https://github.com/CTFd/core-theme). Any future changes to the core theme should be copied over to the core-theme repo.
+- The previous `core` theme has been deprecated and renamed to `core-deprecated`
+
 # 3.7.7 / 2025-04-14
 
 **General**
