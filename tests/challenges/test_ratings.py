@@ -547,7 +547,7 @@ def test_ratings_upvote_downvote_count():
         # Update the expected values list for verification
         user_ratings[0]["value"] = -1
         user_ratings[0]["review"] = "Actually, not so great after reconsidering"
-        
+
         # Expected counts after update: user1 changed from upvote to downvote
         # So now we have: user1(-1), user2(-1), user3(1) = 1 upvote, 2 downvotes
         expected_updated_counts = {"up": 1, "down": 2, "count": 3}
@@ -567,7 +567,10 @@ def test_ratings_upvote_downvote_count():
         r = user1_client.get(f"/api/v1/challenges/{challenge_id}")
         data = r.get_json()
         assert data["data"]["rating"]["value"] == -1
-        assert data["data"]["rating"]["review"] == "Actually, not so great after reconsidering"
+        assert (
+            data["data"]["rating"]["review"]
+            == "Actually, not so great after reconsidering"
+        )
 
         # Verify all other users still see their original ratings in challenge detail
         for user in user_ratings:
@@ -585,7 +588,7 @@ def test_ratings_upvote_downvote_count():
         rating_values = [r.value for r in all_ratings]
         expected_values = sorted([rating["value"] for rating in user_ratings])
         assert sorted(rating_values) == expected_values
-        
+
         # Verify counts match database reality
         upvotes = sum(1 for value in rating_values if value == 1)
         downvotes = sum(1 for value in rating_values if value == -1)
