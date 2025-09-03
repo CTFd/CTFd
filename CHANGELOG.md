@@ -2,42 +2,69 @@
 
 **General**
 
-- Max Attempts can now behave as a timeout instead of a lockout
-  - For example a user who submits 3 attempts may then be prevented from submitting another attempt for 5 minutes.
 - Admins can now configure whether users can see their past submissions
-- Extra attempts on challenges will now show if the submissions is correct/incorrect
-- Fixes issue where admins could not download challenge files before CTF start when downloading anonymously
-- Add ability for CTFd to store solutions for challenges
+- Admins can now store challenge solutions within CTFd to be viewed by users
+- Participants can now leave upvotes/downvotes on challenges as well as their review of a challenge
+  - Ratings/Votes can be configured to be viewed by participants or only admins
+  - Reviews are only visible by admins
+- Challenges now have the `logic` field which allows for challenge developers to control the flag collection behavior of a challenge:
+  - `any`: any flag is accepted for the challenge
+  - `all`: all flags for the challenge must be submitted
+  - `team`: all team members must submit any flag
+- Max Attempts can now behave as a timeout instead of a lockout
+  - For example a user who submits 3 attempts will then be prevented from submitting another attempt for 5 minutes instead of being unable to submit entirely
+- Social Shares for challenge completion are now enabled by default and admins may now control the social share template page
+- Additional attempts after solving on challenges will now show if the submissions is correct/incorrect
 - If email sending is available, email confirmation is enabled by default and users are nudged to complete email verification.
-- Challenges now have the logic field which allows for challenge developers to control the flag collection behavior of a challenge:
-  - `any` flag is accepted
-  - `all` flags must be submitted
-  - `team` where all team members must submit any flag
-- Users can be required to change their password upon login
-- Social Shares are now enabled by default and admins may now control the social share template page
-- Challenges can now collect challenge feedback of a rating as well as reviews
-- Hints now always require unlocking even if they require no cost. This prevents accidental viewing and better tracking of hint consumption
-- Admins must now unlock hints instead of automatically receiving them
+- Hints can now have a title that is shown before unlocking
+- Hints now always require unlocking even if they require no cost
+  - This prevents accidental viewing and better tracking of hint consumption
+- CTFd will now store a tracking event under `challenges.open` in the Tracking table when a challenge is opened for the first time by a user
+- Challenges now report whether a flag is correct or incorrect even if the challenge has already been solved
+- Fixes issue where admins could not download challenge files before CTF start when downloading anonymously
 
 **Admin Panel**
 
-- Brackets are now shown in the Admin Panel scoreboard
-- Add a config for admins to specify a minimum password length
 - A matrix scoreboard showing player progression through the CTF has been added to the Statistics page of the Admin Panel
+- Brackets are now shown in the Admin Panel scoreboard
+- Added a config for admins to specify a minimum password length
+- Added a config to control whether players can see previous submissions
+- Admins can now require Users to change their password upon login
+- Added a config to control max attempts behavior
+- Admins will only be able to see hints for free in the Admin Panel challenge preview
+- Fixed an issue where the hint form would not be reset properly when creating multiple hints
 
 **API**
 
-- Added /api/v1/users/me/submissions for users to get their own submissions
-- Added /api/v1/challenges/[challenge_id]/solutions for users to get challenge solutions
+- Added `/api/v1/users/me/submissions` for users to get their own submissions
+- Added `/api/v1/challenges/[challenge_id]/solutions` for users to get challenge solutions
+- Added `/api/v1/challenges/[challenge_id]/ratings` for users to submit challenge ratings and admins to retrieve ratings
+- Added `ratings` and `rating` fields to the response of `/api/v1/challenges/[challenge_id]`
+- Added `solution_id` to the response of `/api/v1/challenges/[challenge_id]`. If there is no visible solution the challenge has a null solution_id
+- Added `logic` to the response of `/api/v1/challenges/[challenge_id]`
+- Added `change_password` to `/api/v1/users/[user_id]` when viewing as Admin
+- Added `/api/v1/solutions` and `/api/v1/solutions/[solution_id]`
+- `/api/v1/unlocks` are now also used to unlock solutions for viewing by users
 
 **Deployment**
 
+- `PRESET_ADMIN_NAME`, `PRESET_ADMIN_EMAIL`, `PRESET_ADMIN_PASSWORD`, `PRESET_ADMIN_TOKEN` have been added to `config.ini` to allow for the pre-creation of an admin user
+  - This can assist with automating deployments of CTFd and ensuring that a known token will be associated with an admin user.
+- `PRESET_CONFIGS` has been added to `config.ini` to allow for the pre-setting of server side configs
+  - This can assist setting configs without having to complete the setup process or interact with the API
+- `EMAIL_CONFIRMATION_REQUIRE_INTERACTION` has been added to `config.ini` to require an additional interaction for email confirmation links
+  - This can help CTFd work with certain anti-phishing defenses.
+- Email confirmation is now allowed as long as email sending is enabled
 - pybluemonday has been removed from CTFd and replaced with nh3
-- Flask has been updated to 2.1.3
-- Werkzeug has been updated to 2.2.3
-- `EMAIL_CONFIRMATION_REQUIRE_INTERACTION` has been added to config.ini to configure whether confirmation links require a button click or automatically confirm accounts. This can help CTFd work with certain anti-phishing defenses.
-- `PRESET_ADMIN_NAME`, `PRESET_ADMIN_EMAIL`, `PRESET_ADMIN_PASSWORD`, `PRESET_ADMIN_TOKEN` have been added to config.ini to allow for the pre-creation of an admin user. This can assist with automating deployments of CTFd and ensuring that a known token will be associated with an admin user.
-- `PRESET_CONFIGS` has been added to config.ini to allow for the setting of server side configs without having to complete the setup process or interact with the API
+  - This is due to the breakage of Python modules written in Golang
+- Updated Flask to 2.1.3
+- Updated Werkzeug to 2.2.3
+
+**Plugins**
+
+- Challenge Type Plugins should now return a ChallengeResponse object instead of a (status, message) tuple.
+  - Existing behavior will be supported until CTFd 4.0
+- Added `BaseChallenge.partial` for challenge classes to indicate when a solution is a partial solve (for all flag logic)
 
 **Themes**
 
