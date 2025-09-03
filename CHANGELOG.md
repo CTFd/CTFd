@@ -1,4 +1,4 @@
-# 3.8.0 / UNRELEASED
+# 3.8.0 / 2025-09-04
 
 **General**
 
@@ -18,59 +18,59 @@
 - If email sending is available, email confirmation is enabled by default and users are nudged to complete email verification.
 - Hints can now have a title that is shown before unlocking
 - Hints now always require unlocking even if they require no cost
-  - This prevents accidental viewing and better tracking of hint consumption
+  - Prevents accidental viewing and improves tracking of hint usage
 - CTFd will now store a tracking event under `challenges.open` in the Tracking table when a challenge is opened for the first time by a user
 - Challenges now report whether a flag is correct or incorrect even if the challenge has already been solved
 - Fixes issue where admins could not download challenge files before CTF start when downloading anonymously
 
 **Admin Panel**
 
-- A matrix scoreboard showing player progression through the CTF has been added to the Statistics page of the Admin Panel
-- Brackets are now shown in the Admin Panel scoreboard
-- Added a config for admins to specify a minimum password length
-- Added a config to control whether players can see previous submissions
-- Admins can now require Users to change their password upon login
-- Added a config to control max attempts behavior
-- Admins will only be able to see hints for free in the Admin Panel challenge preview
-- Fixed an issue where the hint form would not be reset properly when creating multiple hints
+- Added a matrix scoreboard to the Statistics page to show player progression through the CTF
+- Added support for brackets in the Admin Panel scoreboard
+- Added config option for minimum password length
+- Added config option to control whether players can view their previous submissions
+- Admins can now require users to change their password upon login
+- Added config option to control Max Attempts behavior
+- In the Admin Panel challenge preview, admins now only see free hints
+- Fixed issue where the hint form was not resetting properly when creating multiple hints
 
 **API**
 
-- Added `/api/v1/users/me/submissions` for users to get their own submissions
-- Added `/api/v1/challenges/[challenge_id]/solutions` for users to get challenge solutions
-- Added `/api/v1/challenges/[challenge_id]/ratings` for users to submit challenge ratings and admins to retrieve ratings
+- Added `/api/v1/users/me/submissions` for users to retrieve their own submissions
+- Added `/api/v1/challenges/[challenge_id]/solutions` for users to retrieve challenge solutions
+- Added `/api/v1/challenges/[challenge_id]/ratings` for users to submit ratings and for admins to retrieve them
 - Added `ratings` and `rating` fields to the response of `/api/v1/challenges/[challenge_id]`
-- Added `solution_id` to the response of `/api/v1/challenges/[challenge_id]`. If there is no visible solution the challenge has a null solution_id
-- Added `logic` to the response of `/api/v1/challenges/[challenge_id]`
-- Added `change_password` to `/api/v1/users/[user_id]` when viewing as Admin
-- Added `/api/v1/solutions` and `/api/v1/solutions/[solution_id]`
-- `/api/v1/unlocks` are now also used to unlock solutions for viewing by users
+- Added `solution_id` to the response of `/api/v1/challenges/[challenge_id]`
+  - If no solution is available, the field is `null`
+- Added `logic` field to the response of `/api/v1/challenges/[challenge_id]`
+- Added `change_password` field to `/api/v1/users/[user_id]` when viewed as an admin
+- Added `/api/v1/solutions` and `/api/v1/solutions/[solution_id]` endpoints
+- `/api/v1/unlocks` is now also used to unlock solutions for user viewing
 
 **Deployment**
 
-- `PRESET_ADMIN_NAME`, `PRESET_ADMIN_EMAIL`, `PRESET_ADMIN_PASSWORD`, `PRESET_ADMIN_TOKEN` have been added to `config.ini` to allow for the pre-creation of an admin user
-  - This can assist with automating deployments of CTFd and ensuring that a known token will be associated with an admin user.
-- `PRESET_CONFIGS` has been added to `config.ini` to allow for the pre-setting of server side configs
-  - This can assist setting configs without having to complete the setup process or interact with the API
-- `EMAIL_CONFIRMATION_REQUIRE_INTERACTION` has been added to `config.ini` to require an additional interaction for email confirmation links
-  - This can help CTFd work with certain anti-phishing defenses.
-- Email confirmation is now allowed as long as email sending is enabled
-- pybluemonday has been removed from CTFd and replaced with nh3
-  - This is due to the breakage of Python modules written in Golang
+- Added `PRESET_ADMIN_NAME`, `PRESET_ADMIN_EMAIL`, `PRESET_ADMIN_PASSWORD`, and `PRESET_ADMIN_TOKEN` to `config.ini` for pre-creating an admin user
+  - Useful for automated deployments and ensuring a known admin token exists
+- Added `PRESET_CONFIGS` to `config.ini` for pre-setting server-side configs
+  - Useful for configuring CTFd without completing setup or using the API
+- Added `EMAIL_CONFIRMATION_REQUIRE_INTERACTION` to `config.ini` to require additional interaction for email confirmation links
+  - Improves compatibility with certain anti-phishing defenses
+- Email confirmation is now enabled whenever email sending is available
+- Replaced `pybluemonday` with `nh3` (due to breakage in Python modules written in Golang)
 - Updated Flask to 2.1.3
 - Updated Werkzeug to 2.2.3
 
 **Plugins**
 
-- Challenge Type Plugins should now return a ChallengeResponse object instead of a (status, message) tuple.
-  - Existing behavior will be supported until CTFd 4.0
-- Added `BaseChallenge.partial` for challenge classes to indicate when a solution is a partial solve (for all flag logic)
+- Challenge Type Plugins should now return a `ChallengeResponse` object instead of a `(status, message)` tuple
+  - Existing behavior is supported until CTFd 4.0
+- Added `BaseChallenge.partial` for challenge classes to indicate partial solves (for `all` flag logic)
 
 **Themes**
 
-- `core-beta` has promoted to the `core` theme
-  - The previous core-beta repo has been replaced with the [core-theme repo](https://github.com/CTFd/core-theme). Any future changes to the core theme should be copied over to the core-theme repo.
-- The previous `core` theme has been deprecated and renamed to `core-deprecated`
+- The `core-beta` theme has been promoted to `core`
+  - The `core-beta` repo has been replaced with the [core-theme repo](https://github.com/CTFd/core-theme). Future changes should be made there
+- The previous `core` theme has been deprecated and renamed `core-deprecated`
 
 # 3.7.7 / 2025-04-14
 
