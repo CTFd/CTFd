@@ -12,23 +12,17 @@
           {{ error }}
         </div>
 
-        <!-- Initial State (before loading) -->
+        <!-- No ratings -->
         <div
           v-else-if="!ratings.length && !loading"
           class="text-center text-muted py-4"
         >
           <i class="fa fa-star fa-2x mb-3"></i>
-          <p>Loading Ratings</p>
+          <p>No ratings yet</p>
         </div>
 
         <!-- Ratings Content -->
         <div v-else>
-          <!-- No Ratings State -->
-          <div v-if="!ratings.length" class="alert alert-info">
-            <i class="fa fa-star fa-2x mb-3"></i>
-            <strong>No ratings yet</strong> - This challenge has not been rated
-            by any users.
-          </div>
           <!-- Rating Summary -->
           <div v-if="meta.summary.count > 0" class="mb-3">
             <div class="row">
