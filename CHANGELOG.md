@@ -33,7 +33,7 @@
 **Deployment**
 
 - pybluemonday has been removed from CTFd and replaced with nh3
-- FLask has been updated to 2.1.3
+- Flask has been updated to 2.1.3
 - Werkzeug has been updated to 2.2.3
 - `EMAIL_CONFIRMATION_REQUIRE_INTERACTION` has been added to config.ini to configure whether confirmation links require a button click or automatically confirm accounts. This can help CTFd work with certain anti-phishing defenses.
 - `PRESET_ADMIN_NAME`, `PRESET_ADMIN_EMAIL`, `PRESET_ADMIN_PASSWORD`, `PRESET_ADMIN_TOKEN` have been aded to config.ini to allow for the pre-creation of an admin user. This can assist with automating deployments of CTFd and ensuring that a known token will be associated with an admin user.
