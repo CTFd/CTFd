@@ -17,7 +17,7 @@ Challenge = namedtuple(
     "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
 )
 
-Rating = namedtuple("Rating", ["average", "count"])
+Rating = namedtuple("Rating", ["up", "down", "count"])
 
 
 @cache.memoize(timeout=60)
@@ -153,10 +153,17 @@ def get_rating_average_for_challenge_id(challenge_id):
     ratings = Ratings.query.filter_by(challenge_id=challenge_id).all()
 
     if ratings:
-        # Calculate average rating
-        total_value = sum(rating.value for rating in ratings)
-        average_rating = total_value / len(ratings)
-
-        return Rating(average=round(average_rating, 1), count=len(ratings))
+        # Sum upvotes and downvotes
+        up = 0
+        down = 0
+        count = 0
+        for rating in ratings:
+            count += 1
+            if rating.value < 0:
+                down += rating.value
+            else:
+                up += rating.value
+        down = abs(down)
+        return Rating(up=up, down=down, count=count)
     else:
-        return Rating(average=None, count=0)
+        return Rating(up=0, down=0, count=0)

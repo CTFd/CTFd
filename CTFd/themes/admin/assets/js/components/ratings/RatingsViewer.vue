@@ -26,22 +26,26 @@
           <!-- Rating Summary -->
           <div v-if="meta.summary.count > 0" class="mb-3">
             <div class="row">
-              <div class="col-md-6 text-center">
-                <h5>
-                  <strong>
-                    Average Rating:
-                    {{
-                      meta.summary.average
-                        ? meta.summary.average.toFixed(2)
-                        : "N/A"
-                    }}/5
+              <div class="col-md-4 text-center">
+                <h4>
+                  <strong class="text-success">
+                    <i class="fa-solid fa-thumbs-up"></i>
+                    {{ meta.summary.up }}
                   </strong>
-                </h5>
+                </h4>
               </div>
-              <div class="col-md-6 text-center">
-                <h5>
-                  <strong> Total Ratings: {{ meta.summary.count }} </strong>
-                </h5>
+              <div class="col-md-4 text-center">
+                <h4>
+                  <strong class="text-danger">
+                    <i class="fa-solid fa-thumbs-down"></i>
+                    {{ meta.summary.down }}
+                  </strong>
+                </h4>
+              </div>
+              <div class="col-md-4 text-center">
+                <h4>
+                  <strong> Total: {{ meta.summary.count }} </strong>
+                </h4>
               </div>
             </div>
           </div>
@@ -55,10 +59,14 @@
                     <a :href="`${urlRoot}/admin/users/${rating.user.id}`">{{
                       rating.user.name
                     }}</a>
-                    <span class="text-warning ml-2">{{
-                      getStars(rating.value)
-                    }}</span>
-                    <small class="text-muted">({{ rating.value }}/5)</small>
+                    <span class="ml-2">
+                      <span v-if="rating.value === 1" class="text-success">
+                        <i class="fa-solid fa-thumbs-up"></i>
+                      </span>
+                      <span v-else-if="rating.value === -1" class="text-danger">
+                        <i class="fa-solid fa-thumbs-down"></i>
+                      </span>
+                    </span>
                   </h6>
                   <p v-if="rating.review">{{ rating.review }}</p>
                 </div>
@@ -188,11 +196,6 @@ export default {
     },
     loadPage(page) {
       this.loadRatings(page);
-    },
-    getStars(value) {
-      const filled = "★".repeat(value);
-      const empty = "☆".repeat(5 - value);
-      return filled + empty;
     },
     toLocalTime(date) {
       return dayjs(date).format("MMMM Do, h:mm:ss A");
