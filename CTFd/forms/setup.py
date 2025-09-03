@@ -19,6 +19,7 @@ from CTFd.constants.config import (
     RegistrationVisibilityTypes,
     ScoreVisibilityTypes,
 )
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.config import get_themes
@@ -76,8 +77,7 @@ class SetupForm(BaseForm):
         _l("Theme"),
         description=_l("CTFd Theme to use. Can be changed later."),
         choices=list(zip(get_themes(), get_themes())),
-        ## TODO: Replace back to DEFAULT_THEME (aka core) in CTFd 4.0
-        default="core-beta",
+        default=DEFAULT_THEME,
         validators=[InputRequired()],
     )
     theme_color = HiddenField(
