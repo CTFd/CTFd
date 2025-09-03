@@ -492,7 +492,8 @@ class Challenge(Resource):
             # Get rating information for this challenge
             rating_info = get_rating_average_for_challenge_id(challenge_id)
             response["ratings"] = {
-                "average": rating_info.average,
+                "up": rating_info.up,
+                "down": rating_info.down,
                 "count": rating_info.count,
             }
         else:
@@ -1066,7 +1067,8 @@ class ChallengeRatings(Resource):
                     "total": paginated_ratings.total,
                 },
                 "summary": {
-                    "average": rating_info.average,
+                    "up": rating_info.up,
+                    "down": rating_info.down,
                     "count": rating_info.count,
                 },
             },
@@ -1117,10 +1119,10 @@ class ChallengeRatings(Resource):
             }, 400
 
         # Validate rating value (1-5 scale)
-        if rating_value < 1 or rating_value > 5:
+        if abs(rating_value) != 1:
             return {
                 "success": False,
-                "errors": {"value": ["Rating value must be between 1 and 5"]},
+                "errors": {"value": ["Rating value must be either 1 or -1"]},
             }, 400
 
         # Get review text (optional)
