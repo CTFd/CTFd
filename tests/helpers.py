@@ -476,7 +476,7 @@ def gen_solve(
     return solve
 
 
-def gen_rating(db, user_id, challenge_id, value=5, review="Great challenge!", **kwargs):
+def gen_rating(db, user_id, challenge_id, value=1, review="Great challenge!", **kwargs):
     rating = Ratings(
         user_id=user_id, challenge_id=challenge_id, value=value, review=review, **kwargs
     )

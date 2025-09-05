@@ -27,6 +27,8 @@ def test_ratings_public_config():
         user1_id = 2
         register_user(app, name="user2", email="user2@example.com")
         user2_id = 3
+        register_user(app, name="user3", email="user3@example.com")
+        user3_id = 4
         challenge = gen_challenge(app.db, name="Test Challenge", value=100)
         challenge_id = challenge.id
         gen_flag(app.db, challenge_id=challenge_id, content="flag{test}")
@@ -38,31 +40,44 @@ def test_ratings_public_config():
         gen_solve(
             app.db, user_id=user2_id, challenge_id=challenge_id, provided="flag{test}"
         )
+        gen_solve(
+            app.db, user_id=user3_id, challenge_id=challenge_id, provided="flag{test}"
+        )
 
         client1 = login_as_user(app, name="user1", password="password")
         client2 = login_as_user(app, name="user2", password="password")
+        client3 = login_as_user(app, name="user3", password="password")
 
         # Test that users can leave ratings (PUT request)
         rating_data1 = {
-            "value": 4,
+            "value": 1,
             "review": "Great challenge! Really enjoyed solving it.",
         }
         r = client1.put(f"/api/v1/challenges/{challenge_id}/ratings", json=rating_data1)
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 4
+        assert data["data"]["value"] == 1
         assert data["data"]["review"] == "Great challenge! Really enjoyed solving it."
         assert data["data"]["challenge_id"] == challenge_id
 
         # Second user can also rate
-        rating_data2 = {"value": 5, "review": "Excellent challenge!"}
+        rating_data2 = {"value": 1, "review": "Excellent challenge!"}
         r = client2.put(f"/api/v1/challenges/{challenge_id}/ratings", json=rating_data2)
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 5
+        assert data["data"]["value"] == 1
         assert data["data"]["review"] == "Excellent challenge!"
+
+        # Second user can also rate
+        rating_data3 = {"value": -1, "review": "Hated it!"}
+        r = client3.put(f"/api/v1/challenges/{challenge_id}/ratings", json=rating_data3)
+        assert r.status_code == 200
+        data = r.get_json()
+        assert data["success"] is True
+        assert data["data"]["value"] == -1
+        assert data["data"]["review"] == "Hated it!"
 
         # Test that challenge detail includes rating info when public
         r = client1.get(f"/api/v1/challenges/{challenge_id}")
@@ -70,15 +85,16 @@ def test_ratings_public_config():
         data = r.get_json()
         assert data["success"] is True
         assert "ratings" in data["data"]
-        assert data["data"]["ratings"]["average"] == 4.5
-        assert data["data"]["ratings"]["count"] == 2
+        assert data["data"]["ratings"]["up"] == 2
+        assert data["data"]["ratings"]["down"] == 1
+        assert data["data"]["ratings"]["count"] == 3
         assert "rating" in data["data"]  # User's own rating
-        assert data["data"]["rating"]["value"] == 4
+        assert data["data"]["rating"]["value"] == 1
         assert (
             data["data"]["rating"]["review"]
             == "Great challenge! Really enjoyed solving it."
         )
-        assert len(Ratings.query.all()) == 2
+        assert len(Ratings.query.all()) == 3
 
     destroy_ctfd(app)
 
@@ -115,21 +131,21 @@ def test_ratings_private_config():
         assert r.status_code == 403  # Forbidden
 
         # Test that users can still leave ratings (PUT request)
-        rating_data1 = {"value": 3, "review": "Good challenge with private rating"}
+        rating_data1 = {"value": 1, "review": "Good challenge with private rating"}
         r = client1.put(f"/api/v1/challenges/{challenge_id}/ratings", json=rating_data1)
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 3
+        assert data["data"]["value"] == 1
         assert data["data"]["review"] == "Good challenge with private rating"
 
         # Second user can also rate
-        rating_data2 = {"value": 5, "review": "Excellent private challenge!"}
+        rating_data2 = {"value": 1, "review": "Excellent private challenge!"}
         r = client2.put(f"/api/v1/challenges/{challenge_id}/ratings", json=rating_data2)
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 5
+        assert data["data"]["value"] == 1
         assert data["data"]["review"] == "Excellent private challenge!"
 
         # Test that challenge detail doesn't include aggregated ratings for regular users
@@ -139,7 +155,7 @@ def test_ratings_private_config():
         assert data["success"] is True
         assert data["data"]["ratings"] is None  # No aggregated ratings shown
         assert "rating" in data["data"]  # But user can see their own rating
-        assert data["data"]["rating"]["value"] == 3
+        assert data["data"]["rating"]["value"] == 1
         assert data["data"]["rating"]["review"] == "Good challenge with private rating"
 
         # Test that admin can still see aggregated ratings
@@ -147,7 +163,8 @@ def test_ratings_private_config():
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["meta"]["summary"]["average"] == 4.0  # (3+5)/2
+        assert data["meta"]["summary"]["up"] == 2
+        assert data["meta"]["summary"]["down"] == 0
         assert data["meta"]["summary"]["count"] == 2
 
         assert len(Ratings.query.all()) == 2
@@ -226,7 +243,7 @@ def test_rating_requires_solve():
         client = login_as_user(app, name="user1", password="password")
 
         # Try to rate without solving first
-        rating_data = {"value": 4, "review": "Great challenge!"}
+        rating_data = {"value": 1, "review": "Great challenge!"}
         r = client.put(f"/api/v1/challenges/{chal_id}/ratings", json=rating_data)
         assert r.status_code == 403
         data = r.get_json()
@@ -242,7 +259,7 @@ def test_rating_requires_solve():
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 4
+        assert data["data"]["value"] == 1
         assert data["data"]["review"] == "Great challenge!"
         assert len(Ratings.query.all()) == 1
 
@@ -274,21 +291,21 @@ def test_rating_validation():
         assert data["success"] is False
         assert "Rating value is required" in data["errors"]["value"][0]
 
-        # Test invalid rating value (too low)
+        # Test invalid rating value (not -1 or 1)
         rating_data = {"value": 0}
         r = client.put(f"/api/v1/challenges/{chal_id}/ratings", json=rating_data)
         assert r.status_code == 400
         data = r.get_json()
         assert data["success"] is False
-        assert "Rating value must be between 1 and 5" in data["errors"]["value"][0]
+        assert "Rating value must be either 1 or -1" in data["errors"]["value"][0]
 
         # Test invalid rating value (too high)
-        rating_data = {"value": 6}
+        rating_data = {"value": 2}
         r = client.put(f"/api/v1/challenges/{chal_id}/ratings", json=rating_data)
         assert r.status_code == 400
         data = r.get_json()
         assert data["success"] is False
-        assert "Rating value must be between 1 and 5" in data["errors"]["value"][0]
+        assert "Rating value must be either 1 or -1" in data["errors"]["value"][0]
 
         # Test invalid rating value (non-integer)
         rating_data = {"value": "invalid"}
@@ -300,7 +317,7 @@ def test_rating_validation():
 
         # Test review text too long
         long_review = "x" * 2001  # Exceeds 2000 character limit
-        rating_data = {"value": 4, "review": long_review}
+        rating_data = {"value": 1, "review": long_review}
         r = client.put(f"/api/v1/challenges/{chal_id}/ratings", json=rating_data)
         assert r.status_code == 400
         data = r.get_json()
@@ -312,14 +329,14 @@ def test_rating_validation():
 
         # Test valid rating with review
         rating_data = {
-            "value": 4,
+            "value": -1,
             "review": "This is a valid review within the character limit.",
         }
         r = client.put(f"/api/v1/challenges/{chal_id}/ratings", json=rating_data)
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 4
+        assert data["data"]["value"] == -1
         assert (
             data["data"]["review"]
             == "This is a valid review within the character limit."
@@ -348,41 +365,41 @@ def test_rating_update():
         client = login_as_user(app, name="user1", password="password")
 
         # Create initial rating
-        initial_rating = {"value": 3, "review": "Initial review"}
+        initial_rating = {"value": 1, "review": "Initial review"}
         r = client.put(f"/api/v1/challenges/{chal_id}/ratings", json=initial_rating)
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 3
+        assert data["data"]["value"] == 1
         assert data["data"]["review"] == "Initial review"
         initial_id = data["data"]["id"]
         assert len(Ratings.query.all()) == 1
         r = Ratings.query.get(1)
-        assert r.value == 3
+        assert r.value == 1
         assert r.review == "Initial review"
 
         # Update the rating
         updated_rating = {
-            "value": 5,
+            "value": -1,
             "review": "Updated review after thinking more about it",
         }
         r = client.put(f"/api/v1/challenges/{chal_id}/ratings", json=updated_rating)
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["data"]["value"] == 5
+        assert data["data"]["value"] == -1
         assert data["data"]["review"] == "Updated review after thinking more about it"
         assert data["data"]["id"] == initial_id  # Same rating record, just updated
         assert len(Ratings.query.all()) == 1
 
         r = Ratings.query.get(1)
-        assert r.value == 5
+        assert r.value == -1
         assert r.review == "Updated review after thinking more about it"
 
         # Verify only one rating exists in database
         ratings = Ratings.query.filter_by(user_id=user_id, challenge_id=chal_id).all()
         assert len(ratings) == 1
-        assert ratings[0].value == 5
+        assert ratings[0].value == -1
         assert ratings[0].review == "Updated review after thinking more about it"
 
     destroy_ctfd(app)
@@ -409,36 +426,40 @@ def test_rating_without_authentication():
     destroy_ctfd(app)
 
 
-def test_ratings_average_and_count():
-    """Test that average and count calculations are correct with multiple users and ratings"""
+def test_ratings_upvote_downvote_count():
+    """Test that upvote and downvote calculations are correct with multiple users and ratings"""
     app = create_ctfd()
     with app.app_context():
         set_config("challenge_ratings", "public")
 
-        # Define test data for ratings
+        # Define test data for upvote/downvote ratings
         user_ratings = [
             {
                 "name": "user1",
                 "email": "user1@example.com",
-                "value": 5,
+                "value": 1,  # upvote
                 "review": "Excellent challenge!",
             },
             {
                 "name": "user2",
                 "email": "user2@example.com",
-                "value": 3,
-                "review": "It was okay",
+                "value": -1,  # downvote
+                "review": "Not great",
             },
             {
                 "name": "user3",
                 "email": "user3@example.com",
-                "value": 1,
-                "review": "Too difficult",
+                "value": 1,  # upvote
+                "review": "Pretty good!",
             },
         ]
 
-        # Expected averages after each rating submission
-        expected_averages = [5.0, 4.0, 3.0]
+        # Expected upvotes/downvotes after each rating submission
+        expected_counts = [
+            {"up": 1, "down": 0, "count": 1},  # After user1
+            {"up": 1, "down": 1, "count": 2},  # After user2
+            {"up": 2, "down": 1, "count": 3},  # After user3
+        ]
 
         # Create users and challenge
         users = []
@@ -473,7 +494,8 @@ def test_ratings_average_and_count():
         assert r.status_code == 200
         data = r.get_json()
         assert data["success"] is True
-        assert data["meta"]["summary"]["average"] is None
+        assert data["meta"]["summary"]["up"] == 0
+        assert data["meta"]["summary"]["down"] == 0
         assert data["meta"]["summary"]["count"] == 0
 
         # Submit ratings progressively and verify calculations using database creation
@@ -489,13 +511,14 @@ def test_ratings_average_and_count():
 
             assert len(Ratings.query.all()) == i + 1
 
-            # Check admin ratings endpoint has correct average and count
+            # Check admin ratings endpoint has correct upvote/downvote counts
             r = admin_client.get(f"/api/v1/challenges/{challenge_id}/ratings")
             assert r.status_code == 200
             data = r.get_json()
             assert data["success"] is True
-            assert data["meta"]["summary"]["average"] == expected_averages[i]
-            assert data["meta"]["summary"]["count"] == i + 1
+            assert data["meta"]["summary"]["up"] == expected_counts[i]["up"]
+            assert data["meta"]["summary"]["down"] == expected_counts[i]["down"]
+            assert data["meta"]["summary"]["count"] == expected_counts[i]["count"]
 
         # Verify each user can see their own correct rating in challenge detail
         for rating_data in user_ratings:
@@ -507,13 +530,13 @@ def test_ratings_average_and_count():
             assert data["data"]["rating"]["value"] == rating_data["value"]
             assert data["data"]["rating"]["review"] == rating_data["review"]
 
-        # Test rating update - user 1 changes their rating from 5 to 4
+        # Test rating update - user 1 changes their rating from upvote (1) to downvote (-1)
         # Update rating directly in database
         first_rating = Ratings.query.filter_by(
             user_id=user_ids[0], challenge_id=challenge_id
         ).first()
-        first_rating.value = 4
-        first_rating.review = "Good challenge, revised rating"
+        first_rating.value = -1  # Change from upvote to downvote
+        first_rating.review = "Actually, not so great after reconsidering"
         app.db.session.commit()
         clear_ratings()
 
@@ -522,27 +545,32 @@ def test_ratings_average_and_count():
         )  # Still same number of ratings
 
         # Update the expected values list for verification
-        user_ratings[0]["value"] = 4
-        user_ratings[0]["review"] = "Good challenge, revised rating"
-        updated_values = [rating["value"] for rating in user_ratings]
-        expected_updated_average = round(
-            sum(updated_values) / len(updated_values), 1
-        )  # Should be 2.6 (4+3+1)/3
+        user_ratings[0]["value"] = -1
+        user_ratings[0]["review"] = "Actually, not so great after reconsidering"
 
-        # Check average after update using admin ratings endpoint
+        # Expected counts after update: user1 changed from upvote to downvote
+        # So now we have: user1(-1), user2(-1), user3(1) = 1 upvote, 2 downvotes
+        expected_updated_counts = {"up": 1, "down": 2, "count": 3}
+
+        # Check counts after update using admin ratings endpoint
         r = admin_client.get(f"/api/v1/challenges/{challenge_id}/ratings")
         assert r.status_code == 200
         data = r.get_json()
+        print(data)
         assert data["success"] is True
-        assert data["meta"]["summary"]["average"] == expected_updated_average
-        assert data["meta"]["summary"]["count"] == len(user_ratings)
+        assert data["meta"]["summary"]["up"] == expected_updated_counts["up"]
+        assert data["meta"]["summary"]["down"] == expected_updated_counts["down"]
+        assert data["meta"]["summary"]["count"] == expected_updated_counts["count"]
 
         # Verify updated user sees their new rating in challenge detail
         user1_client = login_as_user(app, name="user1", password="password")
         r = user1_client.get(f"/api/v1/challenges/{challenge_id}")
         data = r.get_json()
-        assert data["data"]["rating"]["value"] == 4
-        assert data["data"]["rating"]["review"] == "Good challenge, revised rating"
+        assert data["data"]["rating"]["value"] == -1
+        assert (
+            data["data"]["rating"]["review"]
+            == "Actually, not so great after reconsidering"
+        )
 
         # Verify all other users still see their original ratings in challenge detail
         for user in user_ratings:
@@ -560,9 +588,11 @@ def test_ratings_average_and_count():
         rating_values = [r.value for r in all_ratings]
         expected_values = sorted([rating["value"] for rating in user_ratings])
         assert sorted(rating_values) == expected_values
-        assert (
-            round(sum(rating_values) / len(rating_values), 1)
-            == expected_updated_average
-        )
+
+        # Verify counts match database reality
+        upvotes = sum(1 for value in rating_values if value == 1)
+        downvotes = sum(1 for value in rating_values if value == -1)
+        assert upvotes == expected_updated_counts["up"]
+        assert downvotes == expected_updated_counts["down"]
 
     destroy_ctfd(app)
