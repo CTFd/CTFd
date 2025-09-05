@@ -69,7 +69,7 @@
 **Themes**
 
 - The `core-beta` theme has been promoted to `core`
-  - The `core-beta` repo has been replaced with the [core-theme repo](https://github.com/CTFd/core-theme). Future changes should be made there
+  - The `core-beta` repo has been replaced with the [core-theme repo](https://github.com/CTFd/core-theme). Future changes should be made in the main CTFd repo and these changes will be copied over to the core-theme repo.
 - The previous `core` theme has been deprecated and renamed `core-deprecated`
 
 # 3.7.7 / 2025-04-14
