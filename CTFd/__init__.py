@@ -55,12 +55,20 @@ class CTFdFlask(Flask):
         self.session_interface = CachingSessionInterface(key_prefix="session")
         self.request_class = CTFdRequest
 
+        Flask.__init__(self, *args, **kwargs)
+
         # Store server start time
         self.start_time = datetime.datetime.utcnow()
 
-        # Create generally unique run identifier
-        self.run_id = sha256(str(self.start_time))[0:8]
-        Flask.__init__(self, *args, **kwargs)
+        # Create time-based unique run identifier
+        time_based_run_id = sha256(str(self.start_time))[0:8]
+
+        if self.debug:
+            # When in debug we want a new run_id each time worker starts
+            self.run_id = time_based_run_id
+        else:
+            # use RUN_ID if exists, otherwise fall back to time_based_run_in
+            self.run_id = os.getenv("RUN_ID", time_based_run_id)
 
     def create_jinja_environment(self):
         """Overridden jinja environment constructor"""
