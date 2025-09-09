@@ -60,10 +60,14 @@ class CTFdFlask(Flask):
         # Store server start time
         self.start_time = datetime.datetime.utcnow()
 
-        # Create time-based run identifier
-        self.time_based_run_id = sha256(
-            str(round(self.start_time.timestamp() / 60) * 60)
-        )[0:8]
+        # Create time-based run identifier.
+        # In production round the timestamp to incrase chances that workers get the same run_id
+        if self.debug:
+            time_based_run_id = str(self.start_time)
+        else:
+            time_based_run_id = str(round(self.start_time.timestamp() / 60) * 60)
+
+        self.time_based_run_id = sha256(time_based_run_id)[0:8]
 
     @property
     def run_id(self):
