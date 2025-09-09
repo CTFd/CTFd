@@ -23,6 +23,8 @@ from CTFd.plugins.LuaUtils import _LuaAsset, ConfigPanel, toggle_config
 from wtforms import SelectField
 from CTFd.utils.validators import ValidationError
 from CTFd.utils import user as current_user
+from CTFd.plugins.emailnotifications.forms import forms
+
 
 class UserNotifs(db.Model):
     __tablename__ = "UserNotifs"
@@ -39,12 +41,13 @@ class UserNotifs(db.Model):
 notifications_namespace = Namespace(
     "notifications", description="Endpoint to retrieve Notifications"
 )
+from CTFd.plugins.emailnotifications.api.users import updateUser
 
 cache.memoize()
 def _get_all_users_checked():
     # get all users who have checked email notifications
     users = db.session.execute(
-        Users.__table__.select(Users.notifs_mail).where(Users.notifs_mail == 1)
+        UserNotifs.__table__.select().where(UserNotifs.data == 1)
     ).all()
 
     return users
@@ -52,7 +55,10 @@ def _get_all_users_checked():
 def get_all_users_checked():
     # do like get config
     users = _get_all_users_checked()
-    return users
+    usermails = []
+    for u in users:
+        usermails.append(u[2])
+    return usermails
 
 def send_mail_all_users(notif):
     # send mail through inbuilt api and put all users in reciever
@@ -67,7 +73,15 @@ def send_mail_all_users(notif):
     text = notif["content"]
     title = notif["title"]
 
-    sendmail(addr,text,title)
+    log(
+            "registrations",
+            format="####################### {users}; {title}; {notif}",
+            users=addr,
+            title=title,
+            notif=text
+        )
+    
+    #sendmail(addr,text,title)
     
     return
 
@@ -81,6 +95,7 @@ emailNotifs = Blueprint('emailnotifications',__name__,template_folder='templates
 def load(app):
 
     app.jinja_env.globals.update(EmailNotifAssets=_LuaAsset("emailnotifications"))
+    app.jinja_env.globals.update(NotificationForms=forms)
 
     # put every existing user in table
     users = db.session.query(Users).all()
@@ -241,7 +256,7 @@ def load(app):
 
                     db.session.add(user)
 
-                    # add user check
+                    # add user checkmark for email notifications
                     check = UserNotifs(user,False)
                     db.session.add(check)
                     db.session.commit()
@@ -304,11 +319,6 @@ def load(app):
         key = configType
     
         newstate = toggle_config(key)
-        log(
-            "registrations",
-            format="####################### {name}",
-            name=newstate,
-        )
         data = "disabled"
         if newstate:
             data = "enabled"
@@ -320,21 +330,16 @@ def load(app):
     def config():
         notif = get_config('sendEmailNotif')
         check = get_config('allowUserCheckmarkNotif')
-        if notif:
-            if notif == "true":
-                notif = "enabled"
-            else :
-                notif = "disabled"
-        else:
-            notif = "disabled"
-        if check:
-            if check == "true":
-                check = "enabled"
-            else :
-                check = "disabled"
-        else:
-            check = "disabled"
 
+        if notif:
+            notif = "enabled"
+        else :
+            notif = "disabled"
+        
+        if check:
+            check = "enabled"
+        else :
+            check = "disabled"
         
         configs = []
         configs.append(ConfigPanel("Email Notifications",
@@ -343,6 +348,7 @@ def load(app):
         configs.append(ConfigPanel("Opt out",
                                    "Toggles wether Users can opt out of email Notifications or not.",
                                    check,'allowUserCheckmarkNotif'))
+        
         
         return render_template('notificationConfig.html',configs = configs)
 
@@ -409,11 +415,20 @@ def load(app):
                 )
             )
 
-        notif = SelectField(_l("Email Notifications"),choices=["false","true"])
-        notifs_mail = db.session.execute(Users.__table__.select(Users.notifs_mail).where(Users.id == user.id))
+        if get_config("allowUserCheckmarkNotif") and get_config('sendEmailNotif'):
+            notif_enabled = True
+            query = db.session.execute(UserNotifs.__table__.select().where(UserNotifs.user == user.id)).first()
+            if query[3]:    
+                notifs_mail = 'true'
+            else:
+                notifs_mail = 'false'
+        else:
+            notif_enabled = False
+            notifs_mail = 'false'
+        
 
         return render_template(
-            "settings.html",
+            "notificationSettings.html",
             name=user.name,
             email=user.email,
             language=user.language,
@@ -425,7 +440,21 @@ def load(app):
             infos=infos,
             errors=errors,
             checked=notifs_mail,
-            notif = notif
+            notifications_enabled = notif_enabled
         )
-    
     app.view_functions['views.settings'] = settings
+
+    @app.route("/api/user/settings/email_notification_toggle",methods=['PATCH'])
+    @authed_only
+    @notifications_namespace.doc(
+    description="Endpoint to edit the User object for the current user",
+    responses={
+        200: ("Success", "UserDetailedSuccessResponse"),
+        400: (
+            "An error occured processing the provided or stored data",
+            "APISimpleErrorResponse",
+        ),
+    },)
+    def set_notif_check():
+        return updateUser(request)
+    

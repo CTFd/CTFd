@@ -38,7 +38,8 @@ Alpine.data("SettingsForm", () => ({
     }
 
     // Send API request
-    const response = await CTFd.pages.settings.updateSettings(data);
+    // call other api request
+    const response = await (await CTFd.fetch("/api/user/settings/email_notification_toggle", { method: "PATCH", body: JSON.stringify(data)})).json();
     if (response.success) {
       this.success = true;
       this.error = false;

@@ -1,0 +1,1 @@
+import{$ as i}from"../jquery-CqDs7TUd.js";i(".toggle-button").click(function(){this.id=this.value;function s(a){i("#"+a.id).html(a.data),a.data==="enabled"?i("#"+a.id).removeClass("bg-danger").addClass("bg-success"):i("#"+a.id).removeClass("bg-success").addClass("bg-danger")}i.get(`/admin/emailNotifs/config/${this.value}`,function(a){s(a)})});

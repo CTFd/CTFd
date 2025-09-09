@@ -3,10 +3,26 @@
     "file": "assets/echarts-l0sNRNKZ.js",
     "name": "echarts"
   },
+  "_jquery-CqDs7TUd.js": {
+    "file": "assets/jquery-CqDs7TUd.js",
+    "name": "jquery"
+  },
   "assets/js/config.js": {
-    "file": "assets/js/config-QEDlhvn5.js",
+    "file": "assets/js/config-wQ4Y4Fja.js",
     "name": "js/config",
     "src": "assets/js/config.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_jquery-CqDs7TUd.js"
+    ]
+  },
+  "assets/js/settings.js": {
+    "file": "assets/js/settings-BAAT3HLw.js",
+    "name": "js/settings",
+    "src": "assets/js/settings.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery-CqDs7TUd.js"
+    ]
   }
 }
