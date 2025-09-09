@@ -60,15 +60,15 @@ class CTFdFlask(Flask):
         # Store server start time
         self.start_time = datetime.datetime.utcnow()
 
-        # Create time-based unique run identifier
-        time_based_run_id = sha256(str(self.start_time))[0:8]
+        # Create time-based run identifier
+        self.time_based_run_id = sha256(
+            str(round(self.start_time.timestamp() / 60) * 60)
+        )[0:8]
 
-        if self.debug:
-            # When in debug we want a new run_id each time worker starts
-            self.run_id = time_based_run_id
-        else:
-            # use RUN_ID if exists, otherwise fall back to time_based_run_in
-            self.run_id = os.getenv("RUN_ID", time_based_run_id)
+    @property
+    def run_id(self):
+        # use RUN_ID if exists, otherwise fall back to time_based_run_in
+        return self.config.get("RUN_ID") or self.time_based_run_id
 
     def create_jinja_environment(self):
         """Overridden jinja environment constructor"""
