@@ -1,8 +1,9 @@
+import functools
 from CTFd.cache import cache
 from CTFd.utils import _get_asset_json, get_asset_json, get_config, set_config
 from CTFd.models import Configs, db
 from CTFd.utils.helpers import markup
-from flask import current_app,url_for
+from flask import current_app,url_for,redirect
 import os
 
 
@@ -53,26 +54,36 @@ class _LuaAsset():
         html += f'<script {_attrs} src="{url}"></script>'
         return markup(html)
 
-def toggle_config(key):
-    db.session.commit()
-    config = Configs.query.filter(Configs.key == key).first()
-    if config:
-        value = get_config(key)
-        if value:
-            set_config(key,'false')
-            return False
-        else:
-            set_config(key,'true')
-            return True
-    else:
-        conf = Configs(key=key,value="true")
-        db.session.add(conf)
-        db.session.commit()
-        return True
-
 class ConfigPanel():
     def __init__(self, name,desc,toggle,config):
         self.name = name
         self.desc = desc
         self.toggle = toggle
         self.config = config
+
+def toggle_config(key):
+    value = get_config(key)
+    if value:
+        set_config(key,'false')
+        return False
+    else:
+        set_config(key,'true')
+        return True
+
+def run_as_decorator(function):
+    def decorator(f):
+        """
+        Decorator that calls provided function before execution
+        :param f:
+        :return:
+        """
+        @functools.wraps(f)
+        def is_owned_wrapper(*args, **kwargs):
+            function(*args, **kwargs)
+            return f(*args, **kwargs)
+        return is_owned_wrapper
+    return decorator
+
+def append_to_route(app,key,function):
+    delete_user_decorator = run_as_decorator(function)
+    app.view_functions[key] = delete_user_decorator(app.view_functions[key])

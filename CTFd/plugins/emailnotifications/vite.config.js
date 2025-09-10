@@ -10,7 +10,8 @@ export default defineConfig({
     alias: {
       "~": resolve(__dirname, "./node_modules/"),
       core: resolve(__dirname, "../../themes/core/assets/js/"),
-      vue: "@vue/compat"
+      vue: "@vue/compat",
+      "@core-beta": resolve(__dirname, "../../themes/core-beta/assets/js")
     }
   },
   build: {
@@ -56,7 +57,7 @@ export default defineConfig({
       },
       input: {
         "js/config" : resolve(__dirname,"assets/js/config.js"),
-        "js/settings" : resolve(__dirname,"assets/js/settings.js")
+        "js/user" : resolve(__dirname,"assets/js/user.js"),
       }
     }
   }

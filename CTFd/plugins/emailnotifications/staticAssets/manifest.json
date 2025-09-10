@@ -3,26 +3,29 @@
     "file": "assets/echarts-l0sNRNKZ.js",
     "name": "echarts"
   },
-  "_jquery-CqDs7TUd.js": {
-    "file": "assets/jquery-CqDs7TUd.js",
+  "_jquery-BT3bhPE2.js": {
+    "file": "assets/jquery-BT3bhPE2.js",
     "name": "jquery"
   },
   "assets/js/config.js": {
-    "file": "assets/js/config-wQ4Y4Fja.js",
+    "file": "assets/js/config-D-5NnfbK.js",
     "name": "js/config",
     "src": "assets/js/config.js",
     "isEntry": true,
     "imports": [
-      "_jquery-CqDs7TUd.js"
+      "_jquery-BT3bhPE2.js"
     ]
   },
-  "assets/js/settings.js": {
-    "file": "assets/js/settings-BAAT3HLw.js",
-    "name": "js/settings",
-    "src": "assets/js/settings.js",
+  "assets/js/user.js": {
+    "file": "assets/js/user-DPCY5nbr.js",
+    "name": "js/user",
+    "src": "assets/js/user.js",
     "isEntry": true,
     "imports": [
-      "_jquery-CqDs7TUd.js"
+      "_jquery-BT3bhPE2.js"
+    ],
+    "css": [
+      "assets/user-Bj1nZ2ug.css"
     ]
   }
 }

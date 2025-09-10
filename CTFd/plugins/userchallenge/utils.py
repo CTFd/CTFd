@@ -2,7 +2,7 @@ import datetime
 import functools
 from pathlib import Path
 from CTFd.utils.plugins import override_template
-from CTFd.models import Challenges, db
+from CTFd.models import Challenges, db,Users
 from CTFd.utils import get_config
 from CTFd.utils.user import get_current_user, get_user_attrs, is_admin
 
@@ -11,8 +11,8 @@ from flask import request, url_for, abort,redirect
 class UserChallenges(db.Model):
     __tablename__ = "UserChallenges"
     id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.Integer,db.ForeignKey('users.id'))
-    challenge = db.Column(db.Integer,db.ForeignKey('challenges.id'))
+    user = db.Column(db.Integer,db.ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'))
+    challenge = db.Column(db.Integer,db.ForeignKey('challenges.id', ondelete='CASCADE', onupdate='CASCADE'))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     changed = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
@@ -130,8 +130,8 @@ def setLastChanged(id):
         setattr(query,'changed',time)
     db.session.commit()
 
-
 def registerTemplate(old_path, new_path):
     dir_path = Path(__file__).parent.resolve()
     template_path = dir_path/'templates'/new_path
     override_template(old_path,open(template_path).read())
+

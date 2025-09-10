@@ -5,7 +5,7 @@ from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.models import Challenges, Solves, Flags, db, Configs,Flags
 from CTFd.utils.decorators import admins_only
 from CTFd.plugins.userchallenge.utils import *
-from CTFd.plugins.LuaUtils import _LuaAsset,toggle_config
+from CTFd.plugins.LuaUtils import _LuaAsset, append_to_route,toggle_config
 userChallenge = Blueprint('userchallenge',__name__,template_folder='templates',static_folder ='staticAssets')
 
 def load(app):
@@ -40,7 +40,7 @@ def load(app):
             enabled = "non-existant"
                 
         return render_template('userConfig.html',status = enabled)
-    
+
     # add creation date and user to listing
     @admins_only
     def challenges_listing():
@@ -73,6 +73,13 @@ def load(app):
             field=field,)
 
     app.view_functions['admin.challenges_listing'] = challenges_listing
+
+    @admins_only
+    def delete_user(user_id):
+        if request.method == "DELETE":
+            UserChallenges.query.filter_by(user=user_id).delete()
+
+    append_to_route(app,'api.users_user_public',delete_user)
 
     #config page api call
     @app.route('/userchallenge/api/config',methods=['GET','POST'])

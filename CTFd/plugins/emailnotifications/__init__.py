@@ -5,7 +5,7 @@ from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.helpers import get_errors, get_infos, markup
 from CTFd.utils.plugins import override_template
-from CTFd.utils import set_config,get_config, validators
+from CTFd.utils import set_config,get_config, validators,config
 from CTFd.utils.logging import log
 from CTFd.schemas.notifications import NotificationSchema
 from CTFd.utils.decorators import admins_only, authed_only, ratelimit
@@ -13,14 +13,12 @@ from CTFd.utils.security.auth import login_user
 from CTFd.utils.user import get_current_team, get_current_user
 from flask import render_template,request,current_app,Blueprint,url_for,redirect,abort
 from flask_restx import Namespace
-from flask_babel import lazy_gettext as _l
 
 from CTFd.utils.email import sendmail
 
 from CTFd.cache import cache
 from CTFd.models import Brackets, UserFieldEntries, UserFields, UserTokens, Users, db
-from CTFd.plugins.LuaUtils import _LuaAsset, ConfigPanel, toggle_config
-from wtforms import SelectField
+from CTFd.plugins.LuaUtils import _LuaAsset, ConfigPanel, append_to_route, toggle_config
 from CTFd.utils.validators import ValidationError
 from CTFd.utils import user as current_user
 from CTFd.plugins.emailnotifications.forms import forms
@@ -29,8 +27,8 @@ from CTFd.plugins.emailnotifications.forms import forms
 class UserNotifs(db.Model):
     __tablename__ = "UserNotifs"
     id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.Integer,db.ForeignKey('users.id'))
-    email = db.Column(db.String(128),db.ForeignKey('users.email'),unique=True)
+    user = db.Column(db.Integer,db.ForeignKey('users.id', ondelete='CASCADE', onupdate='CASCADE'))
+    email = db.Column(db.String(128),db.ForeignKey('users.email', ondelete='CASCADE', onupdate='CASCADE'),unique=True)
     data = db.Column(db.Boolean,default=False)
 
     def __init__(self,user,data):
@@ -41,7 +39,6 @@ class UserNotifs(db.Model):
 notifications_namespace = Namespace(
     "notifications", description="Endpoint to retrieve Notifications"
 )
-from CTFd.plugins.emailnotifications.api.users import updateUser
 
 cache.memoize()
 def _get_all_users_checked():
@@ -61,28 +58,26 @@ def get_all_users_checked():
     return usermails
 
 def send_mail_all_users(notif):
-    # send mail through inbuilt api and put all users in reciever
     users = get_all_users_checked()
-    if len(users) > 1 :
-        addr = ", ".join(users)
-    elif len(users) > 0:
-        addr = users[0]
-    else: 
-        return 
+    if get_config('emailPrivacyNotif'):
+        # send mail through inbuilt api for each user
+        for addr in users:
+            text = notif["content"]
+            title = notif["title"]
+            sendmail(addr,text,title)
+    else:
+        # send mail through inbuilt api to every user in addr. makes all adresses public
+        if len(users) > 1 :
+            addr = ", ".join(users)
+        elif len(users) > 0:
+            addr = users[0]
+        else: 
+            return 
 
-    text = notif["content"]
-    title = notif["title"]
-
-    log(
-            "registrations",
-            format="####################### {users}; {title}; {notif}",
-            users=addr,
-            title=title,
-            notif=text
-        )
-    
-    #sendmail(addr,text,title)
-    
+        text = notif["content"]
+        title = notif["title"]
+        
+        sendmail(addr,text,title)
     return
 
 def registerTemplate(old_path, new_path):
@@ -90,12 +85,24 @@ def registerTemplate(old_path, new_path):
     template_path = dir_path/'templates'/new_path
     override_template(old_path,open(template_path).read())
 
+def get_user_check(user_id):
+        query = db.session.query(UserNotifs).filter(UserNotifs.user == user_id).first()
+        return 'send' if query.data else 'don\'t send'
+
 emailNotifs = Blueprint('emailnotifications',__name__,template_folder='templates',static_folder ='staticAssets')
 
 def load(app):
 
+    app.db.create_all()
+    #intitalize jinja globals
     app.jinja_env.globals.update(EmailNotifAssets=_LuaAsset("emailnotifications"))
     app.jinja_env.globals.update(NotificationForms=forms)
+    app.jinja_env.globals.update(Notifications = get_user_check)
+    
+    keys = ['sendEmailNotif','allowUserCheckmarkNotif','emailPrivacyNotif']
+    for k in keys:
+        if get_config(k) == None:
+            toggle_config(k)
 
     # put every existing user in table
     users = db.session.query(Users).all()
@@ -256,11 +263,6 @@ def load(app):
 
                     db.session.add(user)
 
-                    # add user checkmark for email notifications
-                    check = UserNotifs(user,False)
-                    db.session.add(check)
-                    db.session.commit()
-                    db.session.flush()
 
                     for field_id, value in entries.items():
                         entry = UserFieldEntries(
@@ -268,6 +270,12 @@ def load(app):
                         )
                         db.session.add(entry)
                     db.session.commit()
+
+                    # add user checkmark for email notifications
+                    check = UserNotifs(user,False)
+                    db.session.add(check)
+                    db.session.commit()
+                    db.session.flush()
 
                     login_user(user)
 
@@ -327,9 +335,10 @@ def load(app):
     
     @app.route("/admin/NotificationForwarding")
     @admins_only
-    def config():
+    def notif_config():
         notif = get_config('sendEmailNotif')
         check = get_config('allowUserCheckmarkNotif')
+        privacy = get_config('emailPrivacyNotif')
 
         if notif:
             notif = "enabled"
@@ -340,6 +349,11 @@ def load(app):
             check = "enabled"
         else :
             check = "disabled"
+
+        if privacy:
+            privacy = "enabled"
+        else :
+            privacy = "disabled"
         
         configs = []
         configs.append(ConfigPanel("Email Notifications",
@@ -348,7 +362,9 @@ def load(app):
         configs.append(ConfigPanel("Opt out",
                                    "Toggles wether Users can opt out of email Notifications or not.",
                                    check,'allowUserCheckmarkNotif'))
-        
+        configs.append(ConfigPanel("Privacy",
+                                   "Toggles wether Users can see other receivers in mails.",
+                                   privacy,'emailPrivacyNotif'))
         
         return render_template('notificationConfig.html',configs = configs)
 
@@ -383,7 +399,6 @@ def load(app):
         
 
         return {"success": True, "data": response.data}
-    
     app.view_functions['api.notifications_notificantion_list'] = notification_post
 
     @authed_only
@@ -418,10 +433,15 @@ def load(app):
         if get_config("allowUserCheckmarkNotif") and get_config('sendEmailNotif'):
             notif_enabled = True
             query = db.session.execute(UserNotifs.__table__.select().where(UserNotifs.user == user.id)).first()
-            if query[3]:    
-                notifs_mail = 'true'
+            if query:
+                if query[3]:    
+                    notifs_mail = 'true'
+                else:
+                    notifs_mail = 'false'
             else:
-                notifs_mail = 'false'
+                db.session.query(UserNotifs).filter(UserNotifs.user == user.id).update({'data':False})
+                db.session.commit()
+                notifs_mail ='false'
         else:
             notif_enabled = False
             notifs_mail = 'false'
@@ -444,17 +464,35 @@ def load(app):
         )
     app.view_functions['views.settings'] = settings
 
-    @app.route("/api/user/settings/email_notification_toggle",methods=['PATCH'])
     @authed_only
-    @notifications_namespace.doc(
-    description="Endpoint to edit the User object for the current user",
-    responses={
-        200: ("Success", "UserDetailedSuccessResponse"),
-        400: (
-            "An error occured processing the provided or stored data",
-            "APISimpleErrorResponse",
-        ),
-    },)
     def set_notif_check():
-        return updateUser(request)
+        if request.method == "PATCH":
+            user = get_current_user()
+            data = request.get_json()
+            # email notifications update
+            checked = True if data["notifications"] == 'true' else False
+            db.session.query(UserNotifs).filter(UserNotifs.user == user.id).update({'data':checked})
+            db.session.commit()
+
+    append_to_route(app,'api.users_user_private',set_notif_check)
+
+
     
+    @admins_only
+    def patch_user(user_id):
+        if get_config('sendEmailNotif') and request.method == "PATCH":
+            data = request.get_json()
+            checked = True if data["notifications"] == 'true' else False
+            UserNotifs.query.filter_by(user=user_id).update({'data':checked})
+            db.session.commit()
+
+    append_to_route(app,'api.users_user_public',patch_user)
+    
+    @admins_only
+    def delete_user(user_id):
+        if request.method == "DELETE":
+            UserNotifs.query.filter_by(user=user_id).delete()
+    
+    append_to_route(app,'api.users_user_public',delete_user)
+
+    registerTemplate("admin/users/user.html",'AdminUser.html')
