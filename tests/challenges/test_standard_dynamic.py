@@ -611,9 +611,9 @@ def test_standard_dynamic_challenge_creation_requires_all_parameters():
         req = FakeRequest(form=challenge_data_missing_initial)
         try:
             CTFdStandardChallenge.create(req)
-            assert (
-                False
-            ), "Should have raised ChallengeCreateException for missing initial"
+            raise AssertionError(
+                "Should have raised ChallengeCreateException for missing initial"
+            )
         except ChallengeCreateException as e:
             assert "Missing 'initial'" in str(e)
             assert "function is linear" in str(e)
@@ -633,9 +633,9 @@ def test_standard_dynamic_challenge_creation_requires_all_parameters():
         req = FakeRequest(form=challenge_data_missing_decay)
         try:
             CTFdStandardChallenge.create(req)
-            assert (
-                False
-            ), "Should have raised ChallengeCreateException for missing decay"
+            raise AssertionError(
+                "Should have raised ChallengeCreateException for missing decay"
+            )
         except ChallengeCreateException as e:
             assert "Missing 'decay'" in str(e)
             assert "function is logarithmic" in str(e)
@@ -655,9 +655,9 @@ def test_standard_dynamic_challenge_creation_requires_all_parameters():
         req = FakeRequest(form=challenge_data_missing_minimum)
         try:
             CTFdStandardChallenge.create(req)
-            assert (
-                False
-            ), "Should have raised ChallengeCreateException for missing minimum"
+            raise AssertionError(
+                "Should have raised ChallengeCreateException for missing minimum"
+            )
         except ChallengeCreateException as e:
             assert "Missing 'minimum'" in str(e)
             assert "function is linear" in str(e)
@@ -676,9 +676,9 @@ def test_standard_dynamic_challenge_creation_requires_all_parameters():
         req = FakeRequest(form=challenge_data_missing_all)
         try:
             CTFdStandardChallenge.create(req)
-            assert (
-                False
-            ), "Should have raised ChallengeCreateException for missing all dynamic parameters"
+            raise AssertionError(
+                "Should have raised ChallengeCreateException for missing all dynamic parameters"
+            )
         except ChallengeCreateException as e:
             # Should catch the first missing parameter (likely 'initial')
             assert "Missing" in str(e)
