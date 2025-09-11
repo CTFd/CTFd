@@ -68,11 +68,12 @@ class BaseChallenge(object):
 
         challenge = cls.challenge_model(**data)
 
-        if data.get("value"):
-            challenge.initial = data["value"]
-
         if challenge.function in DECAY_FUNCTIONS:
+            if data.get("value") and not data.get("initial"):
+                challenge.initial = data["value"]
+
             for attr in ("initial", "minimum", "decay"):
+                db.session.rollback()
                 if getattr(challenge, attr) is None:
                     raise ChallengeCreateException(
                         f"Missing '{attr}' but function is {challenge.function}"
@@ -80,6 +81,10 @@ class BaseChallenge(object):
 
         db.session.add(challenge)
         db.session.commit()
+
+        # If the challenge is dynamic we should calculate a new value
+        if challenge.function in DECAY_FUNCTIONS:
+            return calculate_value(challenge)
 
         return challenge
 
@@ -134,8 +139,19 @@ class BaseChallenge(object):
                 try:
                     value = float(value)
                 except (ValueError, TypeError):
+                    db.session.rollback()
                     raise ChallengeUpdateException(f"Invalid input for '{attr}'")
             setattr(challenge, attr, value)
+
+        for attr in ("initial", "minimum", "decay"):
+            if (
+                challenge.function in DECAY_FUNCTIONS
+                and getattr(challenge, attr) is None
+            ):
+                db.session.rollback()
+                raise ChallengeUpdateException(
+                    f"Missing '{attr}' but function is {challenge.function}"
+                )
 
         db.session.commit()
 
