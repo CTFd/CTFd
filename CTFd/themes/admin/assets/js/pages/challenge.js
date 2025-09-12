@@ -270,6 +270,22 @@ $(() => {
       const valueInput = $(".chal-value");
 
       if (selectedFunction === "static") {
+        // Save current values to data attributes before clearing them
+        if (initialInput.val()) {
+          initialInput.data("saved-value", initialInput.val());
+        }
+        if (decayInput.val()) {
+          decayInput.data("saved-value", decayInput.val());
+        }
+        if (minimumInput.val()) {
+          minimumInput.data("saved-value", minimumInput.val());
+        }
+
+        // Clear the input values to prevent validation errors on hidden fields
+        initialInput.val("");
+        decayInput.val("");
+        minimumInput.val("");
+
         // Hide initial, decay, and minimum form groups for static function
         initialFormGroup.hide();
         decayFormGroup.hide();
@@ -279,6 +295,11 @@ $(() => {
         initialInput.removeAttr("name").data("original-name", "initial");
         decayInput.removeAttr("name").data("original-name", "decay");
         minimumInput.removeAttr("name").data("original-name", "minimum");
+
+        // Remove required attribute for static function
+        initialInput.removeAttr("required");
+        decayInput.removeAttr("required");
+        minimumInput.removeAttr("required");
 
         // Make value input enabled and required for static function
         valueInput.prop("disabled", false).prop("required", true);
@@ -301,6 +322,22 @@ $(() => {
           "name",
           minimumInput.data("original-name") || "minimum",
         );
+
+        // Restore saved values from data attributes
+        if (initialInput.data("saved-value")) {
+          initialInput.val(initialInput.data("saved-value"));
+        }
+        if (decayInput.data("saved-value")) {
+          decayInput.val(decayInput.data("saved-value"));
+        }
+        if (minimumInput.data("saved-value")) {
+          minimumInput.val(minimumInput.data("saved-value"));
+        }
+
+        // Add required attribute for dynamic functions
+        initialInput.prop("required", true);
+        decayInput.prop("required", true);
+        minimumInput.prop("required", true);
 
         // Make value input disabled and not required for dynamic functions
         valueInput.prop("disabled", true).prop("required", false);
