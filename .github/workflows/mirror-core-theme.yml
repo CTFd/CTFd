@@ -27,5 +27,4 @@ jobs:
 
       - name: Push subtree
         run: |
-          git subtree split --prefix=core-theme -b mirror-core-theme-subtree
-          git push git@github.com:CTFd/core-theme.git mirror-core-theme-subtree:main
+          git subtree push --prefix="CTFd/themes/core" "git@github.com:CTFd/core-theme.git" main
