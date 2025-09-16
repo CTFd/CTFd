@@ -356,6 +356,21 @@ class UserSchema(ma.ModelSchema):
                 field for field in fields if field["field_id"] not in removed_field_ids
             ]
 
+    @post_dump
+    def include_bracket_name(self, data, **kwargs):
+        """
+        Include bracket name in the response for self view.
+        """
+        # Only include bracket name for self view when bracket_id is present
+        if self.view == "self" and data.get("bracket_id"):
+            # Get the bracket name using the bracket_id
+            bracket_id = data.get("bracket_id")
+            bracket = Brackets.query.filter_by(id=bracket_id).first()
+            if bracket:
+                data["bracket"] = bracket.name
+        
+        return data
+
     views = {
         "user": [
             "website",
