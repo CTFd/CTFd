@@ -24,6 +24,7 @@ from CTFd.models import (
     Hints,
     HintUnlocks,
     Ratings,
+    Solutions,
     Solves,
     Submissions,
     Tags,
@@ -35,6 +36,7 @@ from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.hints import HintSchema
 from CTFd.schemas.ratings import RatingSchema
+from CTFd.schemas.solutions import SolutionSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
@@ -552,6 +554,7 @@ class Challenge(Resource):
     )
     def patch(self, challenge_id):
         data = request.get_json()
+        solution_state = data.pop("solution", None)
 
         # Load data through schema for validation but not for insertion
         schema = ChallengeSchema()
@@ -566,6 +569,19 @@ class Challenge(Resource):
             challenge = challenge_class.update(challenge, request)
         except ChallengeUpdateException as e:
             return {"success": False, "errors": {"": [str(e)]}}, 500
+
+        if solution_state:
+            solution = Solutions.query.filter_by(challenge_id = challenge_id).first()
+            if solution:
+                schema = SolutionSchema(partial=True)
+                response = schema.load({"state": solution_state}, instance = solution, partial=True)
+                if response.errors:
+                    return {"success": False, "errors": response.errors}, 400
+            else:
+                print("HERE")
+                solution = Solutions(challenge_id = challenge_id, state = solution_state)
+                db.session.add(solution)
+            db.session.commit()
 
         response = challenge_class.read(challenge)
 

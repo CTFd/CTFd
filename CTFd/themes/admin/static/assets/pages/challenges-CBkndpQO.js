@@ -16,5 +16,13 @@ import{$ as e,u as c,C as i,B as d}from"./main-CcyKUC_q.js";function u(o){let l=
           <option value="hidden">Hidden</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Solution</label>
+        <select name="solution" data-initial="">
+          <option value="">--</option>
+          <option value="visible">Visible</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
     </form>
     `),button:"Submit",success:function(){let a=e("#challenges-bulk-edit").serializeJSON(!0);const t=[];for(var n of l)t.push(i.fetch(`/api/v1/challenges/${n}`,{method:"PATCH",body:JSON.stringify(a)}));Promise.all(t).then(s=>{window.location.reload()})}})}e(()=>{e("#challenges-delete-button").click(u),e("#challenges-edit-button").click(r)});
