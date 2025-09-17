@@ -578,7 +578,6 @@ class Challenge(Resource):
                 if response.errors:
                     return {"success": False, "errors": response.errors}, 400
             else:
-                print("HERE")
                 solution = Solutions(challenge_id = challenge_id, state = solution_state)
                 db.session.add(solution)
             db.session.commit()
