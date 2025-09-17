@@ -1,0 +1,25 @@
+// They Live Color Palette
+$they-live-black: #000000;
+$they-live-white: #ffffff;
+$they-live-green: #00ff00;
+$they-live-red: #ff0000;
+$they-live-gray: #333333;
+$they-live-light-gray: #666666;
+
+// Override Bootstrap variables
+$primary: $they-live-white;
+$secondary: $they-live-gray;
+$success: $they-live-green;
+$danger: $they-live-red;
+$warning: $they-live-green;
+$info: $they-live-green;
+$light: $they-live-light-gray;
+$dark: $they-live-black;
+
+$body-bg: $they-live-black;
+$body-color: $they-live-white;
+
+// Typography
+$font-family-monospace: 'Courier New', 'Monaco', 'Menlo', monospace;
+$font-family-base: $font-family-monospace;
+$headings-font-family: $font-family-monospace;

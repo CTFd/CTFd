@@ -1,0 +1,22 @@
+/* Table styles
+-------------------------------------------------- */
+
+// Center text in table cells, except the first cell
+.table tr > :not(:first-child) {
+  text-align: center;
+}
+
+// Add some default spacing to table cells
+.table > tbody > tr > td {
+  padding: 0.8rem 1rem;
+}
+
+// Add some padding from the edge of table
+.table > thead > tr > :first-child {
+  padding-left: 1rem;
+}
+
+// Do not wrap text in table headers
+.table > thead > th {
+  white-space: nowrap;
+}

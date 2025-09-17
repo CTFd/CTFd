@@ -1,0 +1,23 @@
+@use "~/@fontsource/lato/scss/mixins" as Lato;
+@use "~/@fontsource/raleway/scss/mixins" as Raleway;
+
+// Include both normal and bold weights
+@include Lato.fontFace($fontDir: "../webfonts", $weight: 400);
+@include Lato.fontFace($fontDir: "../webfonts", $weight: 700);
+
+@include Raleway.fontFace($fontDir: "../webfonts");
+
+$fa-font-path: "../webfonts";
+@import "~/@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~/@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~/@fortawesome/fontawesome-free/scss/brands.scss";
+
+html,
+body,
+.container {
+  font-family: "Lato", sans-serif;
+}
+
+.jumbotron .container {
+  font-family: "Raleway", sans-serif;
+}

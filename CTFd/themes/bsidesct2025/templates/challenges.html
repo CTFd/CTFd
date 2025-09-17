@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container">
+      <h1>
+        {% trans %}Challenges{% endtrans %}
+      </h1>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        {% include "components/errors.html" %}
+      </div>
+    </div>
+
+    <div 
+      x-data="ChallengeBoard" 
+      @load-challenges.window="loadChallenges()" 
+      @load-challenge.window="loadChallenge($event.detail)"
+    >
+      <div
+          x-ref="challengeWindow" id="challenge-window" class="modal fade" tabindex="-1" role="dialog" x-data=""
+          x-html="$store.challenge.data.view"
+      ></div>
+
+      <div x-show="!loaded">
+        <div class="min-vh-50 d-flex align-items-center">
+          <div class="text-center w-100">
+            <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+          </div>
+        </div>
+      </div>
+
+      <div x-show="loaded">
+        <template x-for="(category, idx) in getCategories()" :key="idx">
+          <div class="pt-5">
+            <div class="category-header mb-3">
+              <h3 x-text="category"></h3>
+            </div>
+
+            <div class="category-challenges d-flex flex-column">
+              <div class="challenges-row row">
+                <template x-for="(c, idx) in getChallenges(category)" :key="c.id">
+                  <div class="col-sm-6 col-md-4 col-lg-3 my-3">
+                    <button
+                        class="challenge-button btn btn-dark w-100 h-100"
+                        :class="[
+                          c.solved_by_me ? 'challenge-solved' : '',
+                          ...c.tags.map((tag) => `tag-${tag.value.replace(/ /g, '-')}`),
+                        ];"
+                        :value="c.id" @click="loadChallenge(c.id)"
+                    >
+
+                      <div class="challenge-inner my-3">
+                        <p x-text="c.name"></p>
+                        <span x-text="c.value"></span>
+                      </div>
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/challenges.js") }}
+{% endblock %}

@@ -1,0 +1,69 @@
+// Scanlines effect
+@keyframes scanlines {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.1;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    $they-live-green 2px,
+    $they-live-green 4px
+  );
+  animation: scanlines 2s linear infinite;
+}
+
+// Glitch effect
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch {
+  animation: glitch 0.3s infinite;
+}
+
+// Hidden message reveal
+.hidden-message {
+  color: transparent;
+  background: $they-live-black;
+  transition: all 0.3s ease;
+  
+  &.revealed {
+    color: $they-live-green;
+    background: $they-live-black;
+    text-shadow: 0 0 10px $they-live-green;
+  }
+}
+
+// Sunglasses toggle effect
+.sunglasses-view {
+  filter: invert(1) contrast(2);
+  transition: filter 0.5s ease;
+}
+
+// Terminal cursor
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.terminal-cursor::after {
+  content: '_';
+  animation: blink 1s infinite;
+  color: $they-live-green;
+}

@@ -1,0 +1,109 @@
+@use "includes/they-live/variables" as *;
+
+@use "bootstrap/scss/bootstrap" as * with (
+  $primary: $primary,
+  $secondary: $secondary,
+  $success: $success,
+  $danger: $danger,
+  $warning: $warning,
+  $info: $info,
+  $light: $light,
+  $dark: $dark,
+  $body-bg: $body-bg,
+  $body-color: $body-color,
+  $font-family-base: $font-family-base,
+  $headings-font-family: $headings-font-family
+);
+
+@use "includes/they-live/effects";
+@use "includes/they-live/components";
+
+@use "includes/components/table";
+@use "includes/components/jumbotron";
+@use "includes/components/challenge";
+@use "includes/components/sticky-footer";
+@use "includes/components/graphs";
+
+@use "includes/utils/fonts";
+@use "includes/utils/opacity";
+@use "includes/utils/min-height";
+@use "includes/utils/cursors";
+@use "includes/utils/lolight";
+
+@use "includes/icons/award-icons";
+@use "includes/icons/flag-icons";
+
+// They Live specific styles
+body {
+  background: $they-live-black;
+  color: $they-live-white;
+  font-family: $font-family-monospace;
+  position: relative;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: $they-live-white;
+  
+  &.obey {
+    color: $they-live-green;
+    text-shadow: 0 0 10px $they-live-green;
+  }
+}
+
+a {
+  text-decoration: none !important;
+  color: $they-live-green;
+  
+  &:hover {
+    color: $they-live-white;
+    text-shadow: 0 0 5px $they-live-green;
+  }
+}
+
+blockquote {
+  border-left: 4px solid $they-live-green;
+  padding-left: 15px;
+  background: rgba($they-live-green, 0.05);
+}
+
+input, select {
+  padding: 0.6rem !important;
+  height: auto !important;
+}
+
+.fa-spin.spinner {
+  text-align: center;
+  opacity: 0.5;
+  color: $they-live-green;
+}
+
+.badge-notification {
+  vertical-align: top;
+  margin-left: -1.5em;
+  font-size: 50%;
+  background: $they-live-green;
+  color: $they-live-black;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%2300ff00' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+  background-size: 8px 10px;
+}
+
+// Terminal-style messages
+.terminal-message {
+  font-family: $font-family-monospace;
+  background: $they-live-black;
+  color: $they-live-green;
+  padding: 1rem;
+  border: 1px solid $they-live-green;
+  margin: 1rem 0;
+  
+  &::before {
+    content: "$ ";
+    color: $they-live-green;
+  }
+}

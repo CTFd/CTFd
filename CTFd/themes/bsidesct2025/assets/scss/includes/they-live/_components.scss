@@ -1,0 +1,126 @@
+// Navbar styling
+.navbar {
+  background: $they-live-black !important;
+  border-bottom: 2px solid $they-live-green;
+  
+  .navbar-brand {
+    color: $they-live-white !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    
+    &::before {
+      content: ">>> ";
+      color: $they-live-green;
+    }
+  }
+  
+  .nav-link {
+    color: $they-live-white !important;
+    text-transform: uppercase;
+    
+    &:hover {
+      color: $they-live-green !important;
+      text-shadow: 0 0 5px $they-live-green;
+    }
+  }
+}
+
+// Cards and containers
+.card {
+  background: $they-live-black;
+  border: 1px solid $they-live-green;
+  color: $they-live-white;
+  
+  .card-header {
+    background: $they-live-gray;
+    border-bottom: 1px solid $they-live-green;
+    color: $they-live-white;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+}
+
+// Buttons
+.btn {
+  text-transform: uppercase;
+  font-weight: bold;
+  border: 2px solid;
+  
+  &.btn-primary {
+    background: $they-live-black;
+    border-color: $they-live-green;
+    color: $they-live-green;
+    
+    &:hover {
+      background: $they-live-green;
+      color: $they-live-black;
+      box-shadow: 0 0 10px $they-live-green;
+    }
+  }
+  
+  &.btn-success {
+    background: $they-live-green;
+    border-color: $they-live-green;
+    color: $they-live-black;
+    
+    &:hover {
+      background: $they-live-black;
+      color: $they-live-green;
+    }
+  }
+}
+
+// Forms
+.form-control {
+  background: $they-live-black;
+  border: 1px solid $they-live-green;
+  color: $they-live-white;
+  
+  &:focus {
+    background: $they-live-black;
+    border-color: $they-live-green;
+    color: $they-live-white;
+    box-shadow: 0 0 5px $they-live-green;
+  }
+  
+  &::placeholder {
+    color: $they-live-light-gray;
+  }
+}
+
+// Tables
+.table {
+  color: $they-live-white;
+  
+  th {
+    border-color: $they-live-green;
+    background: $they-live-gray;
+    text-transform: uppercase;
+  }
+  
+  td {
+    border-color: $they-live-light-gray;
+  }
+  
+  tbody tr:hover {
+    background: rgba($they-live-green, 0.1);
+  }
+}
+
+// Alerts
+.alert {
+  border: 1px solid;
+  
+  &.alert-success {
+    background: rgba($they-live-green, 0.1);
+    border-color: $they-live-green;
+    color: $they-live-green;
+  }
+  
+  &.alert-danger {
+    background: rgba($they-live-red, 0.1);
+    border-color: $they-live-red;
+    color: $they-live-red;
+  }
+}

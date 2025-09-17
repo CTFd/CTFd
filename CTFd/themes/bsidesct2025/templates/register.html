@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container">
+      <h1>
+        {% trans %}Register{% endtrans %}
+      </h1>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        {% include "components/errors.html" %}
+
+        {% if integrations.mlc() %}
+          <a class="btn btn-secondary btn-lg btn-block w-100" href="{{ url_for('auth.oauth_login') }}">
+            Login with Major League Cyber
+          </a>
+
+          <hr>
+        {% endif %}
+
+        {% with form = Forms.auth.RegistrationForm() %}
+
+          {% from "macros/forms.html" import render_extra_fields %}
+
+          <form method="post" accept-charset="utf-8" role="form">
+
+            <div class="mb-3">
+              <b>{{ form.name.label(class="form-label") }}</b>
+              {{ form.name(class="form-control", value=name, autocomplete="username") }}
+              <small class="form-text text-muted">
+                {% trans %}Your username on the site{% endtrans %}
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <b>{{ form.email.label(class="form-label") }}</b>
+              {{ form.email(class="form-control", value=email, autocomplete="email") }}
+              <small class="form-text text-muted">
+                {% trans %}Never shown to the public{% endtrans %}
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <b>{{ form.password.label(class="form-label") }}</b>
+              {{ form.password(class="form-control", value=password, autocomplete="new-password") }}
+              <small class="form-text text-muted">
+                {% trans %}Password used to log into your account{% endtrans %}
+              </small>
+            </div>
+
+            {{ form.nonce() }}
+
+            {{ render_extra_fields(form.extra) }}
+
+            <div class="row pt-3">
+              <div class="col-6 col-md-4 offset-6 offset-md-8">
+                {{ form.submit(class="btn btn-block btn-primary w-100") }}
+              </div>
+            </div>
+
+            {% if Configs.tos_or_privacy %}
+              <div class="row pt-3">
+                <div class="col-md-12 text-center">
+                  <small class="text-muted text-center">
+                    {% trans trimmed privacy_link=Configs.privacy_link, tos_link=Configs.tos_link %}
+                    By registering, you agree to the
+                    <a href="{{ privacy_link }}" target="_blank">privacy policy</a>
+                    and <a href="{{ tos_link }}" target="_blank">terms of service</a>
+                    {% endtrans %}
+                  </small>
+                </div>
+              </div>
+            {% endif %}
+          </form>
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
