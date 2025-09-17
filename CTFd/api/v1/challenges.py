@@ -503,7 +503,7 @@ class Challenge(Resource):
             response["ratings"] = None
 
         solution_id = None
-        if chal.solution_id and chal.solution.state == "visible":
+        if chal.solution_id and (chal.solution.state == "visible" or (chal.solution.state == "solved" and (int(challenge_id) in user_solves))):
             solution_id = chal.solution.id
         response["solution_id"] = solution_id
 
