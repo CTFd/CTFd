@@ -1,3 +1,5 @@
+@use "variables" as *;
+
 // Scanlines effect
 @keyframes scanlines {
   0% { transform: translateY(-100%); }

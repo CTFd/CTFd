@@ -1,18 +1,18 @@
-@use "includes/they-live/variables" as *;
+@use "includes/they-live/variables" as they-live;
 
 @use "bootstrap/scss/bootstrap" as * with (
-  $primary: $primary,
-  $secondary: $secondary,
-  $success: $success,
-  $danger: $danger,
-  $warning: $warning,
-  $info: $info,
-  $light: $light,
-  $dark: $dark,
-  $body-bg: $body-bg,
-  $body-color: $body-color,
-  $font-family-base: $font-family-base,
-  $headings-font-family: $headings-font-family
+  $primary: they-live.$primary,
+  $secondary: they-live.$secondary,
+  $success: they-live.$success,
+  $danger: they-live.$danger,
+  $warning: they-live.$warning,
+  $info: they-live.$info,
+  $light: they-live.$light,
+  $dark: they-live.$dark,
+  $body-bg: they-live.$body-bg,
+  $body-color: they-live.$body-color,
+  $font-family-base: they-live.$font-family-base,
+  $headings-font-family: they-live.$headings-font-family
 );
 
 @use "includes/they-live/effects";
@@ -35,9 +35,9 @@
 
 // They Live specific styles
 body {
-  background: $they-live-black;
-  color: $they-live-white;
-  font-family: $font-family-monospace;
+  background: they-live.$they-live-black;
+  color: they-live.$they-live-white;
+  font-family: they-live.$font-family-monospace;
   position: relative;
 }
 
@@ -45,28 +45,28 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: $they-live-white;
+  color: they-live.$they-live-white;
   
   &.obey {
-    color: $they-live-green;
-    text-shadow: 0 0 10px $they-live-green;
+    color: they-live.$they-live-green;
+    text-shadow: 0 0 10px they-live.$they-live-green;
   }
 }
 
 a {
   text-decoration: none !important;
-  color: $they-live-green;
+  color: they-live.$they-live-green;
   
   &:hover {
-    color: $they-live-white;
-    text-shadow: 0 0 5px $they-live-green;
+    color: they-live.$they-live-white;
+    text-shadow: 0 0 5px they-live.$they-live-green;
   }
 }
 
 blockquote {
-  border-left: 4px solid $they-live-green;
+  border-left: 4px solid they-live.$they-live-green;
   padding-left: 15px;
-  background: rgba($they-live-green, 0.05);
+  background: rgba(they-live.$they-live-green, 0.05);
 }
 
 input, select {
@@ -77,15 +77,15 @@ input, select {
 .fa-spin.spinner {
   text-align: center;
   opacity: 0.5;
-  color: $they-live-green;
+  color: they-live.$they-live-green;
 }
 
 .badge-notification {
   vertical-align: top;
   margin-left: -1.5em;
   font-size: 50%;
-  background: $they-live-green;
-  color: $they-live-black;
+  background: they-live.$they-live-green;
+  color: they-live.$they-live-black;
 }
 
 .form-select {
@@ -95,15 +95,15 @@ input, select {
 
 // Terminal-style messages
 .terminal-message {
-  font-family: $font-family-monospace;
-  background: $they-live-black;
-  color: $they-live-green;
+  font-family: they-live.$font-family-monospace;
+  background: they-live.$they-live-black;
+  color: they-live.$they-live-green;
   padding: 1rem;
-  border: 1px solid $they-live-green;
+  border: 1px solid they-live.$they-live-green;
   margin: 1rem 0;
   
   &::before {
     content: "$ ";
-    color: $they-live-green;
+    color: they-live.$they-live-green;
   }
 }
