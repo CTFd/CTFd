@@ -1,0 +1,8 @@
+document.addEventListener("DOMContentLoaded",function(){const d=document.createElement("div");d.className="scanlines",document.body.appendChild(d);let t=!1;const s=document.createElement("button");s.innerHTML="\u{1F576}\uFE0F PUT ON GLASSES",s.className="btn btn-primary position-fixed",s.style.cssText="top: 20px; right: 20px; z-index: 1001; font-size: 12px;",s.addEventListener("click",function(){t=!t,document.body.classList.toggle("sunglasses-view",t),this.innerHTML=t?"\u{1F576}\uFE0F REMOVE GLASSES":"\u{1F576}\uFE0F PUT ON GLASSES",document.querySelectorAll(".hidden-message").forEach(e=>{e.classList.toggle("revealed",t)})}),document.body.appendChild(s),setInterval(()=>{const e=document.querySelectorAll("h1, h2, h3, h4, h5, h6");if(e.length>0&&Math.random()<.1){const n=e[Math.floor(Math.random()*e.length)];n.classList.add("glitch"),setTimeout(()=>n.classList.remove("glitch"),300)}},2e3),document.querySelectorAll('input[type="text"], input[type="password"], textarea').forEach(e=>{e.addEventListener("focus",()=>e.classList.add("terminal-cursor")),e.addEventListener("blur",()=>e.classList.remove("terminal-cursor"))});const a=["THEY CONTROL THE FLAGS","WAKE UP","QUESTION EVERYTHING","THE TRUTH IS IN THE CODE"];setTimeout(()=>{a.forEach((e,n)=>{const o=document.createElement("div");o.className="hidden-message position-fixed",o.textContent=e,o.style.cssText=`
+                top: ${20+n*100}px; 
+                left: ${Math.random()*50+10}%; 
+                z-index: 999; 
+                font-size: 14px; 
+                font-weight: bold;
+                pointer-events: none;
+            `,document.body.appendChild(o)})},1e3)});

@@ -35,16 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 2000);
     
-    // Convert some text to "OBEY" style messages
-    const obeyMessages = ['SUBMIT', 'LOGIN', 'REGISTER', 'SCOREBOARD', 'CHALLENGES'];
-    obeyMessages.forEach(msg => {
-        document.querySelectorAll('*').forEach(el => {
-            if (el.textContent && el.textContent.trim().toUpperCase() === msg && el.children.length === 0) {
-                el.classList.add('obey');
-            }
-        });
-    });
-    
     // Add terminal cursor to inputs when focused
     document.querySelectorAll('input[type="text"], input[type="password"], textarea').forEach(input => {
         input.addEventListener('focus', () => input.classList.add('terminal-cursor'));
