@@ -89,7 +89,7 @@
 						<tr data-href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">
 							<td class="d-block border-right text-center" data-checkbox>
 								<div class="form-check">
-									<input type="checkbox" class="form-check-input" value="{{ challenge.id }}" autocomplete="off" data-challenge-id="{{ challenge.id }}">&nbsp;
+									<input type="checkbox" class="form-check-input" value="{{ challenge.id }}" autocomplete="off" data-challenge-id="{{ challenge.id }}" data-solution-id="{{ challenge.solution_id }}">&nbsp;
 								</div>
 							</td>
 							<td class="text-center">{{ challenge.id }}</td>
@@ -101,10 +101,12 @@
 								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
+							{% if challenge.solution_id %}
 							<td class="text-center">
 								{% set badge_state = 'badge-danger' if challenge.solution_state == 'hidden' else 'badge-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.solution_state }}</span>
 							</td>
+							{% endif %}
 						</tr>
 					{% endfor %}
 					</tbody>

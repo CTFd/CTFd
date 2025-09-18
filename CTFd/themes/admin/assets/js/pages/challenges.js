@@ -33,6 +33,9 @@ function bulkEditChallenges(_event) {
   let challengeIDs = $("input[data-challenge-id]:checked").map(function () {
     return $(this).data("challenge-id");
   });
+  let solutionIDs = $("input[data-challenge-id]:checked").map(function () {
+    return $(this).data("solution-id");
+  });
 
   ezAlert({
     title: "Edit Challenges",
@@ -67,6 +70,8 @@ function bulkEditChallenges(_event) {
     button: "Submit",
     success: function () {
       let data = $("#challenges-bulk-edit").serializeJSON(true);
+      let solution_state = data.solution;
+      delete data["solution"];
       const reqs = [];
       for (var chalID of challengeIDs) {
         reqs.push(
@@ -75,6 +80,16 @@ function bulkEditChallenges(_event) {
             body: JSON.stringify(data),
           }),
         );
+      }
+      for (var solID of solutionIDs) {
+        if solID {
+          reqs.push(
+            CTFd.fetch(`/api/v1/solutions/${solID}`, {
+              method: "PATCH",
+              body: JSON.stringify({"state": solution_state}),
+            }),
+          );
+        }
       }
       Promise.all(reqs).then((_responses) => {
         window.location.reload();

@@ -26,12 +26,12 @@ def challenges_listing():
     total = query.count()
 
     for challenge in challenges:
+        if not challenge.solution_id:
+            continue
         solution = Solutions.query.filter_by(challenge_id=challenge.id).first()
         if solution:
-            challenge.has_solution = True
             challenge.solution_state = solution.state
         else:
-            challenge.has_solution = False
             challenge.solution_state = "hidden"
 
     return render_template(
