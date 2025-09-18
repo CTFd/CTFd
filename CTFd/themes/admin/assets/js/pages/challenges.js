@@ -82,7 +82,7 @@ function bulkEditChallenges(_event) {
         );
       }
       for (var solID of solutionIDs) {
-        if solID {
+        if (solID) {
           reqs.push(
             CTFd.fetch(`/api/v1/solutions/${solID}`, {
               method: "PATCH",
