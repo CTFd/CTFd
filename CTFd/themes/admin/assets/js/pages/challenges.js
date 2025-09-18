@@ -54,6 +54,15 @@ function bulkEditChallenges(_event) {
           <option value="hidden">Hidden</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Solution</label>
+        <select name="solution" data-initial="">
+          <option value="">--</option>
+          <option value="visible">Visible</option>
+          <option value="hidden">Hidden</option>
+          <option value="solved">Solved</option>
+        </select>
+      </div>
     </form>
     `),
     button: "Submit",
