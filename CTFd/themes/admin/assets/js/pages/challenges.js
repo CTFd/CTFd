@@ -70,7 +70,7 @@ function bulkEditChallenges(_event) {
     button: "Submit",
     success: function () {
       let data = $("#challenges-bulk-edit").serializeJSON(true);
-      let solution_state = data.solution;
+      let solution_data = {"state": data.solution};
       delete data["solution"];
       const reqs = [];
       for (var chalID of challengeIDs) {
@@ -86,7 +86,7 @@ function bulkEditChallenges(_event) {
           reqs.push(
             CTFd.fetch(`/api/v1/solutions/${solID}`, {
               method: "PATCH",
-              body: JSON.stringify({"state": solution_state}),
+              body: JSON.stringify(solution_data),
             }),
           );
         }
