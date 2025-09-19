@@ -70,7 +70,7 @@ function bulkEditChallenges(_event) {
     button: "Submit",
     success: function () {
       let data = $("#challenges-bulk-edit").serializeJSON(true);
-      let solution_data = {"state": data.solution};
+      let solution_data = { state: data.solution };
       delete data["solution"];
       const reqs = [];
       for (var chalID of challengeIDs) {
