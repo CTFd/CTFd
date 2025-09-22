@@ -498,10 +498,11 @@ def themes(theme, path):
         if cand_path is None:
             abort(404)
         if os.path.isfile(cand_path):
-            return send_file(cand_path, max_age=3600)
+            response = make_response(send_file(cand_path, max_age=3600))
+            response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+            return response
     abort(404)
-
-
+    
 @views.route("/themes/<theme>/static/<path:path>")
 def themes_beta(theme, path):
     """
@@ -521,7 +522,9 @@ def themes_beta(theme, path):
         if cand_path is None:
             abort(404)
         if os.path.isfile(cand_path):
-            return send_file(cand_path, max_age=3600)
+            response = make_response(send_file(cand_path, max_age=3600))
+            response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+            return response
     abort(404)
 
 
