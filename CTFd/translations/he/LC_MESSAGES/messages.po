@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-23 23:14\n"
+"PO-Revision-Date: 2025-09-24 00:21\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "MIME-Version: 1.0\n"
@@ -20,28 +20,28 @@ msgstr ""
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr ""
+msgstr "נראות האתגר הוגדרה כך שרק מנהלים יוכלו לראות אותו"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr ""
+msgstr "ה-%(ctf_name)s טרם התחיל"
 
 #: CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
-msgstr ""
+msgstr "ה-%(ctf_name)s מושהה"
 
 #: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
-msgstr ""
+msgstr "ה-%(ctf_name)s הסתיים"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
 #: CTFd/themes/core-beta/templates/teams/private.html:329
 #: CTFd/themes/core-beta/templates/teams/public.html:95
 msgid "User Name"
-msgstr ""
+msgstr "שם משתמש"
 
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
 #: CTFd/forms/teams.py:230
