@@ -1,0 +1,867 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CTFd\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-04-02 07:37-0400\n"
+"PO-Revision-Date: 2025-09-24 00:30\n"
+"Last-Translator: \n"
+"Language-Team: Hebrew\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"X-Crowdin-Project: CTFd\n"
+"X-Crowdin-Project-ID: 659064\n"
+"X-Crowdin-Language: he\n"
+"X-Crowdin-File: /master/messages.pot\n"
+"X-Crowdin-File-ID: 188\n"
+"Language: he_IL\n"
+
+#: CTFd/challenges.py:38
+msgid "Challenge Visibility is set to Admins Only"
+msgstr "נראות האתגר הוגדרה כך שרק מנהלים יוכלו לראות אותו"
+
+#: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
+#, python-format
+msgid "%(ctf_name)s has not started yet"
+msgstr "ה-%(ctf_name)s טרם התחיל"
+
+#: CTFd/challenges.py:44
+#, python-format
+msgid "%(ctf_name)s is paused"
+msgstr "ה-%(ctf_name)s מושהה"
+
+#: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
+#, python-format
+msgid "%(ctf_name)s has ended"
+msgstr "ה-%(ctf_name)s הסתיים"
+
+#: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
+#: CTFd/themes/core-beta/templates/teams/private.html:329
+#: CTFd/themes/core-beta/templates/teams/public.html:95
+msgid "User Name"
+msgstr "שם משתמש"
+
+#: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
+#: CTFd/forms/teams.py:230
+msgid "Email"
+msgstr "אימייל"
+
+#: CTFd/forms/auth.py:24 CTFd/forms/auth.py:50 CTFd/forms/auth.py:67
+#: CTFd/forms/self.py:24 CTFd/forms/teams.py:231
+msgid "Password"
+msgstr "סיסמה"
+
+#: CTFd/forms/auth.py:25 CTFd/forms/auth.py:51 CTFd/forms/auth.py:62
+#: CTFd/forms/auth.py:69 CTFd/forms/self.py:29 CTFd/forms/teams.py:154
+#: CTFd/forms/teams.py:237 CTFd/themes/core-beta/templates/challenge.html:147
+msgid "Submit"
+msgstr "שלח"
+
+#: CTFd/forms/auth.py:46
+msgid "User Name or Email"
+msgstr "שם משתמש או אימייל"
+
+#: CTFd/forms/auth.py:55
+msgid "Resend Confirmation Email"
+msgstr "שלח מחדש אימייל אישור"
+
+#: CTFd/forms/self.py:23 CTFd/forms/users.py:181
+msgid "Language"
+msgstr "שפה"
+
+#: CTFd/forms/self.py:25
+msgid "Current Password"
+msgstr "סיסמה נוכחית"
+
+#: CTFd/forms/self.py:26 CTFd/forms/teams.py:140 CTFd/forms/teams.py:218
+#: CTFd/forms/teams.py:233 CTFd/forms/users.py:164
+#: CTFd/themes/core-beta/templates/teams/teams.html:51
+#: CTFd/themes/core-beta/templates/users/users.html:48
+msgid "Affiliation"
+msgstr "אתר"
+
+#: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:219
+#: CTFd/forms/teams.py:232 CTFd/forms/users.py:165
+#: CTFd/themes/core-beta/templates/teams/teams.html:50
+#: CTFd/themes/core-beta/templates/users/users.html:47
+msgid "Website"
+msgstr "אֲתַר אִינטֶרנֶט"
+
+#: CTFd/forms/self.py:28 CTFd/forms/teams.py:150 CTFd/forms/teams.py:234
+#: CTFd/themes/core-beta/templates/teams/teams.html:52
+#: CTFd/themes/core-beta/templates/users/users.html:49
+msgid "Country"
+msgstr "מדינה"
+
+#: CTFd/forms/self.py:59 CTFd/themes/core-beta/templates/settings.html:225
+msgid "Expiration"
+msgstr "תפוגה"
+
+#: CTFd/forms/self.py:61
+msgid "Generate"
+msgstr "לִיצוֹר"
+
+#: CTFd/forms/setup.py:29
+msgid "Event Name"
+msgstr "שם האירוע"
+
+#: CTFd/forms/setup.py:29
+msgid "The name of your CTF event/workshop"
+msgstr "שם האירוע / הסדנה שלך"
+
+#: CTFd/forms/setup.py:32
+msgid "Event Description"
+msgstr "תיאור האירוע"
+
+#: CTFd/forms/setup.py:32
+msgid "Description for the CTF"
+msgstr "תיאור עבור ה-CTF"
+
+#: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
+msgid "User Mode"
+msgstr "מצב משתמש"
+
+#: CTFd/forms/setup.py:36
+msgid "Team Mode"
+msgstr "מצב צוות"
+
+#: CTFd/forms/setup.py:39
+msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
+msgstr "קובעים אם משתמשים יתאגדו בצוותים לשחק (מצב צוות) או ישחקו כפרטים (מצב משתמש)"
+
+#: CTFd/forms/setup.py:45
+msgid "Admin Username"
+msgstr "שם משתמש מנהל"
+
+#: CTFd/forms/setup.py:46
+msgid "Your username for the administration account"
+msgstr "שם המשתמש שלך עבור חשבון הניהול"
+
+#: CTFd/forms/setup.py:50
+msgid "Admin Email"
+msgstr "אימייל מנהל"
+
+#: CTFd/forms/setup.py:51
+msgid "Your email address for the administration account"
+msgstr "כתובת האימייל שלך עבור חשבון הניהול"
+
+#: CTFd/forms/setup.py:55
+msgid "Admin Password"
+msgstr "סיסמת מנהל"
+
+#: CTFd/forms/setup.py:56
+msgid "Your password for the administration account"
+msgstr "הסיסמה שלך עבור חשבון הניהול"
+
+#: CTFd/forms/setup.py:61
+msgid "Logo"
+msgstr "לוגו"
+
+#: CTFd/forms/setup.py:63
+msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
+msgstr "לוגו לשימוש באתר במקום שם CTF. משמש ככפתור בדף הבית. אופציונלי."
+
+#: CTFd/forms/setup.py:67
+msgid "Banner"
+msgstr "באנר"
+
+#: CTFd/forms/setup.py:67
+msgid "Banner to use for the homepage. Optional."
+msgstr "באנר לשימוש בדף הבית. אופציונלי."
+
+#: CTFd/forms/setup.py:70
+msgid "Small Icon"
+msgstr "אייקון קטן"
+
+#: CTFd/forms/setup.py:72
+msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
+msgstr "favicon המשמש בדפדפן המשתמשים. מקבלים רק PNG. חייב להיות בגודל 32×32 פיקסלים. אופציונלי."
+
+#: CTFd/forms/setup.py:76
+msgid "Theme"
+msgstr "ערכת נושא"
+
+#: CTFd/forms/setup.py:77
+msgid "CTFd Theme to use. Can be changed later."
+msgstr "ערכת הנושא של CTFd לשימוש. ניתן לשנות מאוחר יותר."
+
+#: CTFd/forms/setup.py:84
+msgid "Theme Color"
+msgstr "צבע ערכת הנושא"
+
+#: CTFd/forms/setup.py:86
+msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
+msgstr "הצבע בו־ערכת הנושא משתמשת לשליטה באסתטיקה. דורש תמיכה בערכות. אופציונלי."
+
+#: CTFd/forms/setup.py:91
+msgid "Verify Emails"
+msgstr "אמת אימיילים"
+
+#: CTFd/forms/setup.py:143
+msgid "Start Time"
+msgstr "זמן התחלה"
+
+#: CTFd/forms/setup.py:144
+msgid "Time when your CTF is scheduled to start. Optional."
+msgstr "הזמן בו מתוכנן ה-CTF שלך להתחיל. אופציונלי."
+
+#: CTFd/forms/setup.py:147
+msgid "End Time"
+msgstr "זמן סיום"
+
+#: CTFd/forms/setup.py:148
+msgid "Time when your CTF is scheduled to end. Optional."
+msgstr "הזמן בו מתוכנן ה-CTF שלך להסתיים. אופציונטי."
+
+#: CTFd/forms/setup.py:150
+msgid "Finish"
+msgstr "סיום"
+
+#: CTFd/forms/teams.py:102 CTFd/forms/teams.py:109 CTFd/forms/teams.py:127
+#: CTFd/forms/teams.py:229
+msgid "Team Name"
+msgstr "שם הצוות"
+
+#: CTFd/forms/teams.py:103 CTFd/forms/teams.py:110
+msgid "Team Password"
+msgstr "סיסמת הצוות"
+
+#: CTFd/forms/teams.py:104 CTFd/forms/teams.py:289
+msgid "Join"
+msgstr "הצטרף"
+
+#: CTFd/forms/teams.py:111
+msgid "Create"
+msgstr "לִיצוֹר"
+
+#: CTFd/forms/teams.py:128
+msgid "Your team's public name shown to other competitors"
+msgstr "השם הציבורי של הצוות שלך מוצג למתחרים אחרים"
+
+#: CTFd/forms/teams.py:131
+msgid "New Team Password"
+msgstr "סיסמת צוות חדשה"
+
+#: CTFd/forms/teams.py:131
+msgid "Set a new team join password"
+msgstr "הגדר סיסמה חדשה להצטרפות לצוות"
+
+#: CTFd/forms/teams.py:134
+msgid "Confirm Current Team Password"
+msgstr "אשר את סיסמת הצוות הנוכחית"
+
+#: CTFd/forms/teams.py:136
+msgid "Provide your current team password (or your password) to update your team's password"
+msgstr "ספק את סיסמת הצוות הנוכחית (או את הסיסמה שלך) כדי לעדכן את סיסמת הצוות"
+
+#: CTFd/forms/teams.py:142
+msgid "Your team's affiliation publicly shown to other competitors"
+msgstr "השיוך של הצוות שלך מוצג בפומבי למתחרים אחרים"
+
+#: CTFd/forms/teams.py:147
+msgid "Your team's website publicly shown to other competitors"
+msgstr "האתר של הצוות שלך מוצג בפומבי למתחרים אחרים"
+
+#: CTFd/forms/teams.py:152
+msgid "Your team's country publicly shown to other competitors"
+msgstr "המדינה של הצוות שלך מוצגת בפומבי למתחרים אחרים"
+
+#: CTFd/forms/teams.py:192
+msgid "Team Captain"
+msgstr "קפטן הצוות"
+
+#: CTFd/forms/teams.py:215 CTFd/forms/users.py:161
+msgid "Search Field"
+msgstr "שדה חיפוש"
+
+#: CTFd/forms/teams.py:217 CTFd/forms/users.py:163
+#: CTFd/themes/core-beta/templates/challenge.html:206
+msgid "Name"
+msgstr "שם"
+
+#: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
+msgid "Parameter"
+msgstr "פרמטר"
+
+#: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
+msgid "Search"
+msgstr "חפש"
+
+#: CTFd/forms/teams.py:235
+msgid "Hidden"
+msgstr "מוסתר"
+
+#: CTFd/forms/teams.py:236
+msgid "Banned"
+msgstr "אָסוּר"
+
+#: CTFd/forms/teams.py:285
+msgid "Invite Link"
+msgstr "קישור הזמנה"
+
+#: CTFd/forms/users.py:133
+msgid "Bracket"
+msgstr "סוֹגֵר"
+
+#: CTFd/forms/users.py:134
+msgid "Competition bracket for your user"
+msgstr "סולם התחרות עבור המשתמש שלך"
+
+#: CTFd/forms/users.py:172
+msgid "Search for matching users"
+msgstr "חפש משתמשים תואמים"
+
+#: CTFd/themes/core-beta/templates/base.html:53
+msgid "Powered by CTFd"
+msgstr "בהנעה של CTFd"
+
+#: CTFd/themes/core-beta/templates/challenge.html:11
+#: CTFd/themes/core-beta/templates/teams/private.html:388
+#: CTFd/themes/core-beta/templates/teams/public.html:157
+#: CTFd/themes/core-beta/templates/users/private.html:124
+#: CTFd/themes/core-beta/templates/users/public.html:123
+msgid "Challenge"
+msgstr "אתגר"
+
+#: CTFd/themes/core-beta/templates/challenge.html:19
+#, python-format
+msgid "%(num)d Solve"
+msgid_plural "%(num)d Solves"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: CTFd/themes/core-beta/templates/challenge.html:77
+msgid "View Hint"
+msgstr "הצג רמז"
+
+#: CTFd/themes/core-beta/templates/challenge.html:120
+msgid "attempt"
+msgid_plural "attempts"
+msgstr[0] "ניסיון"
+msgstr[1] "ניסיונות"
+msgstr[2] "ניסיונות"
+msgstr[3] "דגל"
+
+#: CTFd/themes/core-beta/templates/challenge.html:135
+msgid "Flag"
+msgstr "דגל"
+
+#: CTFd/themes/core-beta/templates/challenge.html:169
+msgid "Next Challenge"
+msgstr "האתגר הבא"
+
+#: CTFd/themes/core-beta/templates/challenge.html:175
+msgid "Share"
+msgstr "שתף"
+
+#: CTFd/themes/core-beta/templates/challenge.html:207
+#: CTFd/themes/core-beta/templates/setup.html:305
+#: CTFd/themes/core-beta/templates/setup.html:326
+msgid "Date"
+msgstr "תאריך"
+
+#: CTFd/themes/core-beta/templates/challenges.html:7
+#: CTFd/themes/core-beta/templates/components/navbar.html:59
+msgid "Challenges"
+msgstr "אתגרים"
+
+#: CTFd/themes/core-beta/templates/confirm.html:7
+msgid "Confirm"
+msgstr "לְאַשֵׁר"
+
+#: CTFd/themes/core-beta/templates/confirm.html:18
+msgid "We've sent a confirmation email to your email address."
+msgstr "שלחנו אימייל אישור לכתובת האימייל שלך."
+
+#: CTFd/themes/core-beta/templates/confirm.html:24
+msgid "Please click the link in that email to confirm your account."
+msgstr "אנא לחץ על הקישור שבאימייל כדי לאשר את החשבון שלך."
+
+#: CTFd/themes/core-beta/templates/confirm.html:30
+msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
+msgstr "אם האימייל לא מגיע, בדוק את תיקיית הספאם או פנה למנהל לאימות ידני של החשבון."
+
+#: CTFd/themes/core-beta/templates/confirm.html:43
+msgid "Change Email Address"
+msgstr "שנה כתובת אימייל"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:164
+#: CTFd/themes/core-beta/templates/components/navbar.html:169
+#: CTFd/themes/core-beta/templates/login.html:7
+msgid "Login"
+msgstr "התחבר"
+
+#: CTFd/themes/core-beta/templates/login.html:40
+msgid "Forgot your password?"
+msgstr "שכחת את הסיסמה?"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:85
+#: CTFd/themes/core-beta/templates/components/navbar.html:91
+#: CTFd/themes/core-beta/templates/notifications.html:7
+msgid "Notifications"
+msgstr "התראות"
+
+#: CTFd/themes/core-beta/templates/notifications.html:14
+msgid "There are no notifications yet"
+msgstr "עדיין אין התראות"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:151
+#: CTFd/themes/core-beta/templates/components/navbar.html:156
+#: CTFd/themes/core-beta/templates/register.html:7
+msgid "Register"
+msgstr "הרשם"
+
+#: CTFd/themes/core-beta/templates/register.html:35
+msgid "Your username on the site"
+msgstr "שם המשתמש שלך באתר"
+
+#: CTFd/themes/core-beta/templates/register.html:43
+msgid "Never shown to the public"
+msgstr "לעולם לא יוצג לציבור"
+
+#: CTFd/themes/core-beta/templates/register.html:51
+msgid "Password used to log into your account"
+msgstr "הסיסמה המשומשת כדי להיכנס לחשבונך"
+
+#: CTFd/themes/core-beta/templates/register.html:69
+#, python-format
+msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
+msgstr "על-ידי ההרשמה, אתה מסכים ל-<a href=\\\"%(privacy_link)s\\\" target=\\\"_blank\\\">מדיניות הפרטיות</a> ו-<a href=\\\"%(tos_link)s\\\" target=\\\"_blank\\\">תנאי השימוש</a>"
+
+#: CTFd/themes/core-beta/templates/reset_password.html:7
+msgid "Reset Password"
+msgstr "איפוס סיסמה"
+
+#: CTFd/themes/core-beta/templates/reset_password.html:21
+msgid "You can now reset the password for your account and log in. Please enter in a new password below."
+msgstr "כעת באפשרותך לאפס את הסיסמה שלך ולהתחבר. אנא הכנס סיסמה חדשה למטה."
+
+#: CTFd/themes/core-beta/templates/reset_password.html:44
+msgid "Please provide the email address associated with your account below."
+msgstr "אנא ספק את כתובת האימייל המשויכת לחשבונך למטה."
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:52
+#: CTFd/themes/core-beta/templates/scoreboard.html:7
+msgid "Scoreboard"
+msgstr "טבלת ניקוד"
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:24
+msgid "All"
+msgstr "הכל"
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:36
+msgid "Place"
+msgstr "מקום"
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:38
+#: CTFd/themes/core-beta/templates/teams/private.html:330
+#: CTFd/themes/core-beta/templates/teams/public.html:96
+msgid "Score"
+msgstr "ניקוד"
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:60
+msgid "Scoreboard is empty"
+msgstr "טבלת הניקוד ריקה"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:124
+#: CTFd/themes/core-beta/templates/components/navbar.html:129
+#: CTFd/themes/core-beta/templates/settings.html:8
+#: CTFd/themes/core-beta/templates/setup.html:50
+msgid "Settings"
+msgstr "הגדרות"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:112
+#: CTFd/themes/core-beta/templates/components/navbar.html:117
+#: CTFd/themes/core-beta/templates/settings.html:21
+msgid "Profile"
+msgstr "פרופיל"
+
+#: CTFd/themes/core-beta/templates/settings.html:26
+msgid "Access Tokens"
+msgstr "אסימוני גישה"
+
+#: CTFd/themes/core-beta/templates/settings.html:95
+msgid "Your profile has been updated"
+msgstr "הפרופיל שלך עודכן"
+
+#: CTFd/themes/core-beta/templates/settings.html:103
+#: CTFd/themes/core-beta/templates/teams/private.html:83
+#: CTFd/themes/core-beta/templates/teams/private.html:198
+msgid "Error:"
+msgstr "שגיאה:"
+
+#: CTFd/themes/core-beta/templates/settings.html:129
+msgid "API Key Generated"
+msgstr "מפתח API נוצר"
+
+#: CTFd/themes/core-beta/templates/settings.html:137
+msgid "Please copy your API Key, it won't be shown again!"
+msgstr "אנא העתק את מפתח ה-API שלך, הוא לא יוצג שוב!"
+
+#: CTFd/themes/core-beta/templates/settings.html:183
+msgid "Active Tokens"
+msgstr "אסימונים פעילים"
+
+#: CTFd/themes/core-beta/templates/settings.html:195
+msgid "Delete Token"
+msgstr "מחק אסימון"
+
+#: CTFd/themes/core-beta/templates/settings.html:204
+msgid "Are you sure you want to delete this token?"
+msgstr "האם אתה בטוח שברצונך למחוק אסימון זה?"
+
+#: CTFd/themes/core-beta/templates/settings.html:224
+msgid "Created"
+msgstr "נוצר"
+
+#: CTFd/themes/core-beta/templates/settings.html:226
+msgid "Description"
+msgstr "תיאור"
+
+#: CTFd/themes/core-beta/templates/settings.html:227
+msgid "Delete"
+msgstr "לִמְחוֹק"
+
+#: CTFd/themes/core-beta/templates/setup.html:24
+msgid "Setup"
+msgstr "התקנה"
+
+#: CTFd/themes/core-beta/templates/setup.html:44
+msgid "General"
+msgstr "כללי"
+
+#: CTFd/themes/core-beta/templates/setup.html:47
+msgid "Mode"
+msgstr "מצב"
+
+#: CTFd/themes/core-beta/templates/setup.html:53
+msgid "Administration"
+msgstr "ניהול"
+
+#: CTFd/themes/core-beta/templates/setup.html:56
+msgid "Style"
+msgstr "סגנון"
+
+#: CTFd/themes/core-beta/templates/setup.html:59
+msgid "Date &amp; Time"
+msgstr "תאריך ושעה"
+
+#: CTFd/themes/core-beta/templates/setup.html:62
+msgid "Integrations"
+msgstr "אינטגרציות"
+
+#: CTFd/themes/core-beta/templates/setup.html:86
+#: CTFd/themes/core-beta/templates/setup.html:138
+#: CTFd/themes/core-beta/templates/setup.html:202
+#: CTFd/themes/core-beta/templates/setup.html:238
+#: CTFd/themes/core-beta/templates/setup.html:296
+#: CTFd/themes/core-beta/templates/setup.html:345
+msgid "Next"
+msgstr "הבא"
+
+#: CTFd/themes/core-beta/templates/setup.html:112
+msgid "Participants register accounts and form teams"
+msgstr "משתתפים נרשמים ויוצרים צוותים"
+
+#: CTFd/themes/core-beta/templates/setup.html:113
+msgid "If a team member solves a challenge, the entire team receives credit"
+msgstr "אם חבר צוות פותר את האתגר, כל הצוות מקבל קרדיט"
+
+#: CTFd/themes/core-beta/templates/setup.html:115
+msgid "Easier to see which team member solved a challenge"
+msgstr "קל יותר לראות איזה חבר צוות פתר את האתגר"
+
+#: CTFd/themes/core-beta/templates/setup.html:116
+msgid "May be slightly more difficult to administer"
+msgstr "יכול להיות מעט קשה יותר לניהול"
+
+#: CTFd/themes/core-beta/templates/setup.html:120
+msgid "Participants only register an individual account"
+msgstr "משתתפים נרשמים רק כפרטים"
+
+#: CTFd/themes/core-beta/templates/setup.html:121
+msgid "Players can share accounts to form pseudo-teams"
+msgstr "שחקנים יכולים לשתף חשבונות כדי ליצור צוותים דמיוניים"
+
+#: CTFd/themes/core-beta/templates/setup.html:123
+msgid "Easier to organize"
+msgstr "קל יותר לארגן"
+
+#: CTFd/themes/core-beta/templates/setup.html:124
+msgid "Difficult to attribute solutions to individual team members"
+msgstr "קשה יותר לייחס פתרונות לחברי צוות בודדים"
+
+#: CTFd/themes/core-beta/templates/setup.html:143
+msgid "Visibility Settings"
+msgstr "הגדרות נראות"
+
+#: CTFd/themes/core-beta/templates/setup.html:146
+msgid "Control the visibility of different sections of CTFd"
+msgstr "שלוט על הנראות של חלקים שונים ב-CTFd"
+
+#: CTFd/themes/core-beta/templates/setup.html:232
+msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
+msgstr "הרשמה עם כתובת אימייל לניוזלטר של CTFd LLC לעדכונים וחדשות"
+
+#: CTFd/themes/core-beta/templates/setup.html:309
+#: CTFd/themes/core-beta/templates/setup.html:330
+#: CTFd/themes/core-beta/templates/teams/private.html:391
+#: CTFd/themes/core-beta/templates/teams/public.html:160
+#: CTFd/themes/core-beta/templates/users/private.html:127
+#: CTFd/themes/core-beta/templates/users/public.html:126
+msgid "Time"
+msgstr "זמן"
+
+#: CTFd/themes/core-beta/templates/setup.html:334
+msgid "UTC Preview"
+msgstr "תצוגת UTC מראש"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:36
+#: CTFd/themes/core-beta/templates/users/users.html:6
+msgid "Users"
+msgstr "משתמשים"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:43
+#: CTFd/themes/core-beta/templates/teams/teams.html:6
+msgid "Teams"
+msgstr "צוותים"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:72
+#: CTFd/themes/core-beta/templates/components/navbar.html:77
+msgid "Admin Panel"
+msgstr "לוח ניהול"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:99
+#: CTFd/themes/core-beta/templates/components/navbar.html:104
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
+#: CTFd/themes/core-beta/templates/teams/teams.html:49
+msgid "Team"
+msgstr "צוות"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:136
+#: CTFd/themes/core-beta/templates/components/navbar.html:141
+msgid "Logout"
+msgstr "התנתק"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:180
+msgid "Change language"
+msgstr "שנה שפה"
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:199
+#: CTFd/themes/core-beta/templates/components/navbar.html:204
+msgid "Toggle theme"
+msgstr "החלף ערכת נושא"
+
+#: CTFd/themes/core-beta/templates/errors/403.html:12
+msgid "403 Forbidden"
+msgstr "403 - אסור לגשת"
+
+#: CTFd/themes/core-beta/templates/errors/404.html:9
+msgid "File not found"
+msgstr "קובץ לא נמצא"
+
+#: CTFd/themes/core-beta/templates/errors/404.html:12
+msgid "404 Not Found"
+msgstr "404 לא נמצא"
+
+#: CTFd/themes/core-beta/templates/errors/429.html:9
+msgid "Too many requests"
+msgstr "יותר מידי בקשות"
+
+#: CTFd/themes/core-beta/templates/errors/429.html:10
+msgid "Please slow down!"
+msgstr "אנא הרפה!"
+
+#: CTFd/themes/core-beta/templates/errors/429.html:13
+msgid "429 Too Many Requests"
+msgstr "429 יותר מידי בקשות"
+
+#: CTFd/themes/core-beta/templates/errors/502.html:12
+msgid "502 Bad Gateway"
+msgstr "502 גשר גרוע"
+
+#: CTFd/themes/core-beta/templates/macros/forms.html:13
+#: CTFd/themes/core-beta/templates/macros/forms.html:36
+#: CTFd/themes/core-beta/templates/macros/forms.html:65
+msgid "(Optional)"
+msgstr "(אופציונלי)"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:6
+#: CTFd/themes/core-beta/templates/teams/join_team.html:6
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
+msgid "Join Team"
+msgstr "הצטרף לצוות"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:15
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
+msgid "Welcome to"
+msgstr "ברוכים הבאים ל-"
+
+#: CTFd/themes/core-beta/templates/teams/invite.html:19
+msgid "Click the button below to join the team!"
+msgstr "לחץ/י על הכפתור למטה להצטרף לצוות!"
+
+#: CTFd/themes/core-beta/templates/teams/new_team.html:6
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
+msgid "Create Team"
+msgstr "צור צוות"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:8
+msgid "Edit Team"
+msgstr "ערוך צוות"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:76
+msgid "Your team's profile has been updated"
+msgstr "הפרופיל של הצוות שלך עודכן"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:104
+msgid "Choose Captain"
+msgstr "בחר קפטן"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:127
+msgid "Your captain rights have been transferred"
+msgstr "זכויות הקפטן שלך הועברו"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:152
+msgid "Invite Users"
+msgstr "הזמן משתמשים"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:171
+msgid "Share this link with your team members for them to join your team"
+msgstr "שתף את הקישור עם חברי הצוות שלך כדי שהם יצטרפו לצוות שלך"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:174
+msgid "Invite links can be re-used and expire after 1 day"
+msgstr "קישורי הזמנה ניתנים לשימוש חוזר ותפוגתם לאחר יום אחד"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:188
+msgid "Disband Team"
+msgstr "פורק צוות"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:193
+msgid "Are you sure you want to disband your team?"
+msgstr "האם אתה בטוח שברצונך לפרק את הצוות שלך?"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:206
+msgid "No"
+msgstr "לֹא"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:207
+msgid "Yes"
+msgstr "כן"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:218
+#: CTFd/themes/core-beta/templates/teams/public.html:10
+#: CTFd/themes/core-beta/templates/users/private.html:21
+#: CTFd/themes/core-beta/templates/users/public.html:21
+#: CTFd/themes/core-beta/templates/users/users.html:70
+msgid "Official"
+msgstr "רשמי"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:260
+msgid "place"
+msgstr "מקום"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:268
+msgid "points"
+msgstr "נקודות"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:325
+#: CTFd/themes/core-beta/templates/teams/public.html:91
+msgid "Members"
+msgstr "חברים"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:345
+#: CTFd/themes/core-beta/templates/teams/public.html:110
+msgid "Captain"
+msgstr "סֶרֶן"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:361
+#: CTFd/themes/core-beta/templates/teams/public.html:125
+#: CTFd/themes/core-beta/templates/users/private.html:98
+#: CTFd/themes/core-beta/templates/users/public.html:98
+msgid "Awards"
+msgstr "פרסים"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:384
+#: CTFd/themes/core-beta/templates/teams/public.html:153
+#: CTFd/themes/core-beta/templates/users/private.html:120
+msgid "Solves"
+msgstr "פתרונות"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:389
+#: CTFd/themes/core-beta/templates/teams/public.html:158
+#: CTFd/themes/core-beta/templates/users/private.html:125
+#: CTFd/themes/core-beta/templates/users/public.html:124
+msgid "Category"
+msgstr "קטגוריה"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:390
+#: CTFd/themes/core-beta/templates/teams/public.html:159
+#: CTFd/themes/core-beta/templates/users/private.html:126
+#: CTFd/themes/core-beta/templates/users/public.html:125
+msgid "Value"
+msgstr "ערך"
+
+#: CTFd/themes/core-beta/templates/teams/private.html:481
+#: CTFd/themes/core-beta/templates/teams/public.html:248
+#: CTFd/themes/core-beta/templates/users/private.html:213
+#: CTFd/themes/core-beta/templates/users/public.html:214
+msgid "No solves yet"
+msgstr "האתגר טרם נפתר"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
+msgid "In order to participate you must either join or create a team."
+msgstr "כדי להשתתף עליך להצטרף לצוות או ליצור אחד."
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
+msgid "Play with Official Team"
+msgstr "שחק עם צוות רשמי"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
+msgid "Join Unofficial Team"
+msgstr "הצטרף לצוות לא רשמי"
+
+#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
+msgid "Create Unofficial Team"
+msgstr "צור צוות לא רשמי"
+
+#: CTFd/themes/core-beta/templates/teams/teams.html:128
+#: CTFd/themes/core-beta/templates/users/users.html:118
+msgid "Page"
+msgstr "עמוד"
+
+#: CTFd/themes/core-beta/templates/users/users.html:14
+#, python-format
+msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
+msgstr "מחפש משתמשים עבור <strong>%(field)s</strong> התואם <strong>%(q)s</strong>"
+
+#: CTFd/themes/core-beta/templates/users/users.html:17
+#, python-format
+msgid "Page %(page)s of %(total)s results"
+msgstr "עמוד %(page)s מתוך %(total)s תוצאות"
+
+#: CTFd/themes/core-beta/templates/users/users.html:46
+msgid "User"
+msgstr "משתמש"
+
+#: CTFd/utils/modes/__init__.py:35
+msgid "user"
+msgid_plural "users"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: CTFd/utils/modes/__init__.py:37
+msgid "team"
+msgid_plural "teams"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
