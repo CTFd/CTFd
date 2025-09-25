@@ -75,7 +75,6 @@ Alpine.data("Challenge", () => ({
   max_attempts: 0,
   attempts: 0,
   ratingValue: 0,
-  hoveredRating: 0,
   selectedRating: 0,
   ratingReview: "",
   ratingSubmitted: false,

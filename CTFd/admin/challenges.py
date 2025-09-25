@@ -105,6 +105,8 @@ def challenges_preview(challenge_id):
         max_attempts=challenge.max_attempts,
         attempts=0,
         challenge=challenge,
+        rating=None,
+        ratings=None,
     )
     return render_template(
         "admin/challenges/preview.html", content=content, challenge=challenge

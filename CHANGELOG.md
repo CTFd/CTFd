@@ -1,3 +1,77 @@
+# 3.8.0 / 2025-09-04
+
+**General**
+
+- Admins can now configure whether users can see their past submissions
+- Admins can now store challenge solutions within CTFd to be viewed by users
+- Participants can now leave upvotes/downvotes on challenges as well as their review of a challenge
+  - Ratings/Votes can be configured to be viewed by participants or only admins
+  - Reviews are only visible by admins
+- Challenges now have the `logic` field which allows for challenge developers to control the flag collection behavior of a challenge:
+  - `any`: any flag is accepted for the challenge
+  - `all`: all flags for the challenge must be submitted
+  - `team`: all team members must submit any flag
+- Max Attempts can now behave as a timeout instead of a lockout
+  - For example a user who submits 3 attempts will then be prevented from submitting another attempt for 5 minutes instead of being unable to submit entirely
+- Social Shares for challenge completion are now enabled by default and admins may now control the social share template page
+- Additional attempts after solving on challenges will now show if the submissions is correct/incorrect
+- If email sending is available, email confirmation is enabled by default and users are nudged to complete email verification.
+- Hints can now have a title that is shown before unlocking
+- Hints now always require unlocking even if they require no cost
+  - Prevents accidental viewing and improves tracking of hint usage
+- CTFd will now store a tracking event under `challenges.open` in the Tracking table when a challenge is opened for the first time by a user
+- Challenges now report whether a flag is correct or incorrect even if the challenge has already been solved
+- Fixes issue where admins could not download challenge files before CTF start when downloading anonymously
+
+**Admin Panel**
+
+- Added a matrix scoreboard to the Statistics page to show player progression through the CTF
+- Added support for brackets in the Admin Panel scoreboard
+- Added config option for minimum password length
+- Added config option to control whether players can view their previous submissions
+- Admins can now require users to change their password upon login
+- Added config option to control Max Attempts behavior
+- In the Admin Panel challenge preview, admins now only see free hints
+- Fixed issue where the hint form was not resetting properly when creating multiple hints
+
+**API**
+
+- Added `/api/v1/users/me/submissions` for users to retrieve their own submissions
+- Added `/api/v1/challenges/[challenge_id]/solutions` for users to retrieve challenge solutions
+- Added `/api/v1/challenges/[challenge_id]/ratings` for users to submit ratings and for admins to retrieve them
+- Added `ratings` and `rating` fields to the response of `/api/v1/challenges/[challenge_id]`
+- Added `solution_id` to the response of `/api/v1/challenges/[challenge_id]`
+  - If no solution is available, the field is `null`
+- Added `logic` field to the response of `/api/v1/challenges/[challenge_id]`
+- Added `change_password` field to `/api/v1/users/[user_id]` when viewed as an admin
+- Added `/api/v1/solutions` and `/api/v1/solutions/[solution_id]` endpoints
+- `/api/v1/unlocks` is now also used to unlock solutions for user viewing
+
+**Deployment**
+
+- Added `PRESET_ADMIN_NAME`, `PRESET_ADMIN_EMAIL`, `PRESET_ADMIN_PASSWORD`, and `PRESET_ADMIN_TOKEN` to `config.ini` for pre-creating an admin user
+  - Useful for automated deployments and ensuring a known admin token exists
+- Added `PRESET_CONFIGS` to `config.ini` for pre-setting server-side configs
+  - Useful for configuring CTFd without completing setup or using the API
+- Added `EMAIL_CONFIRMATION_REQUIRE_INTERACTION` to `config.ini` to require additional interaction for email confirmation links
+  - Improves compatibility with certain anti-phishing defenses
+- Email confirmation is now enabled whenever email sending is available
+- Replaced `pybluemonday` with `nh3` (due to breakage in Python modules written in Golang)
+- Updated Flask to 2.1.3
+- Updated Werkzeug to 2.2.3
+
+**Plugins**
+
+- Challenge Type Plugins should now return a `ChallengeResponse` object instead of a `(status, message)` tuple
+  - Existing behavior is supported until CTFd 4.0
+- Added `BaseChallenge.partial` for challenge classes to indicate partial solves (for `all` flag logic)
+
+**Themes**
+
+- The `core-beta` theme has been promoted to `core`
+  - The `core-beta` repo has been replaced with the [core-theme repo](https://github.com/CTFd/core-theme). Future changes should be made in the main CTFd repo and these changes will be copied over to the core-theme repo.
+- The previous `core` theme has been deprecated and renamed `core-deprecated`
+
 # 3.7.7 / 2025-04-14
 
 **General**

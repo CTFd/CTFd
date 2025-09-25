@@ -243,6 +243,8 @@ class ServerConfig(object):
 
     APPLICATION_ROOT: str = empty_str_cast(config_ini["optional"]["APPLICATION_ROOT"], default="/")
 
+    RUN_ID: str = empty_str_cast(config_ini["optional"].get("RUN_ID"), default=None)
+
     SERVER_SENT_EVENTS: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["SERVER_SENT_EVENTS"], default=True))
 
     HTML_SANITIZATION: bool = process_boolean_str(empty_str_cast(config_ini["optional"]["HTML_SANITIZATION"], default=False))

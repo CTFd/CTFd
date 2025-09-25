@@ -70,6 +70,66 @@
 	</div>
 	{% endblock %}
 
+	{% block function %}
+	<div class="form-group">
+		<label for="function">
+			Scoring Function<br>
+			<small class="form-text text-muted">
+				<span>How the challenge value will be calculated based on the Decay value</span>
+			</small>
+		</label>
+		<select name="function" class="custom-select chal-function">
+			<option value="static" {% if challenge.function == "static" %}selected{% endif %}>Static</option>
+			<option value="linear" {% if challenge.function == "linear" %}selected{% endif %}>Linear</option>
+			<option value="logarithmic" {% if challenge.function == "logarithmic" %}selected{% endif %}>Logarithmic</option>
+		</select>
+		<small class="form-text text-muted">
+			<ul>
+				<li>Static: Challenge <code>Value</code> is awarded as-is</li>
+				<li>Linear: Calculated as <code>Initial - (Decay * SolveCount)</code></li>
+				<li>Logarithmic: Calculated as <code>(((Minimum - Initial) / (Decay^2)) * (SolveCount^2)) + Initial</code></li>
+			</ul>
+		</small>
+	</div>
+	{% endblock %}
+
+	{% block initial %}
+	<div class="form-group">
+		<label for="initial">Initial Value<br>
+			<small class="form-text text-muted">
+				This is how many points the challenge was worth initially.
+			</small>
+		</label>
+		<input type="number" class="form-control chal-initial" name="initial" value="{{ challenge.initial }}" required>
+	</div>
+	{% endblock %}
+
+	{% block decay %}
+	<div class="form-group">
+		<label for="decay">Decay<br>
+			<small class="form-text text-muted">
+				<span>The decay value is used differently depending on the above Decay Function</span>
+				<ul>
+					<li>Linear: The amount of points deducted per solve. Equal deduction per solve.</li>
+					<li>Logarithmic: The amount of solves before the challenge reaches its minimum value. Earlier solves will lose less points. Later solves will lose more points</li>
+				</ul>
+			</small>
+		</label>
+		<input type="number" class="form-control chal-decay" min="1" name="decay" value="{{ challenge.decay }}" required>
+	</div>
+	{% endblock %}
+
+	{% block minimum %}
+	<div class="form-group">
+		<label for="minimum">Minimum Value<br>
+			<small class="form-text text-muted">
+				This is the lowest that the challenge can be worth
+			</small>
+		</label>
+		<input type="number" class="form-control chal-minimum" name="minimum" value="{{ challenge.minimum }}" required>
+	</div>
+	{% endblock %}
+
 	{% block logic %}
 	<div class="form-group">
 		<label>

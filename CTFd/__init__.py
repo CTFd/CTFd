@@ -33,7 +33,7 @@ from CTFd.utils.sessions import CachingSessionInterface
 from CTFd.utils.updates import update_check
 from CTFd.utils.user import get_locale
 
-__version__ = "3.7.7"
+__version__ = "3.8.0"
 __channel__ = "oss"
 
 
@@ -55,12 +55,24 @@ class CTFdFlask(Flask):
         self.session_interface = CachingSessionInterface(key_prefix="session")
         self.request_class = CTFdRequest
 
+        Flask.__init__(self, *args, **kwargs)
+
         # Store server start time
         self.start_time = datetime.datetime.utcnow()
 
-        # Create generally unique run identifier
-        self.run_id = sha256(str(self.start_time))[0:8]
-        Flask.__init__(self, *args, **kwargs)
+        # Create time-based run identifier.
+        # In production round the timestamp to incrase chances that workers get the same run_id
+        if self.debug:
+            time_based_run_id = str(self.start_time)
+        else:
+            time_based_run_id = str(round(self.start_time.timestamp() / 60) * 60)
+
+        self.time_based_run_id = sha256(time_based_run_id)[0:8]
+
+    @property
+    def run_id(self):
+        # use RUN_ID if exists, otherwise fall back to time_based_run_in
+        return self.config.get("RUN_ID") or self.time_based_run_id
 
     def create_jinja_environment(self):
         """Overridden jinja environment constructor"""

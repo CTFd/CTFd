@@ -74,14 +74,14 @@
             {% if Configs.challenge_ratings == "public" %}
             <small class="challenge-ratings text-center text-muted d-block">
               {% block ratings %}
-                {% if ratings.average %}
-                  <span class="text-right">{{ ratings.average }}</span>
-                  <span class="text-center px-1">
-                  {% for _ in range((ratings.average | round(0) | int)) %}
-                    <i class="fa-solid fa-star"></i>
-                  {% endfor %}
+                {% if ratings %}
+                  <span><i class="fa-solid fa-thumbs-up"></i> {{ ratings.up }}</span>
+                  <span class="text-center px-2">
+                    {% if ratings.count %}
+                    ({{ ((ratings.up / (ratings.count)) * 100) | int }}% liked)
+                    {% endif %}
                   </span>
-                  <span class="text-left">{{ ratings.count }} {% trans c=ratings.count %}rating{% pluralize %}ratings{% endtrans %}</span>
+                  <span><i class="fa-solid fa-thumbs-down"></i> {{ ratings.down }}</span>
                 {% endif %}
               {% endblock %}
             </small>
@@ -239,16 +239,21 @@
                         <hr>
                         <div class="text-center">
                           <p class="mb-2">{% trans %}Rate this challenge:{% endtrans %}</p>
-                          <div class="rating-stars mb-2" x-init="selectedRating = ratingValue || 0;">
-                            <template x-for="star in [1,2,3,4,5]" :key="star">
-                              <i 
-                                class="fa-solid fa-star rating-star m-0 p-1" 
-                                :style="'font-size: 1.3rem; margin: 0 0.2rem; transition: color 0.2s ease, transform 0.1s ease; color: ' + (star <= (hoveredRating || selectedRating || 0) ? '#ffc107' : '#6c757d') + '; ' + 'cursor: pointer;'"
-                                @mouseover="hoveredRating = star"
-                                @mouseleave="hoveredRating = 0"
-                                @click="selectedRating = star"
-                              ></i>
-                            </template>
+                          <div class="rating-buttons mb-2" x-init="selectedRating = ratingValue || 0;">
+                            <button 
+                              class="btn btn-outline-success me-2" 
+                              :class="{ 'active': selectedRating === 1 }"
+                              @click="selectedRating = 1"
+                            >
+                              <i class="fa-solid fa-thumbs-up"></i>
+                            </button>
+                            <button 
+                              class="btn btn-outline-danger" 
+                              :class="{ 'active': selectedRating === -1 }"
+                              @click="selectedRating = -1"
+                            >
+                              <i class="fa-solid fa-thumbs-down"></i>
+                            </button>
                           </div>
                           <div class="mt-3">
                             <textarea 

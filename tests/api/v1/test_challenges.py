@@ -3,7 +3,7 @@
 
 from freezegun import freeze_time
 
-from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Users
+from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Tracking, Users
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -1385,4 +1385,56 @@ def test_api_challenge_get_flags_admin():
         with login_as_user(app, "admin") as client:
             r = client.get("/api/v1/challenges/1/flags")
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_challenge_tracking_first_open_only():
+    """Test that Tracking entry is created only on first challenge open"""
+    app = create_ctfd()
+    with app.app_context():
+        # Create a challenge and a user
+        gen_challenge(app.db)
+        register_user(app)
+
+        # Initially, no tracking entries should exist
+        tracking_count = Tracking.query.filter_by(
+            user_id=2,  # testuser has id 2 (admin is id 1)
+            type="challenges.open",
+            target=1,  # challenge id 1
+        ).count()
+        assert tracking_count == 0
+
+        with login_as_user(app) as client:
+            # First request to challenge - should create tracking entry
+            r = client.get("/api/v1/challenges/1")
+            assert r.status_code == 200
+
+            # Check that tracking entry was created
+            tracking_count = Tracking.query.filter_by(
+                user_id=2, type="challenges.open", target=1
+            ).count()
+            # First challenge open should create tracking entry
+            assert tracking_count == 1
+
+            # Second request to same challenge - should NOT create another tracking entry
+            r = client.get("/api/v1/challenges/1")
+            assert r.status_code == 200
+
+            # Check that tracking entry count is still 1
+            tracking_count = Tracking.query.filter_by(
+                user_id=2, type="challenges.open", target=1
+            ).count()
+            # Subsequent challenge opens should not create additional tracking entries
+            assert tracking_count == 1
+
+            # Third request to ensure consistency
+            r = client.get("/api/v1/challenges/1")
+            assert r.status_code == 200
+
+            tracking_count = Tracking.query.filter_by(
+                user_id=2, type="challenges.open", target=1
+            ).count()
+            # Multiple opens should still only have one tracking entry
+            assert tracking_count == 1
+
     destroy_ctfd(app)
