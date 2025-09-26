@@ -3,6 +3,7 @@
 
 <head>
 	<title>Admin Panel</title>
+	<meta name="description" content="{{ meta_description | default('Admin panel CTFd untuk membuat dan mengelola tantangan CTF, termasuk tipe standard dan dynamic dengan scoring dinamis.') }}">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href="{{ url_for('views.themes', theme='admin', path='img/favicon.ico') }}" type="image/x-icon">
@@ -16,13 +17,13 @@
 			'urlRoot': "{{ request.script_root }}",
 			'csrfNonce': "{{ Session.nonce }}",
 			'userMode': "{{ Configs.user_mode }}",
-			'userId': {{ Session.id }},
-			'userName': {{ User.name | tojson }},
-			'userEmail': {{ User.email | tojson }},
-			'teamId': {{ Team.id | tojson }}, 
-			'teamName': {{ Team.name | tojson }},
-			'start': {{ Configs.start | tojson }},
-			'end': {{ Configs.end | tojson }}
+			'userId': "{{ Session.id }}",
+			'userName': "{{ User.name | tojson }}",
+			'userEmail': "{{ User.email | tojson }}",
+			'teamId': "{{ Team.id | tojson }}", 
+			'teamName': "{{ Team.name | tojson }}",
+			'start': "{{ Configs.start | tojson }}",
+			'end': "{{ Configs.end | tojson }}"
 		}
 	</script>
 	{% block stylesheets %} {% endblock %}
