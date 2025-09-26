@@ -43,11 +43,10 @@ def generate_preset_admin():
     preset_admin_email = get_app_config("PRESET_ADMIN_EMAIL")
     preset_admin_password = get_app_config("PRESET_ADMIN_PASSWORD")
 
-    user = Users.query.filter_by(
-        name=preset_admin_name, email=preset_admin_email
-    ).first()
+    # We should only promote by email as name may not correctly associate
+    user = Users.query.filter_by(email=preset_admin_email).first()
 
-    if not user:
+    if user is None:
         # Create the preset admin user
         user = Users(
             name=preset_admin_name,
