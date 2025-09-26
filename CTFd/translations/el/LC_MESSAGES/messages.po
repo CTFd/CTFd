@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-07 03:17-0400\n"
-"PO-Revision-Date: 2025-02-10 20:29\n"
+"POT-Creation-Date: 2025-04-02 07:37-0400\n"
+"PO-Revision-Date: 2025-09-24 00:30\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.17.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: CTFd\n"
 "X-Crowdin-Project-ID: 659064\n"
@@ -18,69 +18,88 @@ msgstr ""
 "X-Crowdin-File-ID: 188\n"
 "Language: el_GR\n"
 
-#: CTFd/forms/auth.py:19 CTFd/forms/self.py:16
-#: CTFd/themes/core-beta/templates/teams/private.html:319
-#: CTFd/themes/core-beta/templates/teams/public.html:85
+#: CTFd/challenges.py:38
+msgid "Challenge Visibility is set to Admins Only"
+msgstr ""
+
+#: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
+#, python-format
+msgid "%(ctf_name)s has not started yet"
+msgstr ""
+
+#: CTFd/challenges.py:44
+#, python-format
+msgid "%(ctf_name)s is paused"
+msgstr ""
+
+#: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
+#, python-format
+msgid "%(ctf_name)s has ended"
+msgstr ""
+
+#: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
+#: CTFd/themes/core-beta/templates/teams/private.html:329
+#: CTFd/themes/core-beta/templates/teams/public.html:95
 msgid "User Name"
 msgstr "Όνομα Χρήστη"
 
-#: CTFd/forms/auth.py:21 CTFd/forms/auth.py:53 CTFd/forms/self.py:17
-#: CTFd/forms/teams.py:203
+#: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
+#: CTFd/forms/teams.py:230
 msgid "Email"
 msgstr "Ηλεκτρονική Διεύθυνση"
 
-#: CTFd/forms/auth.py:22 CTFd/forms/auth.py:43 CTFd/forms/auth.py:60
-#: CTFd/forms/self.py:19 CTFd/forms/teams.py:204
+#: CTFd/forms/auth.py:24 CTFd/forms/auth.py:50 CTFd/forms/auth.py:67
+#: CTFd/forms/self.py:24 CTFd/forms/teams.py:231
 msgid "Password"
 msgstr "Κωδικός"
 
-#: CTFd/forms/auth.py:23 CTFd/forms/auth.py:44 CTFd/forms/auth.py:55
-#: CTFd/forms/auth.py:62 CTFd/forms/self.py:24 CTFd/forms/teams.py:127
-#: CTFd/forms/teams.py:210 CTFd/themes/core-beta/templates/challenge.html:147
+#: CTFd/forms/auth.py:25 CTFd/forms/auth.py:51 CTFd/forms/auth.py:62
+#: CTFd/forms/auth.py:69 CTFd/forms/self.py:29 CTFd/forms/teams.py:154
+#: CTFd/forms/teams.py:237 CTFd/themes/core-beta/templates/challenge.html:147
 msgid "Submit"
 msgstr "Υποβολή"
 
-#: CTFd/forms/auth.py:39
+#: CTFd/forms/auth.py:46
 msgid "User Name or Email"
 msgstr "Όνομα Χρήστη ή Ηλεκτρονική Διεύθυνση"
 
-#: CTFd/forms/auth.py:48
+#: CTFd/forms/auth.py:55
 msgid "Resend Confirmation Email"
 msgstr "Επαναποστολή email επιβεβαίωσης"
 
-#: CTFd/forms/self.py:18 CTFd/forms/users.py:155
+#: CTFd/forms/self.py:23 CTFd/forms/users.py:181
 msgid "Language"
 msgstr "Γλώσσα"
 
-#: CTFd/forms/self.py:20
+#: CTFd/forms/self.py:25
 msgid "Current Password"
 msgstr "Τρέχων κωδικός πρόσβασης"
 
-#: CTFd/forms/self.py:21 CTFd/forms/teams.py:113 CTFd/forms/teams.py:191
-#: CTFd/forms/teams.py:206 CTFd/forms/users.py:138
+#: CTFd/forms/self.py:26 CTFd/forms/teams.py:140 CTFd/forms/teams.py:218
+#: CTFd/forms/teams.py:233 CTFd/forms/users.py:164
 #: CTFd/themes/core-beta/templates/teams/teams.html:51
 #: CTFd/themes/core-beta/templates/users/users.html:48
 msgid "Affiliation"
 msgstr "Σύνδεση"
 
-#: CTFd/forms/self.py:22 CTFd/forms/teams.py:119 CTFd/forms/teams.py:192
-#: CTFd/forms/teams.py:205 CTFd/forms/users.py:139
+#: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:219
+#: CTFd/forms/teams.py:232 CTFd/forms/users.py:165
 #: CTFd/themes/core-beta/templates/teams/teams.html:50
 #: CTFd/themes/core-beta/templates/users/users.html:47
 msgid "Website"
 msgstr "Ιστοσελίδα"
 
-#: CTFd/forms/self.py:23 CTFd/forms/teams.py:123 CTFd/forms/teams.py:207
+#: CTFd/forms/self.py:28 CTFd/forms/teams.py:150 CTFd/forms/teams.py:234
 #: CTFd/themes/core-beta/templates/teams/teams.html:52
 #: CTFd/themes/core-beta/templates/users/users.html:49
 msgid "Country"
 msgstr "Χώρα"
 
-#: CTFd/forms/self.py:52 CTFd/themes/core-beta/templates/settings.html:225
+#: CTFd/forms/self.py:59 CTFd/themes/core-beta/templates/settings.html:225
 msgid "Expiration"
 msgstr "Λήξη"
 
-#: CTFd/forms/self.py:54
+#: CTFd/forms/self.py:61
 msgid "Generate"
 msgstr "Δημιουργία"
 
@@ -108,7 +127,7 @@ msgstr "Λειτουργία Χρήστη"
 msgid "Team Mode"
 msgstr "Λειτουργία ομάδας"
 
-#: CTFd/forms/setup.py:38
+#: CTFd/forms/setup.py:39
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
 msgstr "Ελέγχει αν οι χρήστες θα συμμετέχουν σε ομάδες για να παίξουν (Λειτουργία Ομάδας) ή θα παίζουν ως ξεχωριστοί χρήστες (Λειτουργία Χρήστη)"
 
@@ -140,7 +159,7 @@ msgstr "Ο κωδικός πρόσβασής σας για τον λογαρια
 msgid "Logo"
 msgstr "Λογότυπο"
 
-#: CTFd/forms/setup.py:62
+#: CTFd/forms/setup.py:63
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
 msgstr "Λογότυπο που θα χρησιμοποιηθεί στον ιστότοπο αντί για το όνομα CTF. Χρησιμοποιείται ως κουμπί αρχικής σελίδας. Προαιρετικό."
 
@@ -156,7 +175,7 @@ msgstr "Μπάνερ για χρήση στην αρχική σελίδα. Πρ�
 msgid "Small Icon"
 msgstr "Μικρό Εικονίδιο"
 
-#: CTFd/forms/setup.py:71
+#: CTFd/forms/setup.py:72
 msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
 msgstr "favicon που χρησιμοποιείται στα προγράμματα περιήγησης του χρήστη. Αποδεκτά μόνο PNG. Πρέπει να είναι 32x32px. Προαιρετικό."
 
@@ -172,7 +191,7 @@ msgstr "Θέμα CTFd για χρήση. Μπορεί να αλλάξει αργ
 msgid "Theme Color"
 msgstr "Χρώμα θέματος"
 
-#: CTFd/forms/setup.py:85
+#: CTFd/forms/setup.py:86
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
 msgstr "Χρώμα που χρησιμοποιείται από το θέμα για τον έλεγχο της αισθητικής. Απαιτεί υποστήριξη θέματος. Προαιρετικό."
 
@@ -200,101 +219,109 @@ msgstr "Ώρα κατά την οποία έχει προγραμματιστε�
 msgid "Finish"
 msgstr "Λήξη"
 
-#: CTFd/forms/teams.py:76 CTFd/forms/teams.py:83 CTFd/forms/teams.py:100
-#: CTFd/forms/teams.py:202
+#: CTFd/forms/teams.py:102 CTFd/forms/teams.py:109 CTFd/forms/teams.py:127
+#: CTFd/forms/teams.py:229
 msgid "Team Name"
 msgstr "Όνομα Ομάδας"
 
-#: CTFd/forms/teams.py:77 CTFd/forms/teams.py:84
+#: CTFd/forms/teams.py:103 CTFd/forms/teams.py:110
 msgid "Team Password"
 msgstr "Κωδικός Ομάδας"
 
-#: CTFd/forms/teams.py:78 CTFd/forms/teams.py:258
+#: CTFd/forms/teams.py:104 CTFd/forms/teams.py:289
 msgid "Join"
 msgstr "Γίνετε μέλος"
 
-#: CTFd/forms/teams.py:85
+#: CTFd/forms/teams.py:111
 msgid "Create"
 msgstr "Δημιουργία"
 
-#: CTFd/forms/teams.py:101
+#: CTFd/forms/teams.py:128
 msgid "Your team's public name shown to other competitors"
 msgstr "Το δημόσιο όνομα της ομάδας σας εμφανίζεται σε άλλους ανταγωνιστές"
 
-#: CTFd/forms/teams.py:104
+#: CTFd/forms/teams.py:131
 msgid "New Team Password"
 msgstr "Νέος Κωδικός Πρόσβασης Ομάδας"
 
-#: CTFd/forms/teams.py:104
+#: CTFd/forms/teams.py:131
 msgid "Set a new team join password"
 msgstr "Ορίστε έναν νέο κωδικό πρόσβασης για συμμετοχή στην ομάδα"
 
-#: CTFd/forms/teams.py:107
+#: CTFd/forms/teams.py:134
 msgid "Confirm Current Team Password"
 msgstr "Επιβεβαιώστε τον τρέχοντα κωδικό πρόσβασης ομάδας"
 
-#: CTFd/forms/teams.py:108
+#: CTFd/forms/teams.py:136
 msgid "Provide your current team password (or your password) to update your team's password"
 msgstr "Καταχωρίστε τον τρέχοντα κωδικό πρόσβασης της ομάδας σας (ή τον κωδικό πρόσβασής σας) για να ενημερώσετε τον κωδικό πρόσβασης της ομάδας σας"
 
-#: CTFd/forms/teams.py:114
+#: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
 msgstr "Η συνεργασία της ομάδας σας εμφανίζεται δημόσια σε άλλους ανταγωνιστές"
 
-#: CTFd/forms/teams.py:120
+#: CTFd/forms/teams.py:147
 msgid "Your team's website publicly shown to other competitors"
 msgstr "Ο ιστότοπος της ομάδας σας εμφανίζεται δημόσια σε άλλους ανταγωνιστές"
 
-#: CTFd/forms/teams.py:125
+#: CTFd/forms/teams.py:152
 msgid "Your team's country publicly shown to other competitors"
 msgstr "Η χώρα της ομάδας σας εμφανίζεται δημόσια σε άλλους ανταγωνιστές"
 
-#: CTFd/forms/teams.py:165
+#: CTFd/forms/teams.py:192
 msgid "Team Captain"
 msgstr "Αρχηγός Ομάδας"
 
-#: CTFd/forms/teams.py:188 CTFd/forms/users.py:135
+#: CTFd/forms/teams.py:215 CTFd/forms/users.py:161
 msgid "Search Field"
 msgstr "Πεδίο αναζήτησης"
 
-#: CTFd/forms/teams.py:190 CTFd/forms/users.py:137
-#: CTFd/themes/core-beta/templates/challenge.html:183
+#: CTFd/forms/teams.py:217 CTFd/forms/users.py:163
+#: CTFd/themes/core-beta/templates/challenge.html:206
 msgid "Name"
 msgstr "Όνομα"
 
-#: CTFd/forms/teams.py:197 CTFd/forms/users.py:145
+#: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
 msgid "Parameter"
 msgstr "Παράμετρος"
 
-#: CTFd/forms/teams.py:198 CTFd/forms/users.py:149
+#: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: CTFd/forms/teams.py:208
+#: CTFd/forms/teams.py:235
 msgid "Hidden"
 msgstr "Κρυμμένο"
 
-#: CTFd/forms/teams.py:209
+#: CTFd/forms/teams.py:236
 msgid "Banned"
 msgstr "Απαγορευμένο"
 
-#: CTFd/forms/teams.py:254
+#: CTFd/forms/teams.py:285
 msgid "Invite Link"
 msgstr "Σύνδεσμος πρόσκλησης"
 
-#: CTFd/forms/users.py:146
+#: CTFd/forms/users.py:133
+msgid "Bracket"
+msgstr ""
+
+#: CTFd/forms/users.py:134
+msgid "Competition bracket for your user"
+msgstr ""
+
+#: CTFd/forms/users.py:172
 msgid "Search for matching users"
 msgstr "Αναζήτηση για αντίστοιχους χρήστες"
 
-#: CTFd/themes/core-beta/templates/base.html:49
+#: CTFd/themes/core-beta/templates/base.html:53
 msgid "Powered by CTFd"
 msgstr "Με την υποστήριξη του CTFd"
 
 #: CTFd/themes/core-beta/templates/challenge.html:11
-#: CTFd/themes/core-beta/templates/teams/private.html:375
-#: CTFd/themes/core-beta/templates/teams/public.html:141
-#: CTFd/themes/core-beta/templates/users/private.html:114
-#: CTFd/themes/core-beta/templates/users/public.html:113
+#: CTFd/themes/core-beta/templates/teams/private.html:388
+#: CTFd/themes/core-beta/templates/teams/public.html:157
+#: CTFd/themes/core-beta/templates/users/private.html:124
+#: CTFd/themes/core-beta/templates/users/public.html:123
 msgid "Challenge"
 msgstr "Πρόκληση"
 
@@ -305,26 +332,36 @@ msgid_plural "%(num)d Solves"
 msgstr[0] "%(num)d Λύση"
 msgstr[1] "%(num)d Λύσεις"
 
-#: CTFd/themes/core-beta/templates/challenge.html:73
+#: CTFd/themes/core-beta/templates/challenge.html:77
 msgid "View Hint"
 msgstr "Δείτε Υπόδειξη"
+
+#: CTFd/themes/core-beta/templates/challenge.html:120
+msgid "attempt"
+msgid_plural "attempts"
+msgstr[0] ""
+msgstr[1] ""
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
 msgstr "Σημαία"
 
-#: CTFd/themes/core-beta/templates/challenge.html:167
+#: CTFd/themes/core-beta/templates/challenge.html:169
 msgid "Next Challenge"
 msgstr "Επόμενη Πρόκληση"
 
-#: CTFd/themes/core-beta/templates/challenge.html:186
+#: CTFd/themes/core-beta/templates/challenge.html:175
+msgid "Share"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/challenge.html:207
 #: CTFd/themes/core-beta/templates/setup.html:305
 #: CTFd/themes/core-beta/templates/setup.html:326
 msgid "Date"
 msgstr "Ημερομηνία"
 
 #: CTFd/themes/core-beta/templates/challenges.html:7
-#: CTFd/themes/core-beta/templates/components/navbar.html:57
+#: CTFd/themes/core-beta/templates/components/navbar.html:59
 msgid "Challenges"
 msgstr "Προκλήσεις"
 
@@ -348,7 +385,8 @@ msgstr "Αν το email δε φτάσει, ελέγξτε το φάκελο αν
 msgid "Change Email Address"
 msgstr "Αλλαγή Διεύθυνσης Ηλεκτρονικού ταχυδρομείου"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:178
+#: CTFd/themes/core-beta/templates/components/navbar.html:164
+#: CTFd/themes/core-beta/templates/components/navbar.html:169
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
 msgstr "Είσοδος"
@@ -357,7 +395,8 @@ msgstr "Είσοδος"
 msgid "Forgot your password?"
 msgstr "Ξεχάσατε τον κωδικό πρόσβασής σας;"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:97
+#: CTFd/themes/core-beta/templates/components/navbar.html:85
+#: CTFd/themes/core-beta/templates/components/navbar.html:91
 #: CTFd/themes/core-beta/templates/notifications.html:7
 msgid "Notifications"
 msgstr "Ειδοποιήσεις"
@@ -366,7 +405,8 @@ msgstr "Ειδοποιήσεις"
 msgid "There are no notifications yet"
 msgstr "Δεν υπάρχουν ακόμη ειδοποιήσεις"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:165
+#: CTFd/themes/core-beta/templates/components/navbar.html:151
+#: CTFd/themes/core-beta/templates/components/navbar.html:156
 #: CTFd/themes/core-beta/templates/register.html:7
 msgid "Register"
 msgstr "Εγγραφή"
@@ -383,6 +423,11 @@ msgstr "Να μην εμφανίζεται ποτέ δημόσια"
 msgid "Password used to log into your account"
 msgstr "Κωδικός πρόσβασης που χρησιμοποιείται για τη σύνδεση"
 
+#: CTFd/themes/core-beta/templates/register.html:69
+#, python-format
+msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
+msgstr ""
+
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
 msgstr "Επαναφορά κωδικού πρόσβασης"
@@ -395,13 +440,38 @@ msgstr "Τώρα μπορείτε να επαναφέρετε τον κωδικ�
 msgid "Please provide the email address associated with your account below."
 msgstr "Εισαγάγετε τη διεύθυνση ηλεκτρονικού ταχυδρομείου που σχετίζεται με τον λογαριασμό σας παρακάτω."
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:135
+#: CTFd/themes/core-beta/templates/components/navbar.html:52
+#: CTFd/themes/core-beta/templates/scoreboard.html:7
+msgid "Scoreboard"
+msgstr "Πίνακας αποτελεσμάτων"
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:24
+msgid "All"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:36
+msgid "Place"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:38
+#: CTFd/themes/core-beta/templates/teams/private.html:330
+#: CTFd/themes/core-beta/templates/teams/public.html:96
+msgid "Score"
+msgstr "Βαθμολογία"
+
+#: CTFd/themes/core-beta/templates/scoreboard.html:60
+msgid "Scoreboard is empty"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/components/navbar.html:124
+#: CTFd/themes/core-beta/templates/components/navbar.html:129
 #: CTFd/themes/core-beta/templates/settings.html:8
 #: CTFd/themes/core-beta/templates/setup.html:50
 msgid "Settings"
 msgstr "Ρυθμίσεις"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:123
+#: CTFd/themes/core-beta/templates/components/navbar.html:112
+#: CTFd/themes/core-beta/templates/components/navbar.html:117
 #: CTFd/themes/core-beta/templates/settings.html:21
 msgid "Profile"
 msgstr "Προφίλ"
@@ -535,10 +605,10 @@ msgstr "Εγγραφείτε στα νέα της CTFd LLC μέσω email"
 
 #: CTFd/themes/core-beta/templates/setup.html:309
 #: CTFd/themes/core-beta/templates/setup.html:330
-#: CTFd/themes/core-beta/templates/teams/private.html:378
-#: CTFd/themes/core-beta/templates/teams/public.html:144
-#: CTFd/themes/core-beta/templates/users/private.html:117
-#: CTFd/themes/core-beta/templates/users/public.html:116
+#: CTFd/themes/core-beta/templates/teams/private.html:391
+#: CTFd/themes/core-beta/templates/teams/public.html:160
+#: CTFd/themes/core-beta/templates/users/private.html:127
+#: CTFd/themes/core-beta/templates/users/public.html:126
 msgid "Time"
 msgstr "Ώρα"
 
@@ -546,60 +616,73 @@ msgstr "Ώρα"
 msgid "UTC Preview"
 msgstr "Προεπισκόπηση UTC"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:34
+#: CTFd/themes/core-beta/templates/components/navbar.html:36
 #: CTFd/themes/core-beta/templates/users/users.html:6
 msgid "Users"
 msgstr "Χρήστες"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:41
+#: CTFd/themes/core-beta/templates/components/navbar.html:43
 #: CTFd/themes/core-beta/templates/teams/teams.html:6
 msgid "Teams"
 msgstr "Ομάδες"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:50
-msgid "Scoreboard"
-msgstr "Πίνακας αποτελεσμάτων"
-
-#: CTFd/themes/core-beta/templates/components/navbar.html:80
+#: CTFd/themes/core-beta/templates/components/navbar.html:72
+#: CTFd/themes/core-beta/templates/components/navbar.html:77
 msgid "Admin Panel"
 msgstr "Πίνακας Διαχειριστή"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:110
+#: CTFd/themes/core-beta/templates/components/navbar.html:99
+#: CTFd/themes/core-beta/templates/components/navbar.html:104
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
 #: CTFd/themes/core-beta/templates/teams/teams.html:49
 msgid "Team"
 msgstr "Ομάδα"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:147
+#: CTFd/themes/core-beta/templates/components/navbar.html:136
+#: CTFd/themes/core-beta/templates/components/navbar.html:141
 msgid "Logout"
 msgstr "Αποσύνδεση"
 
-#: CTFd/themes/core-beta/templates/errors/403.html:9
-msgid "Forbidden"
-msgstr "Απαγορευμένο"
+#: CTFd/themes/core-beta/templates/components/navbar.html:180
+msgid "Change language"
+msgstr ""
 
-#: CTFd/themes/core-beta/templates/errors/404.html:11
+#: CTFd/themes/core-beta/templates/components/navbar.html:199
+#: CTFd/themes/core-beta/templates/components/navbar.html:204
+msgid "Toggle theme"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/errors/403.html:12
+msgid "403 Forbidden"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
 msgstr "Το αρχείο δεν βρέθηκε"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
-msgid "Sorry about that"
-msgstr "Συγνώμη για αυτό"
+msgid "404 Not Found"
+msgstr ""
 
-#: CTFd/themes/core-beta/templates/errors/429.html:11
+#: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
 msgstr "Πάρα πολλά αιτήματα"
 
-#: CTFd/themes/core-beta/templates/errors/429.html:12
+#: CTFd/themes/core-beta/templates/errors/429.html:10
 msgid "Please slow down!"
 msgstr "Παρακαλώ σιγά!"
 
-#: CTFd/themes/core-beta/templates/errors/502.html:11
-msgid "Bad Gateway"
-msgstr "Εσφαλμένη Πύλη"
+#: CTFd/themes/core-beta/templates/errors/429.html:13
+msgid "429 Too Many Requests"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/errors/502.html:12
+msgid "502 Bad Gateway"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
+#: CTFd/themes/core-beta/templates/macros/forms.html:65
 msgid "(Optional)"
 msgstr "(Προαιρετικό)"
 
@@ -671,63 +754,59 @@ msgstr "Ναι"
 #: CTFd/themes/core-beta/templates/teams/public.html:10
 #: CTFd/themes/core-beta/templates/users/private.html:21
 #: CTFd/themes/core-beta/templates/users/public.html:21
-#: CTFd/themes/core-beta/templates/users/users.html:66
+#: CTFd/themes/core-beta/templates/users/users.html:70
 msgid "Official"
 msgstr "Επίσημα"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:250
+#: CTFd/themes/core-beta/templates/teams/private.html:260
 msgid "place"
 msgstr "θέση"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:258
+#: CTFd/themes/core-beta/templates/teams/private.html:268
 msgid "points"
 msgstr "πόντοι"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:315
-#: CTFd/themes/core-beta/templates/teams/public.html:81
+#: CTFd/themes/core-beta/templates/teams/private.html:325
+#: CTFd/themes/core-beta/templates/teams/public.html:91
 msgid "Members"
 msgstr "Μέλη"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:320
-#: CTFd/themes/core-beta/templates/teams/public.html:86
-msgid "Score"
-msgstr "Βαθμολογία"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:332
+#: CTFd/themes/core-beta/templates/teams/private.html:345
+#: CTFd/themes/core-beta/templates/teams/public.html:110
 msgid "Captain"
 msgstr "Αρχηγός"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:348
-#: CTFd/themes/core-beta/templates/teams/public.html:109
-#: CTFd/themes/core-beta/templates/users/private.html:88
-#: CTFd/themes/core-beta/templates/users/public.html:88
+#: CTFd/themes/core-beta/templates/teams/private.html:361
+#: CTFd/themes/core-beta/templates/teams/public.html:125
+#: CTFd/themes/core-beta/templates/users/private.html:98
+#: CTFd/themes/core-beta/templates/users/public.html:98
 msgid "Awards"
 msgstr "Βραβεία"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:371
-#: CTFd/themes/core-beta/templates/teams/public.html:137
-#: CTFd/themes/core-beta/templates/users/private.html:110
+#: CTFd/themes/core-beta/templates/teams/private.html:384
+#: CTFd/themes/core-beta/templates/teams/public.html:153
+#: CTFd/themes/core-beta/templates/users/private.html:120
 msgid "Solves"
 msgstr "Λύσεις"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:376
-#: CTFd/themes/core-beta/templates/teams/public.html:142
-#: CTFd/themes/core-beta/templates/users/private.html:115
-#: CTFd/themes/core-beta/templates/users/public.html:114
+#: CTFd/themes/core-beta/templates/teams/private.html:389
+#: CTFd/themes/core-beta/templates/teams/public.html:158
+#: CTFd/themes/core-beta/templates/users/private.html:125
+#: CTFd/themes/core-beta/templates/users/public.html:124
 msgid "Category"
 msgstr "Κατηγορία"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:377
-#: CTFd/themes/core-beta/templates/teams/public.html:143
-#: CTFd/themes/core-beta/templates/users/private.html:116
-#: CTFd/themes/core-beta/templates/users/public.html:115
+#: CTFd/themes/core-beta/templates/teams/private.html:390
+#: CTFd/themes/core-beta/templates/teams/public.html:159
+#: CTFd/themes/core-beta/templates/users/private.html:126
+#: CTFd/themes/core-beta/templates/users/public.html:125
 msgid "Value"
 msgstr "Τιμή"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:468
-#: CTFd/themes/core-beta/templates/teams/public.html:232
-#: CTFd/themes/core-beta/templates/users/private.html:203
-#: CTFd/themes/core-beta/templates/users/public.html:204
+#: CTFd/themes/core-beta/templates/teams/private.html:481
+#: CTFd/themes/core-beta/templates/teams/public.html:248
+#: CTFd/themes/core-beta/templates/users/private.html:213
+#: CTFd/themes/core-beta/templates/users/public.html:214
 msgid "No solves yet"
 msgstr "Καμία λύση ακόμα"
 
@@ -747,10 +826,20 @@ msgstr "Εγγραφείτε σε μια ανεπίσημη ομάδα"
 msgid "Create Unofficial Team"
 msgstr "Δημιουργήστε μια ανεπίσημη ομάδα"
 
-#: CTFd/themes/core-beta/templates/teams/teams.html:124
-#: CTFd/themes/core-beta/templates/users/users.html:114
+#: CTFd/themes/core-beta/templates/teams/teams.html:128
+#: CTFd/themes/core-beta/templates/users/users.html:118
 msgid "Page"
 msgstr "Σελίδα"
+
+#: CTFd/themes/core-beta/templates/users/users.html:14
+#, python-format
+msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
+msgstr ""
+
+#: CTFd/themes/core-beta/templates/users/users.html:17
+#, python-format
+msgid "Page %(page)s of %(total)s results"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"
