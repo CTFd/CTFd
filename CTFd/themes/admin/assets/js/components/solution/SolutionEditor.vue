@@ -27,6 +27,7 @@
         <select class="form-control custom-select" name="state" v-model="state">
           <option value="hidden">Hidden</option>
           <option value="visible">Visible</option>
+          <option value="solved">Solved</option>
         </select>
       </div>
       <button class="btn btn-primary float-right" type="submit">
