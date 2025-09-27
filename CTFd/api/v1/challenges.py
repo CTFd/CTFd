@@ -676,34 +676,6 @@ class ChallengeAttempt(Resource):
 
         chal_class = get_chal_class(challenge.type)
 
-        # Anti-bruteforce / submitting Flags too quickly
-        kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
-        kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
-        if kpm > kpm_limit:
-            if ctftime():
-                chal_class.fail(
-                    user=user, team=team, challenge=challenge, request=request
-                )
-            log(
-                "submissions",
-                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
-                name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
-                challenge_id=challenge_id,
-                kpm=kpm,
-            )
-            # Submitting too fast
-            return (
-                {
-                    "success": True,
-                    "data": {
-                        "status": "ratelimited",
-                        "message": "You're submitting flags too fast. Slow down.",
-                    },
-                },
-                429,
-            )
-
         solves = Solves.query.filter_by(
             account_id=user.account_id, challenge_id=challenge_id
         ).first()
@@ -755,6 +727,34 @@ class ChallengeAttempt(Resource):
                         },
                         403,
                     )
+
+            # Anti-bruteforce / submitting Flags too quickly
+            kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
+            kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
+            if kpm > kpm_limit:
+                if ctftime():
+                    chal_class.fail(
+                        user=user, team=team, challenge=challenge, request=request
+                    )
+                log(
+                    "submissions",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
+                    name=user.name,
+                    submission=request_data.get("submission", "").encode("utf-8"),
+                    challenge_id=challenge_id,
+                    kpm=kpm,
+                )
+                # Submitting too fast
+                return (
+                    {
+                        "success": True,
+                        "data": {
+                            "status": "ratelimited",
+                            "message": "You're submitting flags too fast. Slow down.",
+                        },
+                    },
+                    429,
+                )
 
             response = chal_class.attempt(challenge, request)
             # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
