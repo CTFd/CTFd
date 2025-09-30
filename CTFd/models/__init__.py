@@ -181,6 +181,8 @@ class Challenges(db.Model):
                     return "premium"
                 elif topic_value.lower() == "all-in":
                     return "all-in"
+                elif topic_value.lower() == "beta":
+                    return "beta"
                 elif topic_value.startswith("subscription_required:"):
                     result = topic_value.split(":")[1]
                     return result
