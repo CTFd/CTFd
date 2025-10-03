@@ -676,6 +676,8 @@ class ChallengeAttempt(Resource):
 
         chal_class = get_chal_class(challenge.type)
 
+        kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
+
         solves = Solves.query.filter_by(
             account_id=user.account_id, challenge_id=challenge_id
         ).first()
@@ -729,7 +731,6 @@ class ChallengeAttempt(Resource):
                     )
 
             # Anti-bruteforce / submitting Flags too quickly
-            kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
             kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
             if kpm > kpm_limit:
                 if ctftime():
