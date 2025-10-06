@@ -22,6 +22,7 @@ import{$ as e,u as c,C as i,B as d}from"./main-CcyKUC_q.js";function u(o){let l=
           <option value="">--</option>
           <option value="visible">Visible</option>
           <option value="hidden">Hidden</option>
+          <option value="hidden">Solved</option>
         </select>
       </div>
     </form>

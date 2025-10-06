@@ -103,7 +103,7 @@
 							</td>
 							{% if challenge.solution_id %}
 							<td class="text-center">
-								{% set badge_state = 'badge-danger' if challenge.solution_state == 'hidden' else 'badge-success' %}
+								{% set badge_state = 'badge-danger' if challenge.solution_state == 'hidden' else 'badge-warning' if challenge.solution_state == 'solved' else 'badge-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.solution_state }}</span>
 							</td>
 							{% else %}
