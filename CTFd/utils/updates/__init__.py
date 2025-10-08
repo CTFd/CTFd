@@ -23,6 +23,8 @@ def update_check(force=False):
     """
     # If UPDATE_CHECK is disabled don't check for updates at all.
     if app.config.get("UPDATE_CHECK") is False:
+        # Remove any version_latest setting that is there
+        set_config("version_latest", None)
         return
 
     # Don't do an update check if not setup
