@@ -70,26 +70,33 @@ function bulkEditChallenges(_event) {
     `),
     button: "Submit",
     success: function () {
+      const reqs = [];
       let data = $("#challenges-bulk-edit").serializeJSON(true);
       let solution_data = { state: data.solution };
+      // We don't need the solution field for updating challenges
       delete data["solution"];
-      const reqs = [];
-      for (var chalID of challengeIDs) {
-        reqs.push(
-          CTFd.fetch(`/api/v1/challenges/${chalID}`, {
-            method: "PATCH",
-            body: JSON.stringify(data),
-          }),
-        );
-      }
-      for (var solID of solutionIDs) {
-        if (solID) {
+      // If we didnt' set any challenge fields no need to set challenge data
+      if (Object.keys(data).length !== 0) {
+        for (var chalID of challengeIDs) {
           reqs.push(
-            CTFd.fetch(`/api/v1/solutions/${solID}`, {
+            CTFd.fetch(`/api/v1/challenges/${chalID}`, {
               method: "PATCH",
-              body: JSON.stringify(solution_data),
+              body: JSON.stringify(data),
             }),
           );
+        }
+      }
+      // If we set solution field we should update the relevant solutions
+      if (solution_data.state) {
+        for (var solID of solutionIDs) {
+          if (solID) {
+            reqs.push(
+              CTFd.fetch(`/api/v1/solutions/${solID}`, {
+                method: "PATCH",
+                body: JSON.stringify(solution_data),
+              }),
+            );
+          }
         }
       }
       Promise.all(reqs).then((_responses) => {
