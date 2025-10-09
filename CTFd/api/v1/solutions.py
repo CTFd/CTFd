@@ -154,8 +154,10 @@ class Solution(Resource):
         if is_admin():
             view = "admin"
         else:
+            if solution.state == "hidden":
+                abort(404)
             if solution.challenge.state == "hidden":
-                abort(403)
+                abort(404)
             view = "locked"
             unlocked = SolutionUnlocks.query.filter_by(
                 account_id=user.account_id, target=solution.id

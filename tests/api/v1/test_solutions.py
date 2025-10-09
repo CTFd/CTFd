@@ -145,7 +145,7 @@ def test_api_solutions_get_detail_non_admin_locked():
     app = create_ctfd()
     with app.app_context():
         gen_challenge(app.db)
-        solution_id = gen_solution(app.db, challenge_id=1).id
+        solution_id = gen_solution(app.db, challenge_id=1, state="visible").id
         register_user(app)
 
         with login_as_user(app) as client:
@@ -167,7 +167,7 @@ def test_api_solutions_get_detail_non_admin_unlocked():
     app = create_ctfd()
     with app.app_context():
         gen_challenge(app.db)
-        solution_id = gen_solution(app.db, challenge_id=1).id
+        solution_id = gen_solution(app.db, challenge_id=1, state="visible").id
         user_id = gen_user(app.db, name="user", email="user@user.com").id
 
         # Create solution unlock
@@ -603,7 +603,7 @@ def test_api_solutions_cannot_be_viewed_if_challenge_is_hidden():
         # Regular user cannot access solution for hidden challenge
         with login_as_user(app, name="testuser", password="password") as client:
             r = client.get(f"/api/v1/solutions/{hidden_solution_id}")
-            assert r.status_code == 403
+            assert r.status_code == 404
 
         # Admin can access solution for hidden challenge
         with login_as_user(app, "admin") as admin_client:
@@ -623,7 +623,7 @@ def test_api_solutions_cannot_be_viewed_if_challenge_is_hidden():
         # User still cannot access the solution because the challenge is hidden
         with login_as_user(app, name="testuser", password="password") as client:
             r = client.get(f"/api/v1/solutions/{hidden_solution_id}")
-            assert r.status_code == 403
+            assert r.status_code == 404
 
         # Make the challenge visible, now user should be able to see the unlocked solution
         challenge = Challenges.query.filter_by(id=1).first()
@@ -644,3 +644,63 @@ def test_api_solutions_cannot_be_viewed_if_challenge_is_hidden():
             assert data["data"]["content"] == "Hidden challenge solution"
 
     destroy_ctfd(app)
+
+
+def test_api_user_cannot_access_hidden_state_solution():
+    """Test that a user cannot access a solution if the solution state is hidden"""
+    app = create_ctfd()
+    with app.app_context():
+        # Create a challenge and solution with state="hidden"
+        challenge = gen_challenge(app.db)
+        solution = gen_solution(
+            app.db,
+            challenge_id=challenge.id,
+            content="This is a hidden solution",
+            state="hidden",
+        )
+        solution_id = solution.id
+
+        # Create a regular user
+        user = gen_user(app.db, name="testuser", email="test@example.com")
+        user_id = user.id
+
+        # User should not be able to see the solution when state is hidden (locked view)
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+        # Even if user unlocks the solution, state=hidden means content should still be locked
+        unlock = SolutionUnlocks(user_id=user_id, target=solution_id)
+        app.db.session.add(unlock)
+        app.db.session.commit()
+
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+        # Admin should always be able to see the solution regardless of state
+        with login_as_user(app, "admin") as admin_client:
+            r = admin_client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "content" in data["data"]
+            assert data["data"]["content"] == "This is a hidden solution"
+            assert data["data"]["state"] == "hidden"
+
+        # Now test with state="visible"
+        solution = Solutions.query.filter_by(id=1).first()
+        solution.state = "visible"
+        app.db.session.commit()
+
+        # User with unlock should be able to see it
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "content" in data["data"]
+            assert data["data"]["state"] == "visible"
+
+    destroy_ctfd(app)
+
