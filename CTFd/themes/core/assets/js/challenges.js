@@ -211,6 +211,11 @@ Alpine.data("Challenge", () => ({
   async renderSubmissionResponse() {
     if (this.response.data.status === "correct") {
       this.submission = "";
+
+      await CTFd.pages.challenge.displayChallenge(this.id, challenge => {
+        challenge.data.view = addTargetBlank(challenge.data.view);
+        Alpine.store("challenge").data = challenge.data;
+      }
     }
 
     // Increment attempts counter
