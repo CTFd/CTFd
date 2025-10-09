@@ -501,8 +501,14 @@ class Challenge(Resource):
             response["ratings"] = None
 
         solution_id = None
-        if chal.solution_id and (chal.solution.state == "visible" or (chal.solution.state == "solved" and (int(challenge_id) in user_solves))):
-            solution_id = chal.solution.id
+        if chal.solution_id:
+            # We explicitly want the solution visible
+            if chal.solution.state == "visible":
+                solution_id = chal.solution.id
+            # We only want the solution to be visible if the challenge has been solved
+            elif chal.solution.state == "solved":
+                if int(challenge_id) in user_solves:
+                    solution_id = chal.solution.id
         response["solution_id"] = solution_id
 
         response["view"] = render_template(
