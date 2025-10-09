@@ -101,16 +101,18 @@
 								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
-							{% if challenge.solution_id %}
 							<td class="text-center">
-								{% set badge_state = 'badge-danger' if challenge.solution_state == 'hidden' else 'badge-warning' if challenge.solution_state == 'solved' else 'badge-success' %}
-								<span class="badge {{ badge_state }}">{{ challenge.solution_state }}</span>
+								{% if challenge.solution_id %}
+									{% if challenge.solution.state == 'hidden' %}
+										{% set badge_state = 'badge-danger' %}
+									{% elif challenge.solution.state == 'solved' %}
+										{% set badge_state = 'badge-warning' %}
+									{% else %}
+										{% set badge_state = 'badge-success' %}
+									{% endif %}
+									<span class="badge {{ badge_state }}">{{ challenge.solution.state }}</span>
+								{% endif %}
 							</td>
-							{% else %}
-							<td class="text-center">
-								<span class="badge badge-info">undefined</span>
-							</td>							
-							{% endif %}
 						</tr>
 					{% endfor %}
 					</tbody>

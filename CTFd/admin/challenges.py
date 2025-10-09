@@ -1,7 +1,7 @@
 from flask import abort, render_template, request, url_for
 
 from CTFd.admin import admin
-from CTFd.models import Challenges, Flags, Solutions, Solves
+from CTFd.models import Challenges, Flags, Solves
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
@@ -24,15 +24,6 @@ def challenges_listing():
     query = Challenges.query.filter(*filters).order_by(Challenges.id.asc())
     challenges = query.all()
     total = query.count()
-
-    for challenge in challenges:
-        if not challenge.solution_id:
-            continue
-        solution = Solutions.query.filter_by(challenge_id=challenge.id).first()
-        if solution:
-            challenge.solution_state = solution.state
-        else:
-            challenge.solution_state = "hidden"
 
     return render_template(
         "admin/challenges/challenges.html",
