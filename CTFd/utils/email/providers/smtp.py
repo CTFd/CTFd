@@ -12,6 +12,7 @@ class SMTPEmailProvider(EmailProvider):
     def sendmail(addr, text, subject):
         ctf_name = get_config("ctf_name")
         mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
+        mailfrom_email = mailfrom_addr
         mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
 
         data = {
@@ -44,6 +45,7 @@ class SMTPEmailProvider(EmailProvider):
             msg["Subject"] = subject
             msg["From"] = mailfrom_addr
             msg["To"] = addr
+            msg["List-Unsubscribe"]= f"<mailto:{mailfrom_email}?subject=unsubscribe>"
 
             # Check whether we are using an admin-defined SMTP server
             custom_smtp = bool(get_config("mail_server"))
