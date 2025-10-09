@@ -703,4 +703,3 @@ def test_api_user_cannot_access_hidden_state_solution():
             assert data["data"]["state"] == "visible"
 
     destroy_ctfd(app)
-
