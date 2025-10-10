@@ -211,6 +211,21 @@ Alpine.data("Challenge", () => ({
   async renderSubmissionResponse() {
     if (this.response.data.status === "correct") {
       this.submission = "";
+
+      await CTFd.fetch("/api/v1/challenges/" + this.id, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (challenge) {
+          Alpine.store("challenge").data.solution_id = challenge.data.solution_id;
+        });
     }
 
     // Increment attempts counter
