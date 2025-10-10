@@ -32,17 +32,31 @@ def upgrade(op=None):
 
     # Copy data from old columns to new columns
     connection = op.get_bind()
-    connection.execute(
-        sa.text(
+    url = str(connection.engine.url)
+    if url.startswith("postgres"):
+        connection.execute(
+            sa.text(
+                """
+                UPDATE dynamic_challenge
+                SET dynamic_initial = initial,
+                    dynamic_minimum = minimum,
+                    dynamic_decay = decay,
+                    dynamic_function = `function`
             """
-            UPDATE dynamic_challenge
-            SET dynamic_initial = initial,
-                dynamic_minimum = minimum,
-                dynamic_decay = decay,
-                dynamic_function = `function`
-        """
+            )
         )
-    )
+    else:
+        connection.execute(
+            sa.text(
+                """
+                UPDATE dynamic_challenge
+                SET dynamic_initial = initial,
+                    dynamic_minimum = minimum,
+                    dynamic_decay = decay,
+                    dynamic_function = function
+            """
+            )
+        )
 
     # Drop old columns
     op.drop_column("dynamic_challenge", "minimum")
@@ -66,17 +80,31 @@ def downgrade(op=None):
 
     # Copy data from new columns back to old columns
     connection = op.get_bind()
-    connection.execute(
-        sa.text(
+    url = str(connection.engine.url)
+    if url.startswith("postgres"):
+        connection.execute(
+            sa.text(
+                """
+                UPDATE dynamic_challenge
+                SET initial = dynamic_initial,
+                    minimum = dynamic_minimum,
+                    decay = dynamic_decay,
+                    `function` = dynamic_function
             """
-            UPDATE dynamic_challenge
-            SET initial = dynamic_initial,
-                minimum = dynamic_minimum,
-                decay = dynamic_decay,
-                `function` = dynamic_function
-        """
+            )
         )
-    )
+    else:
+        connection.execute(
+            sa.text(
+                """
+                UPDATE dynamic_challenge
+                SET initial = dynamic_initial,
+                    minimum = dynamic_minimum,
+                    decay = dynamic_decay,
+                    function = dynamic_function
+            """
+            )
+        )
 
     # Drop new columns
     op.drop_column("dynamic_challenge", "dynamic_function")
