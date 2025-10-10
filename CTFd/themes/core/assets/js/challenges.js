@@ -64,6 +64,7 @@ Alpine.data("Hint", () => ({
 
 Alpine.data("Challenge", () => ({
   id: null,
+  next_id: null,
   submission: "",
   tab: null,
   solves: [],
