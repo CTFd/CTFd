@@ -35,7 +35,7 @@ def upgrade(op=None):
     connection.execute(
         sa.text(
             """
-            UPDATE dynamic_challenge 
+            UPDATE dynamic_challenge
             SET dynamic_initial = initial,
                 dynamic_minimum = minimum,
                 dynamic_decay = decay,
@@ -69,7 +69,7 @@ def downgrade(op=None):
     connection.execute(
         sa.text(
             """
-            UPDATE dynamic_challenge 
+            UPDATE dynamic_challenge
             SET initial = dynamic_initial,
                 minimum = dynamic_minimum,
                 decay = dynamic_decay,
