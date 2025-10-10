@@ -41,7 +41,7 @@ def upgrade(op=None):
                 SET dynamic_initial = initial,
                     dynamic_minimum = minimum,
                     dynamic_decay = decay,
-                    dynamic_function = `function`
+                    dynamic_function = function
             """
             )
         )
@@ -53,7 +53,7 @@ def upgrade(op=None):
                 SET dynamic_initial = initial,
                     dynamic_minimum = minimum,
                     dynamic_decay = decay,
-                    dynamic_function = function
+                    dynamic_function = `function`
             """
             )
         )
@@ -89,7 +89,7 @@ def downgrade(op=None):
                 SET initial = dynamic_initial,
                     minimum = dynamic_minimum,
                     decay = dynamic_decay,
-                    `function` = dynamic_function
+                    function = dynamic_function
             """
             )
         )
@@ -101,7 +101,7 @@ def downgrade(op=None):
                 SET initial = dynamic_initial,
                     minimum = dynamic_minimum,
                     decay = dynamic_decay,
-                    function = dynamic_function
+                    `function` = dynamic_function
             """
             )
         )
