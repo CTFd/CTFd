@@ -64,7 +64,6 @@ Alpine.data("Hint", () => ({
 
 Alpine.data("Challenge", () => ({
   id: null,
-  next_id: null,
   submission: "",
   tab: null,
   solves: [],
@@ -212,10 +211,20 @@ Alpine.data("Challenge", () => ({
     if (this.response.data.status === "correct") {
       this.submission = "";
 
-      await CTFd.pages.challenge.displayChallenge(this.id, challenge => {
-        challenge.data.view = addTargetBlank(challenge.data.view);
-        Alpine.store("challenge").data = challenge.data;
-      }
+      await CTFd.fetch("/api/v1/challenges/" + this.id, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (challenge) {
+          Alpine.store("challenge").data.solution_id = challenge.data.solution_id;
+        });
     }
 
     // Increment attempts counter
