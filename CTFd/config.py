@@ -6,6 +6,8 @@ from typing import Union
 
 from sqlalchemy.engine.url import URL
 
+_FORCED_EXTRA_CONFIG_TYPES = {}
+
 
 class EnvInterpolation(configparser.BasicInterpolation):
     """Interpolation which expands environment variables in values."""
@@ -14,12 +16,23 @@ class EnvInterpolation(configparser.BasicInterpolation):
         value = super().before_get(parser, section, option, value, defaults)
         envvar = os.getenv(option)
         if value == "" and envvar:
-            return process_string_var(envvar)
+            return process_string_var(envvar, key=option)
         else:
             return value
 
 
-def process_string_var(value):
+def process_string_var(value, key=None):
+    if key in _FORCED_EXTRA_CONFIG_TYPES:
+        t = _FORCED_EXTRA_CONFIG_TYPES[key]
+        if t == "str":
+            return str(value)
+        elif t == "int":
+            return int(value)
+        elif t == "float":
+            return float(value)
+        elif t == "bool":
+            return bool(strtobool(value))
+
     if value == "":
         return None
 
@@ -252,6 +265,13 @@ class ServerConfig(object):
     SAFE_MODE: bool = process_boolean_str(empty_str_cast(config_ini["optional"].get("SAFE_MODE", False), default=False))
 
     EMAIL_CONFIRMATION_REQUIRE_INTERACTION: bool = process_boolean_str(empty_str_cast(config_ini["optional"].get("EMAIL_CONFIRMATION_REQUIRE_INTERACTION", False), default=False))
+
+    EXTRA_CONFIGS_FORCE_TYPES: str = empty_str_cast(config_ini["optional"].get("EXTRA_CONFIGS_FORCE_TYPES"), default=None)
+    if EXTRA_CONFIGS_FORCE_TYPES:
+        config_types = EXTRA_CONFIGS_FORCE_TYPES.split(",")
+        for entry in config_types:
+            k, v = entry.split("=")
+            _FORCED_EXTRA_CONFIG_TYPES[k] = v
 
     if DATABASE_URL.startswith("sqlite") is False:
         SQLALCHEMY_ENGINE_OPTIONS = {
