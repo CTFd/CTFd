@@ -560,4 +560,107 @@ $(() => {
   let bracketListContainer = document.createElement("div");
   document.querySelector("#brackets-list").appendChild(bracketListContainer);
   new bracketList({}).$mount(bracketListContainer);
+
+  document.getElementById('email_whitelist_csv').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const csvContent = event.target.result;
+      document.getElementById('email_whitelist_input').value = csvContent.trim().replace(/\s+/g, '');
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('email_blacklist_csv').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const csvContent = event.target.result;
+      document.getElementById('email_blacklist_input').value = csvContent.trim().replace(/\s+/g, '');
+    };
+    reader.readAsText(file);
+  });
+
+  const form = document.querySelector('#accounts form');
+  if (!form) return;
+
+  document.getElementById('customSubmitBtn').addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent default form submission
+
+    // Get input values and sanitize
+    const emailWhitelist = document.getElementById('email_whitelist_input').value.split(',').map(x => x.trim()).filter(Boolean);
+    const emailBlacklist = document.getElementById('email_blacklist_input').value.split(',').map(x => x.trim()).filter(Boolean);
+    const domainWhitelist = document.querySelector('[name="domain_whitelist"]').value.split(',').map(x => x.trim()).filter(Boolean);
+    const domainBlacklist = document.querySelector('[name="domain_blacklist"]').value.split(',').map(x => x.trim()).filter(Boolean);
+
+    // Conflicts: exact match
+    const emailConflicts = emailWhitelist.filter(email => emailBlacklist.includes(email));
+    const domainConflicts = domainWhitelist.filter(domain => domainBlacklist.includes(domain));
+
+    // Conflicts: domain/email mismatch
+    const domainEmailConflicts = [];
+
+    // Check if an email's domain is blacklisted but email is whitelisted
+    emailWhitelist.forEach(email => {
+      const domain = email.split('@')[1];
+      if (domainBlacklist.includes(domain)) {
+        domainEmailConflicts.push(`Email ${email} vs Domain blacklist: ${domain}`);
+      }
+    });
+
+    // Check if an email's domain is whitelisted but email is blacklisted
+    emailBlacklist.forEach(email => {
+      const domain = email.split('@')[1];
+      if (domainWhitelist.includes(domain)) {
+        domainEmailConflicts.push(`Email ${email} vs Domain whitelist: ${domain}`);
+      }
+    });
+
+    // First modal: direct conflicts
+    if (emailConflicts.length > 0 || domainConflicts.length > 0) {
+      const conflictList = document.getElementById('conflictList');
+      conflictList.innerHTML = '';
+
+      emailConflicts.forEach(email => {
+        const li = document.createElement('li');
+        li.textContent = `Email: ${email}`;
+        conflictList.appendChild(li);
+      });
+
+      domainConflicts.forEach(domain => {
+        const li = document.createElement('li');
+        li.textContent = `Domain: ${domain}`;
+        conflictList.appendChild(li);
+      });
+
+      $('#conflictModal').modal('show');
+      document.getElementById('modalConfirmSubmitBtn').onclick = function () {
+        $('#conflictModal').modal('hide');
+        form.requestSubmit();
+      };
+    }
+    // Second modal: email-domain logic conflict
+    else if (domainEmailConflicts.length > 0) {
+      const list = document.getElementById('domainEmailConflictList');
+      list.innerHTML = '';
+      domainEmailConflicts.forEach(conflict => {
+        const li = document.createElement('li');
+        li.textContent = conflict;
+        list.appendChild(li);
+      });
+
+      $('#domainEmailConflictModal').modal('show');
+      document.getElementById('modalDomainConflictSubmitBtn').onclick = function () {
+        $('#domainEmailConflictModal').modal('hide');
+        form.requestSubmit();
+      };
+    }
+    else {
+      form.requestSubmit(); // No conflicts
+    }
+  });
 });
