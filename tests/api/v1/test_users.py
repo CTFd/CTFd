@@ -547,16 +547,22 @@ def test_api_user_change_email_under_whitelist():
         set_config(
             "domain_whitelist", "whitelisted.com, whitelisted.org, whitelisted.net"
         )
+        set_config(
+            "email_whitelist", "specific_user@test.com, another@domain.com"
+        )
+
         with login_as_user(app) as client:
+            # Email not in domain or email whitelist
             r = client.patch(
                 "/api/v1/users/me",
-                json={"email": "new_email@email.com", "confirm": "password"},
+                json={"email": "unauthorized@email.com", "confirm": "password"},
             )
             assert r.status_code == 400
             resp = r.get_json()
             assert resp["errors"]["email"]
             assert resp["success"] is False
 
+            # Email in domain whitelist
             r = client.patch(
                 "/api/v1/users/me",
                 json={"email": "new_email@whitelisted.com", "confirm": "password"},
@@ -565,6 +571,17 @@ def test_api_user_change_email_under_whitelist():
             resp = r.get_json()
             assert resp["data"]["email"] == "new_email@whitelisted.com"
             assert resp["success"] is True
+
+            # Email in email whitelist
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "specific_user@test.com", "confirm": "password"},
+            )
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp["data"]["email"] == "specific_user@test.com"
+            assert resp["success"] is True
+
     destroy_ctfd(app)
 
 
@@ -576,7 +593,12 @@ def test_api_user_change_email_under_blacklist():
         set_config(
             "domain_blacklist", "blacklisted.com, blacklisted.org, blacklisted.net"
         )
+        set_config(
+            "email_blacklist", "blocked_user@test.com, another@domain.com"
+        )
+
         with login_as_user(app) as client:
+            # Email in domain blacklist
             r = client.patch(
                 "/api/v1/users/me",
                 json={"email": "new_email@blacklisted.com", "confirm": "password"},
@@ -586,6 +608,17 @@ def test_api_user_change_email_under_blacklist():
             assert resp["errors"]["email"]
             assert resp["success"] is False
 
+            # Email in email blacklist
+            r = client.patch(
+                "/api/v1/users/me",
+                json={"email": "blocked_user@test.com", "confirm": "password"},
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert resp["errors"]["email"]
+            assert resp["success"] is False
+
+            # Email not blacklisted
             r = client.patch(
                 "/api/v1/users/me",
                 json={"email": "new_email@test.com", "confirm": "password"},
@@ -594,6 +627,7 @@ def test_api_user_change_email_under_blacklist():
             resp = r.get_json()
             assert resp["data"]["email"] == "new_email@test.com"
             assert resp["success"] is True
+
     destroy_ctfd(app)
 
 

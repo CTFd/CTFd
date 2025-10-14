@@ -91,11 +91,17 @@ def test_register_whitelisted_email():
         set_config(
             "domain_whitelist", "whitelisted.com, whitelisted.org, whitelisted.net"
         )
+        set_config(
+            "email_whitelist", "allowed@other.com, user@custom.org"
+        )
+
+        # Email neither in domain whitelist nor in email whitelist
         register_user(
             app, name="not_whitelisted", email="user@nope.com", raise_for_error=False
         )
         assert Users.query.count() == 1
 
+        # Emails in domain whitelist
         register_user(app, name="user1", email="user@whitelisted.com")
         assert Users.query.count() == 2
 
@@ -104,6 +110,14 @@ def test_register_whitelisted_email():
 
         register_user(app, name="user3", email="user@whitelisted.net")
         assert Users.query.count() == 4
+
+        # Email in email whitelist
+        register_user(app, name="user4", email="allowed@other.com")
+        assert Users.query.count() == 5
+
+        register_user(app, name="user5", email="user@custom.org")
+        assert Users.query.count() == 6
+
     destroy_ctfd(app)
 
 
@@ -114,11 +128,28 @@ def test_register_blacklisted_email():
         set_config(
             "domain_blacklist", "blacklisted.com, blacklisted.org, blacklisted.net"
         )
+        set_config(
+            "email_blacklist", "blocked@other.com, user@custom.org"
+        )
+
+        # Email in domain blacklist
         register_user(
             app, name="blacklisted", email="user@blacklisted.com", raise_for_error=False
         )
         assert Users.query.count() == 1
 
+        # Email in email blacklist
+        register_user(
+            app, name="blocked", email="blocked@other.com", raise_for_error=False
+        )
+        assert Users.query.count() == 1
+
+        register_user(
+            app, name="blocked2", email="user@custom.org", raise_for_error=False
+        )
+        assert Users.query.count() == 1
+
+        # Emails not blacklisted
         register_user(app, name="user1", email="user@yep.com")
         assert Users.query.count() == 2
 
@@ -127,6 +158,7 @@ def test_register_blacklisted_email():
 
         register_user(app, name="user3", email="user@yipee.net")
         assert Users.query.count() == 4
+
     destroy_ctfd(app)
 
 
