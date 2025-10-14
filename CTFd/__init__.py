@@ -310,7 +310,7 @@ def create_app(config="CTFd.config.Config"):
             utils.set_config("ctf_version", __version__)
 
         if not utils.get_config("ctf_theme"):
-            utils.set_config("ctf_theme", "core-beta")
+            utils.set_config("ctf_theme", DEFAULT_THEME)
 
         update_check(force=True)
 

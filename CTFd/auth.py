@@ -60,10 +60,10 @@ def confirm(data=None):
             get_app_config("EMAIL_CONFIRMATION_REQUIRE_INTERACTION")
             and request.args.get("interaction") is None
         ):
-            button = """<button onclick="
+            button = """<button style="margin-top: 3rem; padding: 1rem;" onclick="
                 let u = new window.URL(window.location.href);
                 u.searchParams.set('interaction', '1');
-                window.location.href = u;">Confirm Email</button>"""
+                window.location.href = u;">Click Here to Confirm Email</button>"""
             return render_template("page.html", content=button)
 
         user.verified = True
