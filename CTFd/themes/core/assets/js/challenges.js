@@ -142,6 +142,15 @@ Alpine.data("Challenge", () => ({
     return data.solution_id;
   },
 
+  getSolutionState() {
+    let data = Alpine.store("challenge").data;
+    return data.solution_state;
+  },
+
+  setSolutionId(solutionId) {
+    Alpine.store("challenge").data.solution_id = solutionId;
+  },
+
   async showSolution() {
     let solution_id = this.getSolutionId();
     CTFd._functions.challenge.displaySolution = solution => {
@@ -211,21 +220,20 @@ Alpine.data("Challenge", () => ({
   async renderSubmissionResponse() {
     if (this.response.data.status === "correct") {
       this.submission = "";
+    }
 
-      await CTFd.fetch("/api/v1/challenges/" + this.id, {
-        method: "GET",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (challenge) {
-          Alpine.store("challenge").data.solution_id = challenge.data.solution_id;
-        });
+    // Decide whether to check for the solution
+    if (this.getSolutionId() == null) {
+      if (
+        CTFd.pages.challenge.checkSolution(
+          this.getSolutionState(),
+          Alpine.store("challenge").data,
+          this.response.data.status,
+        )
+      ) {
+        let data = await CTFd.pages.challenge.getSolution(this.id);
+        this.setSolutionId(data.id);
+      }
     }
 
     // Increment attempts counter
