@@ -75,7 +75,7 @@ function bulkEditChallenges(_event) {
       let solution_data = { state: data.solution };
       // We don't need the solution field for updating challenges
       delete data["solution"];
-      // If we didnt' set any challenge fields no need to set challenge data
+      // If we didn't set any challenge fields no need to set challenge data
       if (Object.keys(data).length !== 0) {
         for (var chalID of challengeIDs) {
           reqs.push(
