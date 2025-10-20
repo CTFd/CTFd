@@ -124,6 +124,7 @@ $(() => {
   $("#user-profile-form").submit(profileUpdate);
   $("#user-token-form").submit(tokenGenerate);
   $(".delete-token").click(deleteToken);
+  $("#manage-billing-btn").click(manageBilling); 
   $(".nav-pills a").click(function(_event) {
     window.location.hash = this.hash;
   });
@@ -135,3 +136,9 @@ $(() => {
     $('.nav-pills a[href="' + hash + '"]').tab("show");
   }
 });
+
+function manageBilling(event) {
+  event.preventDefault();
+  // Direct redirect to Stripe billing portal
+  window.location.href = "https://billing.stripe.com/p/login/14k4hX9Oh4Fr2lO3cc";
+}

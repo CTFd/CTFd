@@ -1,3 +1,5 @@
+console.log('CORE-BETA Alpine settings.js loaded - BillingForm should be available');
+
 import Alpine from "alpinejs";
 import { Modal } from "bootstrap";
 import { serializeJSON } from "@ctfdio/ctfd-js/forms";
@@ -95,6 +97,21 @@ Alpine.data("Tokens", () => ({
       $token.remove();
     }
   },
+}));
+
+Alpine.data("BillingForm", () => ({
+  loading: false,
+  
+  async manageBilling() {
+    this.loading = true;
+    try {
+      // Direct link to your Stripe billing portal
+      window.location.href = "https://billing.stripe.com/p/login/14k4hX9Oh4Fr2lO3cc";
+    } catch (error) {
+      console.error('Billing management error:', error);
+      this.loading = false;
+    }
+  }
 }));
 
 Alpine.start();

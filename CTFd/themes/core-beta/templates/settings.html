@@ -21,6 +21,11 @@
           >{% trans %}Profile{% endtrans %}
           </button>
           <button
+            class="nav-link" id="settings-billing-tab" data-bs-toggle="pill" 
+            data-bs-target="#billing" role="tab"
+        >{% trans %}Billing{% endtrans %}
+        </button>
+          <button
               class="nav-link" id="settings-tokens-tab" data-bs-toggle="pill" data-bs-target="#tokens"
               role="tab"
           >{% trans %}Access Tokens{% endtrans %}
@@ -116,6 +121,24 @@
                 </div>
               </form>
             {% endwith %}
+          </div>
+
+          <!-- Billing Tab -->
+          <div class="tab-pane fade" id="billing" role="tabpanel">
+              <div class="text-center mb-4">
+                  <h3>{% trans %}Subscription Management{% endtrans %}</h3>
+                  <p class="text-muted">{% trans %}Manage your subscription, update payment methods, or cancel your plan.{% endtrans %}</p>
+              </div>
+
+              <div class="text-center">
+                  <button 
+                      type="button" 
+                      class="btn btn-primary btn-lg" 
+                      id="manage-billing-btn"
+                  >
+                      <i class="fas fa-credit-card"></i> {% trans %}Manage Billing{% endtrans %}
+                  </button>
+              </div>
           </div>
 
           <div class="tab-pane fade" id="tokens" role="tabpanel">
@@ -263,4 +286,15 @@
 
 {% block scripts %}
   {{ Assets.js("assets/js/settings.js") }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const billingBtn = document.getElementById('manage-billing-btn');
+      if (billingBtn) {
+        billingBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = "https://billing.stripe.com/p/login/14k4hX9Oh4Fr2lO3cc";
+        });
+      }
+    });
+  </script>
 {% endblock %}

@@ -14,6 +14,7 @@
 		<div class="col-md-2 offset-md-1">
 			<div class="nav flex-column nav-pills" role="tablist">
 				<a class="nav-link active" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Profile</a>
+				<a class="nav-link" id="settings-billing-tab" data-toggle="pill" href="#billing" role="tab">Billing</a>
 				<a class="nav-link" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Access Tokens</a>
 			</div>
 		</div>
@@ -74,6 +75,25 @@
 					</form>
 					{% endwith %}
 				</div>
+
+				<!-- Billing Tab -->
+				<div class="tab-pane fade" id="billing" role="tabpanel">
+					<div class="text-center mb-4">
+						<h3>{% trans %}Subscription Management{% endtrans %}</h3>
+						<p class="text-muted">{% trans %}Manage your subscription, update payment methods, or cancel your plan.{% endtrans %}</p>
+					</div>
+
+					<div class="text-center">
+						<button 
+							type="button" 
+							class="btn btn-primary btn-lg" 
+							id="manage-billing-btn"
+						>
+							<i class="fas fa-credit-card"></i> {% trans %}Manage Billing{% endtrans %}
+						</button>
+					</div>
+				</div>
+				
 				<div class="tab-pane fade" id="tokens" role="tabpanel">
 					{% with form = Forms.self.TokensForm() %}
 					<form method="POST" id="user-token-form">
