@@ -501,9 +501,19 @@ class Challenge(Resource):
             response["ratings"] = None
 
         solution_id = None
-        if chal.solution_id and chal.solution.state == "visible":
-            solution_id = chal.solution.id
+        solution_state = "hidden"
+        if chal.solution_id:
+            # Share the solution state to the user but default to hidden
+            solution_state = chal.solution.state
+            # We explicitly want the solution visible
+            if chal.solution.state == "visible":
+                solution_id = chal.solution.id
+            # We only want the solution to be visible if the challenge has been solved
+            elif chal.solution.state == "solved":
+                if int(challenge_id) in user_solves:
+                    solution_id = chal.solution.id
         response["solution_id"] = solution_id
+        response["solution_state"] = solution_state
 
         response["view"] = render_template(
             chal_class.templates["view"].lstrip("/"),
@@ -1169,3 +1179,41 @@ class ChallengeRatings(Resource):
                 "date": isoformat(rating.date),
             },
         }
+
+
+@challenges_namespace.route("/<challenge_id>/solution")
+class ChallengeSolution(Resource):
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @authed_only
+    @require_verified_emails
+    def get(self, challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        # Check if challenge is visible to the user
+        if challenge.state == "hidden" and not is_admin():
+            abort(404)
+
+        # Get user's current solves
+        user = get_current_user_attrs()
+        user_solves = get_solve_ids_for_user_id(user_id=user.id)
+
+        response = {
+            "id": None,
+            "state": None,
+        }
+        solution_id = None
+        solution_state = "hidden"
+        if challenge.solution_id:
+            # Share the solution state to the user but default to hidden
+            solution_state = challenge.solution.state
+            # We explicitly want the solution visible
+            if challenge.solution.state == "visible":
+                solution_id = challenge.solution.id
+            # We only want the solution to be visible if the challenge has been solved
+            elif challenge.solution.state == "solved":
+                if int(challenge_id) in user_solves:
+                    solution_id = challenge.solution.id
+        response["id"] = solution_id
+        response["state"] = solution_state
+        return {"success": True, "data": response}
