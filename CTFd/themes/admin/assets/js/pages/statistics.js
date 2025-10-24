@@ -442,7 +442,7 @@ const graph_configs = {
         tooltip: {
           trigger: "item",
           formatter: function (data) {
-            return `${data.name} - ${(Math.round(data.value * 10) / 10).toFixed(
+            return `${echarts.format.encodeHTML(data.name)} - ${(Math.round(data.value * 10) / 10).toFixed(
               1,
             )}%`;
           },
