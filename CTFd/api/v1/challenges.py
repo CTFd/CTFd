@@ -1190,6 +1190,10 @@ class ChallengeSolution(Resource):
     def get(self, challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
+        # Check if challenge is visible to the user
+        if challenge.state == "hidden" and not is_admin():
+            abort(404)
+
         # Get user's current solves
         user = get_current_user_attrs()
         user_solves = get_solve_ids_for_user_id(user_id=user.id)
