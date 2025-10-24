@@ -47,6 +47,7 @@ def get_menubar_plugins():
 
 
 def get_configurable_plugins():
+    application_root = app.config.get("APPLICATION_ROOT")
     Plugin = namedtuple("Plugin", ["name", "route", "config"])
 
     plugins_path = os.path.join(app.root_path, "plugins")
@@ -61,21 +62,33 @@ def get_configurable_plugins():
                 plugin_json_data = json.loads(f.read())
                 if type(plugin_json_data) is list:
                     for plugin_json in plugin_json_data:
+                        route = plugin_json.get("route")
+                        if route and not route.startswith("http"):
+                            route = application_root + route
+                        config = plugin_json.get("config")
+                        if config and not config.startswith("http"):
+                            config = application_root + config
                         p = Plugin(
                             name=plugin_json.get("name"),
-                            route=plugin_json.get("route"),
-                            config=plugin_json.get("config"),
+                            route=route,
+                            config=config,
                         )
                         plugins.append(p)
                 else:
+                    route = plugin_json_data.get("route")
+                    if route and not route.startswith("http"):
+                        route = application_root + route
+                    config = plugin_json_data.get("config")
+                    if config and not config.startswith("http"):
+                        config = application_root + config
                     p = Plugin(
                         name=plugin_json_data.get("name"),
-                        route=plugin_json_data.get("route"),
-                        config=plugin_json_data.get("config"),
+                        route=route,
+                        config=config,
                     )
                     plugins.append(p)
         elif os.path.isfile(os.path.join(plugins_path, dir, "config.html")):
-            p = Plugin(name=dir, route="/admin/plugins/{}".format(dir), config=None)
+            p = Plugin(name=dir, route=application_root + "/admin/plugins/{}".format(dir), config=None)
             plugins.append(p)
 
     return plugins
