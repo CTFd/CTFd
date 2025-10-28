@@ -9,7 +9,7 @@ from sqlalchemy.sql import and_
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
-from CTFd.cache import clear_challenges, clear_ratings, clear_standings
+from CTFd.cache import cache, clear_challenges, clear_ratings, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.exceptions.challenges import (
     ChallengeCreateException,
@@ -689,7 +689,13 @@ class ChallengeAttempt(Resource):
         # Anti-bruteforce / submitting Flags too quickly
         kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
         kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
-        if kpm > kpm_limit:
+
+        # Serialize attempt counting through redis to get a more accurate attempt count
+        acc_kpm_key = f"account_kpm_{user.account_id}"
+        recent_attempt_count = cache.inc(acc_kpm_key)
+        cache.expire(acc_kpm_key, 60)
+
+        if kpm > kpm_limit or recent_attempt_count > kpm_limit:
             if ctftime():
                 chal_class.fail(
                     user=user, team=team, challenge=challenge, request=request
@@ -754,7 +760,7 @@ class ChallengeAttempt(Resource):
                     fails = fails_query.count()
                     response = "Not accepted. You have 0 tries remaining"
 
-                if fails >= max_tries:
+                if fails >= max_tries or recent_attempt_count > max_tries:
                     return (
                         {
                             "success": True,
