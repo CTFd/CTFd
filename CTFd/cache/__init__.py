@@ -8,7 +8,7 @@ from flask_caching import Cache, make_template_fragment_key
 
 class CTFdCache(Cache):
     """
-    This sublcass exists to give flask-caching some additional features
+    This subclass exists to give flask-caching some additional features
     Ideally likely we should have our own isolated redis connection but that might introduce more issues
     """
 
