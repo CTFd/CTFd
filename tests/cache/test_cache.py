@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from redis.exceptions import ConnectionError
+
 from CTFd.cache import clear_all_user_sessions, clear_user_session
 from CTFd.config import TestingConfig
 from CTFd.models import Users
