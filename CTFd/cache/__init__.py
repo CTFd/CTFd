@@ -33,6 +33,8 @@ class CTFdCache(Cache):
             )
         else:
             # Generic alternative that leverages flask-caching built-ins to do expiration
+            if timeout <= 0:
+                self.cache.delete(key)
             value = self.get(key)
             if value:
                 self.set(key=key, value=value, timeout=timeout)
