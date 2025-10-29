@@ -29,7 +29,7 @@ class CTFdCache(Cache):
         """
         if current_app.config["CACHE_TYPE"] == "redis":
             return self.cache._write_client.expire(
-                f"{self.cache._get_prefix()}{key}", timeout
+                f"{self.cache.key_prefix}{key}", timeout
             )
         else:
             # Generic alternative that leverages flask-caching built-ins to do expiration
