@@ -17,9 +17,6 @@ challenges = Blueprint("challenges", __name__)
 
 
 @challenges.route("/challenges", methods=["GET"])
-@require_complete_profile
-@during_ctf_time_only
-
 def listing():
     if (
         Configs.challenge_visibility == ChallengeVisibilityTypes.PUBLIC
