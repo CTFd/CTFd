@@ -691,7 +691,7 @@ class ChallengeAttempt(Resource):
         kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
 
         # Serialize attempt counting through redis to get a more accurate attempt count
-        acc_kpm_key = f"account_kpm_{user.account_id}"
+        acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}"
         recent_attempt_count = cache.inc(acc_kpm_key)
         cache.expire(acc_kpm_key, 60)
 
