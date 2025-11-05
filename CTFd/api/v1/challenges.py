@@ -760,7 +760,7 @@ class ChallengeAttempt(Resource):
                     fails = fails_query.count()
                     response = "Not accepted. You have 0 tries remaining"
 
-                if fails >= max_tries or recent_attempt_count > max_tries:
+                if fails >= max_tries:
                     return (
                         {
                             "success": True,
