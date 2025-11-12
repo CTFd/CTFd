@@ -7,6 +7,8 @@ Create Date: 2025-10-10 02:07:16.055798
 """
 import sqlalchemy as sa
 
+from CTFd.plugins.migrations import get_columns_for_table
+
 # revision identifiers, used by Alembic.
 revision = "93284ed9c099"
 down_revision = "eb68f277ab61"
@@ -15,20 +17,29 @@ depends_on = None
 
 
 def upgrade(op=None):
+    columns = get_columns_for_table(
+        op=op, table_name="dynamic_challenge", names_only=True
+    )
     # Add new columns with dynamic_ prefix
-    op.add_column(
-        "dynamic_challenge", sa.Column("dynamic_initial", sa.Integer(), nullable=True)
-    )
-    op.add_column(
-        "dynamic_challenge", sa.Column("dynamic_minimum", sa.Integer(), nullable=True)
-    )
-    op.add_column(
-        "dynamic_challenge", sa.Column("dynamic_decay", sa.Integer(), nullable=True)
-    )
-    op.add_column(
-        "dynamic_challenge",
-        sa.Column("dynamic_function", sa.String(length=32), nullable=True),
-    )
+    if "dynamic_initial" not in columns:
+        op.add_column(
+            "dynamic_challenge",
+            sa.Column("dynamic_initial", sa.Integer(), nullable=True),
+        )
+    if "dynamic_minimum" not in columns:
+        op.add_column(
+            "dynamic_challenge",
+            sa.Column("dynamic_minimum", sa.Integer(), nullable=True),
+        )
+    if "dynamic_decay" not in columns:
+        op.add_column(
+            "dynamic_challenge", sa.Column("dynamic_decay", sa.Integer(), nullable=True)
+        )
+    if "dynamic_function" not in columns:
+        op.add_column(
+            "dynamic_challenge",
+            sa.Column("dynamic_function", sa.String(length=32), nullable=True),
+        )
 
     # Copy data from old columns to new columns
     connection = op.get_bind()
@@ -59,24 +70,38 @@ def upgrade(op=None):
         )
 
     # Drop old columns
-    op.drop_column("dynamic_challenge", "minimum")
-    op.drop_column("dynamic_challenge", "initial")
-    op.drop_column("dynamic_challenge", "function")
-    op.drop_column("dynamic_challenge", "decay")
+    if "minimum" in columns:
+        op.drop_column("dynamic_challenge", "minimum")
+    if "initial" in columns:
+        op.drop_column("dynamic_challenge", "initial")
+    if "function" in columns:
+        op.drop_column("dynamic_challenge", "function")
+    if "decay" in columns:
+        op.drop_column("dynamic_challenge", "decay")
 
 
 def downgrade(op=None):
+    columns = get_columns_for_table(
+        op=op, table_name="dynamic_challenge", names_only=True
+    )
     # Add old columns back
-    op.add_column("dynamic_challenge", sa.Column("decay", sa.Integer(), nullable=True))
-    op.add_column(
-        "dynamic_challenge", sa.Column("function", sa.String(length=32), nullable=True)
-    )
-    op.add_column(
-        "dynamic_challenge", sa.Column("initial", sa.Integer(), nullable=True)
-    )
-    op.add_column(
-        "dynamic_challenge", sa.Column("minimum", sa.Integer(), nullable=True)
-    )
+    if "decay" not in columns:
+        op.add_column(
+            "dynamic_challenge", sa.Column("decay", sa.Integer(), nullable=True)
+        )
+    if "function" not in columns:
+        op.add_column(
+            "dynamic_challenge",
+            sa.Column("function", sa.String(length=32), nullable=True),
+        )
+    if "initial" not in columns:
+        op.add_column(
+            "dynamic_challenge", sa.Column("initial", sa.Integer(), nullable=True)
+        )
+    if "minimum" not in columns:
+        op.add_column(
+            "dynamic_challenge", sa.Column("minimum", sa.Integer(), nullable=True)
+        )
 
     # Copy data from new columns back to old columns
     connection = op.get_bind()
@@ -107,7 +132,11 @@ def downgrade(op=None):
         )
 
     # Drop new columns
-    op.drop_column("dynamic_challenge", "dynamic_function")
-    op.drop_column("dynamic_challenge", "dynamic_decay")
-    op.drop_column("dynamic_challenge", "dynamic_minimum")
-    op.drop_column("dynamic_challenge", "dynamic_initial")
+    if "dynamic_function" in columns:
+        op.drop_column("dynamic_challenge", "dynamic_function")
+    if "dynamic_decay" in columns:
+        op.drop_column("dynamic_challenge", "dynamic_decay")
+    if "dynamic_minimum" in columns:
+        op.drop_column("dynamic_challenge", "dynamic_minimum")
+    if "dynamic_initial" in columns:
+        op.drop_column("dynamic_challenge", "dynamic_initial")
