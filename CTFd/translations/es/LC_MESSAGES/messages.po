@@ -856,3 +856,4 @@ msgid "team"
 msgid_plural "teams"
 msgstr[0] "equipo"
 msgstr[1] "equipos"
+
