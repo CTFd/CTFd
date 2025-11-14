@@ -426,7 +426,7 @@ msgstr "Contraseña utilizada para acceder a su cuenta"
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr "Al registrarte, aceptas la <a href=\"%(privacy_link)s\" target=\"_blank\">política de privacidad</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
+msgstr "Al registrarte, aceptas la <a href=\"%(privacy_link)s\" target=\"_blank\">política de privacidad</a> y los <a href=\"%(tos_link)s\" target=\"_blank\">términoso y condiciones</a>"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
