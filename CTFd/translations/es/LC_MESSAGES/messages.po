@@ -25,7 +25,7 @@ msgstr "La visibilidad del desafío está configurada solo para administradores"
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr "%(ctf_name) aún no ha comenzado"
+msgstr "%(ctf_name)s aún no ha comenzado"
 
 #: CTFd/challenges.py:44
 #, python-format
