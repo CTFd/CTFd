@@ -4,7 +4,12 @@
 
       <div class="mb-3">
         {% if show_labels %}
-          <b>{{ field.label(class="form-label") }}</b>
+          <b>
+            {{ field.label(class="form-label") }}
+            {% if field.flags.required %}
+              <span class="text-danger">*</span>
+            {% endif %}
+          </b>
         {% endif %}
 
         {% if show_optionals %}
@@ -29,7 +34,13 @@
     {% elif field.field_type == "boolean" %}
 
       <div>
-        {{ field.label(class="form-label") }}
+        <b>
+          {{ field.label(class="form-label") }}
+          {% if field.flags.required %}
+            <span class="text-danger">*</span>
+          {% endif %}
+        </b>
+
         {% if show_optionals %}
           {% if field.flags.required is false %}
             <small class="ms-1 text-muted">
@@ -58,7 +69,13 @@
     {% elif field.field_type == "select" %}
 
       <div>
-        <b>{{ field.label(class="form-label") }}</b>
+        <b>
+          {{ field.label(class="form-label") }}
+          {% if field.flags.required %}
+            <span class="text-danger">*</span>
+          {% endif %}
+        </b>
+
         {% if show_optionals %}
           {% if field.flags.required is false %}
             <small class="ms-1 text-muted">
