@@ -9,7 +9,7 @@ from CTFd.api.v1.schemas import (
     APIDetailedSuccessResponse,
     PaginatedAPIListSuccessResponse,
 )
-from CTFd.cache import clear_challenges, clear_standings
+from CTFd.cache import cache, clear_challenges, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import Solves, Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
@@ -229,9 +229,16 @@ class Submission(Resource):
     )
     def delete(self, submission_id):
         submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+        account_id = submission.account_id
+        challenge_id = submission.challenge_id
         db.session.delete(submission)
         db.session.commit()
         db.session.close()
+
+        # Clear out the user's recent attempt count
+        # This is a little lossy but I don't think it matters in practice
+        acc_kpm_key = f"account_kpm_{account_id}_{challenge_id}"
+        cache.expire(acc_kpm_key, 0)
 
         # Delete standings cache
         clear_standings()

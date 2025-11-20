@@ -780,3 +780,58 @@ def test_admin_can_set_change_password_via_api():
         assert normal_user.change_password is False
 
     destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_user_reset_password_rate_limit(mock_smtp):
+    """
+    Test that a user can only create 5 reset password attempts before they are rate limited
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Create a user before configuring mail to not send any extra emails
+        register_user(app, name="user1", email="user@user.com")
+
+        # Set CTFd to send emails
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
+
+        with app.test_client() as client:
+            # Make 5 password reset requests (which should all succeed)
+            for _ in range(5):
+                client.get("/reset_password")
+
+                # Build reset password data
+                with client.session_transaction() as sess:
+                    data = {"nonce": sess.get("nonce"), "email": "user@user.com"}
+
+                # Issue the password reset request
+                r = client.post("/reset_password", data=data)
+                assert r.status_code == 200
+                resp = r.get_data(as_text=True)
+                assert (
+                    "If that account exists you will receive an email, please check your inbox"
+                    in resp
+                )
+                assert "Too many password reset attempts" not in resp
+
+            # Verify that the email was sent 5 times
+            assert mock_smtp.return_value.send_message.call_count == 5
+
+            # 6th attempt should be rate limited
+            client.get("/reset_password")
+            with client.session_transaction() as sess:
+                data = {"nonce": sess.get("nonce"), "email": "user@user.com"}
+
+            r = client.post("/reset_password", data=data)
+            assert r.status_code == 200
+            resp = r.get_data(as_text=True)
+            assert "Too many password reset attempts. Please try again later." in resp
+
+            # Verify that no additional email was sent
+            assert mock_smtp.return_value.send_message.call_count == 5
+
+    destroy_ctfd(app)
