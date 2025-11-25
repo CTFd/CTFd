@@ -742,7 +742,7 @@ class ChallengeAttempt(Resource):
                     )
                     fails = fails_query.filter(Fails.date >= timeout_delta).count()
                     # Calculate actual time remaining for the most recent fail
-                    response = f"Not accepted. Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
+                    response = f"Not accepted. Try again in {math.ceil(max_attempts_timeout)} seconds"
                     if fails > 0:
                         most_recent_fail = (
                             fails_query.filter(Fails.date >= timeout_delta)
@@ -754,8 +754,7 @@ class ChallengeAttempt(Resource):
                                 datetime.utcnow() - most_recent_fail.date
                             ).total_seconds()
                             remaining_seconds = max_attempts_timeout - time_since_fail
-                            remaining_minutes = math.ceil(remaining_seconds / 60)
-                            response = f"Not accepted. Try again in {remaining_minutes} minutes"
+                            response = f"Not accepted. Try again in {math.ceil(remaining_seconds)} seconds"
                 else:  # Use lockout behavior
                     fails = fails_query.count()
                     response = "Not accepted. You have 0 tries remaining"
@@ -879,10 +878,9 @@ class ChallengeAttempt(Resource):
                                 remaining_seconds = (
                                     max_attempts_timeout - time_since_fail
                                 )
-                                remaining_minutes = math.ceil(remaining_seconds / 60)
-                                message += f" Try again in {remaining_minutes} minutes"
+                                message += f" Try again in {math.ceil(remaining_seconds)} seconds"
                             else:
-                                message += f" Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
+                                message += f" Try again in {math.ceil(max_attempts_timeout)} seconds"
                     return {
                         "success": True,
                         "data": {
