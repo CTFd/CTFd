@@ -296,12 +296,13 @@ def test_challenges_with_max_attempts_timeout_behavior():
             assert r.status_code == 200
 
         # Should be locked out now
-        data = {"submission": "flag", "challenge_id": chal_id}
-        r = client.post("/api/v1/challenges/attempt", json=data)
-        assert r.status_code == 403
-        resp = r.get_json()["data"]
-        assert resp.get("status") == "ratelimited"
-        assert "Not accepted. Try again in 5 minutes" in resp.get("message")
+        with freeze_time(timedelta(seconds=0)):
+            data = {"submission": "flag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 403
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "ratelimited"
+            assert "Not accepted. Try again in 299 seconds" in resp.get("message")
 
         # Use freeze_time to advance time by 290 seconds
         with freeze_time(timedelta(seconds=290)):
@@ -310,7 +311,7 @@ def test_challenges_with_max_attempts_timeout_behavior():
             assert r.status_code == 403
             resp = r.get_json()["data"]
             assert resp.get("status") == "ratelimited"
-            assert "Not accepted. Try again in 1 minutes" in resp.get("message")
+            assert "Not accepted. Try again in 9 seconds" in resp.get("message")
 
         # Use freeze_time to advance time by 301 seconds
         with freeze_time(timedelta(seconds=301)):
