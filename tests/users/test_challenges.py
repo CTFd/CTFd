@@ -356,7 +356,10 @@ def test_challenge_kpm_limit_no_freeze():
 
         resp = r.get_json()["data"]
         assert resp.get("status") == "ratelimited"
-        assert resp.get("message") == "You're submitting flags too fast. Try again in 59 seconds."
+        assert (
+            resp.get("message")
+            == "You're submitting flags too fast. Try again in 59 seconds."
+        )
 
         solves = Solves.query.count()
         assert solves == 0
