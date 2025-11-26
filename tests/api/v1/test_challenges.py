@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from unittest.mock import patch
+
 from freezegun import freeze_time
 
 from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Tracking, Users
@@ -1436,5 +1438,116 @@ def test_api_challenge_tracking_first_open_only():
             ).count()
             # Multiple opens should still only have one tracking entry
             assert tracking_count == 1
+
+    destroy_ctfd(app)
+
+
+def test_api_challenge_attempt_correct_when_ctf_ends_during_request():
+    """Does a correct submission return 403 when CTF ends during request"""
+    app = create_ctfd()
+    with app.app_context():
+        # Import modules to patch their local ctftime references
+        import CTFd.utils.decorators
+        import CTFd.api.v1.challenges
+
+        # Decorator sees CTF as running (allows request through)
+        # Endpoint sees CTF as ended (skips solve recording)
+        with patch.object(CTFd.utils.decorators, "ctftime", return_value=True), \
+             patch.object(CTFd.api.v1.challenges, "ctftime", return_value=False):
+            # Setup: Create user, challenge, and flag
+            register_user(app, name="user", email="user@ctfd.io")
+            challenge_id = gen_challenge(app.db, value=100).id
+            gen_flag(app.db, challenge_id=challenge_id, content="flag")
+
+            # Login as the user
+            client = login_as_user(app)
+
+            # Submit the correct flag
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag"}
+            )
+
+            # Should return 403 when CTF has ended
+            assert r.status_code == 403
+            resp_data = r.get_json()
+            assert resp_data["success"] is True
+            assert resp_data["data"]["status"] == "ended"
+
+            # Verify no solve was recorded in database
+            solves = Solves.query.filter_by(challenge_id=challenge_id).count()
+            assert solves == 0
+
+    destroy_ctfd(app)
+
+
+def test_api_challenge_attempt_incorrect_when_ctf_ends_during_request():
+    """Does an incorrect submission return 403 when CTF ends during request"""
+    app = create_ctfd()
+    with app.app_context():
+        # Import modules to patch their local ctftime references
+        import CTFd.utils.decorators
+        import CTFd.api.v1.challenges
+
+        # Decorator sees CTF as running (allows request through)
+        # Endpoint sees CTF as ended (skips fail recording)
+        with patch.object(CTFd.utils.decorators, "ctftime", return_value=True), \
+             patch.object(CTFd.api.v1.challenges, "ctftime", return_value=False):
+            # Setup: Create user, challenge, and flag
+            register_user(app, name="user", email="user@ctfd.io")
+            challenge_id = gen_challenge(app.db, value=100).id
+            gen_flag(app.db, challenge_id=challenge_id, content="flag")
+
+            # Login as the user
+            client = login_as_user(app)
+
+            # Submit an incorrect flag
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "wrong"}
+            )
+
+            # Should return 403 when CTF has ended
+            assert r.status_code == 403
+            resp_data = r.get_json()
+            assert resp_data["success"] is True
+            assert resp_data["data"]["status"] == "ended"
+
+    destroy_ctfd(app)
+
+
+def test_api_challenge_attempt_partial_when_ctf_ends_during_request():
+    """Does a partial submission return 403 when CTF ends during request"""
+    app = create_ctfd()
+    with app.app_context():
+        from CTFd.plugins.challenges import BaseChallenge
+
+        # Import modules to patch their local ctftime references
+        import CTFd.utils.decorators
+        import CTFd.api.v1.challenges
+
+        # Decorator sees CTF as running (allows request through)
+        # Endpoint sees CTF as ended (skips partial recording)
+        with patch.object(CTFd.utils.decorators, "ctftime", return_value=True), \
+             patch.object(CTFd.api.v1.challenges, "ctftime", return_value=False), \
+             patch.object(BaseChallenge, "attempt", return_value=("partial", "Partially correct")):
+            # Setup: Create user and challenge
+            register_user(app, name="user", email="user@ctfd.io")
+            challenge_id = gen_challenge(app.db, value=100).id
+
+            # Login as the user
+            client = login_as_user(app)
+
+            # Submit a partial answer
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "partial_answer"}
+            )
+
+            # Should return 403 when CTF has ended
+            assert r.status_code == 403
+            resp_data = r.get_json()
+            assert resp_data["success"] is True
+            assert resp_data["data"]["status"] == "ended"
 
     destroy_ctfd(app)

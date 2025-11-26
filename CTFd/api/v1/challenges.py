@@ -789,18 +789,29 @@ class ChallengeAttempt(Resource):
                     clear_standings()
                     clear_challenges()
 
-                log(
-                    "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
-                    kpm=kpm,
-                )
-                return {
-                    "success": True,
-                    "data": {"status": "correct", "message": message},
-                }
+                    log(
+                        "submissions",
+                        "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
+                    return {
+                        "success": True,
+                        "data": {"status": "correct", "message": message},
+                    }
+                else:
+                    return (
+                        {
+                            "success": True,
+                            "data": {
+                                "status": "ended",
+                                "message": "{} has ended".format(config.ctf_name()),
+                            },
+                        },
+                        403,
+                    )
             elif status == "partial":
                 # The challenge plugin says that the input is a partial solve
                 if ctftime() or current_user.is_admin():
@@ -810,18 +821,29 @@ class ChallengeAttempt(Resource):
                     clear_standings()
                     clear_challenges()
 
-                log(
-                    "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [PARTIAL]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
-                    kpm=kpm,
-                )
-                return {
-                    "success": True,
-                    "data": {"status": "partial", "message": message},
-                }
+                    log(
+                        "submissions",
+                        "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [PARTIAL]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
+                    return {
+                        "success": True,
+                        "data": {"status": "partial", "message": message},
+                    }
+                else:
+                    return (
+                        {
+                            "success": True,
+                            "data": {
+                                "status": "ended",
+                                "message": "{} has ended".format(config.ctf_name()),
+                            },
+                        },
+                        403,
+                    )
             elif status == "incorrect" or status is False:
                 # The challenge plugin says the input is wrong
                 if ctftime() or current_user.is_admin():
@@ -831,68 +853,79 @@ class ChallengeAttempt(Resource):
                     clear_standings()
                     clear_challenges()
 
-                log(
-                    "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
-                    kpm=kpm,
-                )
-
-                if max_tries:
-                    # Off by one since fails has changed since it was gotten
-                    attempts_left = max_tries - fails - 1
-                    tries_str = pluralize(attempts_left, singular="try", plural="tries")
-                    # Add a punctuation mark if there isn't one
-                    if message[-1] not in "!().;?[]{}":
-                        message = message + "."
-                    message = "{} You have {} {} remaining.".format(
-                        message, attempts_left, tries_str
+                    log(
+                        "submissions",
+                        "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
                     )
-                    if attempts_left == 0:
-                        max_attempts_behavior = get_config(
-                            "max_attempts_behavior", "lockout"
+
+                    if max_tries:
+                        # Off by one since fails has changed since it was gotten
+                        attempts_left = max_tries - fails - 1
+                        tries_str = pluralize(attempts_left, singular="try", plural="tries")
+                        # Add a punctuation mark if there isn't one
+                        if message[-1] not in "!().;?[]{}":
+                            message = message + "."
+                        message = "{} You have {} {} remaining.".format(
+                            message, attempts_left, tries_str
                         )
-                        if max_attempts_behavior == "timeout":
-                            max_attempts_timeout = int(
-                                get_config("max_attempts_timeout", 300)
+                        if attempts_left == 0:
+                            max_attempts_behavior = get_config(
+                                "max_attempts_behavior", "lockout"
                             )
-                            # Calculate actual time remaining based on the most recent fail
-                            timeout_delta = datetime.utcnow() - timedelta(
-                                seconds=max_attempts_timeout
-                            )
-                            most_recent_fail = (
-                                Fails.query.filter_by(
-                                    account_id=user.account_id,
-                                    challenge_id=challenge_id,
+                            if max_attempts_behavior == "timeout":
+                                max_attempts_timeout = int(
+                                    get_config("max_attempts_timeout", 300)
                                 )
-                                .filter(Fails.date >= timeout_delta)
-                                .order_by(Fails.date.asc())
-                                .first()
-                            )
-                            if most_recent_fail:
-                                time_since_fail = (
-                                    datetime.utcnow() - most_recent_fail.date
-                                ).total_seconds()
-                                remaining_seconds = (
-                                    max_attempts_timeout - time_since_fail
+                                # Calculate actual time remaining based on the most recent fail
+                                timeout_delta = datetime.utcnow() - timedelta(
+                                    seconds=max_attempts_timeout
                                 )
-                                message += f" Try again in {math.ceil(remaining_seconds)} seconds"
-                            else:
-                                message += f" Try again in {math.ceil(max_attempts_timeout)} seconds"
-                    return {
-                        "success": True,
-                        "data": {
-                            "status": "incorrect",
-                            "message": message,
-                        },
-                    }
+                                most_recent_fail = (
+                                    Fails.query.filter_by(
+                                        account_id=user.account_id,
+                                        challenge_id=challenge_id,
+                                    )
+                                    .filter(Fails.date >= timeout_delta)
+                                    .order_by(Fails.date.asc())
+                                    .first()
+                                )
+                                if most_recent_fail:
+                                    time_since_fail = (
+                                        datetime.utcnow() - most_recent_fail.date
+                                    ).total_seconds()
+                                    remaining_seconds = (
+                                        max_attempts_timeout - time_since_fail
+                                    )
+                                    message += f" Try again in {math.ceil(remaining_seconds)} seconds"
+                                else:
+                                    message += f" Try again in {math.ceil(max_attempts_timeout)} seconds"
+                        return {
+                            "success": True,
+                            "data": {
+                                "status": "incorrect",
+                                "message": message,
+                            },
+                        }
+                    else:
+                        return {
+                            "success": True,
+                            "data": {"status": "incorrect", "message": message},
+                        }
                 else:
-                    return {
-                        "success": True,
-                        "data": {"status": "incorrect", "message": message},
-                    }
+                    return (
+                        {
+                            "success": True,
+                            "data": {
+                                "status": "ended",
+                                "message": "{} has ended".format(config.ctf_name()),
+                            },
+                        },
+                        403,
+                    )
 
         # Challenge already solved
         else:
