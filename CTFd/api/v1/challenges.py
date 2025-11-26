@@ -691,23 +691,20 @@ class ChallengeAttempt(Resource):
         chal_class = get_chal_class(challenge.type)
 
         # Anti-bruteforce / submitting Flags too quickly
-        recent_fails = current_user.get_wrong_submissions_per_minute(
-            user.account_id, return_objects=True
-        )
+        recent_fails = current_user.get_wrong_submissions_per_delta(user.account_id)
         kpm = len(recent_fails)
         kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
 
         # We want to expire recent_attempt_count around the same time as our oldest submission slides off
         time_delay = 60
         if recent_fails:
-            time_delay -= math.ceil(
+            time_delay -= round(
                 (datetime.utcnow() - recent_fails[0].date).total_seconds()
             )
 
         # Serialize attempt counting through redis to get a more accurate attempt count
         acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}"
-        recent_attempt_count = cache.inc(acc_kpm_key)
-        cache.expire(acc_kpm_key, time_delay)
+        recent_attempt_count = int(cache.get(acc_kpm_key) or 0)
 
         # Hit max attempts
         max_tries = challenge.max_attempts
@@ -715,31 +712,24 @@ class ChallengeAttempt(Resource):
         fails = 0
         if max_tries and max_tries > 0:
             max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
-            fails_query = Fails.query.filter_by(
-                account_id=user.account_id, challenge_id=challenge_id
-            )
             if max_attempts_behavior == "timeout":  # Use timeout behavior
                 max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
-                timeout_delta = datetime.utcnow() - timedelta(
-                    seconds=max_attempts_timeout
+                timeout_delta = timedelta(seconds=-max_attempts_timeout)
+                recent_fails = current_user.get_wrong_submissions_per_delta(
+                    user.account_id, delta=timeout_delta
                 )
-                fails = fails_query.filter(Fails.date >= timeout_delta).count()
-                # Calculate actual time remaining for the most recent fail
-                response = f"Not accepted. Try again in {math.ceil(max_attempts_timeout)} seconds"
-                if fails > 0:
-                    most_recent_fail = (
-                        fails_query.filter(Fails.date >= timeout_delta)
-                        .order_by(Fails.date.asc())
-                        .first()
+                fails = len(recent_fails)
+                time_delay = max_attempts_timeout
+                if recent_fails:
+                    time_delay -= round(
+                        (datetime.utcnow() - recent_fails[0].date).total_seconds()
                     )
-                    if most_recent_fail:
-                        time_since_fail = (
-                            datetime.utcnow() - most_recent_fail.date
-                        ).total_seconds()
-                        remaining_seconds = max_attempts_timeout - time_since_fail
-                        response = f"Not accepted. Try again in {math.ceil(remaining_seconds)} seconds"
+                # Calculate actual time remaining based on oldest fail
+                response = f"Not accepted. Try again in {math.ceil(time_delay)} seconds"
             else:  # Use lockout behavior
-                fails = fails_query.count()
+                fails = Fails.query.filter_by(
+                    account_id=user.account_id, challenge_id=challenge_id
+                ).count()
                 response = "Not accepted. You have 0 tries remaining"
 
             if fails >= max_tries or recent_attempt_count > max_tries:
@@ -778,6 +768,9 @@ class ChallengeAttempt(Resource):
                 },
                 429,
             )
+
+        cache.inc(acc_kpm_key)
+        cache.expire(acc_kpm_key, time_delay)
 
         solves = Solves.query.filter_by(
             account_id=user.account_id, challenge_id=challenge_id
@@ -882,7 +875,7 @@ class ChallengeAttempt(Resource):
                                     challenge_id=challenge_id,
                                 )
                                 .filter(Fails.date >= timeout_delta)
-                                .order_by(Fails.date.asc())
+                                .order_by(Fails.id.asc())
                                 .first()
                             )
                             if most_recent_fail:

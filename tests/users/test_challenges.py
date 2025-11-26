@@ -358,7 +358,7 @@ def test_challenge_kpm_limit_no_freeze():
         assert resp.get("status") == "ratelimited"
         assert (
             resp.get("message")
-            == "You're submitting flags too fast. Try again in 59 seconds."
+            == "You're submitting flags too fast. Try again in 60 seconds."
         )
 
         solves = Solves.query.count()
@@ -401,7 +401,7 @@ def test_challenge_kpm_limit_freeze_time():
             assert resp.get("status") == "ratelimited"
             assert (
                 resp.get("message")
-                == "You're submitting flags too fast. Try again in 49 seconds."
+                == "You're submitting flags too fast. Try again in 50 seconds."
             )
 
         with freeze_time(timedelta(seconds=60)):
