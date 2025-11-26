@@ -13,6 +13,7 @@ from CTFd.models import (
     Flags,
     Hints,
     Partials,
+    Ratelimiteds,
     Solves,
     Tags,
     db,
@@ -213,6 +214,20 @@ class BaseChallenge(object):
         data = request.form or request.get_json()
         submission = data["submission"].strip()
         partial = Partials(
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(req=request),
+            provided=submission,
+        )
+        db.session.add(partial)
+        db.session.commit()
+
+    @classmethod
+    def ratelimited(cls, user, team, challenge, request):
+        data = request.form or request.get_json()
+        submission = data["submission"].strip()
+        partial = Ratelimiteds(
             user_id=user.id,
             team_id=team.id if team else None,
             challenge_id=challenge.id,
