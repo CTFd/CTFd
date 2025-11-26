@@ -216,7 +216,7 @@ def get_user_recent_ips(user_id):
     return {ip for (ip,) in addrs}
 
 
-def get_wrong_submissions_per_minute(account_id, return_objects=True):
+def get_wrong_submissions_per_minute(account_id, return_objects=False):
     """
     Get incorrect submissions per minute.
 
