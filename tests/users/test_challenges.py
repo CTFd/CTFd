@@ -345,21 +345,23 @@ def test_challenge_kpm_limit_no_freeze():
         assert wrong_keys == 10
         assert ratelimiteds == 1
 
-        data = {"submission": "flag", "challenge_id": chal_id}
-        r = client.post("/api/v1/challenges/attempt", json=data)
-        assert r.status_code == 429
+        # We just want a consistent flag response countdown
+        with freeze_time(timedelta(seconds=0)):
+            data = {"submission": "flag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 429
 
-        wrong_keys = Fails.query.count()
-        ratelimiteds = Ratelimiteds.query.count()
-        assert wrong_keys == 10
-        assert ratelimiteds == 2
+            wrong_keys = Fails.query.count()
+            ratelimiteds = Ratelimiteds.query.count()
+            assert wrong_keys == 10
+            assert ratelimiteds == 2
 
-        resp = r.get_json()["data"]
-        assert resp.get("status") == "ratelimited"
-        assert (
-            resp.get("message")
-            == "You're submitting flags too fast. Try again in 60 seconds."
-        )
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "ratelimited"
+            assert (
+                resp.get("message")
+                == "You're submitting flags too fast. Try again in 60 seconds."
+            )
 
         solves = Solves.query.count()
         assert solves == 0
