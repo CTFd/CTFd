@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from freezegun import freeze_time
 
-from CTFd.models import Challenges, Fails, Solves
+from CTFd.models import Challenges, Fails, Ratelimiteds, Solves
 from CTFd.utils import set_config, text_type
 from tests.helpers import (
     create_ctfd,
@@ -325,7 +325,7 @@ def test_challenges_with_max_attempts_timeout_behavior():
     destroy_ctfd(app)
 
 
-def test_challenge_kpm_limit():
+def test_challenge_kpm_limit_no_freeze():
     """Test that users are properly ratelimited when submitting flags"""
     app = create_ctfd()
     with app.app_context():
@@ -341,21 +341,76 @@ def test_challenge_kpm_limit():
             r = client.post("/api/v1/challenges/attempt", json=data)
 
         wrong_keys = Fails.query.count()
-        assert wrong_keys == 11
+        ratelimiteds = Ratelimiteds.query.count()
+        assert wrong_keys == 10
+        assert ratelimiteds == 1
 
         data = {"submission": "flag", "challenge_id": chal_id}
         r = client.post("/api/v1/challenges/attempt", json=data)
         assert r.status_code == 429
 
         wrong_keys = Fails.query.count()
-        assert wrong_keys == 12
+        ratelimiteds = Ratelimiteds.query.count()
+        assert wrong_keys == 10
+        assert ratelimiteds == 2
 
         resp = r.get_json()["data"]
         assert resp.get("status") == "ratelimited"
-        assert resp.get("message") == "You're submitting flags too fast. Slow down."
+        assert resp.get("message") == "You're submitting flags too fast. Try again in 59 seconds."
 
         solves = Solves.query.count()
         assert solves == 0
+    destroy_ctfd(app)
+
+
+def test_challenge_kpm_limit_freeze_time():
+    """Test that users are properly ratelimited when submitting flags"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
+        with freeze_time(timedelta(seconds=0)):
+            for _ in range(11):
+                with client.session_transaction():
+                    data = {"submission": "notflag", "challenge_id": chal_id}
+                r = client.post("/api/v1/challenges/attempt", json=data)
+
+            wrong_keys = Fails.query.count()
+            ratelimiteds = Ratelimiteds.query.count()
+            assert wrong_keys == 10
+            assert ratelimiteds == 1
+
+        with freeze_time(timedelta(seconds=10)):
+            data = {"submission": "flag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 429
+
+            wrong_keys = Fails.query.count()
+            ratelimiteds = Ratelimiteds.query.count()
+            assert wrong_keys == 10
+            assert ratelimiteds == 2
+
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "ratelimited"
+            assert (
+                resp.get("message")
+                == "You're submitting flags too fast. Try again in 49 seconds."
+            )
+
+        with freeze_time(timedelta(seconds=60)):
+            for _ in range(11):
+                with client.session_transaction():
+                    data = {"submission": "notflag", "challenge_id": chal_id}
+                r = client.post("/api/v1/challenges/attempt", json=data)
+
+            wrong_keys = Fails.query.count()
+            ratelimiteds = Ratelimiteds.query.count()
+            assert wrong_keys == 20
+            assert ratelimiteds == 3
     destroy_ctfd(app)
 
 
