@@ -704,7 +704,7 @@ class ChallengeAttempt(Resource):
 
         # Serialize attempt counting through redis to get a more accurate attempt count
         acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}"
-        recent_attempt_count = int(cache.get(acc_kpm_key) or 0)
+        recent_attempt_count = cache.inc(acc_kpm_key)
 
         # Hit max attempts
         max_tries = challenge.max_attempts
@@ -735,8 +735,6 @@ class ChallengeAttempt(Resource):
                     # Calculate actual time remaining based on oldest fail
                     response = f"Not accepted. Try again in {time_delay} seconds"
                     response_code = 429
-                    # Expire the cache key directly since we will not hit the normal expire flow
-                    cache.expire(acc_kpm_key, time_delay)
                     if ctftime():
                         chal_class.ratelimited(
                             user=user, team=team, challenge=challenge, request=request
@@ -744,6 +742,8 @@ class ChallengeAttempt(Resource):
                 else:  # Use lockout behavior
                     response = "Not accepted. You have 0 tries remaining"
                     response_code = 403
+                # Expire the cache key directly since we will not hit the normal expire flow
+                cache.expire(acc_kpm_key, time_delay)
                 return (
                     {
                         "success": True,
@@ -768,6 +768,8 @@ class ChallengeAttempt(Resource):
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
+            # Expire the cache key directly since we will not hit the normal expire flow
+            cache.expire(acc_kpm_key, time_delay)
             # Submitting too fast
             return (
                 {
@@ -780,7 +782,7 @@ class ChallengeAttempt(Resource):
                 429,
             )
 
-        cache.inc(acc_kpm_key)
+        # Set the main expiration key as we will now process the submission
         cache.expire(acc_kpm_key, time_delay)
 
         solves = Solves.query.filter_by(
