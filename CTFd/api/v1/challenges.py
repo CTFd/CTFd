@@ -716,23 +716,28 @@ class ChallengeAttempt(Resource):
                 max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
                 timeout_delta = timedelta(seconds=-max_attempts_timeout)
                 recent_fails = current_user.get_wrong_submissions_per_delta(
-                    user.account_id, delta=timeout_delta
+                    user.account_id, challenge_id=challenge_id, delta=timeout_delta
                 )
                 fails = len(recent_fails)
-                time_delay = max_attempts_timeout
-                if recent_fails:
-                    time_delay -= int(
-                        (datetime.utcnow() - recent_fails[0].date).total_seconds()
-                    )
-                # Calculate actual time remaining based on oldest fail
-                response = f"Not accepted. Try again in {time_delay} seconds"
             else:  # Use lockout behavior
                 fails = Fails.query.filter_by(
                     account_id=user.account_id, challenge_id=challenge_id
                 ).count()
-                response = "Not accepted. You have 0 tries remaining"
 
             if fails >= max_tries or recent_attempt_count > max_tries:
+                if max_attempts_behavior == "timeout":
+                    # We specifically override the outer time_delay because max_attempts timeout can be different than the minute
+                    time_delay = max_attempts_timeout
+                    if recent_fails:
+                        time_delay -= int(
+                            (datetime.utcnow() - recent_fails[0].date).total_seconds()
+                        )
+                    # Calculate actual time remaining based on oldest fail
+                    response = f"Not accepted. Try again in {time_delay} seconds"
+                else:  # Use lockout behavior
+                    response = "Not accepted. You have 0 tries remaining"
+                # Expire the cache key directly since we will not hit the normal expire flow
+                cache.expire(acc_kpm_key, time_delay)
                 return (
                     {
                         "success": True,
