@@ -704,7 +704,9 @@ class ChallengeAttempt(Resource):
 
         # Serialize attempt counting through redis to get a more accurate attempt count
         acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}"
-        recent_attempt_count = cache.inc(acc_kpm_key)
+
+        # Get serialized recent_attempt_count
+        recent_attempt_count = int(cache.get(acc_kpm_key) or 0)
 
         # Hit max attempts
         max_tries = challenge.max_attempts
@@ -724,7 +726,7 @@ class ChallengeAttempt(Resource):
                     account_id=user.account_id, challenge_id=challenge_id
                 ).count()
 
-            if fails >= max_tries or recent_attempt_count > max_tries:
+            if fails >= max_tries or recent_attempt_count >= max_tries:
                 if max_attempts_behavior == "timeout":
                     # We specifically override the outer time_delay because max_attempts timeout can be different than the minute
                     time_delay = max_attempts_timeout
@@ -755,7 +757,7 @@ class ChallengeAttempt(Resource):
                     response_code,
                 )
 
-        if kpm >= kpm_limit or recent_attempt_count > kpm_limit:
+        if kpm >= kpm_limit or recent_attempt_count >= kpm_limit:
             if ctftime():
                 chal_class.ratelimited(
                     user=user, team=team, challenge=challenge, request=request
@@ -783,6 +785,7 @@ class ChallengeAttempt(Resource):
             )
 
         # Set the main expiration key as we will now process the submission
+        cache.inc(acc_kpm_key)
         cache.expire(acc_kpm_key, time_delay)
 
         solves = Solves.query.filter_by(
