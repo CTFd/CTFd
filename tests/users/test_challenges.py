@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from freezegun import freeze_time
 
@@ -10,6 +10,7 @@ from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
     gen_challenge,
+    gen_fail,
     gen_flag,
     gen_hint,
     login_as_user,
@@ -378,7 +379,10 @@ def test_challenge_kpm_limit_freeze_time():
         chal_id = chal.id
 
         gen_flag(app.db, challenge_id=chal.id, content="flag")
-        with freeze_time(timedelta(seconds=0)):
+        base_time = datetime.utcnow()
+
+        # First section: Use API to generate 10 fails + 1 ratelimit
+        with freeze_time(base_time):
             for _ in range(11):
                 with client.session_transaction():
                     data = {"submission": "notflag", "challenge_id": chal_id}
@@ -389,6 +393,7 @@ def test_challenge_kpm_limit_freeze_time():
             assert wrong_keys == 10
             assert ratelimiteds == 1
 
+        # Within the 1 min time frame we should still be ratelimited
         with freeze_time(timedelta(seconds=10)):
             data = {"submission": "flag", "challenge_id": chal_id}
             r = client.post("/api/v1/challenges/attempt", json=data)
@@ -406,11 +411,16 @@ def test_challenge_kpm_limit_freeze_time():
                 == "You're submitting flags too fast. Try again in 50 seconds."
             )
 
-        with freeze_time(timedelta(seconds=60)):
-            for _ in range(11):
-                with client.session_transaction():
-                    data = {"submission": "notflag", "challenge_id": chal_id}
-                r = client.post("/api/v1/challenges/attempt", json=data)
+        # Generate 10 more fails at +60 seconds using gen_fail because freezegun cannot patch to sqlalchemy's default
+        for _ in range(10):
+            fail = gen_fail(app.db, user_id=2, challenge_id=chal_id, provided="notflag")
+            fail.date = base_time + timedelta(seconds=60)
+            app.db.session.commit()
+
+        # The 11th attempt via API should trigger another ratelimit
+        with freeze_time(base_time + timedelta(seconds=60)):
+            data = {"submission": "notflag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
 
             wrong_keys = Fails.query.count()
             ratelimiteds = Ratelimiteds.query.count()

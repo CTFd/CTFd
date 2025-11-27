@@ -698,7 +698,7 @@ class ChallengeAttempt(Resource):
         # We want to expire recent_attempt_count around the same time as our oldest submission slides off
         time_delay = 60
         if recent_fails:
-            time_delay -= round(
+            time_delay -= int(
                 (datetime.utcnow() - recent_fails[0].date).total_seconds()
             )
 
@@ -721,11 +721,11 @@ class ChallengeAttempt(Resource):
                 fails = len(recent_fails)
                 time_delay = max_attempts_timeout
                 if recent_fails:
-                    time_delay -= round(
+                    time_delay -= int(
                         (datetime.utcnow() - recent_fails[0].date).total_seconds()
                     )
                 # Calculate actual time remaining based on oldest fail
-                response = f"Not accepted. Try again in {math.ceil(time_delay)} seconds"
+                response = f"Not accepted. Try again in {time_delay} seconds"
             else:  # Use lockout behavior
                 fails = Fails.query.filter_by(
                     account_id=user.account_id, challenge_id=challenge_id
