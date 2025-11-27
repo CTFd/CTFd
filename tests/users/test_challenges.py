@@ -339,7 +339,7 @@ def test_challenge_kpm_limit_no_freeze():
         for _ in range(11):
             with client.session_transaction():
                 data = {"submission": "notflag", "challenge_id": chal_id}
-            r = client.post("/api/v1/challenges/attempt", json=data)
+            client.post("/api/v1/challenges/attempt", json=data)
 
         wrong_keys = Fails.query.count()
         ratelimiteds = Ratelimiteds.query.count()
@@ -394,7 +394,7 @@ def test_challenge_kpm_limit_freeze_time():
             assert ratelimiteds == 1
 
         # Within the 1 min time frame we should still be ratelimited
-        with freeze_time(timedelta(seconds=10)):
+        with freeze_time(base_time + timedelta(seconds=11)):
             data = {"submission": "flag", "challenge_id": chal_id}
             r = client.post("/api/v1/challenges/attempt", json=data)
             assert r.status_code == 429
@@ -420,7 +420,7 @@ def test_challenge_kpm_limit_freeze_time():
         # The 11th attempt via API should trigger another ratelimit
         with freeze_time(base_time + timedelta(seconds=60)):
             data = {"submission": "notflag", "challenge_id": chal_id}
-            r = client.post("/api/v1/challenges/attempt", json=data)
+            client.post("/api/v1/challenges/attempt", json=data)
 
             wrong_keys = Fails.query.count()
             ratelimiteds = Ratelimiteds.query.count()
