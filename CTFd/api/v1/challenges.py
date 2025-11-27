@@ -717,8 +717,10 @@ class ChallengeAttempt(Resource):
             if max_attempts_behavior == "timeout":  # Use timeout behavior
                 max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
                 timeout_delta = timedelta(seconds=-max_attempts_timeout)
-                max_attempts_recent_fails = current_user.get_wrong_submissions_per_delta(
-                    user.account_id, challenge_id=challenge_id, delta=timeout_delta
+                max_attempts_recent_fails = (
+                    current_user.get_wrong_submissions_per_delta(
+                        user.account_id, challenge_id=challenge_id, delta=timeout_delta
+                    )
                 )
                 fails = len(max_attempts_recent_fails)
             else:  # Use lockout behavior
@@ -732,7 +734,9 @@ class ChallengeAttempt(Resource):
                     time_delay = max_attempts_timeout
                     if max_attempts_recent_fails:
                         time_delay -= int(
-                            (datetime.utcnow() - max_attempts_recent_fails[0].date).total_seconds()
+                            (
+                                datetime.utcnow() - max_attempts_recent_fails[0].date
+                            ).total_seconds()
                         )
                     # Calculate actual time remaining based on oldest fail
                     response = f"Not accepted. Try again in {time_delay} seconds"
