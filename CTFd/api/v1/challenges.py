@@ -734,10 +734,16 @@ class ChallengeAttempt(Resource):
                         )
                     # Calculate actual time remaining based on oldest fail
                     response = f"Not accepted. Try again in {time_delay} seconds"
+                    response_code = 429
+                    # Expire the cache key directly since we will not hit the normal expire flow
+                    cache.expire(acc_kpm_key, time_delay)
+                    if ctftime():
+                        chal_class.ratelimited(
+                            user=user, team=team, challenge=challenge, request=request
+                        )
                 else:  # Use lockout behavior
                     response = "Not accepted. You have 0 tries remaining"
-                # Expire the cache key directly since we will not hit the normal expire flow
-                cache.expire(acc_kpm_key, time_delay)
+                    response_code = 403
                 return (
                     {
                         "success": True,
@@ -746,7 +752,7 @@ class ChallengeAttempt(Resource):
                             "message": response,
                         },
                     },
-                    403,
+                    response_code,
                 )
 
         if kpm >= kpm_limit or recent_attempt_count > kpm_limit:

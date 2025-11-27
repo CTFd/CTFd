@@ -300,7 +300,7 @@ def test_challenges_with_max_attempts_timeout_behavior():
         with freeze_time(timedelta(seconds=0)):
             data = {"submission": "flag", "challenge_id": chal_id}
             r = client.post("/api/v1/challenges/attempt", json=data)
-            assert r.status_code == 403
+            assert r.status_code == 429
             resp = r.get_json()["data"]
             assert resp.get("status") == "ratelimited"
             assert "Not accepted. Try again in 300 seconds" in resp.get("message")
@@ -309,7 +309,7 @@ def test_challenges_with_max_attempts_timeout_behavior():
         with freeze_time(timedelta(seconds=290)):
             data = {"submission": "flag", "challenge_id": chal_id}
             r = client.post("/api/v1/challenges/attempt", json=data)
-            assert r.status_code == 403
+            assert r.status_code == 429
             resp = r.get_json()["data"]
             assert resp.get("status") == "ratelimited"
             assert "Not accepted. Try again in 10 seconds" in resp.get("message")
@@ -323,6 +323,95 @@ def test_challenges_with_max_attempts_timeout_behavior():
             # Should be correct now
             assert resp.get("status") == "correct"
             assert resp.get("message") == "Correct"
+    destroy_ctfd(app)
+
+
+def test_challenges_with_max_attempts_timeout_ratelimit():
+    """Test that max_attempts timeout ratelimit and global ratelimit work together correctly"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("max_attempts_behavior", "timeout")
+        set_config("max_attempts_timeout", 30)  # 30 seconds timeout for test
+
+        register_user(app)
+        client = login_as_user(app)
+
+        # Challenge 1 with max_attempts = 5
+        chal1 = gen_challenge(app.db)
+        chal1_obj = Challenges.query.filter_by(id=chal1.id).first()
+        chal1_obj.max_attempts = 5
+        app.db.session.commit()
+        gen_flag(app.db, challenge_id=chal1.id, content="flag1")
+
+        # Challenge 2 with no max_attempts
+        chal2 = gen_challenge(app.db)
+        gen_flag(app.db, challenge_id=chal2.id, content="flag2")
+
+        base_time = datetime.utcnow()
+
+        # Submit 5 wrong attempts to challenge 1 (triggers max_attempts ratelimit)
+        with freeze_time(base_time):
+            for _ in range(5):
+                data = {"submission": "wrong", "challenge_id": chal1.id}
+                r = client.post("/api/v1/challenges/attempt", json=data)
+                assert r.status_code == 200
+
+            # 6th attempt should be blocked by max_attempts timeout
+            data = {"submission": "flag1", "challenge_id": chal1.id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 429
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "ratelimited"
+            assert "Try again in 30 seconds" in resp.get("message")
+
+            # Now submit 5 more wrong attempts to challenge 2 (total 10 fails, triggers global ratelimit)
+            for i in range(6):
+                data = {"submission": "wrong", "challenge_id": chal2.id}
+                r = client.post("/api/v1/challenges/attempt", json=data)
+                if i < 5:
+                    assert r.status_code == 200
+                else:
+                    # 11th attempt should be blocked by global ratelimit (60 seconds)
+                    assert r.status_code == 429
+                    resp = r.get_json()["data"]
+                    assert resp.get("status") == "ratelimited"
+                    assert "You're submitting flags too fast" in resp.get("message")
+
+            # Check counts
+            wrong_keys = Fails.query.count()
+            ratelimiteds = Ratelimiteds.query.count()
+            assert wrong_keys == 10
+            assert (
+                ratelimiteds == 2
+            )  # One max_attempts ratelimit + one global ratelimit
+
+        # After 30 seconds, max_attempts timeout should release but global ratelimit (60s) still active
+        with freeze_time(base_time + timedelta(seconds=31)):
+            # Try challenge 1 - should still be blocked by global ratelimit
+            data = {"submission": "flag1", "challenge_id": chal1.id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            resp = r.get_json()["data"]
+            assert r.status_code == 429
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "ratelimited"
+            assert "Try again in 30 seconds" in resp.get("message")
+
+            ratelimiteds = Ratelimiteds.query.count()
+            assert ratelimiteds == 3  # Another ratelimit entry
+
+        # After 60 seconds, both ratelimits should be released
+        with freeze_time(base_time + timedelta(seconds=61)):
+            # Should be able to solve challenge 1 now
+            data = {"submission": "flag1", "challenge_id": chal1.id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 200
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "correct"
+            assert resp.get("message") == "Correct"
+
+            # Verify solve was recorded
+            solves = Solves.query.count()
+            assert solves == 1
     destroy_ctfd(app)
 
 
