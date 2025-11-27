@@ -390,7 +390,6 @@ def test_challenges_with_max_attempts_timeout_ratelimit():
             # Try challenge 1 - should still be blocked by global ratelimit
             data = {"submission": "flag1", "challenge_id": chal1.id}
             r = client.post("/api/v1/challenges/attempt", json=data)
-            resp = r.get_json()["data"]
             assert r.status_code == 429
             resp = r.get_json()["data"]
             assert resp.get("status") == "ratelimited"
