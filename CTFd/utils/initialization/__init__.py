@@ -353,6 +353,8 @@ def init_request_processors(app):
 
     @app.before_request
     def csrf():
+        if request.endpoint in ("views.themes", "views.themes_beta"):
+            return
         try:
             func = app.view_functions[request.endpoint]
         except KeyError:
