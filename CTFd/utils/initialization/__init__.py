@@ -220,6 +220,7 @@ def init_request_processors(app):
                 "views.setup",
                 "views.integrations",
                 "views.themes",
+                "views.themes_beta",
                 "views.files",
                 "views.healthcheck",
                 "views.robots",
@@ -230,7 +231,7 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
-        if request.endpoint == "views.themes":
+        if request.endpoint in ("views.themes", "views.themes_beta"):
             return
 
         if import_in_progress():
@@ -272,7 +273,7 @@ def init_request_processors(app):
 
     @app.before_request
     def banned():
-        if request.endpoint == "views.themes":
+        if request.endpoint in ("views.themes", "views.themes_beta"):
             return
 
         if authed():
@@ -298,7 +299,12 @@ def init_request_processors(app):
 
     @app.before_request
     def change_password():
-        if request.endpoint in ("views.themes", "auth.logout", "auth.reset_password"):
+        if request.endpoint in (
+            "views.themes",
+            "views.themes_beta",
+            "auth.logout",
+            "auth.reset_password",
+        ):
             return
 
         if authed():
