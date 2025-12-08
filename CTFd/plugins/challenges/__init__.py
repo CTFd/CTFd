@@ -146,8 +146,8 @@ class BaseChallenge(object):
 
         for attr in ("initial", "minimum", "decay"):
             if (
-                    challenge.function in DECAY_FUNCTIONS
-                    and getattr(challenge, attr) is None
+                challenge.function in DECAY_FUNCTIONS
+                and getattr(challenge, attr) is None
             ):
                 db.session.rollback()
                 raise ChallengeUpdateException(
