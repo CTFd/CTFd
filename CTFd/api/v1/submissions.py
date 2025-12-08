@@ -190,6 +190,20 @@ class Submission(Resource):
         submission_type = req.get("type")
 
         if submission_type == "correct":
+            existing_solve = Solves.query.filter_by(
+                challenge_id=submission.challenge_id,
+                user_id=submission.user_id,
+                team_id=submission.team_id if submission.team_id else None,
+            ).first()
+
+            # If a solve for this user / team pair exists, don't create a new solve
+            if existing_solve:
+                db.session.rollback()
+                return {
+                    "success": False,
+                    "errors": {"type": ["Solve already exists for this submission"]},
+                }, 400
+
             solve = Solves(
                 user_id=submission.user_id,
                 challenge_id=submission.challenge_id,
