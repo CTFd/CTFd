@@ -114,6 +114,26 @@ def test_api_submission_patch_correct():
     destroy_ctfd(app)
 
 
+def test_api_submission_patch_correct_with_existing_solve_fails():
+    """Test that patching a submission to correct fails if a solve already exists"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        gen_challenge(app.db)
+        gen_fail(app.db, challenge_id=1, user_id=2)
+        gen_solve(app.db, challenge_id=1, user_id=2)
+        assert Solves.query.count() == 1
+        with login_as_user(app, "admin") as client:
+            r = client.patch("/api/v1/submissions/1", json={"type": "correct"})
+            data = r.get_json()
+            assert r.status_code == 400
+            assert data["success"] is False
+            assert Solves.query.count() == 1
+            assert Fails.query.count() == 1
+            assert Discards.query.count() == 0
+    destroy_ctfd(app)
+
+
 def test_api_submission_patch_correct_scoreboard():
     "If we adjust a submission for someone the scoreboard should be correct accounting for the time of the adjusted submission"
     app = create_ctfd()
