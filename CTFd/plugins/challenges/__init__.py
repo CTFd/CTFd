@@ -249,6 +249,17 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
         submission = data["submission"].strip()
+
+        existing_solve = Solves.query.filter_by(
+            challenge_id=challenge.id,
+            user_id=user.id,
+            team_id=team.id if team else None,
+        ).first()
+
+        # If a solve for this user / team pair exists, don't create a new solve
+        if existing_solve:
+            return
+
         solve = Solves(
             user_id=user.id,
             team_id=team.id if team else None,
