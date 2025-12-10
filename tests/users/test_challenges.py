@@ -448,10 +448,10 @@ def test_challenges_max_attempts_timeout_config_change():
         # Change the max_attempts_timeout config (this changes the cache key)
         set_config("max_attempts_timeout", 30)  # Change to 30 seconds
 
-        # Jump forward in time to ensure we're past any global rate limit (60 seconds)
+        # Jump forward in time to ensure we're past the new 30 second rate limit
         with freeze_time(timedelta(seconds=35)):
             # Now we should be able to submit again because the cache key changed
-            # (even though we haven't waited for the timeout)
+            # Old submissions have also fallen off the 30 second window
             data = {"submission": "flag", "challenge_id": chal_id}
             r = client.post("/api/v1/challenges/attempt", json=data)
             assert r.status_code == 200
