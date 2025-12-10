@@ -693,6 +693,8 @@ class ChallengeAttempt(Resource):
         # Anti-bruteforce / submitting Flags too quickly
         recent_fails = current_user.get_wrong_submissions_per_delta(user.account_id)
         kpm = len(recent_fails)
+        kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
+        max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
 
         # We want to expire recent_attempt_count around the same time as our oldest submission slides off
         time_delay = 60
@@ -702,9 +704,7 @@ class ChallengeAttempt(Resource):
             )
 
         # Serialize attempt counting through redis to get a more accurate attempt count
-        # kpm_limit and max_attempts_timeout are included in the cache key as they are admin-edittable and can attempt limits
-        kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
-        max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
+        # kpm_limit and max_attempts_timeout are included in the cache key as they are admin-editable and can affect limits
         acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}_{kpm_limit}_{max_attempts_timeout}"
 
         # Get serialized recent_attempt_count
@@ -883,9 +883,6 @@ class ChallengeAttempt(Resource):
                             "max_attempts_behavior", "lockout"
                         )
                         if max_attempts_behavior == "timeout":
-                            max_attempts_timeout = int(
-                                get_config("max_attempts_timeout", 300)
-                            )
                             # Calculate actual time remaining based on the most recent fail
                             timeout_delta = datetime.utcnow() - timedelta(
                                 seconds=max_attempts_timeout
