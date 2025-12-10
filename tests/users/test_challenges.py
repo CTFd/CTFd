@@ -414,6 +414,64 @@ def test_challenges_with_max_attempts_timeout_ratelimit():
     destroy_ctfd(app)
 
 
+def test_challenges_max_attempts_timeout_config_change():
+    """Test that changing max_attempts_timeout resets attempt count because cache key changes"""
+    app = create_ctfd()
+    with app.app_context():
+        set_config("max_attempts_behavior", "timeout")
+        set_config("max_attempts_timeout", 300)  # Start with 300 seconds
+
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        chal = Challenges.query.filter_by(id=chal.id).first()
+        chal_id = chal.id
+        chal.max_attempts = 3
+        app.db.session.commit()
+
+        gen_flag(app.db, challenge_id=chal.id, content="flag")
+
+        # Make 3 wrong attempts (hit the limit)
+        for _ in range(3):
+            data = {"submission": "notflag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 200
+
+        # Verify we're locked out
+        data = {"submission": "flag", "challenge_id": chal_id}
+        r = client.post("/api/v1/challenges/attempt", json=data)
+        assert r.status_code == 429
+        resp = r.get_json()["data"]
+        assert resp.get("status") == "ratelimited"
+        assert "300 seconds" in resp.get("message")
+
+        # Change the max_attempts_timeout config (this changes the cache key)
+        set_config("max_attempts_timeout", 30)  # Change to 30 seconds
+
+        # Jump forward in time to ensure we're past the new 30 second rate limit
+        with freeze_time(timedelta(seconds=35)):
+            # Now we should be able to submit again because the cache key changed
+            # Old submissions have also fallen off the 30 second window
+            data = {"submission": "flag", "challenge_id": chal_id}
+            r = client.post("/api/v1/challenges/attempt", json=data)
+            assert r.status_code == 200
+            resp = r.get_json()["data"]
+            assert resp.get("status") == "correct"
+            assert resp.get("message") == "Correct"
+
+        # Verify solve was recorded
+        solves = Solves.query.count()
+        assert solves == 1
+
+        # Verify the fail count is still accurate (3 fails from before)
+        fails = Fails.query.count()
+        assert fails == 3
+
+        ratelimiteds = Ratelimiteds.query.count()
+        assert ratelimiteds == 1
+    destroy_ctfd(app)
+
+
 def test_challenge_kpm_limit_no_freeze():
     """Test that users are properly ratelimited when submitting flags"""
     app = create_ctfd()
