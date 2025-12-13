@@ -196,6 +196,9 @@ class BaseChallenge(object):
         :return: (boolean, string)
         """
         data = request.form or request.get_json()
+        # Empty string "" is a potentially valid submission
+        if not data or data.get("submission") is None:
+            return False, "No submission sent"
         submission = data["submission"].strip()
 
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
@@ -240,7 +243,8 @@ class BaseChallenge(object):
     @classmethod
     def solve(cls, user, team, challenge, request):
         """
-        This method is used to insert Solves into the database in order to mark a challenge as solved.
+        This method is used to insert Solves into the database in order to mark a challenge as solved. If solve has
+        already been submitted by the specified user, it will not be added again.
 
         :param team: The Team object from the database
         :param chal: The Challenge object from the database
@@ -248,16 +252,34 @@ class BaseChallenge(object):
         :return:
         """
         data = request.form or request.get_json()
+        if not data or data.get("submission") is None:
+            return False, "No submission sent"
         submission = data["submission"].strip()
-        solve = Solves(
+
+        existing_solve = Solves.query.filter_by(
             user_id=user.id,
             team_id=team.id if team else None,
             challenge_id=challenge.id,
-            ip=get_ip(req=request),
-            provided=submission,
-        )
-        db.session.add(solve)
-        db.session.commit()
+        ).first()
+
+        if existing_solve:
+            return
+
+        else:
+            solve = Solves(
+                user_id=user.id,
+                team_id=team.id if team else None,
+                challenge_id=challenge.id,
+                ip=get_ip(req=request),
+                provided=submission,
+            )
+            try:
+                db.session.add(solve)
+            except Exception as e:
+                db.session.rollback()
+                raise Exception(f"Error: {e} - {solve}")
+            else:
+                db.session.commit()
 
         # If the challenge is dynamic we should calculate a new value
         if challenge.function in DECAY_FUNCTIONS:
@@ -274,6 +296,8 @@ class BaseChallenge(object):
         :return:
         """
         data = request.form or request.get_json()
+        if not data or data.get("submission") is None:
+            return False, "No submission sent"
         submission = data["submission"].strip()
         wrong = Fails(
             user_id=user.id,
