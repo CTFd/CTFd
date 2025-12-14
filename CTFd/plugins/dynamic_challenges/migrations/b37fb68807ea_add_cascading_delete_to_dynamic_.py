@@ -37,7 +37,7 @@ def mysql_op_drop_constraint(op, name, table_name, type_):
                 if error_code == 1091:
                     # This may mean that a MariaDB 12.1 or above is used, so try again with the new default naming
                     op.drop_constraint(name.split('_ibfk_', 1)[1], table_name, type_=type_)
-                    return    
+                    return
             # Re-raise any other unexpected operational error
             raise
     else:
