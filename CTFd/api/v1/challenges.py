@@ -694,6 +694,7 @@ class ChallengeAttempt(Resource):
         recent_fails = current_user.get_wrong_submissions_per_delta(user.account_id)
         kpm = len(recent_fails)
         kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
+        max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
 
         # We want to expire recent_attempt_count around the same time as our oldest submission slides off
         time_delay = 60
@@ -703,7 +704,8 @@ class ChallengeAttempt(Resource):
             )
 
         # Serialize attempt counting through redis to get a more accurate attempt count
-        acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}"
+        # kpm_limit and max_attempts_timeout are included in the cache key as they are admin-editable and can affect limits
+        acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}_{kpm_limit}_{max_attempts_timeout}"
 
         # Get serialized recent_attempt_count
         recent_attempt_count = int(cache.get(acc_kpm_key) or 0)
@@ -715,7 +717,6 @@ class ChallengeAttempt(Resource):
         if max_tries and max_tries > 0:
             max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
             if max_attempts_behavior == "timeout":  # Use timeout behavior
-                max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
                 timeout_delta = timedelta(seconds=-max_attempts_timeout)
                 max_attempts_recent_fails = (
                     current_user.get_wrong_submissions_per_delta(
@@ -882,9 +883,6 @@ class ChallengeAttempt(Resource):
                             "max_attempts_behavior", "lockout"
                         )
                         if max_attempts_behavior == "timeout":
-                            max_attempts_timeout = int(
-                                get_config("max_attempts_timeout", 300)
-                            )
                             # Calculate actual time remaining based on the most recent fail
                             timeout_delta = datetime.utcnow() - timedelta(
                                 seconds=max_attempts_timeout
