@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pytest
 from flask import request
+from sqlalchemy.exc import IntegrityError
 
+from CTFd.exceptions.challenges import ChallengeSolveException
 from CTFd.models import Solves
 from CTFd.plugins.challenges import BaseChallenge
 from tests.helpers import (
@@ -34,8 +37,8 @@ def test_base_challenge_solve_creates_solve_when_missing():
     destroy_ctfd(app)
 
 
-def test_base_challenge_solve_skips_existing_solve():
-    """Test that BaseChallenge.solve() does not create a solve if it exists, and does not error"""
+def test_base_challenge_solve_raises_on_duplicate_solve():
+    """Test that BaseChallenge.solve() raises ChallengeSolveException on duplicate solve"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         challenge = gen_challenge(app.db)
@@ -49,7 +52,10 @@ def test_base_challenge_solve_skips_existing_solve():
             json={"submission": "flag"},
             environ_base={"REMOTE_ADDR": "127.0.0.1"},
         ):
-            BaseChallenge.solve(user, team, challenge, request)
+            with pytest.raises(ChallengeSolveException) as exc:
+                BaseChallenge.solve(user, team, challenge, request)
+
+            assert isinstance(exc.value.__cause__, IntegrityError)
 
         assert Solves.query.count() == 1
     destroy_ctfd(app)
