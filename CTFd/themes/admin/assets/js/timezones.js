@@ -578,7 +578,7 @@ const timezones = [
   "ROC",
   "ROK",
   "Singapore",
-  "Turkey",
+  "Turkiye",
   "UCT",
   "US/Alaska",
   "US/Aleutian",
