@@ -15,6 +15,21 @@ from flask import send_file
 from datetime import datetime
 from sqlalchemy.sql import func
 import os, secrets
+import json
+
+# Attempt to load a local .env file in development (optional). If python-dotenv
+# is installed this will read `.env` or `.flaskenv` near the project root so
+# developers can keep secrets out of source control. In production (Docker,
+# systemd, kubernetes) prefer passing environment variables via the runtime.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
+
+# Optional server-side ntfy integration: set `PHOTO_NTFY_URL` in the app config
+# to a full ntfy publish endpoint (e.g. https://ntfy.example.com/yourtopic).
+# This URL is never exposed to clients; messages are sent from the backend only.
 
 # photo_bp = Blueprint("photo_evidence", __name__, template_folder="templates", static_folder="static", url_prefix="/photo_evidence")
 photo_namespace = Namespace("photos", description="Endpoint to handle photo evidence submissions")
@@ -29,6 +44,64 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def _maybe_send_ntfy(challenge_id=None, challenge_name=None, team_id=None, submission_id=None):
+    """Send a push to an ntfy endpoint if `PHOTO_NTFY_URL` is set in app config.
+
+    The URL is read from `current_app.config['PHOTO_NTFY_URL']` and is never
+    exposed to clients. Optionally configure `PHOTO_NTFY_HEADERS` as a dict of
+    extra headers (e.g. Authorization) to include with the request.
+    """
+    ntfy_url = current_app.config.get('PHOTO_NTFY_URL')
+    if not ntfy_url:
+        return
+
+    # Resolve challenge name if not provided
+    if not challenge_name and challenge_id is not None:
+        try:
+            chal = Challenges.query.filter_by(id=challenge_id).first()
+            if chal:
+                challenge_name = chal.name
+        except Exception:
+            challenge_name = str(challenge_id)
+
+    title = f"Photo submission: {challenge_name or challenge_id or 'unknown'}"
+    body = f"Team {team_id} submitted a photo for '{challenge_name or challenge_id}'. Submission ID: {submission_id}"
+
+    headers = {}
+    # Prefer config, fall back to environment variable
+    extra = current_app.config.get('PHOTO_NTFY_HEADERS') or os.environ.get('PHOTO_NTFY_HEADERS')
+    if isinstance(extra, dict):
+        headers.update(extra)
+    elif isinstance(extra, str) and extra:
+        # Allow JSON string in env var: PHOTO_NTFY_HEADERS='{"Authorization":"Basic ..."}'
+        try:
+            parsed = json.loads(extra)
+            if isinstance(parsed, dict):
+                headers.update(parsed)
+        except Exception:
+            # ignore parse errors
+            pass
+    # ntfy supports a "Title" header for notifications
+    headers.setdefault('Title', title)
+
+    # Try requests first, fall back to urllib
+    try:
+        # Try requests if available
+        try:
+            import requests
+            requests.post(ntfy_url, data=body.encode('utf-8'), headers=headers, timeout=5)
+            return
+        except Exception:
+            pass
+
+        # Fallback to urllib
+        from urllib.request import Request, urlopen
+        req = Request(ntfy_url, data=body.encode('utf-8'), headers=headers)
+        urlopen(req, timeout=5)
+    except Exception as e:
+        current_app.logger.exception("photo_challenges: ntfy send failed: %s", e)
 
 @photo_bp.route("/upload/<int:challenge_id>", methods=["GET","POST"])
 @authed_only
@@ -70,12 +143,22 @@ def upload(challenge_id):
             db.session.rollback()
 
         # Notify the team that their submission is pending review
+        challenge_name = None
         try:
-            note = Notifications(title="Photo submission pending", content=f"Your photo for challenge {challenge_id} is pending review.", team_id=team_id)
+            chal = Challenges.query.filter_by(id=challenge_id).first()
+            challenge_name = chal.name if chal else str(challenge_id)
+            note = Notifications(title="Photo submission pending", content=f"Your photo submission for challenge '{challenge_name}' is pending review.", team_id=team_id)
             db.session.add(note)
             db.session.commit()
         except Exception:
             db.session.rollback()
+
+        # Send optional server-side ntfy push (kept secret on server)
+        try:
+            _maybe_send_ntfy(challenge_name=challenge_name, team_id=team_id, submission_id=submission.id)
+        except Exception:
+            current_app.logger.exception("photo_challenges: ntfy push failed")
+        
         flash("Photo submitted for review", "success")
         return redirect(url_for("challenges.view", challenge_id=challenge_id))
 
@@ -124,12 +207,21 @@ class Solve(Resource):
             db.session.rollback()
 
         # Notify the team
+        challenge_name = None
         try:
-            note = Notifications(title="Photo submission pending", content=f"Your photo for challenge {subflag_id} is pending review.", team_id=team_id)
+            chal = Challenges.query.filter_by(id=subflag_id).first()
+            challenge_name = chal.name if chal else str(subflag_id)
+            note = Notifications(title="Photo submission pending", content=f"Your photo submission for challenge '{challenge_name}' is pending review.", team_id=team_id)
             db.session.add(note)
             db.session.commit()
         except Exception:
             db.session.rollback()
+
+        # Send optional server-side ntfy push
+        try:
+            _maybe_send_ntfy(challenge_name=challenge_name, team_id=team_id, submission_id=submission.id)
+        except Exception:
+            current_app.logger.exception("photo_challenges: ntfy push failed")
 
         return {"success": True, "message": "Photo submitted for review", "submission_id": submission.id}
 
@@ -175,12 +267,21 @@ class UploadPhoto(Resource):
             db.session.rollback()
 
         # Notify the team
+        challenge_name = None
         try:
-            note = Notifications(title="Photo submission pending", content=f"Your photo for challenge {challenge_id} is pending review.", team_id=team_id)
+            chal = Challenges.query.filter_by(id=int(challenge_id)).first()
+            challenge_name = chal.name if chal else str(challenge_id)
+            note = Notifications(title="Photo submission pending", content=f"Your photo submission for challenge '{challenge_name}' is pending review.", team_id=team_id)
             db.session.add(note)
             db.session.commit()
         except Exception:
             db.session.rollback()
+
+        # Send optional server-side ntfy push
+        try:
+            _maybe_send_ntfy(challenge_name=challenge_name, team_id=team_id, submission_id=submission.id)
+        except Exception:
+            current_app.logger.exception("photo_challenges: ntfy push failed")
 
         return {"success": True, "message": "Photo submitted for review", "submission_id": submission.id}
 
@@ -195,11 +296,17 @@ class SubmissionStatus(Resource):
         team = get_current_team()
         team_id = team.id if team else (user.id if user else None)
 
-        pending = False
+        status = None
         if team_id is not None:
-            pending = PhotoSubmission.query.filter_by(team_id=team_id, challenge_id=challenge_id, status='pending').first() is not None
+            sub = (
+                PhotoSubmission.query.filter_by(team_id=team_id, challenge_id=challenge_id)
+                .order_by(PhotoSubmission.submitted_at.desc())
+                .first()
+            )
+            if sub:
+                status = sub.status
 
-        return {"pending": pending}
+        return {"status": status}
 
 
 # Admin review UI and actions
@@ -218,7 +325,16 @@ class AdminReview(Resource):
             if s.filepath and Files.query.filter_by(location=s.filepath).first():
                 valid_submissions.append(s)
 
-        return render_template('admin_review.html', submissions=valid_submissions)
+        # Render the admin review HTML. Some admin UI code fetches this
+        # endpoint via XHR and expects JSON. Detect Accept header and
+        # return JSON-wrapped HTML when appropriate to avoid the UI
+        # attempting to parse HTML as JSON.
+        rendered = render_template('admin_review.html', submissions=valid_submissions)
+        accept = request.headers.get('Accept', '')
+        if 'application/json' in accept:
+            return {'html': rendered}
+
+        return rendered
 
 
 @photo_namespace.route('/admin/review/<int:submission_id>/approve', methods=['POST'])
@@ -246,14 +362,28 @@ class AdminApprove(Resource):
         except Exception:
             db.session.rollback()
 
-        # Notify team
+        # Notify team with details and mark other pending submissions cleared
         try:
-            note = Notifications(title='Photo submission approved', content=f'Your photo submission for challenge {sub.challenge_id} was approved.', team_id=sub.team_id)
+            chal = Challenges.query.filter_by(id=sub.challenge_id).first()
+            challenge_name = chal.name if chal else str(sub.challenge_id)
+            content = f"Your photo submission for challenge '{challenge_name}' was approved."
+            if sub.review_notes:
+                content += f"\nReview notes: {sub.review_notes}"
+
+            note = Notifications(title='Photo submission approved', content=content, team_id=sub.team_id)
             db.session.add(note)
+            # Mark any other pending submissions for this team/challenge as rejected/cleared
+            PhotoSubmission.query.filter_by(team_id=sub.team_id, challenge_id=sub.challenge_id, status='pending').update({"status": "rejected"})
             db.session.commit()
         except Exception:
             db.session.rollback()
 
+        # Return JSON for XHR/JSON clients, otherwise redirect to the
+        # admin review page so browser form submits still work.
+        rendered = render_template('admin_review.html', submissions=PhotoSubmission.query.order_by(PhotoSubmission.submitted_at.desc()).all())
+        accept = request.headers.get('Accept', '')
+        if 'application/json' in accept or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return {"success": True, "submission_id": sub.id, "status": "approved", "html": rendered}
         return redirect('/api/v1/photo_challenges/admin/review')
 
 
@@ -276,13 +406,29 @@ class AdminReject(Resource):
         except Exception:
             db.session.rollback()
 
+        # Notify team and ensure any pending flags are cleared so challenge is submittable
         try:
-            note = Notifications(title='Photo submission rejected', content=f'Your photo submission for challenge {sub.challenge_id} was rejected.', team_id=sub.team_id)
+            chal = Challenges.query.filter_by(id=sub.challenge_id).first()
+            challenge_name = chal.name if chal else str(sub.challenge_id)
+            content = f"Your photo submission for challenge '{challenge_name}' was rejected."
+            if sub.review_notes:
+                content += f"\nReview notes: {sub.review_notes}"
+
+            note = Notifications(title='Photo submission rejected', content=content, team_id=sub.team_id)
             db.session.add(note)
+            # Clear any other pending submissions for this team/challenge
+            PhotoSubmission.query.filter_by(team_id=sub.team_id, challenge_id=sub.challenge_id, status='pending').update({"status": "rejected"})
+            # Ensure challenge is visible/submittable again
+            if chal:
+                chal.state = 'visible'
             db.session.commit()
         except Exception:
             db.session.rollback()
 
+        rendered = render_template('admin_review.html', submissions=PhotoSubmission.query.order_by(PhotoSubmission.submitted_at.desc()).all())
+        accept = request.headers.get('Accept', '')
+        if 'application/json' in accept or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return {"success": True, "submission_id": sub.id, "status": "rejected", "html": rendered}
         return redirect('/api/v1/photo_challenges/admin/review')
 
 
@@ -390,8 +536,14 @@ def submission_status_fallback(challenge_id):
     team = get_current_team()
     team_id = team.id if team else (user.id if user else None)
 
-    pending = False
+    status = None
     if team_id is not None:
-        pending = PhotoSubmission.query.filter_by(team_id=team_id, challenge_id=challenge_id, status='pending').first() is not None
+        sub = (
+            PhotoSubmission.query.filter_by(team_id=team_id, challenge_id=challenge_id)
+            .order_by(PhotoSubmission.submitted_at.desc())
+            .first()
+        )
+        if sub:
+            status = sub.status
 
-    return {"pending": pending}
+    return {"status": status}
