@@ -34,6 +34,18 @@ services:
     depends_on:
       - ctfd
 
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    environment: #TODO: Add tokens in .env
+      NGROK_AUTHTOKEN: placeholder
+    command: http ctfd:8000
+    depends_on:
+      - ctfd
+    networks:
+      internal:
+
+
   db:
     image: mariadb:10.11
     restart: always
