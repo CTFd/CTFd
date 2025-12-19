@@ -107,6 +107,49 @@ services:
           > "/backups/$${TIMESTAMP}.sql"
 
 
+  restore:
+    image: mariadb:10.11
+    restart: "no"
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: ctfd
+      MYSQL_PASSWORD: ctfd
+      MYSQL_DATABASE: ctfd
+      BACKUP_FILE: ""
+    volumes:
+      - backups:/backups:ro
+    networks:
+      - internal
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        if [ -z "$$BACKUP_FILE" ]; then
+          echo "ERROR: BACKUP_FILE is not set"
+          echo "Usage: BACKUP_FILE=filename.sql docker compose run --rm restore"
+          exit 1
+        fi
+
+        echo "Restoring backup: $$BACKUP_FILE"
+
+        mysql \
+          -h "$$MYSQL_HOST" \
+          -u "$$MYSQL_USER" \
+          -p"$$MYSQL_PASSWORD" \
+          "$$MYSQL_DATABASE" <<EOF
+        SET autocommit=0;
+        SET unique_checks=0;
+        SET foreign_key_checks=0;
+        SOURCE /backups/$$BACKUP_FILE;
+        COMMIT;
+        SET foreign_key_checks=1;
+        SET unique_checks=1;
+        EOF
+
+        echo "Restore completed successfully"
+
+
+
 
   cache:
     image: redis:4
