@@ -4,7 +4,7 @@
 #
 #    ./scripts/pip-compile.sh
 #
-alembic==1.16.4
+alembic==1.17.2
     # via
     #   dataset
     #   flask-migrate

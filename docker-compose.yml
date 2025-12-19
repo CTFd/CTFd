@@ -1,4 +1,27 @@
 services:
+  ctfd-backup:
+      build: /ctfd-backup
+      container_name: ctfd-backup
+      restart: "no"
+
+      volumes:
+        - ./backup-data:/data
+
+      # Optioneel maar netjes
+      environment:
+        TZ: Europe/Amsterdam
+
+      depends_on:
+        - ctfd
+      networks:
+        ctfd_net:
+      # Logt netjes naar stdout (cron / docker logs)
+      logging:
+        driver: json-file
+        options:
+          max-size: "10m"
+          max-file: "3"
+   
   ctfd:
     build: .
     user: root
@@ -18,10 +41,12 @@ services:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
       - .:/opt/CTFd:ro
+      - /opt/ctfd-backup:/opt/ctfd-backup:ro
+      - /backups:/backups
     depends_on:
       - db
     networks:
-        default:
+        ctfd_net:
         internal:
 
   nginx:
@@ -33,7 +58,9 @@ services:
       - 80:80
     depends_on:
       - ctfd
-
+    networks:
+      ctfd_net:
+      internal:
   db:
     image: mariadb:10.11
     restart: always
@@ -59,6 +86,8 @@ services:
         internal:
 
 networks:
-    default:
-    internal:
-        internal: true
+  ctfd_net:
+    external: true
+
+  internal:
+      internal: true
