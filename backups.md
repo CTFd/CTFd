@@ -141,3 +141,7 @@ docker compose run --rm \
 4. Commit in één transactie
 5. Zet checks weer aan
 
+
+## Geautomatiseerd
+
+Indien CTFd in Kubernetes is gedeployed, kan de backup container worden aangeroepen met een cronjob. Op deze manier zullen er automatisch backups worden gemaakt.
