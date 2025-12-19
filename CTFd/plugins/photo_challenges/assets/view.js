@@ -55,10 +55,59 @@ function markChallengePending() {
     // Dim challenge text and inputs to indicate pending status
     CTFd.lib.$('.challenge-name, .challenge-value, .challenge-desc, .submit-row').css('opacity', '0.6');
 
-    // Add a visible badge next to the challenge title if not present
-    if (CTFd.lib.$('.challenge-name .photo-pending-badge').length === 0) {
-        CTFd.lib.$('.challenge-name').append('<span class="photo-pending-badge badge bg-warning ms-2">Pending Review</span>');
+    // Remove other badges then add pending badge
+    CTFd.lib.$('.photo-pending-badge').remove();
+    CTFd.lib.$('.photo-rejected-badge').remove();
+    CTFd.lib.$('.photo-approved-badge').remove();
+    CTFd.lib.$('.challenge-name').append('<span class="photo-pending-badge badge bg-warning ms-2">Pending Review</span>');
+}
+
+function markChallengeRejected() {
+    // Enable inputs and clear pending styling
+    CTFd.lib.$('#challenge-input').prop('disabled', false);
+    CTFd.lib.$('#challenge-submit-photo').prop('disabled', false).removeClass('disabled-button');
+    CTFd.lib.$('.challenge-name, .challenge-value, .challenge-desc, .submit-row').css('opacity', '1');
+
+    // Remove pending badge and add rejected badge
+    CTFd.lib.$('.photo-pending-badge').remove();
+    if (CTFd.lib.$('.challenge-name .photo-rejected-badge').length === 0) {
+        CTFd.lib.$('.challenge-name').append('<span class="photo-rejected-badge badge bg-danger ms-2">Rejected</span>');
     }
+}
+
+function markChallengeApproved() {
+    // Let the regular CTFd UI handle marking a challenge as solved (green).
+    // We create a Solve on the backend when an admin approves; reload the
+    // page so the standard challenge rendering (and solved-state UI) is used.
+    try { CTFd.lib.$('.photo-pending-badge').remove(); } catch (e) {}
+    showSimpleNotification(__('Submission Approved'), __('Your photo submission was approved. The challenge will be marked accordingly.'));
+    // Avoid triggering repeated reloads if the page keeps re-rendering.
+    // Use sessionStorage per-challenge so the flag survives a single reload
+    // but prevents an infinite reload loop when the status remains "approved".
+    try {
+        function _resolveChallengeIdForGuard() {
+            try { const id = Number(CTFd._internal.challenge?.data?.id); if (!Number.isNaN(id) && id > 0) return id; } catch (e) {}
+            try { const val = CTFd.lib.$('#challenge-id').val(); const id = Number(val); if (!Number.isNaN(id) && id > 0) return id; } catch (e) {}
+            try { const dataId = CTFd.lib.$('[data-challenge-id]').attr('data-challenge-id'); const id = Number(dataId); if (!Number.isNaN(id) && id > 0) return id; } catch (e) {}
+            try { const m = window.location.pathname.match(/challenges\/(\d+)/); if (m) { const id = Number(m[1]); if (!Number.isNaN(id) && id > 0) return id; } } catch (e) {}
+            return null;
+        }
+        var _cid = _resolveChallengeIdForGuard();
+        if (_cid !== null) {
+            var key = 'photo_approved_reload_done_' + String(_cid);
+            if (sessionStorage.getItem(key)) {
+                return;
+            }
+            sessionStorage.setItem(key, '1');
+        } else {
+            // Fallback to window-scoped guard if we couldn't resolve id
+            if (window.__photo_approved_reload_done) {
+                return;
+            }
+            window.__photo_approved_reload_done = true;
+        }
+    } catch (e) {}
+    setTimeout(function() { window.location.reload(); }, 800);
 }
 
 // Check server for pending submissions for the currently opened challenge
@@ -81,9 +130,18 @@ function checkChallengePendingOnOpen() {
         CTFd.fetch(url).then(function(resp) {
             try { return resp.json(); } catch (e) { return Promise.resolve({}); }
         }).then(function(data) {
-            if (data && data.pending) {
-                try { markChallengePending(); } catch (e) { console.warn('[photo] markChallengePending failed', e); }
-                showSimpleNotification(__('Submission Pending'), __('You have a photo submission pending review for this challenge.'));
+                if (data && data.status) {
+                    try {
+                        if (data.status === 'pending') {
+                            markChallengePending();
+                            showSimpleNotification(__('Submission Pending'), __('You have a photo submission pending review for this challenge.'));
+                        } else if (data.status === 'rejected') {
+                            markChallengeRejected();
+                            showSimpleNotification(__('Submission Rejected'), __('Your photo submission was rejected. You may resubmit.'));
+                        } else if (data.status === 'approved') {
+                            markChallengeApproved();
+                        }
+                    } catch (e) { console.warn('[photo] markChallengePending failed', e); }
             }
         }).catch(function(err) {
             console.warn('[photo] pending status check failed', err);

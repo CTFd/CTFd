@@ -542,25 +542,36 @@ def load(app):
     # creation of a local `Api(...)` which can cause initialization hangs
     # in some environments. These wrappers import `routes` only when the
     # endpoint is actually invoked.
-    def _lazy_view(func_name):
+    from CTFd.utils.decorators import authed_only
+    from CTFd.plugins import bypass_csrf_protection
+
+    def _lazy_view(func_name, apply_csrf_bypass=False, require_auth=False):
         def _view(*args, **kwargs):
             module = importlib.import_module("CTFd.plugins.photo_challenges.routes")
             func = getattr(module, func_name)
             return func(*args, **kwargs)
-        return _view
+
+        # Optionally wrap with auth and/or CSRF-bypass so the lazy view
+        # matches the behavior of the original RESTX Resources.
+        view = _view
+        if apply_csrf_bypass:
+            view = bypass_csrf_protection(view)
+        if require_auth:
+            view = authed_only(view)
+        return view
 
     try:
         app.add_url_rule(
             "/api/v1/photo_challenges/upload",
             endpoint="photo_challenges.upload",
-            view_func=_lazy_view("upload_photo_fallback"),
+            view_func=_lazy_view("upload_photo_fallback", apply_csrf_bypass=True, require_auth=True),
             methods=["POST"],
         )
 
         app.add_url_rule(
             "/api/v1/photo_challenges/status/<int:challenge_id>",
             endpoint="photo_challenges.status",
-            view_func=_lazy_view("submission_status_fallback"),
+            view_func=_lazy_view("submission_status_fallback", require_auth=True),
             methods=["GET"],
         )
 
