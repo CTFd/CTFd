@@ -328,3 +328,70 @@ def admin_page():
             valid_submissions.append(s)
 
     return render_template('admin_review.html', submissions=valid_submissions)
+
+
+# --- Fallback view functions (used by plugin load to register direct Flask rules) ---
+def upload_photo_fallback():
+    """Fallback view that delegates to the API upload handler.
+
+    This exists so `__init__.py` can register a direct Flask URL rule
+    in environments where the RESTX namespace isn't attached yet.
+    """
+    # Mirror the logic from the UploadPhoto Resource.post
+    if "file" not in request.files:
+        return {"success": False, "message": "No file"}, 400
+
+    file = request.files["file"]
+    challenge_id = request.form.get("challenge_id")
+
+    if not file or not challenge_id:
+        return {"success": False, "message": "Invalid submission"}, 400
+
+    if not allowed_file(file.filename):
+        return {"success": False, "message": "Invalid file type"}, 400
+
+    filename = secure_filename(file.filename)
+    filename = f"{secrets.token_hex(8)}_{filename}"
+    location = f"photo_evidence/{filename}"
+    file_row = upload_file(file=file, challenge_id=int(challenge_id), type="challenge", location=location)
+    path = file_row.location
+
+    user = get_current_user()
+    team = get_current_team()
+    team_id = team.id if team else (user.id if user else None)
+
+    submission = PhotoSubmission(team_id=team_id, challenge_id=int(challenge_id), filename=filename, filepath=path)
+    db.session.add(submission)
+    db.session.commit()
+
+    # Mark the challenge as paused (pending review)
+    try:
+        chal = Challenges.query.filter_by(id=int(challenge_id)).first()
+        if chal:
+            chal.state = "paused"
+            db.session.commit()
+    except Exception:
+        db.session.rollback()
+
+    # Notify the team
+    try:
+        note = Notifications(title="Photo submission pending", content=f"Your photo for challenge {challenge_id} is pending review.", team_id=team_id)
+        db.session.add(note)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+
+    return {"success": True, "message": "Photo submitted for review", "submission_id": submission.id}
+
+
+def submission_status_fallback(challenge_id):
+    """Fallback view that delegates to the submission status handler."""
+    user = get_current_user()
+    team = get_current_team()
+    team_id = team.id if team else (user.id if user else None)
+
+    pending = False
+    if team_id is not None:
+        pending = PhotoSubmission.query.filter_by(team_id=team_id, challenge_id=challenge_id, status='pending').first() is not None
+
+    return {"pending": pending}

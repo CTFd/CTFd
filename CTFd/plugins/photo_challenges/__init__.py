@@ -3,7 +3,10 @@ from flask_restx import Namespace, Resource
 
 from CTFd.plugins.challenges import BaseChallenge, CHALLENGE_CLASSES
 from CTFd.plugins import register_plugin_assets_directory
-from .routes import photo_namespace
+import importlib
+
+print("photo_challenges: module imported")
+
 from .models import PhotoSubmission
 from CTFd.plugins.migrations import upgrade
 from CTFd.api import CTFd_API_v1
@@ -495,6 +498,7 @@ class PhotoChallengeType(BaseChallenge):
 #             return {"success": True, "data": {"message": "Subflag solved", "solved": True}}  
     
 def load(app):
+    app.logger.info("photo_challenges: load() starting")
     upgrade(plugin_name="photo_challenges")
     app.db.create_all()
 
@@ -516,6 +520,8 @@ def load(app):
     # ad-hoc `add_url_rule` hacks.
     def _register_namespaces():
         try:
+            # Import namespace lazily to avoid import-time side effects
+            from .routes import photo_namespace
             CTFd_API_v1.add_namespace(photo_namespace, '/photo_challenges')
             app.logger.info("photo_challenges: registered RESTX namespace /photo_challenges")
         except Exception:
@@ -531,30 +537,67 @@ def load(app):
     # register direct Flask URL rules that map to the Resource classes
     # defined in `routes.py`. This preserves canonical RESTX usage while
     # ensuring the endpoints remain reachable in all environments.
-    try:
-        # import here to avoid circular import at module import time
-        from .routes import upload_photo_fallback, submission_status_fallback
+    # Register lightweight lazy wrappers for endpoints that would otherwise
+    # import `routes.py` at plugin load time. Importing `routes.py` triggers
+    # creation of a local `Api(...)` which can cause initialization hangs
+    # in some environments. These wrappers import `routes` only when the
+    # endpoint is actually invoked.
+    def _lazy_view(func_name):
+        def _view(*args, **kwargs):
+            module = importlib.import_module("CTFd.plugins.photo_challenges.routes")
+            func = getattr(module, func_name)
+            return func(*args, **kwargs)
+        return _view
 
+    try:
         app.add_url_rule(
             "/api/v1/photo_challenges/upload",
             endpoint="photo_challenges.upload",
-            view_func=upload_photo_fallback,
+            view_func=_lazy_view("upload_photo_fallback"),
             methods=["POST"],
         )
 
         app.add_url_rule(
             "/api/v1/photo_challenges/status/<int:challenge_id>",
             endpoint="photo_challenges.status",
-            view_func=submission_status_fallback,
+            view_func=_lazy_view("submission_status_fallback"),
             methods=["GET"],
         )
-        # Log any rules that include our plugin prefix to aid debugging
+
         try:
             rules = [r.rule for r in app.url_map.iter_rules() if 'photo_challenges' in r.endpoint or 'photo_challenges' in r.rule]
             app.logger.info(f"photo_challenges: fallback rules added, matching rules: {rules}")
         except Exception:
             app.logger.info("photo_challenges: fallback rules added (unable to enumerate url_map)")
     except Exception:
-        # If these rules cannot be added (e.g., during tests or import
-        # ordering issues), ignore and rely on RESTX namespace registration.
         app.logger.exception("photo_challenges: failed to add fallback url rules")
+
+    # Register an admin page and add it to the Admin Plugins menu so
+    # administrators can review/approve/reject submissions from the UI.
+    try:
+        from .routes import admin_page
+        from CTFd.plugins import register_admin_plugin_menu_bar
+
+        # Expose the admin landing page at `/admin/photo_evidence`.
+        app.add_url_rule(
+            "/admin/photo_evidence",
+            endpoint="photo_challenges.admin",
+            view_func=admin_page,
+            methods=["GET"],
+        )
+
+        # Add the menu entry under the admin Plugins dropdown. Use a
+        # relative route (no leading slash) so templates build the final
+        # /admin/... URL consistently.
+        register_admin_plugin_menu_bar("Photo Submissions", "photo_evidence")
+        app.logger.info("photo_challenges: registered admin menu link target 'photo_evidence'")
+
+        # Emit diagnostic info about matching URL rules so we can confirm
+        # registration on startup.
+        try:
+            rules = [r.rule for r in app.url_map.iter_rules() if 'photo_challenges' in r.endpoint or r.rule.endswith('/admin/photo_evidence') or r.rule.endswith('/admin/photo_evidence/')]
+            app.logger.info(f"photo_challenges: url_map rules matching expected admin route: {rules}")
+        except Exception:
+            app.logger.exception("photo_challenges: failed to enumerate url_map after admin registration")
+    except Exception:
+        app.logger.exception("photo_challenges: failed to register admin admin menu link")
