@@ -76,6 +76,37 @@ services:
         internal:
     # This command is required to set important mariadb defaults
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+  
+  backup:
+    image: mariadb:10.11
+    restart: "no"
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: ctfd
+      MYSQL_PASSWORD: ctfd
+      MYSQL_DATABASE: ctfd
+    volumes:
+      - backups:/backups
+    networks:
+      internal:
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        TIMESTAMP=$$(date +"%Y-%m-%d_%H-%M-%S")
+        mysqldump \
+          -h "$$MYSQL_HOST" \
+          -u "$$MYSQL_USER" \
+          -p"$$MYSQL_PASSWORD" \
+          --single-transaction \
+          --quick \
+          --routines \
+          --events \
+          --triggers \
+          "$$MYSQL_DATABASE" \
+          > "/backups/$${TIMESTAMP}.sql"
+
+
 
   cache:
     image: redis:4
@@ -91,3 +122,6 @@ networks:
 
   internal:
       internal: true
+
+volumes:
+  backups:

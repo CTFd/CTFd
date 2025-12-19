@@ -1,0 +1,14 @@
+[
+    {
+        "pos": 1,
+        "account_id": 1,
+        "account_url": "/teams/1",
+        "account_type": "team",
+        "oauth_id": null,
+        "name": "losers",
+        "score": 100,
+        "bracket_id": null,
+        "bracket_name": null,
+        "members": []
+    }
+]
