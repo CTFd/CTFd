@@ -22,7 +22,7 @@ def mysql_op_drop_constraint(op, name, table_name, type_):
     https://mariadb.org/per-table-unique-foreign-key-constraint-names-new-feature-in-mariadb-12-1/
     """
     # If default contraint name is used
-    if name.startswith(table_name + '_ibfk_'):
+    if name.startswith(table_name + "_ibfk_"):
         # Try to run the constraint drop operation as normal
         try:
             op.drop_constraint(name, table_name, type_=type_)
@@ -31,19 +31,22 @@ def mysql_op_drop_constraint(op, name, table_name, type_):
         # Monitor for errors
         except Exception as e:
             # Inspect the error
-            if hasattr(e, 'orig') and hasattr(e.orig, 'args'):
+            if hasattr(e, "orig") and hasattr(e.orig, "args"):
                 error_code = e.orig.args[0]
 
                 # If the error is "constraint not found" (1091)
                 if error_code == 1091:
                     # This may mean that a MariaDB 12.1 or above is used, so try again with the new default naming
-                    op.drop_constraint(name.split('_ibfk_', 1)[1], table_name, type_=type_)
+                    op.drop_constraint(
+                        name.split("_ibfk_", 1)[1], table_name, type_=type_
+                    )
                     return
             # Re-raise any other unexpected operational error
             raise
     else:
         # Try to run the constraint drop operation as normal
         op.drop_constraint(name, table_name, type_=type_)
+
 
 def upgrade():
     bind = op.get_bind()
