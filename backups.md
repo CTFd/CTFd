@@ -44,7 +44,6 @@ Voor **volledige recovery** combineer je dit met:
 .data/mysql/
 ```
 Dit is het **live databasevolume**.  
-Hier raak je **nooit handmatig iets aan**.
 
 ### Backups
 

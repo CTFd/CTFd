@@ -1,26 +1,4 @@
 services:
-  ctfd-backup:
-      build: /ctfd-backup
-      container_name: ctfd-backup
-      restart: "no"
-
-      volumes:
-        - ./backup-data:/data
-
-      # Optioneel maar netjes
-      environment:
-        TZ: Europe/Amsterdam
-
-      depends_on:
-        - ctfd
-      networks:
-        ctfd_net:
-      # Logt netjes naar stdout (cron / docker logs)
-      logging:
-        driver: json-file
-        options:
-          max-size: "10m"
-          max-file: "3"
    
   ctfd:
     build: .
@@ -41,8 +19,7 @@ services:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
       - .:/opt/CTFd:ro
-      - /opt/ctfd-backup:/opt/ctfd-backup:ro
-      - /backups:/backups
+      - ~/Desktop/CTFd/backups:/backups
     depends_on:
       - db
     networks:
