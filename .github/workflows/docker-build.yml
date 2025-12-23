@@ -10,37 +10,47 @@ jobs:
     permissions:
       contents: read
       packages: write
+    strategy:
+      matrix:
+        include:
+          - name: debian-image
+            dockerfile: Dockerfile
+            latest_tag: latest
+            version_tag: ${{ github.event.release.tag_name }}
+          - name: alpine-image
+            dockerfile: Dockerfile-alpine
+            latest_tag: alpine
+            version_tag: ${{ github.event.release.tag_name }}-alpine
     steps:
-      - name: Set repo name lowercase
-        id: repo
-        uses: ASzc/change-string-case-action@v2
-        with:
-          string: ${{ github.repository }}
+      - name: Lowercase github.repository
+        run: |
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY@L}" >> ${GITHUB_ENV}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v3
+      - name: Build and push ${{ matrix.name }} image
+        uses: docker/build-push-action@v6
         with:
           context: .
+          file: ./${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ steps.repo.outputs.lowercase }}:latest
-            ghcr.io/${{ steps.repo.outputs.lowercase }}:latest
-            ${{ steps.repo.outputs.lowercase }}:${{ github.event.release.tag_name }}
-            ghcr.io/${{ steps.repo.outputs.lowercase }}:${{ github.event.release.tag_name }}
+            ${{ env.IMAGE_NAME }}:${{ matrix.latest_tag }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ matrix.latest_tag }}
+            ${{ env.IMAGE_NAME }}:${{ matrix.version_tag }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ matrix.version_tag }}
