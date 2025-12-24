@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from unittest.mock import patch
 
 from freezegun import freeze_time
+from sqlalchemy.exc import IntegrityError
 
-from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Users
+from CTFd.exceptions.challenges import ChallengeSolveException
+from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Tracking, Users
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -1031,6 +1034,38 @@ def test_api_challenge_attempt_post_admin():
     destroy_ctfd(app)
 
 
+def test_api_challenge_attempt_post_duplicate_solve_race_condition():
+    """Test that a race condition resulting in ChallengeSolveException returns 'already_solved' status"""
+    app = create_ctfd()
+    with app.app_context():
+        challenge = gen_challenge(app.db)
+        challenge_id = challenge.id
+        gen_flag(app.db, challenge_id=challenge.id, content="flag")
+        register_user(app)
+        client = login_as_user(app)
+
+        # Mock BaseChallenge.solve raising ChallengeSolveException - it's hard to trigger this race condition in tests
+        # The exception should be handled and API should return an already_solved status
+        with patch("CTFd.plugins.challenges.BaseChallenge.solve") as mock_solve:
+            exception = ChallengeSolveException("Duplicate solve")
+            exception.__cause__ = IntegrityError(
+                "INSERT test...", {}, Exception("UNIQUE constraint failed")
+            )
+            mock_solve.side_effect = exception
+
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag"},
+            )
+
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp["data"]["status"] == "already_solved"
+            assert "already solved this" in resp["data"]["message"]
+
+    destroy_ctfd(app)
+
+
 def test_api_challenge_get_solves_visibility_public():
     """Can a public user get /api/v1/challenges/<challenge_id>/solves if challenge_visibility is private/public"""
     app = create_ctfd()
@@ -1385,4 +1420,56 @@ def test_api_challenge_get_flags_admin():
         with login_as_user(app, "admin") as client:
             r = client.get("/api/v1/challenges/1/flags")
             assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_challenge_tracking_first_open_only():
+    """Test that Tracking entry is created only on first challenge open"""
+    app = create_ctfd()
+    with app.app_context():
+        # Create a challenge and a user
+        gen_challenge(app.db)
+        register_user(app)
+
+        # Initially, no tracking entries should exist
+        tracking_count = Tracking.query.filter_by(
+            user_id=2,  # testuser has id 2 (admin is id 1)
+            type="challenges.open",
+            target=1,  # challenge id 1
+        ).count()
+        assert tracking_count == 0
+
+        with login_as_user(app) as client:
+            # First request to challenge - should create tracking entry
+            r = client.get("/api/v1/challenges/1")
+            assert r.status_code == 200
+
+            # Check that tracking entry was created
+            tracking_count = Tracking.query.filter_by(
+                user_id=2, type="challenges.open", target=1
+            ).count()
+            # First challenge open should create tracking entry
+            assert tracking_count == 1
+
+            # Second request to same challenge - should NOT create another tracking entry
+            r = client.get("/api/v1/challenges/1")
+            assert r.status_code == 200
+
+            # Check that tracking entry count is still 1
+            tracking_count = Tracking.query.filter_by(
+                user_id=2, type="challenges.open", target=1
+            ).count()
+            # Subsequent challenge opens should not create additional tracking entries
+            assert tracking_count == 1
+
+            # Third request to ensure consistency
+            r = client.get("/api/v1/challenges/1")
+            assert r.status_code == 200
+
+            tracking_count = Tracking.query.filter_by(
+                user_id=2, type="challenges.open", target=1
+            ).count()
+            # Multiple opens should still only have one tracking entry
+            assert tracking_count == 1
+
     destroy_ctfd(app)

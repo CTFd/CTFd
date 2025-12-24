@@ -141,9 +141,7 @@ def test_user_bad_login():
         with client.session_transaction() as sess:
             assert sess.get("id") is None
         r = client.get("/profile")
-        assert r.location.startswith(
-            "http://localhost/login"
-        )  # We got redirected to login
+        assert r.location.startswith("/login")  # We got redirected to login
     destroy_ctfd(app)
 
 
@@ -154,9 +152,7 @@ def test_user_login():
         register_user(app)
         client = login_as_user(app)
         r = client.get("/profile")
-        assert (
-            r.location != "http://localhost/login"
-        )  # We didn't get redirected to login
+        assert r.location is None  # We didn't get redirected to login
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -168,9 +164,7 @@ def test_user_login_with_email():
         register_user(app)
         client = login_as_user(app, name="user@examplectf.com", password="password")
         r = client.get("/profile")
-        assert (
-            r.location != "http://localhost/login"
-        )  # We didn't get redirected to login
+        assert r.location is None  # We didn't get redirected to login
         assert r.status_code == 200
     destroy_ctfd(app)
 
@@ -183,7 +177,7 @@ def test_user_get_logout():
         client = login_as_user(app)
         client.get("/logout", follow_redirects=True)
         r = client.get("/challenges")
-        assert r.location == "http://localhost/login?next=%2Fchallenges%3F"
+        assert r.location == "/login?next=%2Fchallenges%3F"
         assert r.status_code == 302
     destroy_ctfd(app)
 
@@ -204,7 +198,7 @@ def test_user_isnt_admin():
             "config",
         ]:
             r = client.get("/admin/{}".format(page))
-            assert r.location.startswith("http://localhost/login?next=")
+            assert r.location.startswith("/login?next=")
             assert r.status_code == 302
     destroy_ctfd(app)
 
@@ -213,6 +207,11 @@ def test_expired_confirmation_links():
     """Test that expired confirmation links are reported to the user"""
     app = create_ctfd()
     with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
         set_config("verify_emails", True)
 
         register_user(app, email="user@user.com")
@@ -237,6 +236,11 @@ def test_invalid_confirmation_links():
     """Test that invalid confirmation links are reported to the user"""
     app = create_ctfd()
     with app.app_context():
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
         set_config("verify_emails", True)
 
         register_user(app, email="user@user.com")
@@ -337,7 +341,7 @@ def test_user_can_confirm_email(mock_smtp):
 
         client = login_as_user(app, name="user1", password="password")
 
-        r = client.get("http://localhost/confirm")
+        r = client.get("/confirm")
         assert "We've sent a confirmation email" in r.get_data(as_text=True)
 
         # smtp send message function was called
@@ -351,21 +355,19 @@ def test_user_can_confirm_email(mock_smtp):
             assert "Confirmation email sent to" in r.get_data(as_text=True)
 
             r = client.get("/challenges")
-            assert (
-                r.location == "http://localhost/confirm"
-            )  # We got redirected to /confirm
+            assert r.location == "/confirm"  # We got redirected to /confirm
 
             r = client.get(
                 "http://localhost/confirm/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
             )
-            assert r.location == "http://localhost/challenges"
+            assert r.location == "/challenges"
 
             # The team is now verified
             user = Users.query.filter_by(email="user@user.com").first()
             assert user.verified is True
 
             r = client.get("http://localhost/confirm")
-            assert r.location == "http://localhost/settings"
+            assert r.location == "/settings"
     destroy_ctfd(app)
 
 
@@ -503,7 +505,7 @@ def test_registration_code_required():
             data["registration_code"] = "secret-sauce"
             r = client.post("/register", data=data)
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/challenges")
+            assert r.location.startswith("/challenges")
     destroy_ctfd(app)
 
 
@@ -533,5 +535,303 @@ def test_registration_code_allows_numeric():
             data["registration_code"] = "1234567890"
             r = client.post("/register", data=data)
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/challenges")
+            assert r.location.startswith("/challenges")
+    destroy_ctfd(app)
+
+
+def test_registration_password_minimum_length():
+    """
+    Test that registration enforces minimum password length when configured
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Set a minimum password length
+        set_config("password_min_length", 8)
+
+        with app.test_client() as client:
+            # Load CSRF nonce
+            r = client.get("/register")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user",
+                    "email": "user1@examplectf.com",
+                    "password": "short",  # Only 5 characters
+                    "nonce": sess.get("nonce"),
+                }
+
+            # Attempt registration with password too short
+            r = client.post("/register", data=data)
+            resp = r.get_data(as_text=True)
+            assert "Password must be at least 8 characters" in resp
+            assert r.status_code == 200  # Should stay on registration page
+
+            # Verify user was not created
+            user_count = Users.query.count()
+            assert user_count == 1  # Only admin user exists
+
+            # Attempt registration with password meeting minimum length
+            data["password"] = "validpassword"  # 13 characters, meets minimum
+            r = client.post("/register", data=data)
+            assert r.status_code == 302
+            assert r.location.startswith("/challenges")
+
+            # Verify user was created
+            user_count = Users.query.count()
+            assert user_count == 2  # Admin user + new user
+
+        # Test with minimum length set to 0 (disabled)
+        set_config("password_min_length", 0)
+
+        with app.test_client() as client:
+            # Load CSRF nonce
+            r = client.get("/register")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "user2",
+                    "email": "user2@examplectf.com",
+                    "password": "x",  # Only 1 character
+                    "nonce": sess.get("nonce"),
+                }
+
+            # Should allow short password when minimum length is 0
+            r = client.post("/register", data=data)
+            assert r.status_code == 302
+            assert r.location.startswith("/challenges")
+
+            # Verify user was created
+            user_count = Users.query.count()
+            assert user_count == 3  # Admin user + 2 new users
+    destroy_ctfd(app)
+
+
+def test_user_change_password_required():
+    """
+    Test that users with change_password=True are redirected to reset password
+    and cannot access other pages until they change their password
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Create a user with change_password=True
+        register_user(
+            app, name="testuser", email="test@example.com", password="oldpassword"
+        )
+        user = Users.query.filter_by(name="testuser").first()
+        user.change_password = True
+        db.session.commit()
+
+        with app.test_client() as client:
+            # Login as the user
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "testuser",
+                    "password": "oldpassword",
+                    "nonce": sess.get("nonce"),
+                }
+
+            # Get login page first to get nonce
+            client.get("/login")
+            with client.session_transaction() as sess:
+                data["nonce"] = sess.get("nonce")
+
+            # Login
+            r = client.post("/login", data=data)
+            assert r.status_code == 302
+
+            # Test that user is redirected to reset_password when accessing various pages
+            protected_routes = [
+                "/",
+                "/challenges",
+                "/scoreboard",
+                "/profile",
+                "/settings",
+                "/api/v1/challenges",
+            ]
+
+            for route in protected_routes:
+                r = client.get(route, follow_redirects=False)
+                # Should be redirected to reset_password with a token
+                assert r.status_code == 302
+                assert "/reset_password/" in r.location
+
+            # Test that the user can access the reset_password page directly
+            r = client.get(route, follow_redirects=True)
+            # Should end up on reset_password page
+            final_url = r.request.path
+            assert "/reset_password/" in final_url
+
+            # Get redirected to reset password page with token
+            r = client.get("/challenges", follow_redirects=False)
+            assert r.status_code == 302
+            assert "/reset_password/" in r.location
+
+            # Extract the token from the redirect URL
+            reset_url = r.location
+            token = reset_url.split("/reset_password/")[-1]
+
+            # Access the reset password page with the token
+            r = client.get(f"/reset_password/{token}")
+            assert r.status_code == 200
+
+            # Actually reset the password using the reset password form
+            with client.session_transaction() as sess:
+                reset_data = {"password": "newpassword123", "nonce": sess.get("nonce")}
+
+            # Submit the password reset form
+            r = client.post(f"/reset_password/{token}", data=reset_data)
+            assert r.status_code == 302  # Should redirect after successful reset
+
+            # Verify the password was actually changed and change_password flag was cleared
+            user = Users.query.filter_by(name="testuser").first()
+            assert user.change_password is False
+            assert verify_password("newpassword123", user.password)
+
+            client.get("/login")
+            with client.session_transaction() as sess:
+                data = {
+                    "name": "testuser",
+                    "password": "newpassword123",
+                    "nonce": sess.get("nonce"),
+                }
+
+            r = client.post("/login", data=data)
+            assert r.status_code == 302
+
+            # Now user should be able to access protected routes normally
+            r = client.get("/challenges")
+            assert r.status_code == 200
+            assert r.location is None  # No redirect
+
+            r = client.get("/profile")
+            assert r.status_code == 200
+            assert r.location is None  # No redirect
+
+    destroy_ctfd(app)
+
+
+def test_admin_can_set_change_password_via_api():
+    """
+    Test that admins can set the change_password attribute via the API
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Login as admin
+        client = login_as_user(app, name="admin", password="password")
+
+        # Create a user via API with change_password=True
+        r = client.post(
+            "/api/v1/users",
+            json={
+                "name": "apiuser",
+                "email": "apiuser@example.com",
+                "password": "password123",
+                "change_password": True,
+            },
+        )
+        assert r.status_code == 200
+
+        # Verify the user was created with change_password=True
+        response_data = r.get_json()
+        assert response_data["success"] is True
+        user_id = response_data["data"]["id"]
+
+        user = Users.query.filter_by(id=user_id).first()
+        assert user is not None
+        assert user.change_password is True
+
+        # Update user via API to set change_password=False
+        r = client.patch(f"/api/v1/users/{user_id}", json={"change_password": False})
+        assert r.status_code == 200
+
+        # Verify the change_password was updated
+        user = Users.query.filter_by(id=user_id).first()
+        assert user.change_password is False
+
+        # Test that non-admin users cannot set change_password via API
+        register_user(app, name="normaluser", email="normal@example.com")
+        normal_client = login_as_user(app, name="normaluser", password="password")
+
+        # Try to modify change_password on their own account (should fail)
+        normal_user = Users.query.filter_by(name="normaluser").first()
+        r = normal_client.patch(
+            f"/api/v1/users/{normal_user.id}",
+            json={
+                "change_password": True,
+            },
+        )
+        # Normal users shouldn't be able to modify change_password field
+        assert r.status_code == 403  # Forbidden
+
+        # Verify that change_password was not modified
+        normal_user = Users.query.filter_by(name="normaluser").first()
+        assert normal_user.change_password is False
+
+        # Also test via the /me endpoint
+        r = normal_client.patch(
+            "/api/v1/users/me",
+            json={
+                "change_password": True,
+            },
+        )
+        # Request goes through but doesn't actually modify the attribute
+        assert r.status_code == 200
+
+        # Verify that change_password was still not modified
+        normal_user = Users.query.filter_by(name="normaluser").first()
+        assert normal_user.change_password is False
+
+    destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_user_reset_password_rate_limit(mock_smtp):
+    """
+    Test that a user can only create 5 reset password attempts before they are rate limited
+    """
+    app = create_ctfd()
+    with app.app_context():
+        # Create a user before configuring mail to not send any extra emails
+        register_user(app, name="user1", email="user@user.com")
+
+        # Set CTFd to send emails
+        set_config("mail_server", "localhost")
+        set_config("mail_port", 25)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "username")
+        set_config("mail_password", "password")
+
+        with app.test_client() as client:
+            # Make 5 password reset requests (which should all succeed)
+            for _ in range(5):
+                client.get("/reset_password")
+
+                # Build reset password data
+                with client.session_transaction() as sess:
+                    data = {"nonce": sess.get("nonce"), "email": "user@user.com"}
+
+                # Issue the password reset request
+                r = client.post("/reset_password", data=data)
+                assert r.status_code == 200
+                resp = r.get_data(as_text=True)
+                assert (
+                    "If that account exists you will receive an email, please check your inbox"
+                    in resp
+                )
+                assert "Too many password reset attempts" not in resp
+
+            # Verify that the email was sent 5 times
+            assert mock_smtp.return_value.send_message.call_count == 5
+
+            # 6th attempt should be rate limited
+            client.get("/reset_password")
+            with client.session_transaction() as sess:
+                data = {"nonce": sess.get("nonce"), "email": "user@user.com"}
+
+            r = client.post("/reset_password", data=data)
+            assert r.status_code == 200
+            resp = r.get_data(as_text=True)
+            assert "Too many password reset attempts. Please try again later." in resp
+
+            # Verify that no additional email was sent
+            assert mock_smtp.return_value.send_message.call_count == 5
+
     destroy_ctfd(app)

@@ -83,7 +83,7 @@ def test_page_requiring_auth():
         with app.test_client() as client:
             r = client.get("/this-is-a-route")
             assert r.status_code == 302
-            assert r.location == "http://localhost/login?next=%2Fthis-is-a-route%3F"
+            assert r.location == "/login?next=%2Fthis-is-a-route%3F"
 
         register_user(app)
         client = login_as_user(app)
@@ -135,7 +135,7 @@ def test_themes_handler():
     app = create_ctfd()
     with app.app_context():
         with app.test_client() as client:
-            r = client.get("/themes/core/static/css/main.min.css")
+            r = client.get("/themes/core/static/manifest.json")
             assert r.status_code == 200
             r = client.get("/themes/core/static/css/404_NOT_FOUND")
             assert r.status_code == 404
@@ -268,6 +268,81 @@ def test_user_can_access_files():
                     r = admin.get(url)
                     assert r.status_code == 200
                     assert r.get_data(as_text=True) == "testing file load"
+        finally:
+            rmdir(directory)
+    destroy_ctfd(app)
+
+
+def test_admin_access_files_with_auth_token():
+    """Test that admins can download files via token before CTF starts"""
+    app = create_ctfd()
+    with app.app_context():
+        from CTFd.utils.uploads import rmdir
+
+        chal = gen_challenge(app.db)
+        chal_id = chal.id
+        path = app.config.get("UPLOAD_FOLDER")
+
+        md5hash = hexencode(os.urandom(16))
+        location = os.path.join(path, md5hash, "test.txt")
+        directory = os.path.dirname(location)
+        model_path = os.path.join(md5hash, "test.txt")
+
+        try:
+            os.makedirs(directory)
+            with open(location, "wb") as obj:
+                obj.write("testing admin file load".encode())
+            gen_file(app.db, location=model_path, challenge_id=chal_id)
+
+            # Register a regular user and admin user
+            register_user(app)
+
+            # Get regular user token for comparison
+            with login_as_user(app) as user_client:
+                req = user_client.get("/api/v1/challenges/1")
+                data = req.get_json()
+                user_file_url = data["data"]["files"][0]
+
+            # Set CTF to start in the future (before CTF start scenario)
+            with freeze_time("2017-10-5"):
+                # Friday, October 6, 2017 12:00:00 AM GMT-04:00 DST
+                set_config("start", "1507262400")
+                set_config("challenge_visibility", "private")
+
+                # Confirm that challenges aren't visible
+                with login_as_user(app) as user_client:
+                    req = user_client.get("/challenges")
+                    assert req.status_code == 403
+
+                # Get admin token for file download
+                with login_as_user(app, "admin") as admin_client:
+                    req = admin_client.get("/api/v1/challenges/1")
+                    data = req.get_json()
+                    admin_file_url = data["data"]["files"][0]
+
+                with app.test_client() as client:
+                    # Test that admin can download files via token before CTF starts
+                    r = client.get(admin_file_url)
+                    assert r.status_code == 200
+                    assert r.get_data(as_text=True) == "testing admin file load"
+
+                    # Test that regular user cannot download files via token before CTF starts
+                    r = client.get(user_file_url)
+                    assert r.status_code == 403
+                    assert r.get_data(as_text=True) != "testing admin file load"
+
+                    # Test direct file access without token should fail for both
+                    direct_url = url_for("views.files", path=model_path)
+                    r = client.get(direct_url)
+                    assert r.status_code == 403
+
+                    # Test with invalid token should fail
+                    invalid_token_url = url_for(
+                        "views.files", path=model_path, token="invalid_token"
+                    )
+                    r = client.get(invalid_token_url)
+                    assert r.status_code == 403
+
         finally:
             rmdir(directory)
     destroy_ctfd(app)

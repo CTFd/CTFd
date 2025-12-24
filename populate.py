@@ -13,11 +13,15 @@ from CTFd.models import (
     Teams,
     Challenges,
     Flags,
+    Hints,
     Awards,
     ChallengeFiles,
     Fails,
     Solves,
     Tracking,
+    Brackets,
+    Solutions,
+    Ratings,
 )
 from faker import Faker
 
@@ -34,6 +38,9 @@ parser.add_argument(
 parser.add_argument(
     "--awards", help="Amount of awards to generate", default=5, type=int
 )
+parser.add_argument(
+    "--brackets", help="Amount of brackets to generate", default=5, type=int
+)
 
 args = parser.parse_args()
 
@@ -44,6 +51,7 @@ USER_AMOUNT = args.users
 TEAM_AMOUNT = args.teams if args.mode == "teams" else 0
 CHAL_AMOUNT = args.challenges
 AWARDS_AMOUNT = args.awards
+BRACKETS_AMOUNT = args.brackets
 
 categories = [
     "Exploitation",
@@ -69,8 +77,12 @@ icons = [
 ]
 
 
-def gen_sentence():
+def gen_text():
     return fake.text()
+
+
+def gen_sentence():
+    return fake.sentence()
 
 
 def gen_name():
@@ -97,6 +109,10 @@ def gen_value():
     return random.choice(range(100, 500, 50))
 
 
+def gen_cost():
+    return random.choice([0, 50, 100])
+
+
 def gen_word():
     return fake.word()
 
@@ -111,6 +127,10 @@ def gen_file():
 
 def gen_ip():
     return fake.ipv4()
+
+
+def gen_rating():
+    return random.choice((-1, 1))
 
 
 def random_date(start, end):
@@ -133,7 +153,7 @@ if __name__ == "__main__":
             word = gen_word()
             chal = Challenges(
                 name=word,
-                description=gen_sentence(),
+                description=gen_text(),
                 attribution=f"Written by {gen_name()}",
                 value=gen_value(),
                 category=gen_category(),
@@ -143,6 +163,37 @@ if __name__ == "__main__":
             f = Flags(challenge_id=x + 1, content=word, type="static")
             db.session.add(f)
             db.session.commit()
+
+        # Generating Solutions
+        print("GENERATING SOLUTIONS")
+        solutions = []
+        for x in range(CHAL_AMOUNT):
+            solution = Solutions(
+                content=" ".join([gen_text() for _ in range(5)]),
+                state="visible",
+                challenge_id=x + 1,
+            )
+            db.session.add(solution)
+            solutions.append(solution)
+        db.session.commit()
+
+        # Generating Hints
+        print("GENERATING HINTS")
+        for challenge_id in range(1, CHAL_AMOUNT + 1):
+            # Each challenge gets 0-3 hints (weighted towards having hints)
+            num_hints = random.choices([0, 1, 2, 3], weights=[20, 30, 35, 15])[0]
+
+            for hint_num in range(num_hints):
+                hint = Hints(
+                    title=gen_sentence(),
+                    content=gen_text(),
+                    cost=gen_cost(),
+                    challenge_id=challenge_id,
+                    type="standard",
+                )
+                db.session.add(hint)
+
+        db.session.commit()
 
         # Generating Files
         print("GENERATING FILES")
@@ -157,6 +208,23 @@ if __name__ == "__main__":
             db.session.add(chal_file)
 
         db.session.commit()
+
+        # Generating Brackets
+        print("GENERATING BRACKETS")
+        for x in range(BRACKETS_AMOUNT):
+            bracket = Brackets(
+                name=gen_team_name(), description=gen_sentence(), type="teams"
+            )
+            db.session.add(bracket)
+        for x in range(BRACKETS_AMOUNT):
+            bracket = Brackets(
+                name=gen_team_name(), description=gen_sentence(), type="users"
+            )
+            db.session.add(bracket)
+
+        db.session.commit()
+        TEAM_BRACKETS = [b.id for b in Brackets.query.filter_by(type="teams").all()]
+        USER_BRACKETS = [b.id for b in Brackets.query.filter_by(type="users").all()]
 
         # Generating Teams
         print("GENERATING TEAMS")
@@ -176,6 +244,8 @@ if __name__ == "__main__":
                         oauth_id = random.randint(1, 1000)
                     used_oauth_ids.append(oauth_id)
                     team.oauth_id = oauth_id
+                if random_chance():
+                    team.bracket_id = random.choice(TEAM_BRACKETS)
                 db.session.add(team)
                 count += 1
 
@@ -201,6 +271,8 @@ if __name__ == "__main__":
                             oauth_id = random.randint(1, 1000)
                         used_oauth_ids.append(oauth_id)
                         user.oauth_id = oauth_id
+                    if random_chance():
+                        user.bracket_id = random.choice(USER_BRACKETS)
                     if mode == "teams":
                         user.team_id = random.randint(1, TEAM_AMOUNT)
                     db.session.add(user)
@@ -229,6 +301,41 @@ if __name__ == "__main__":
                 if captain:
                     team.captain_id = captain.id
             db.session.commit()
+
+        # Generating Challenge Open Tracking Events
+        print("GENERATING CHALLENGE TRACKING EVENTS")
+        base_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=-12000)
+
+        for user_id in range(1, USER_AMOUNT + 1):
+            user = Users.query.filter_by(id=user_id).first()
+            if user:
+                # Each user opens/views some random challenges (60-100% of challenges)
+                num_challenges_to_open = random.randint(
+                    int(CHAL_AMOUNT * 0.6), CHAL_AMOUNT
+                )
+                challenges_to_open = random.sample(
+                    range(1, CHAL_AMOUNT + 1), num_challenges_to_open
+                )
+
+                user_time = base_time + datetime.timedelta(
+                    minutes=random.randint(0, 1000)
+                )
+
+                for challenge_id in challenges_to_open:
+                    # Create tracking event for challenge open
+                    track_event = Tracking(
+                        type="challenges.open",
+                        ip=gen_ip(),
+                        target=challenge_id,
+                        user_id=user_id,
+                        date=user_time,
+                    )
+                    db.session.add(track_event)
+
+                    # Increment time by 1-30 minutes between challenge opens
+                    user_time += datetime.timedelta(minutes=random.randint(1, 30))
+
+        db.session.commit()
 
         # Generating Solves
         print("GENERATING SOLVES")
@@ -347,6 +454,40 @@ if __name__ == "__main__":
 
                     db.session.add(wrong)
                     db.session.commit()
+
+        db.session.commit()
+
+        # Generating Ratings and Reviews for Solved Challenges
+        print("GENERATING RATINGS AND REVIEWS")
+        solves = Solves.query.all()
+        for solve in solves:
+            # Only some users will rate challenges they solve (60% chance)
+            if random.random() < 0.6:
+                try:
+                    # Check if this user has already rated this challenge
+                    existing_rating = Ratings.query.filter_by(
+                        user_id=solve.user_id, challenge_id=solve.challenge_id
+                    ).first()
+
+                    if not existing_rating:
+                        rating = Ratings(
+                            user_id=solve.user_id,
+                            challenge_id=solve.challenge_id,
+                            value=gen_rating(),
+                            review=gen_sentence()
+                            if random.random() < 0.7
+                            else None,  # 70% chance of review
+                            date=solve.date
+                            + datetime.timedelta(
+                                minutes=random.randint(
+                                    5, 120
+                                )  # Rate within 5 minutes to 2 hours after solving
+                            ),
+                        )
+                        db.session.add(rating)
+                except Exception:
+                    # Skip if there's any constraint violation
+                    pass
 
         db.session.commit()
         db.session.close()

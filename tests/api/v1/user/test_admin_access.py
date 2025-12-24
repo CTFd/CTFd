@@ -44,5 +44,5 @@ def test_api_hint_404():
         for endpoint in endpoints:
             r = client.get(endpoint.format(1))
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/login")
+            assert r.location.startswith("/login")
     destroy_ctfd(app)

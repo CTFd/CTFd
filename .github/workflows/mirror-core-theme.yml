@@ -1,0 +1,30 @@
+name: Mirror core-theme
+on:
+  push:
+    branches: 
+      - main
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need full history for subtree
+
+      - name: Setup SSH for deploy key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CORE_THEME_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Setup git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "username@users.noreply.github.com"
+
+      - name: Push subtree
+        run: |
+          git subtree push --prefix="CTFd/themes/core" "git@github.com:CTFd/core-theme.git" main

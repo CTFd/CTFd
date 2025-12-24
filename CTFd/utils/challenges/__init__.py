@@ -5,7 +5,8 @@ from sqlalchemy import func as sa_func
 from sqlalchemy.sql import and_, false, true
 
 from CTFd.cache import cache
-from CTFd.models import Challenges, Solves, Users, db
+from CTFd.models import Challenges, Ratings, Solves, Submissions, Users, db
+from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import get_config
 from CTFd.utils.dates import isoformat, unix_time_to_utc
@@ -15,6 +16,8 @@ from CTFd.utils.modes import generate_account_url, get_model
 Challenge = namedtuple(
     "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
 )
+
+Rating = namedtuple("Rating", ["up", "down", "count"])
 
 
 @cache.memoize(timeout=60)
@@ -87,6 +90,21 @@ def get_solves_for_challenge_id(challenge_id, freeze=False):
 
 
 @cache.memoize(timeout=60)
+def get_submissions_for_user_id_for_challenge_id(user_id, challenge_id):
+    user = Users.query.filter_by(id=user_id).first()
+    submissions = (
+        Submissions.query.join(Users)
+        .filter(
+            Submissions.challenge_id == challenge_id,
+            Submissions.account_id == user.account_id,
+        )
+        .order_by(Submissions.date.desc())
+    )
+    response = SubmissionSchema(view="self", many=True).dump(submissions)
+    return response
+
+
+@cache.memoize(timeout=60)
 def get_solve_ids_for_user_id(user_id):
     user = Users.query.filter_by(id=user_id).first()
     solve_ids = (
@@ -128,3 +146,24 @@ def get_solve_counts_for_challenges(challenge_id=None, admin=False):
     for chal_id, solve_count in solves_q:
         solve_counts[chal_id] = solve_count
     return solve_counts
+
+
+@cache.memoize(timeout=60)
+def get_rating_average_for_challenge_id(challenge_id):
+    ratings = Ratings.query.filter_by(challenge_id=challenge_id).all()
+
+    if ratings:
+        # Sum upvotes and downvotes
+        up = 0
+        down = 0
+        count = 0
+        for rating in ratings:
+            count += 1
+            if rating.value < 0:
+                down += rating.value
+            else:
+                up += rating.value
+        down = abs(down)
+        return Rating(up=up, down=down, count=count)
+    else:
+        return Rating(up=0, down=0, count=0)

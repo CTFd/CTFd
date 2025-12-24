@@ -2,8 +2,9 @@ import requests
 from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
+from flask_babel import lazy_gettext as _l
 
-from CTFd.cache import clear_team_session, clear_user_session
+from CTFd.cache import cache, clear_team_session, clear_user_session
 from CTFd.exceptions.email import (
     UserConfirmTokenInvalidException,
     UserResetPasswordTokenInvalidException,
@@ -12,7 +13,7 @@ from CTFd.models import Brackets, Teams, UserFieldEntries, UserFields, Users, db
 from CTFd.utils import config, email, get_app_config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils import validators
-from CTFd.utils.config import is_teams_mode
+from CTFd.utils.config import can_send_mail, is_teams_mode
 from CTFd.utils.config.integrations import mlc_registration
 from CTFd.utils.config.visibility import registration_visible
 from CTFd.utils.crypto import verify_password
@@ -21,7 +22,7 @@ from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.helpers import error_for, get_errors, markup
 from CTFd.utils.logging import log
 from CTFd.utils.modes import TEAMS_MODE
-from CTFd.utils.security.auth import login_user, logout_user
+from CTFd.utils.security.auth import generate_preset_admin, login_user, logout_user
 from CTFd.utils.security.email import (
     remove_email_confirm_token,
     remove_reset_password_token,
@@ -37,9 +38,17 @@ auth = Blueprint("auth", __name__)
 @auth.route("/confirm/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def confirm(data=None):
-    if not get_config("verify_emails"):
-        # If the CTF doesn't care about confirming email addresses then redierct to challenges
-        return redirect(url_for("challenges.listing"))
+    # If we can't send mails our behavior depends on verify_emails
+    if not can_send_mail():
+        if get_config("verify_emails") is False:
+            return redirect(url_for("challenges.listing"))
+        else:
+            return render_template(
+                "confirm.html",
+                errors=[
+                    "Email verification is enabled but email sending isn't available. Please contact an admin to confirm your account"
+                ],
+            )
 
     # User is confirming email account
     if data and request.method == "GET":
@@ -55,6 +64,16 @@ def confirm(data=None):
         if user.verified:
             return redirect(url_for("views.settings"))
 
+        if (
+            get_app_config("EMAIL_CONFIRMATION_REQUIRE_INTERACTION")
+            and request.args.get("interaction") is None
+        ):
+            button = """<button style="margin-top: 3rem; padding: 1rem;" onclick="
+                let u = new window.URL(window.location.href);
+                u.searchParams.set('interaction', '1');
+                window.location.href = u;">Click Here to Confirm Email</button>"""
+            return render_template("page.html", content=button)
+
         user.verified = True
         log(
             "registrations",
@@ -64,7 +83,9 @@ def confirm(data=None):
         db.session.commit()
         remove_email_confirm_token(data)
         clear_user_session(user_id=user.id)
-        email.successful_registration_notification(user.email)
+        # Only send this registration notification if we are preventing access to registered users only
+        if get_config("verify_emails"):
+            email.successful_registration_notification(user.email)
         db.session.close()
         if current_user.authed():
             return redirect(url_for("challenges.listing"))
@@ -99,7 +120,7 @@ def confirm(data=None):
 @auth.route("/reset_password/<data>", methods=["POST", "GET"])
 @ratelimit(method="POST", limit=10, interval=60)
 def reset_password(data=None):
-    if config.can_send_mail() is False:
+    if config.can_send_mail() is False and data is None:
         return render_template(
             "reset_password.html",
             errors=[
@@ -134,10 +155,23 @@ def reset_password(data=None):
             pass_short = len(password) == 0
             if pass_short:
                 return render_template(
-                    "reset_password.html", errors=["Please pick a longer password"]
+                    "reset_password.html", errors=[_l("Please pick a longer password")]
+                )
+
+            password_min_length = int(get_config("password_min_length", default=0))
+            pass_min = len(password) < password_min_length
+            if pass_min:
+                return render_template(
+                    "reset_password.html",
+                    errors=[
+                        _l(
+                            f"Password must be at least {password_min_length} characters"
+                        )
+                    ],
                 )
 
             user.password = password
+            user.change_password = False
             db.session.commit()
             remove_reset_password_token(data)
             clear_user_session(user_id=user.id)
@@ -160,7 +194,9 @@ def reset_password(data=None):
             return render_template(
                 "reset_password.html",
                 infos=[
-                    "If that account exists you will receive an email, please check your inbox"
+                    _l(
+                        "If that account exists you will receive an email, please check your inbox"
+                    )
                 ],
             )
 
@@ -168,16 +204,30 @@ def reset_password(data=None):
             return render_template(
                 "reset_password.html",
                 infos=[
-                    "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                    _l(
+                        "The email address associated with this account was registered via an authentication provider and does not have an associated password. Please login via your authentication provider."
+                    )
                 ],
             )
 
+        # Preferably this would be in a pipeline or multi but the benefit is minor
+        limit = cache.inc(f"reset_password_attempt_user_{user.id}")
+        cache.expire(f"reset_password_attempt_user_{user.id}", 180)
+        if limit > 5:
+            return render_template(
+                "reset_password.html",
+                errors=[
+                    _l("Too many password reset attempts. Please try again later.")
+                ],
+            )
         email.forgot_password(email_address)
 
         return render_template(
             "reset_password.html",
             infos=[
-                "If that account exists you will receive an email, please check your inbox"
+                _l(
+                    "If that account exists you will receive an email, please check your inbox"
+                )
             ],
         )
     return render_template("reset_password.html")
@@ -224,12 +274,15 @@ def register():
         valid_email = validators.validate_email(email_address)
         team_name_email_check = validators.validate_email(name)
 
+        password_min_length = int(get_config("password_min_length", default=0))
+        pass_min = len(password) < password_min_length
+
         if get_config("registration_code"):
             if (
                 registration_code.lower()
                 != str(get_config("registration_code", default="")).lower()
             ):
-                errors.append("The registration code you entered was incorrect")
+                errors.append(_l("The registration code you entered was incorrect"))
 
         # Process additional user fields
         fields = {}
@@ -240,7 +293,7 @@ def register():
         for field_id, field in fields.items():
             value = request.form.get(f"fields[{field_id}]", "").strip()
             if field.required is True and (value is None or value == ""):
-                errors.append("Please provide all required fields")
+                errors.append(_l("Please provide all required fields"))
                 break
 
             if field.field_type == "boolean":
@@ -278,31 +331,37 @@ def register():
                 valid_bracket = True
 
         if not valid_email:
-            errors.append("Please enter a valid email address")
+            errors.append(_l("Please enter a valid email address"))
         if email.check_email_is_whitelisted(email_address) is False:
-            errors.append("Your email address is not from an allowed domain")
+            errors.append(_l("Your email address is not from an allowed domain"))
         if email.check_email_is_blacklisted(email_address) is True:
-            errors.append("Your email address is not from an allowed domain")
+            errors.append(_l("Your email address is not from an allowed domain"))
         if names:
-            errors.append("That user name is already taken")
+            errors.append(_l("That user name is already taken"))
         if team_name_email_check is True:
-            errors.append("Your user name cannot be an email address")
+            errors.append(_l("Your user name cannot be an email address"))
         if emails:
-            errors.append("That email has already been used")
+            errors.append(_l("That email has already been used"))
         if pass_short:
-            errors.append("Pick a longer password")
+            errors.append(_l("Pick a longer password"))
+        if password_min_length and pass_min:
+            errors.append(
+                _l(f"Password must be at least {password_min_length} characters")
+            )
         if pass_long:
-            errors.append("Pick a shorter password")
+            errors.append(_l("Pick a shorter password"))
         if name_len:
-            errors.append("Pick a longer user name")
+            errors.append(_l("Pick a longer user name"))
         if valid_website is False:
-            errors.append("Websites must be a proper URL starting with http or https")
+            errors.append(
+                _l("Websites must be a proper URL starting with http or https")
+            )
         if valid_country is False:
-            errors.append("Invalid country")
+            errors.append(_l("Invalid country"))
         if valid_affiliation is False:
-            errors.append("Please provide a shorter affiliation")
+            errors.append(_l("Please provide a shorter affiliation"))
         if valid_bracket is False:
-            errors.append("Please provide a valid bracket")
+            errors.append(_l("Please provide a valid bracket"))
 
         if len(errors) > 0:
             return render_template(
@@ -386,6 +445,27 @@ def login():
     errors = get_errors()
     if request.method == "POST":
         name = request.form["name"]
+
+        # Check for preset admin credentials first
+        preset_admin_name = get_app_config("PRESET_ADMIN_NAME")
+        preset_admin_email = get_app_config("PRESET_ADMIN_EMAIL")
+        preset_admin_password = get_app_config("PRESET_ADMIN_PASSWORD")
+
+        if preset_admin_name and preset_admin_email and preset_admin_password:
+            password = request.form.get("password", "")
+            # Check if credentials match preset admin
+            if (
+                name == preset_admin_name or name == preset_admin_email
+            ) and password == preset_admin_password:
+                admin = generate_preset_admin()
+                if admin:
+                    login_user(user=admin)
+                    return redirect(url_for("challenges.listing"))
+                else:
+                    errors.append(
+                        "Preset admin user could not be created. Please contact an administrator"
+                    )
+                    return render_template("login.html", errors=errors)
 
         # Check if the user submitted an email address or a team name
         if validators.validate_email(name) is True:
@@ -492,7 +572,7 @@ def oauth_redirect():
             "client_secret": client_secret,
             "grant_type": "authorization_code",
         }
-        token_request = requests.post(url, data=data, headers=headers)
+        token_request = requests.post(url, data=data, headers=headers, timeout=5)
 
         if token_request.status_code == requests.codes.ok:
             token = token_request.json()["access_token"]
@@ -506,7 +586,7 @@ def oauth_redirect():
                 "Authorization": "Bearer " + str(token),
                 "Content-type": "application/json",
             }
-            api_data = requests.get(url=user_url, headers=headers).json()
+            api_data = requests.get(url=user_url, headers=headers, timeout=5).json()
 
             user_id = api_data["id"]
             user_name = api_data["name"]

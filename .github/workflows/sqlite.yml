@@ -43,7 +43,7 @@ jobs:
             TESTING_DATABASE_URL: 'sqlite://'
 
       - name: Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           file: ./coverage.xml
 

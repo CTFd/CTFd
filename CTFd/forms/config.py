@@ -8,10 +8,23 @@ from CTFd.constants.config import (
     RegistrationVisibilityTypes,
     ScoreVisibilityTypes,
 )
+from CTFd.constants.email import (
+    DEFAULT_PASSWORD_CHANGE_ALERT_BODY,
+    DEFAULT_PASSWORD_CHANGE_ALERT_SUBJECT,
+    DEFAULT_PASSWORD_RESET_BODY,
+    DEFAULT_PASSWORD_RESET_SUBJECT,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+    DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
+    DEFAULT_USER_CREATION_EMAIL_BODY,
+    DEFAULT_USER_CREATION_EMAIL_SUBJECT,
+    DEFAULT_VERIFICATION_EMAIL_BODY,
+    DEFAULT_VERIFICATION_EMAIL_SUBJECT,
+)
 from CTFd.constants.languages import SELECT_LANGUAGE_LIST
 from CTFd.forms import BaseForm
 from CTFd.forms.fields import SubmitField
 from CTFd.utils.csv import get_dumpable_tables
+from CTFd.utils.social import BASE_TEMPLATE
 
 
 class ResetInstanceForm(BaseForm):
@@ -64,6 +77,11 @@ class AccountSettingsForm(BaseForm):
         widget=NumberInput(min=0),
         description="Maximum number of user accounts allowed to register with this CTF",
     )
+    password_min_length = IntegerField(
+        "Minimum Password Length for Users",
+        widget=NumberInput(min=0),
+        description="Minimum Password Length for Users",
+    )
     verify_emails = SelectField(
         "Verify Emails",
         description="Control whether users must confirm their email addresses before playing",
@@ -115,6 +133,11 @@ class SocialSettingsForm(BaseForm):
         choices=[("true", "Enabled"), ("false", "Disabled")],
         default="true",
     )
+    social_share_solve_template = TextAreaField(
+        "Social Share Solve Template",
+        description="HTML for Share Template",
+        default=BASE_TEMPLATE,
+    )
     submit = SubmitField("Update")
 
 
@@ -136,6 +159,48 @@ class LegalSettingsForm(BaseForm):
         description="Text shown on the Privacy Policy page",
     )
     submit = SubmitField("Update")
+
+
+class ChallengeSettingsForm(BaseForm):
+    view_self_submissions = SelectField(
+        "View Self Submissions",
+        description="Allow users to view their previous submissions",
+        choices=[("true", "Enabled"), ("false", "Disabled")],
+        default="false",
+    )
+    max_attempts_behavior = SelectField(
+        "Max Attempts Behavior",
+        description="Set Max Attempts behavior to be a lockout or a timeout",
+        choices=[("lockout", "lockout"), ("timeout", "timeout")],
+        default="lockout",
+    )
+    max_attempts_timeout = IntegerField(
+        "Max Attempts Timeout Duration",
+        description="How long the timeout lasts in seconds for max attempts (if set to timeout). Default is 300 seconds",
+        default=300,
+    )
+    hints_free_public_access = SelectField(
+        "Hints Free Public Access",
+        description="Control whether users must be logged in to see free hints (hints without cost or requirements)",
+        choices=[("true", "Enabled"), ("false", "Disabled")],
+        default="false",
+    )
+    challenge_ratings = SelectField(
+        "Challenge Ratings",
+        description="Control who can see and submit challenge ratings",
+        choices=[
+            ("public", "Public (users can submit ratings and see aggregated ratings)"),
+            (
+                "private",
+                "Private (users can submit ratings but cannot see aggregated ratings)",
+            ),
+            (
+                "disabled",
+                "Disabled (users cannot submit ratings or see aggregated ratings)",
+            ),
+        ],
+        default="public",
+    )
 
 
 class VisibilitySettingsForm(BaseForm):
@@ -188,3 +253,92 @@ class LocalizationForm(BaseForm):
         description="Language to use if a user does not specify a language in their account settings. By default, CTFd will auto-detect the user's preferred language.",
         choices=SELECT_LANGUAGE_LIST,
     )
+
+
+class EmailSettingsForm(BaseForm):
+    # Mail Server Settings
+    mailfrom_addr = StringField(
+        "Mail From Address", description="Email address used to send email"
+    )
+    mail_server = StringField(
+        "Mail Server Address",
+        description="Change the email server used by CTFd to send email",
+    )
+    mail_port = IntegerField(
+        "Mail Server Port",
+        widget=NumberInput(min=1, max=65535),
+        description="Mail Server Port",
+    )
+    mail_useauth = BooleanField("Use Mail Server Username and Password")
+    mail_username = StringField("Username", description="Mail Server Account Username")
+    mail_password = StringField("Password", description="Mail Server Account Password")
+    mail_ssl = BooleanField("TLS/SSL")
+    mail_tls = BooleanField("STARTTLS")
+
+    # Mailgun Settings (deprecated)
+    mailgun_base_url = StringField(
+        "Mailgun API Base URL", description="Mailgun API Base URL"
+    )
+    mailgun_api_key = StringField("Mailgun API Key", description="Mailgun API Key")
+
+    # Registration Email
+    successful_registration_email_subject = StringField(
+        "Subject",
+        description="Subject line for registration confirmation email",
+        default=DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
+    )
+    successful_registration_email_body = TextAreaField(
+        "Body",
+        description="Email body sent to users after they've finished registering",
+        default=DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_BODY,
+    )
+
+    # Verification Email
+    verification_email_subject = StringField(
+        "Subject",
+        description="Subject line for account verification email",
+        default=DEFAULT_VERIFICATION_EMAIL_SUBJECT,
+    )
+    verification_email_body = TextAreaField(
+        "Body",
+        description="Email body sent to users to confirm their account at the address they provided during registration",
+        default=DEFAULT_VERIFICATION_EMAIL_BODY,
+    )
+
+    # Account Details Email
+    user_creation_email_subject = StringField(
+        "Subject",
+        description="Subject line for new account details email",
+        default=DEFAULT_USER_CREATION_EMAIL_SUBJECT,
+    )
+    user_creation_email_body = TextAreaField(
+        "Body",
+        description="Email body sent to new users (manually created by an admin) with their initial account details",
+        default=DEFAULT_USER_CREATION_EMAIL_BODY,
+    )
+
+    # Password Reset Email
+    password_reset_subject = StringField(
+        "Subject",
+        description="Subject line for password reset request email",
+        default=DEFAULT_PASSWORD_RESET_SUBJECT,
+    )
+    password_reset_body = TextAreaField(
+        "Body",
+        description="Email body sent when a user requests a password reset",
+        default=DEFAULT_PASSWORD_RESET_BODY,
+    )
+
+    # Password Reset Confirmation Email
+    password_change_alert_subject = StringField(
+        "Subject",
+        description="Subject line for password reset confirmation email",
+        default=DEFAULT_PASSWORD_CHANGE_ALERT_SUBJECT,
+    )
+    password_change_alert_body = TextAreaField(
+        "Body",
+        description="Email body sent when a user successfully resets their password",
+        default=DEFAULT_PASSWORD_CHANGE_ALERT_BODY,
+    )
+
+    submit = SubmitField("Update")

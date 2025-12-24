@@ -1,19 +1,55 @@
-from flask import Blueprint
+from dataclasses import dataclass
 
+from flask import Blueprint
+from sqlalchemy.exc import IntegrityError
+
+from CTFd.exceptions.challenges import (
+    ChallengeCreateException,
+    ChallengeSolveException,
+    ChallengeUpdateException,
+)
 from CTFd.models import (
     ChallengeFiles,
     Challenges,
     Fails,
     Flags,
     Hints,
+    Partials,
+    Ratelimiteds,
     Solves,
     Tags,
     db,
 )
 from CTFd.plugins import register_plugin_assets_directory
-from CTFd.plugins.flags import FlagException, get_flag_class
+from CTFd.plugins.challenges.decay import DECAY_FUNCTIONS, logarithmic
+from CTFd.plugins.challenges.logic import (
+    challenge_attempt_all,
+    challenge_attempt_any,
+    challenge_attempt_team,
+)
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
+
+
+@dataclass
+class ChallengeResponse:
+    status: str
+    message: str
+
+    def __iter__(self):
+        """Allow tuple-like unpacking for backwards compatibility."""
+        # TODO: CTFd 4.0 remove this behavior as we should move away from the tuple strategy
+        yield (True if self.status == "correct" else False)
+        yield self.message
+
+
+def calculate_value(challenge):
+    f = DECAY_FUNCTIONS.get(challenge.function, logarithmic)
+    value = f(challenge)
+
+    challenge.value = value
+    db.session.commit()
+    return challenge
 
 
 class BaseChallenge(object):
@@ -35,8 +71,23 @@ class BaseChallenge(object):
 
         challenge = cls.challenge_model(**data)
 
+        if challenge.function in DECAY_FUNCTIONS:
+            if data.get("value") and not data.get("initial"):
+                challenge.initial = data["value"]
+
+            for attr in ("initial", "minimum", "decay"):
+                db.session.rollback()
+                if getattr(challenge, attr) is None:
+                    raise ChallengeCreateException(
+                        f"Missing '{attr}' but function is {challenge.function}"
+                    )
+
         db.session.add(challenge)
         db.session.commit()
+
+        # If the challenge is dynamic we should calculate a new value
+        if challenge.function in DECAY_FUNCTIONS:
+            return calculate_value(challenge)
 
         return challenge
 
@@ -59,6 +110,11 @@ class BaseChallenge(object):
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
+            "logic": challenge.logic,
+            "initial": challenge.initial if challenge.function != "static" else None,
+            "decay": challenge.decay if challenge.function != "static" else None,
+            "minimum": challenge.minimum if challenge.function != "static" else None,
+            "function": challenge.function,
             "type": challenge.type,
             "type_data": {
                 "id": cls.id,
@@ -81,9 +137,32 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
         for attr, value in data.items():
+            # We need to set these to floats so that the next operations don't operate on strings
+            if attr in ("initial", "minimum", "decay"):
+                try:
+                    value = float(value)
+                except (ValueError, TypeError):
+                    db.session.rollback()
+                    raise ChallengeUpdateException(f"Invalid input for '{attr}'")
             setattr(challenge, attr, value)
 
+        for attr in ("initial", "minimum", "decay"):
+            if (
+                challenge.function in DECAY_FUNCTIONS
+                and getattr(challenge, attr) is None
+            ):
+                db.session.rollback()
+                raise ChallengeUpdateException(
+                    f"Missing '{attr}' but function is {challenge.function}"
+                )
+
         db.session.commit()
+
+        # If the challenge is dynamic we should calculate a new value
+        if challenge.function in DECAY_FUNCTIONS:
+            return calculate_value(challenge)
+
+        # If we don't support dynamic we just don't do anything
         return challenge
 
     @classmethod
@@ -120,14 +199,45 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
         submission = data["submission"].strip()
+
         flags = Flags.query.filter_by(challenge_id=challenge.id).all()
-        for flag in flags:
-            try:
-                if get_flag_class(flag.type).compare(flag, submission):
-                    return True, "Correct"
-            except FlagException as e:
-                return False, str(e)
-        return False, "Incorrect"
+
+        if challenge.logic == "any":
+            return challenge_attempt_any(submission, challenge, flags)
+        elif challenge.logic == "all":
+            return challenge_attempt_all(submission, challenge, flags)
+        elif challenge.logic == "team":
+            return challenge_attempt_team(submission, challenge, flags)
+        else:
+            return challenge_attempt_any(submission, challenge, flags)
+
+    @classmethod
+    def partial(cls, user, team, challenge, request):
+        data = request.form or request.get_json()
+        submission = data["submission"].strip()
+        partial = Partials(
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(req=request),
+            provided=submission,
+        )
+        db.session.add(partial)
+        db.session.commit()
+
+    @classmethod
+    def ratelimited(cls, user, team, challenge, request):
+        data = request.form or request.get_json()
+        submission = data["submission"].strip()
+        partial = Ratelimiteds(
+            user_id=user.id,
+            team_id=team.id if team else None,
+            challenge_id=challenge.id,
+            ip=get_ip(req=request),
+            provided=submission,
+        )
+        db.session.add(partial)
+        db.session.commit()
 
     @classmethod
     def solve(cls, user, team, challenge, request):
@@ -141,6 +251,7 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
         submission = data["submission"].strip()
+
         solve = Solves(
             user_id=user.id,
             team_id=team.id if team else None,
@@ -148,8 +259,19 @@ class BaseChallenge(object):
             ip=get_ip(req=request),
             provided=submission,
         )
-        db.session.add(solve)
-        db.session.commit()
+
+        try:
+            db.session.add(solve)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            raise ChallengeSolveException(
+                f"Duplicate solve for user {user.id} on challenge {challenge.id}"
+            ) from e
+
+        # If the challenge is dynamic we should calculate a new value
+        if challenge.function in DECAY_FUNCTIONS:
+            calculate_value(challenge)
 
     @classmethod
     def fail(cls, user, team, challenge, request):
