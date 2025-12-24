@@ -3,7 +3,7 @@ services:
     build: .
     user: root
     restart: always
-    expose:
+    ports:
       - 8000
     environment:
       - UPLOAD_FOLDER=/var/uploads
@@ -13,7 +13,6 @@ services:
       - LOG_FOLDER=/var/log/CTFd
       - ACCESS_LOG=-
       - ERROR_LOG=-
-      - REVERSE_PROXY=true
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
