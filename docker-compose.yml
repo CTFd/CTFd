@@ -19,20 +19,9 @@ services:
       - .:/opt/CTFd:ro
     depends_on:
       - db
+      - cache
     networks:
-        default:
-        internal:
-
-  nginx:
-    image: nginx:stable
-    restart: always
-    volumes:
-      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
-    expose:
-      - 80
-    depends_on:
-      - ctfd
-
+      - astu-network
   db:
     image: mariadb:10.11
     restart: always
@@ -45,7 +34,7 @@ services:
     volumes:
       - .data/mysql:/var/lib/mysql
     networks:
-        internal:
+        - astu-network
     # This command is required to set important mariadb defaults
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
@@ -55,9 +44,8 @@ services:
     volumes:
     - .data/redis:/data
     networks:
-        internal:
+        - astu-network
 
 networks:
-    default:
-    internal:
-        internal: true
+  astu-network:
+    driver: bridge
