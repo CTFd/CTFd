@@ -50,3 +50,9 @@ services:
 networks:
   astu-network:
     driver: bridge
+volumes:
+  ctfd-mysql:
+  ctfd-logs:
+  ctfd-uploads:
+  ctfd-source:
+  ctfd-redis:
