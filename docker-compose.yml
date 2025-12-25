@@ -1,7 +1,6 @@
 services:
   ctfd:
     build: .
-    user: root
     restart: always
     ports:
       - 8000
@@ -14,10 +13,11 @@ services:
       - ACCESS_LOG=-
       - ERROR_LOG=-
       - REVERSE_PROXY=true
+      - SERVER_SENT_EVENTS=true
     volumes:
-      - .data/CTFd/logs:/var/log/CTFd
-      - .data/CTFd/uploads:/var/uploads
-      - .:/opt/CTFd:ro
+      - ctfd-logs:/var/log/CTFd
+      - ctfd-uploads:/var/uploads
+      - ctfd-source:/opt/CTFd:ro
     depends_on:
       - db
       - cache
@@ -33,7 +33,7 @@ services:
       - MARIADB_DATABASE=ctfd
       - MARIADB_AUTO_UPGRADE=1
     volumes:
-      - .data/mysql:/var/lib/mysql
+      - ctfd-mysql:/var/lib/mysql
     networks:
         - astu-network
     # This command is required to set important mariadb defaults
@@ -43,7 +43,7 @@ services:
     image: redis:4
     restart: always
     volumes:
-    - .data/redis:/data
+    - ctfd-redis:/data
     networks:
         - astu-network
 
