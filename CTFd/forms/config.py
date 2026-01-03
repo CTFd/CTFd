@@ -161,6 +161,14 @@ class LegalSettingsForm(BaseForm):
     submit = SubmitField("Update")
 
 
+class TermsOfParticipationForm(BaseForm):
+    terms_of_participation = TextAreaField(
+        "Rules & Code of Conduct",
+        description="HTML content shown during registration. Users must scroll through and accept these rules before creating an account. Leave empty to disable this feature.",
+    )
+    submit = SubmitField("Update")
+
+
 class ChallengeSettingsForm(BaseForm):
     view_self_submissions = SelectField(
         "View Self Submissions",

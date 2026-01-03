@@ -1,0 +1,16 @@
+<div role="tabpanel" class="tab-pane config-section" id="terms-of-participation">
+
+	{% with form = Forms.config.TermsOfParticipationForm(terms_of_participation=terms_of_participation|default('')) %}
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			{{ form.terms_of_participation.label }}
+			<small class="form-text text-muted">
+				{{ form.terms_of_participation.description }}
+			</small>
+			{{ form.terms_of_participation(class="form-control markdown", rows=15) }}
+		</div>
+
+		{{ form.submit(class="btn btn-md btn-primary float-right") }}
+	</form>
+	{% endwith %}
+</div>

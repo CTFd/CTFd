@@ -65,6 +65,20 @@
 
             {{ render_extra_fields(form.extra) }}
 
+            {% if get_config('terms_of_participation') %}
+              <div class="mb-3">
+                <div style="max-height: 150px; overflow-y: scroll; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 10px;">
+                  {{ get_config('terms_of_participation') | safe }}
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="terms_accepted" name="terms_accepted" required>
+                  <label class="form-check-label" for="terms_accepted">
+                    <b>{% trans %}I have read and accept the rules and code of conduct{% endtrans %} <span class="text-danger">*</span></b>
+                  </label>
+                </div>
+              </div>
+            {% endif %}
+
             <div class="row pt-3">
               <div class="col-6 col-md-4 offset-6 offset-md-8">
                 {{ form.submit(class="btn btn-block btn-primary w-100") }}

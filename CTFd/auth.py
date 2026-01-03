@@ -330,6 +330,13 @@ def register():
             else:
                 valid_bracket = True
 
+        # Check if terms of participation need to be accepted
+        terms_required = get_config("terms_of_participation")
+        terms_accepted = request.form.get("terms_accepted")
+        
+        if terms_required and not terms_accepted:
+            errors.append(_l("You must accept the rules and code of conduct to register"))
+
         if not valid_email:
             errors.append(_l("Please enter a valid email address"))
         if email.check_email_is_whitelisted(email_address) is False:
