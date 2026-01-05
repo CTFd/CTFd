@@ -28,6 +28,9 @@ fi
 # Initialize database
 flask db upgrade
 
+# Load CSS into database
+python load_css.py
+
 # Start CTFd
 echo "Starting CTFd"
 exec gunicorn 'CTFd:create_app()' \

@@ -1,0 +1,109 @@
+<style>
+/* Global */
+body{
+  background: radial-gradient(1200px 600px at 15% 0%, rgba(96,38,158,.35), transparent 55%),
+              radial-gradient(900px 500px at 85% 10%, rgba(183,156,255,.18), transparent 55%),
+              var(--cm-bg);
+  color: var(--cm-text);
+}
+a{ color: var(--cm-link); }
+a:hover{ color: #d6c7ff; }
+
+/* Cards / panels */
+.card, .modal-content, .list-group-item, .table, .nav-tabs .nav-link, .dropdown-menu{
+  background-color: var(--cm-surface) !important;
+  color: var(--cm-text) !important;
+  border-color: var(--cm-border) !important;
+}
+.card-header, .modal-header, .modal-footer{
+  background-color: var(--cm-surface-2) !important;
+  border-color: var(--cm-border) !important;
+}
+
+/* Inputs */
+.form-control, .form-select, input, select, textarea{
+  background-color: rgba(255,255,255,.04) !important;
+  color: var(--cm-text) !important;
+  border-color: var(--cm-border) !important;
+}
+.form-control:focus, .form-select:focus{
+  border-color: rgba(96,38,158,.65) !important;
+  box-shadow: 0 0 0 .2rem rgba(96,38,158,.25) !important;
+}
+
+/* Buttons */
+.btn-primary{
+  background-color: var(--cm-primary) !important;
+  border-color: var(--cm-primary) !important;
+}
+.btn-primary:hover{
+  background-color: var(--cm-primary-600) !important;
+  border-color: var(--cm-primary-600) !important;
+}
+.btn-outline-primary{
+  color: var(--cm-link) !important;
+  border-color: rgba(183,156,255,.55) !important;
+}
+.btn-outline-primary:hover{
+  background-color: rgba(96,38,158,.25) !important;
+}
+
+/* Navbar */
+.navbar, .navbar-dark, .navbar-light{
+  background-color: rgba(17,17,26,.85) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--cm-border);
+}
+.navbar a, .navbar .navbar-brand, .navbar .nav-link{
+  color: var(--cm-text) !important;
+}
+.navbar .nav-link.active{
+  color: #ffffff !important;
+  position: relative;
+}
+.navbar .nav-link.active::after{
+  content:"";
+  position:absolute;
+  left: .75rem;
+  right: .75rem;
+  bottom: .35rem;
+  height: 2px;
+  background: var(--cm-primary);
+  border-radius: 999px;
+}
+
+/* Scoreboard highlight / badges (best-effort) */
+.badge, .badge.bg-primary{
+  background-color: rgba(96,38,158,.85) !important;
+}
+.progress-bar{
+  background-color: var(--cm-primary) !important;
+}
+
+/* Challenge tiles (best-effort across core/core-beta variations) */
+.challenge-button, .challenge, .challenge-card, .challengebox, .challenge-entry{
+  background-color: rgba(255,255,255,.03) !important;
+  border: 1px solid var(--cm-border) !important;
+  border-radius: 14px !important;
+}
+.challenge-button:hover, .challenge:hover, .challenge-card:hover{
+  border-color: rgba(183,156,255,.55) !important;
+  transform: translateY(-1px);
+}
+
+/* Tables */
+.table{
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: rgba(255,255,255,.03);
+  --bs-table-hover-bg: rgba(96,38,158,.10);
+}
+.table td, .table th{
+  border-color: var(--cm-border) !important;
+}
+
+/* Muted text */
+.text-muted, small, .small{
+  color: var(--cm-muted) !important;
+}
+
+</style>
