@@ -966,6 +966,10 @@ class Discards(Submissions):
     __mapper_args__ = {"polymorphic_identity": "discard"}
 
 
+class Ratelimiteds(Submissions):
+    __mapper_args__ = {"polymorphic_identity": "ratelimited"}
+
+
 class Unlocks(db.Model):
     __tablename__ = "unlocks"
     id = db.Column(db.Integer, primary_key=True)
