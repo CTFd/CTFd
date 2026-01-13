@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from unittest.mock import patch
 
 from freezegun import freeze_time
+from sqlalchemy.exc import IntegrityError
 
+from CTFd.exceptions.challenges import ChallengeSolveException
 from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Tracking, Users
 from CTFd.utils import set_config
 from tests.helpers import (
@@ -1028,6 +1031,38 @@ def test_api_challenge_attempt_post_admin():
             )
             assert r.status_code == 200
             assert r.get_json()["data"]["status"] == "already_solved"
+    destroy_ctfd(app)
+
+
+def test_api_challenge_attempt_post_duplicate_solve_race_condition():
+    """Test that a race condition resulting in ChallengeSolveException returns 'already_solved' status"""
+    app = create_ctfd()
+    with app.app_context():
+        challenge = gen_challenge(app.db)
+        challenge_id = challenge.id
+        gen_flag(app.db, challenge_id=challenge.id, content="flag")
+        register_user(app)
+        client = login_as_user(app)
+
+        # Mock BaseChallenge.solve raising ChallengeSolveException - it's hard to trigger this race condition in tests
+        # The exception should be handled and API should return an already_solved status
+        with patch("CTFd.plugins.challenges.BaseChallenge.solve") as mock_solve:
+            exception = ChallengeSolveException("Duplicate solve")
+            exception.__cause__ = IntegrityError(
+                "INSERT test...", {}, Exception("UNIQUE constraint failed")
+            )
+            mock_solve.side_effect = exception
+
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag"},
+            )
+
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp["data"]["status"] == "already_solved"
+            assert "already solved this" in resp["data"]["message"]
+
     destroy_ctfd(app)
 
 
