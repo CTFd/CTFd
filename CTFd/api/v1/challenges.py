@@ -9,10 +9,11 @@ from sqlalchemy.sql import and_
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
-from CTFd.cache import clear_challenges, clear_ratings, clear_standings
+from CTFd.cache import cache, clear_challenges, clear_ratings, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.exceptions.challenges import (
     ChallengeCreateException,
+    ChallengeSolveException,
     ChallengeUpdateException,
 )
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
@@ -451,6 +452,10 @@ class Challenge(Resource):
             attempts_query = Submissions.query.filter_by(
                 account_id=user.account_id, challenge_id=challenge_id
             )
+            # Don't consider discarded or ratelimited attempts
+            attempts_query = attempts_query.filter(
+                Submissions.type != "discard", Submissions.type != "ratelimited"
+            )
             max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
             if max_attempts_behavior == "timeout":
                 max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
@@ -687,11 +692,80 @@ class ChallengeAttempt(Resource):
         chal_class = get_chal_class(challenge.type)
 
         # Anti-bruteforce / submitting Flags too quickly
-        kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
+        recent_fails = current_user.get_wrong_submissions_per_delta(user.account_id)
+        kpm = len(recent_fails)
         kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
-        if kpm > kpm_limit:
+        max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
+
+        # We want to expire recent_attempt_count around the same time as our oldest submission slides off
+        time_delay = 60
+        if recent_fails:
+            time_delay -= int(
+                (datetime.utcnow() - recent_fails[0].date).total_seconds()
+            )
+
+        # Serialize attempt counting through redis to get a more accurate attempt count
+        # kpm_limit and max_attempts_timeout are included in the cache key as they are admin-editable and can affect limits
+        acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}_{kpm_limit}_{max_attempts_timeout}"
+
+        # Get serialized recent_attempt_count
+        recent_attempt_count = int(cache.get(acc_kpm_key) or 0)
+
+        # Hit max attempts
+        max_tries = challenge.max_attempts
+        # We default fails to 0 as it's not needed unless we are working with max attempts
+        fails = 0
+        if max_tries and max_tries > 0:
+            max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
+            if max_attempts_behavior == "timeout":  # Use timeout behavior
+                timeout_delta = timedelta(seconds=-max_attempts_timeout)
+                max_attempts_recent_fails = (
+                    current_user.get_wrong_submissions_per_delta(
+                        user.account_id, challenge_id=challenge_id, delta=timeout_delta
+                    )
+                )
+                fails = len(max_attempts_recent_fails)
+            else:  # Use lockout behavior
+                fails = Fails.query.filter_by(
+                    account_id=user.account_id, challenge_id=challenge_id
+                ).count()
+
+            if fails >= max_tries or recent_attempt_count >= max_tries:
+                if max_attempts_behavior == "timeout":
+                    # We specifically override the outer time_delay because max_attempts timeout can be different than the minute
+                    time_delay = max_attempts_timeout
+                    if max_attempts_recent_fails:
+                        time_delay -= int(
+                            (
+                                datetime.utcnow() - max_attempts_recent_fails[0].date
+                            ).total_seconds()
+                        )
+                    # Calculate actual time remaining based on oldest fail
+                    response = f"Not accepted. Try again in {time_delay} seconds"
+                    response_code = 429
+                    if ctftime():
+                        chal_class.ratelimited(
+                            user=user, team=team, challenge=challenge, request=request
+                        )
+                else:  # Use lockout behavior
+                    response = "Not accepted. You have 0 tries remaining"
+                    response_code = 403
+                # Expire the cache key directly since we will not hit the normal expire flow
+                cache.expire(acc_kpm_key, time_delay)
+                return (
+                    {
+                        "success": True,
+                        "data": {
+                            "status": "ratelimited",
+                            "message": response,
+                        },
+                    },
+                    response_code,
+                )
+
+        if kpm >= kpm_limit or recent_attempt_count >= kpm_limit:
             if ctftime():
-                chal_class.fail(
+                chal_class.ratelimited(
                     user=user, team=team, challenge=challenge, request=request
                 )
             log(
@@ -702,70 +776,30 @@ class ChallengeAttempt(Resource):
                 challenge_id=challenge_id,
                 kpm=kpm,
             )
+            # Expire the cache key directly since we will not hit the normal expire flow
+            cache.expire(acc_kpm_key, time_delay)
             # Submitting too fast
             return (
                 {
                     "success": True,
                     "data": {
                         "status": "ratelimited",
-                        "message": "You're submitting flags too fast. Slow down.",
+                        "message": f"You're submitting flags too fast. Try again in {time_delay} seconds.",
                     },
                 },
                 429,
             )
 
+        # Set the main expiration key as we will now process the submission
+        cache.inc(acc_kpm_key)
+        cache.expire(acc_kpm_key, time_delay)
+
         solves = Solves.query.filter_by(
             account_id=user.account_id, challenge_id=challenge_id
         ).first()
-        # We default fails to 0 as it's not needed unless we are working with max attempts
-        fails = 0
 
         # Challenge not solved yet
         if not solves:
-            # Hit max attempts
-            max_tries = challenge.max_attempts
-            if max_tries and max_tries > 0:
-                max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
-                fails_query = Fails.query.filter_by(
-                    account_id=user.account_id, challenge_id=challenge_id
-                )
-                if max_attempts_behavior == "timeout":  # Use timeout behavior
-                    max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
-                    timeout_delta = datetime.utcnow() - timedelta(
-                        seconds=max_attempts_timeout
-                    )
-                    fails = fails_query.filter(Fails.date >= timeout_delta).count()
-                    # Calculate actual time remaining for the most recent fail
-                    response = f"Not accepted. Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
-                    if fails > 0:
-                        most_recent_fail = (
-                            fails_query.filter(Fails.date >= timeout_delta)
-                            .order_by(Fails.date.asc())
-                            .first()
-                        )
-                        if most_recent_fail:
-                            time_since_fail = (
-                                datetime.utcnow() - most_recent_fail.date
-                            ).total_seconds()
-                            remaining_seconds = max_attempts_timeout - time_since_fail
-                            remaining_minutes = math.ceil(remaining_seconds / 60)
-                            response = f"Not accepted. Try again in {remaining_minutes} minutes"
-                else:  # Use lockout behavior
-                    fails = fails_query.count()
-                    response = "Not accepted. You have 0 tries remaining"
-
-                if fails >= max_tries:
-                    return (
-                        {
-                            "success": True,
-                            "data": {
-                                "status": "ratelimited",
-                                "message": response,
-                            },
-                        },
-                        403,
-                    )
-
             response = chal_class.attempt(challenge, request)
             # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
             if isinstance(response, tuple):
@@ -778,9 +812,35 @@ class ChallengeAttempt(Resource):
             if status == "correct" or status is True:
                 # The challenge plugin says the input is right
                 if ctftime() or current_user.is_admin():
-                    chal_class.solve(
-                        user=user, team=team, challenge=challenge, request=request
-                    )
+                    try:
+                        chal_class.solve(
+                            user=user,
+                            team=team,
+                            challenge=challenge,
+                            request=request,
+                        )
+
+                    # ChallengeSoleException is raised on duplicate solve - so treat it as already_solved
+                    except ChallengeSolveException:
+                        log(
+                            "submissions",
+                            "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                            name=user.name,
+                            submission=request_data.get("submission", "").encode(
+                                "utf-8"
+                            ),
+                            challenge_id=challenge_id,
+                            kpm=kpm,
+                        )
+
+                        return {
+                            "success": True,
+                            "data": {
+                                "status": "already_solved",
+                                "message": f"{message} but you already solved this",
+                            },
+                        }
+
                     clear_standings()
                     clear_challenges()
 
@@ -850,9 +910,6 @@ class ChallengeAttempt(Resource):
                             "max_attempts_behavior", "lockout"
                         )
                         if max_attempts_behavior == "timeout":
-                            max_attempts_timeout = int(
-                                get_config("max_attempts_timeout", 300)
-                            )
                             # Calculate actual time remaining based on the most recent fail
                             timeout_delta = datetime.utcnow() - timedelta(
                                 seconds=max_attempts_timeout
@@ -863,7 +920,7 @@ class ChallengeAttempt(Resource):
                                     challenge_id=challenge_id,
                                 )
                                 .filter(Fails.date >= timeout_delta)
-                                .order_by(Fails.date.asc())
+                                .order_by(Fails.id.asc())
                                 .first()
                             )
                             if most_recent_fail:
@@ -873,10 +930,9 @@ class ChallengeAttempt(Resource):
                                 remaining_seconds = (
                                     max_attempts_timeout - time_since_fail
                                 )
-                                remaining_minutes = math.ceil(remaining_seconds / 60)
-                                message += f" Try again in {remaining_minutes} minutes"
+                                message += f" Try again in {math.ceil(remaining_seconds)} seconds"
                             else:
-                                message += f" Try again in {math.ceil(max_attempts_timeout / 60)} minutes"
+                                message += f" Try again in {math.ceil(max_attempts_timeout)} seconds"
                     return {
                         "success": True,
                         "data": {

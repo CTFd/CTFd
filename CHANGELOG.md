@@ -1,3 +1,45 @@
+# 3.8.1 / 2025-11-06
+
+**Security**
+
+- Make challenge attempt ratelimit stricter
+- Make reset password ratelimit stricter and apply per-account
+
+**General**
+
+- Integrates dynamic scoring into the standard challenge type
+  - All challenges will now have `initial`, `decay`, `minimum`, `function` columns available through the standard challenge type
+  - Scoring logic for challenges can be configured with the `function` field
+  - The dynamic value challenge plugin will remain supported until CTFd 4.0
+- Add `solved` solution visibility to challenge solutions
+  - This only allows a user to view a challenge's solution if they've solved the associated challenge
+
+**Admin Panel**
+
+- Add bulk editing for solution visibility in the Admin Panel Challenges page
+
+**API**
+
+- Change `GET /api/v1/solutions/[solution_id]` to return 404 if a solution is hidden instead of a 403
+- Add `/api/v1/challenges/[challenge_id]/solution` endpoint to check if a challenge solution is accessible
+
+**Themes**
+
+- CTFd.js has been bumped to `0.0.19`
+- `challenges.js` now has additional functions `getSolutionState` and `setSolutionId` to allow the UI to determine if a solution is accessible
+
+**Deployment**
+
+- Fixes issues where preset admins would not be created
+- Add `RUN_ID` config which specifies a token which will be used as a cache-buster URL parameter
+- Add `EXTRA_CONFIGS_FORCE_TYPES` config to allow server admins to force types for configs specified in the `[extra]` section
+- If `UPDATE_CHECK` is disabled the update prompt banner should be properly disabled
+- Fix issue where users would be put into an infinite loop if confirm emails is enabled without having an email server configured
+
+**Translations**
+
+- Add Uzbek and Hebrew languages
+
 # 3.8.0 / 2025-09-04
 
 **General**

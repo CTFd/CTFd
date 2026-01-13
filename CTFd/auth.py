@@ -4,7 +4,7 @@ from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
 from flask_babel import lazy_gettext as _l
 
-from CTFd.cache import clear_team_session, clear_user_session
+from CTFd.cache import cache, clear_team_session, clear_user_session
 from CTFd.exceptions.email import (
     UserConfirmTokenInvalidException,
     UserResetPasswordTokenInvalidException,
@@ -210,6 +210,16 @@ def reset_password(data=None):
                 ],
             )
 
+        # Preferably this would be in a pipeline or multi but the benefit is minor
+        limit = cache.inc(f"reset_password_attempt_user_{user.id}")
+        cache.expire(f"reset_password_attempt_user_{user.id}", 180)
+        if limit > 5:
+            return render_template(
+                "reset_password.html",
+                errors=[
+                    _l("Too many password reset attempts. Please try again later.")
+                ],
+            )
         email.forgot_password(email_address)
 
         return render_template(
