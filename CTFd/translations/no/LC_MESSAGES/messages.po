@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-24 00:30\n"
+"POT-Creation-Date: 2025-11-17 21:57\n"
+"PO-Revision-Date: 2025-11-17 21:57\n"
 "Last-Translator: \n"
-"Language-Team: Spanish\n"
+"Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,155 +13,155 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: CTFd\n"
 "X-Crowdin-Project-ID: 659064\n"
-"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-Language: no\n"
 "X-Crowdin-File: /master/messages.pot\n"
 "X-Crowdin-File-ID: 188\n"
-"Language: es_ES\n"
+"Language: nb_NO\n"
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr "La visibilidad del desafío está configurada solo para administradores"
+msgstr "Oppgavesynlighet er satt til kun administratorer"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr "%(ctf_name)s aún no ha comenzado"
+msgstr "%(ctf_name)s har ikke startet ennå"
 
 #: CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
-msgstr "%(ctf_name)s está pausado"
+msgstr "%(ctf_name)s er satt på pause"
 
 #: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
-msgstr "%(ctf_name)s ha finalizado"
+msgstr "%(ctf_name)s er avsluttet"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
 #: CTFd/themes/core-beta/templates/teams/private.html:329
 #: CTFd/themes/core-beta/templates/teams/public.html:95
 msgid "User Name"
-msgstr "Nombre de usuario"
+msgstr "Brukernavn"
 
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
 #: CTFd/forms/teams.py:230
 msgid "Email"
-msgstr "Correo electrónico"
+msgstr "Epost"
 
 #: CTFd/forms/auth.py:24 CTFd/forms/auth.py:50 CTFd/forms/auth.py:67
 #: CTFd/forms/self.py:24 CTFd/forms/teams.py:231
 msgid "Password"
-msgstr "Contraseña"
+msgstr "Passord"
 
 #: CTFd/forms/auth.py:25 CTFd/forms/auth.py:51 CTFd/forms/auth.py:62
 #: CTFd/forms/auth.py:69 CTFd/forms/self.py:29 CTFd/forms/teams.py:154
 #: CTFd/forms/teams.py:237 CTFd/themes/core-beta/templates/challenge.html:147
 msgid "Submit"
-msgstr "Enviar"
+msgstr "Send inn"
 
 #: CTFd/forms/auth.py:46
 msgid "User Name or Email"
-msgstr "Nombre de usuario o correo electrónico"
+msgstr "Brukernavn eller epost"
 
 #: CTFd/forms/auth.py:55
 msgid "Resend Confirmation Email"
-msgstr "Reenviar correo de confirmación"
+msgstr "Send bekreftelse på nytt"
 
 #: CTFd/forms/self.py:23 CTFd/forms/users.py:181
 msgid "Language"
-msgstr "Idioma"
+msgstr "Språk"
 
 #: CTFd/forms/self.py:25
 msgid "Current Password"
-msgstr "Contraseña actual"
+msgstr "Nåværende passord"
 
 #: CTFd/forms/self.py:26 CTFd/forms/teams.py:140 CTFd/forms/teams.py:218
 #: CTFd/forms/teams.py:233 CTFd/forms/users.py:164
 #: CTFd/themes/core-beta/templates/teams/teams.html:51
 #: CTFd/themes/core-beta/templates/users/users.html:48
 msgid "Affiliation"
-msgstr "Afiliación"
+msgstr "Tilhørighet"
 
 #: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:219
 #: CTFd/forms/teams.py:232 CTFd/forms/users.py:165
 #: CTFd/themes/core-beta/templates/teams/teams.html:50
 #: CTFd/themes/core-beta/templates/users/users.html:47
 msgid "Website"
-msgstr "Página web"
+msgstr "Nettside"
 
 #: CTFd/forms/self.py:28 CTFd/forms/teams.py:150 CTFd/forms/teams.py:234
 #: CTFd/themes/core-beta/templates/teams/teams.html:52
 #: CTFd/themes/core-beta/templates/users/users.html:49
 msgid "Country"
-msgstr "País"
+msgstr "Land"
 
 #: CTFd/forms/self.py:59 CTFd/themes/core-beta/templates/settings.html:225
 msgid "Expiration"
-msgstr "Caducidad"
+msgstr "Utløpsdato"
 
 #: CTFd/forms/self.py:61
 msgid "Generate"
-msgstr "Genere"
+msgstr "Generer"
 
 #: CTFd/forms/setup.py:29
 msgid "Event Name"
-msgstr "Nombre del evento"
+msgstr "Navn på event"
 
 #: CTFd/forms/setup.py:29
 msgid "The name of your CTF event/workshop"
-msgstr "El nombre de su evento/taller CTF"
+msgstr "Navnet på ditt event"
 
 #: CTFd/forms/setup.py:32
 msgid "Event Description"
-msgstr "Descripción del evento"
+msgstr "Eventbeskrivelse"
 
 #: CTFd/forms/setup.py:32
 msgid "Description for the CTF"
-msgstr "Descripción del CTF"
+msgstr "Beskrivelse av CTFen"
 
 #: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
 msgid "User Mode"
-msgstr "Modo individual"
+msgstr "Bruker-modus"
 
 #: CTFd/forms/setup.py:36
 msgid "Team Mode"
-msgstr "Modo equipo"
+msgstr "Lags-modus"
 
 #: CTFd/forms/setup.py:39
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
-msgstr "Controla si los usuarios se unen en equipos para jugar (Modo Equipo) o juegan como ellos mismos (Modo Usuario)"
+msgstr "Kontrollerer om brukere går sammen i lag for å spille (Lags-modus) eller spiller som seg selv (Bruker-modus)"
 
 #: CTFd/forms/setup.py:45
 msgid "Admin Username"
-msgstr "Nombre de usuario"
+msgstr "Administrator brukernavn"
 
 #: CTFd/forms/setup.py:46
 msgid "Your username for the administration account"
-msgstr "Su nombre de usuario para la cuenta de administración"
+msgstr "Ditt brukernavn for administrasjonskontoen"
 
 #: CTFd/forms/setup.py:50
 msgid "Admin Email"
-msgstr "Correo electrónico del administrador"
+msgstr "Administrators epost"
 
 #: CTFd/forms/setup.py:51
 msgid "Your email address for the administration account"
-msgstr "Su dirección de correo electrónico para la cuenta de administración"
+msgstr "Din epostadresse for administrasjonskontoen"
 
 #: CTFd/forms/setup.py:55
 msgid "Admin Password"
-msgstr "Contraseña de administrador"
+msgstr "Administratorpassord"
 
 #: CTFd/forms/setup.py:56
 msgid "Your password for the administration account"
-msgstr "Su contraseña para la cuenta de administración"
+msgstr "Ditt passord for administrasjonskontoen"
 
 #: CTFd/forms/setup.py:61
 msgid "Logo"
-msgstr "Logotipo"
+msgstr "Logo"
 
 #: CTFd/forms/setup.py:63
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
-msgstr "Logotipo para utilizar en el sitio web en lugar del nombre de la CTF. Se utiliza como botón de la página de inicio. Opcional."
+msgstr "Logo som skal brukes for nettsiden i stedet for et CTF-navn. Brukes som hjem-knapp. Valgfritt."
 
 #: CTFd/forms/setup.py:67
 msgid "Banner"
@@ -169,153 +169,153 @@ msgstr "Banner"
 
 #: CTFd/forms/setup.py:67
 msgid "Banner to use for the homepage. Optional."
-msgstr "Banner a utilizar para la página de inicio. Opcional."
+msgstr "Banner som skal brukes på hjemmesiden. Valgfritt."
 
 #: CTFd/forms/setup.py:70
 msgid "Small Icon"
-msgstr "Icono pequeño"
+msgstr "Lite ikon"
 
 #: CTFd/forms/setup.py:72
 msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
-msgstr "favicon utilizado en los navegadores de los usuarios. Sólo se aceptan PNG. Debe ser de 32x32px. Opcional."
+msgstr "Favicon som brukes i brukerens nettlesere. Kun PNG-er aksepteres. Må være 32x32 piksler. Valgfritt."
 
 #: CTFd/forms/setup.py:76
 msgid "Theme"
-msgstr "Tema"
+msgstr "Tema for utseende"
 
 #: CTFd/forms/setup.py:77
 msgid "CTFd Theme to use. Can be changed later."
-msgstr "Tema CTFd a utilizar. Se puede cambiar más tarde."
+msgstr "CTFd-Tema som skal brukes. Kan endres senere."
 
 #: CTFd/forms/setup.py:84
 msgid "Theme Color"
-msgstr "Color del tema"
+msgstr "Tema-farge"
 
 #: CTFd/forms/setup.py:86
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
-msgstr "Color utilizado por el tema para controlar la estética. Requiere soporte de tema. Opcional."
+msgstr "Farge som brukes av temaet for å kontrollere estetikk. Krever temasupport. Valgfritt."
 
 #: CTFd/forms/setup.py:91
 msgid "Verify Emails"
-msgstr "Verificar correos electrónicos"
+msgstr "Eposter må verifiseres"
 
 #: CTFd/forms/setup.py:143
 msgid "Start Time"
-msgstr "Hora de inicio"
+msgstr "Starttidspunkt"
 
 #: CTFd/forms/setup.py:144
 msgid "Time when your CTF is scheduled to start. Optional."
-msgstr "Hora a la que está previsto que comience tu CTF. Opcional."
+msgstr "Tidspunkt for når CTF-en din er skal starte. Valgfritt."
 
 #: CTFd/forms/setup.py:147
 msgid "End Time"
-msgstr "Fin de los tiempos"
+msgstr "Sluttidspunkt"
 
 #: CTFd/forms/setup.py:148
 msgid "Time when your CTF is scheduled to end. Optional."
-msgstr "Hora a la que está previsto que finalice tu CTF. Opcional."
+msgstr "Tidspunkt for når CTF-en din er skal slutte. Valgfritt."
 
 #: CTFd/forms/setup.py:150
 msgid "Finish"
-msgstr "Finalizar"
+msgstr "Ferdig"
 
 #: CTFd/forms/teams.py:102 CTFd/forms/teams.py:109 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:229
 msgid "Team Name"
-msgstr "Nombre del equipo"
+msgstr "Lagnavn"
 
 #: CTFd/forms/teams.py:103 CTFd/forms/teams.py:110
 msgid "Team Password"
-msgstr "Contraseña del equipo"
+msgstr "Lagets passord"
 
 #: CTFd/forms/teams.py:104 CTFd/forms/teams.py:289
 msgid "Join"
-msgstr "Unirse"
+msgstr "Bli med"
 
 #: CTFd/forms/teams.py:111
 msgid "Create"
-msgstr "Crear"
+msgstr "Opprett"
 
 #: CTFd/forms/teams.py:128
 msgid "Your team's public name shown to other competitors"
-msgstr "El nombre público de tu equipo se muestra a otros competidores"
+msgstr "Lagets offentlige navn vist til andre deltakere"
 
 #: CTFd/forms/teams.py:131
 msgid "New Team Password"
-msgstr "Nueva contraseña del equipo"
+msgstr "Nytt lagpassord"
 
 #: CTFd/forms/teams.py:131
 msgid "Set a new team join password"
-msgstr "Establecer una nueva contraseña para unirse al equipo"
+msgstr "Sett et nytt lagpåloggingspassord"
 
 #: CTFd/forms/teams.py:134
 msgid "Confirm Current Team Password"
-msgstr "Confirmar la contraseña actual del equipo"
+msgstr "Bekreft nåværende lagpassord"
 
 #: CTFd/forms/teams.py:136
 msgid "Provide your current team password (or your password) to update your team's password"
-msgstr "Proporcione la contraseña actual de su equipo (o su contraseña) para actualizar la contraseña de su equipo"
+msgstr "Oppgi ditt nåværende lagpassord (eller ditt passord) for å oppdatere lagets passord"
 
 #: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
-msgstr "La afiliación de tu equipo se muestra públicamente a otros competidores"
+msgstr "Ditt lags tilhørighet offentlig vist til andre deltakere"
 
 #: CTFd/forms/teams.py:147
 msgid "Your team's website publicly shown to other competitors"
-msgstr "El sitio web de su equipo se muestra públicamente a otros competidores"
+msgstr "Ditt lags nettside offentlig vist til andre deltakere"
 
 #: CTFd/forms/teams.py:152
 msgid "Your team's country publicly shown to other competitors"
-msgstr "El país de tu equipo se muestra públicamente a los demás competidores"
+msgstr "Ditt lags land offentlig vist til andre deltakere"
 
 #: CTFd/forms/teams.py:192
 msgid "Team Captain"
-msgstr "Capitán del equipo"
+msgstr "Kaptein"
 
 #: CTFd/forms/teams.py:215 CTFd/forms/users.py:161
 msgid "Search Field"
-msgstr "Campo de búsqueda"
+msgstr "Søkefelt"
 
 #: CTFd/forms/teams.py:217 CTFd/forms/users.py:163
 #: CTFd/themes/core-beta/templates/challenge.html:206
 msgid "Name"
-msgstr "Nombre"
+msgstr "Navn"
 
 #: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
 msgid "Parameter"
-msgstr "Parámetro"
+msgstr "Parameter"
 
 #: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
 msgid "Search"
-msgstr "Buscar en"
+msgstr "Søk"
 
 #: CTFd/forms/teams.py:235
 msgid "Hidden"
-msgstr "Oculto"
+msgstr "Skjult"
 
 #: CTFd/forms/teams.py:236
 msgid "Banned"
-msgstr "Prohibido"
+msgstr "Utestengt"
 
 #: CTFd/forms/teams.py:285
 msgid "Invite Link"
-msgstr "Enlace de invitación"
+msgstr "Invitasjonslenke"
 
 #: CTFd/forms/users.py:133
 msgid "Bracket"
-msgstr ""
+msgstr "Liga"
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
-msgstr ""
+msgstr "Konkurranseliga for din bruker"
 
 #: CTFd/forms/users.py:172
 msgid "Search for matching users"
-msgstr "Buscar usuarios coincidentes"
+msgstr "Søk etter brukere"
 
 #: CTFd/themes/core-beta/templates/base.html:53
 msgid "Powered by CTFd"
-msgstr "Desarrollado por CTFd"
+msgstr "Laget med CTFd"
 
 #: CTFd/themes/core-beta/templates/challenge.html:11
 #: CTFd/themes/core-beta/templates/teams/private.html:388
@@ -323,232 +323,232 @@ msgstr "Desarrollado por CTFd"
 #: CTFd/themes/core-beta/templates/users/private.html:124
 #: CTFd/themes/core-beta/templates/users/public.html:123
 msgid "Challenge"
-msgstr "Desafío"
+msgstr "Oppgave"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
 #, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] "%(num)d Resolución"
-msgstr[1] "%(num)d Resoluciones"
+msgstr[0] "%(num)d løsing"
+msgstr[1] "%(num)d løsinger"
 
 #: CTFd/themes/core-beta/templates/challenge.html:77
 msgid "View Hint"
-msgstr "Ver pista"
+msgstr "Se hint"
 
 #: CTFd/themes/core-beta/templates/challenge.html:120
 msgid "attempt"
 msgid_plural "attempts"
-msgstr[0] "intento"
-msgstr[1] "intentos"
+msgstr[0] "forsøk"
+msgstr[1] "forsøk"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
-msgstr "Bandera"
+msgstr "Flagg"
 
 #: CTFd/themes/core-beta/templates/challenge.html:169
 msgid "Next Challenge"
-msgstr "Próximo reto"
+msgstr "Neste oppgave"
 
 #: CTFd/themes/core-beta/templates/challenge.html:175
 msgid "Share"
-msgstr "Compartir"
+msgstr "Del"
 
 #: CTFd/themes/core-beta/templates/challenge.html:207
 #: CTFd/themes/core-beta/templates/setup.html:305
 #: CTFd/themes/core-beta/templates/setup.html:326
 msgid "Date"
-msgstr "Fecha"
+msgstr "Dato"
 
 #: CTFd/themes/core-beta/templates/challenges.html:7
 #: CTFd/themes/core-beta/templates/components/navbar.html:59
 msgid "Challenges"
-msgstr "Desafíos"
+msgstr "Oppgaver"
 
 #: CTFd/themes/core-beta/templates/confirm.html:7
 msgid "Confirm"
-msgstr "Confirme"
+msgstr "Bekreft"
 
 #: CTFd/themes/core-beta/templates/confirm.html:18
 msgid "We've sent a confirmation email to your email address."
-msgstr "Hemos enviado un mensaje de confirmación a tu dirección de correo electrónico."
+msgstr "Vi har sendt en e-post om bekreftelse til din e-postadresse."
 
 #: CTFd/themes/core-beta/templates/confirm.html:24
 msgid "Please click the link in that email to confirm your account."
-msgstr "Haga clic en el enlace de ese correo electrónico para confirmar su cuenta."
+msgstr "Trykk på lenken i e-posten for å bekrefte kontoen din."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
 msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
-msgstr "Si el correo electrónico no llega, compruebe su carpeta de correo no deseado o póngase en contacto con un administrador para verificar manualmente su cuenta."
+msgstr "Hvis e-posten ikke kommer fram, sjekk søppelpostmappen din eller kontakt en administrator for å manuelt verifisere kontoen din."
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
-msgstr "Cambiar la dirección de correo electrónico"
+msgstr "Endre epostadresse"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:164
 #: CTFd/themes/core-beta/templates/components/navbar.html:169
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
-msgstr "Inicio de sesión"
+msgstr "Logg inn"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
-msgstr "¿Ha olvidado su contraseña?"
+msgstr "Glemt passord?"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:85
 #: CTFd/themes/core-beta/templates/components/navbar.html:91
 #: CTFd/themes/core-beta/templates/notifications.html:7
 msgid "Notifications"
-msgstr "Notificaciones"
+msgstr "Varsler"
 
 #: CTFd/themes/core-beta/templates/notifications.html:14
 msgid "There are no notifications yet"
-msgstr "Aún no hay notificaciones"
+msgstr "Du har ikke noen varsler ennå"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:151
 #: CTFd/themes/core-beta/templates/components/navbar.html:156
 #: CTFd/themes/core-beta/templates/register.html:7
 msgid "Register"
-msgstr "Regístrese en"
+msgstr "Registrer"
 
 #: CTFd/themes/core-beta/templates/register.html:35
 msgid "Your username on the site"
-msgstr "Su nombre de usuario en el sitio"
+msgstr "Brukernavnet ditt på nettstedet"
 
 #: CTFd/themes/core-beta/templates/register.html:43
 msgid "Never shown to the public"
-msgstr "Nunca se muestra al público"
+msgstr "Blir ikke vist offentlig"
 
 #: CTFd/themes/core-beta/templates/register.html:51
 msgid "Password used to log into your account"
-msgstr "Contraseña utilizada para acceder a su cuenta"
+msgstr "Passord som brukes for å logge inn på kontoen din"
 
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr "Al registrarte, aceptas la <a href=\"%(privacy_link)s\" target=\"_blank\">política de privacidad</a> y los <a href=\"%(tos_link)s\" target=\"_blank\">términoso y condiciones</a>"
+msgstr "Ved å registrere deg godtar du <a href=\"%(privacy_link)s\" target=\"_blank\">personvernreglene</a> og <a href=\"%(tos_link)s\" target=\"_blank\">vilkårene for bruk</a>"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
-msgstr "Restablecer contraseña"
+msgstr "Tilbakestill passord"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:21
 msgid "You can now reset the password for your account and log in. Please enter in a new password below."
-msgstr "Ahora puede restablecer la contraseña de su cuenta e iniciar sesión. Introduzca una nueva contraseña a continuación."
+msgstr "Nå kan du tilbakestille passordet for kontoen din og logge inn. Vennligst skriv inn et nytt passord nedenfor."
 
 #: CTFd/themes/core-beta/templates/reset_password.html:44
 msgid "Please provide the email address associated with your account below."
-msgstr "Indique a continuación la dirección de correo electrónico asociada a su cuenta."
+msgstr "Vennligst oppgi e-postadressen knyttet til kontoen din nedenfor."
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:52
 #: CTFd/themes/core-beta/templates/scoreboard.html:7
 msgid "Scoreboard"
-msgstr "Marcador"
+msgstr "Resultattavle"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:24
 msgid "All"
-msgstr "Todos"
+msgstr "Alle"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:36
 msgid "Place"
-msgstr "Posición"
+msgstr "Plassering"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:38
 #: CTFd/themes/core-beta/templates/teams/private.html:330
 #: CTFd/themes/core-beta/templates/teams/public.html:96
 msgid "Score"
-msgstr "Puntuación"
+msgstr "Poeng"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:60
 msgid "Scoreboard is empty"
-msgstr "El scoreboard está vacío"
+msgstr "Det er ingen resultater å vise"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:124
 #: CTFd/themes/core-beta/templates/components/navbar.html:129
 #: CTFd/themes/core-beta/templates/settings.html:8
 #: CTFd/themes/core-beta/templates/setup.html:50
 msgid "Settings"
-msgstr "Ajustes"
+msgstr "Innstillinger"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:112
 #: CTFd/themes/core-beta/templates/components/navbar.html:117
 #: CTFd/themes/core-beta/templates/settings.html:21
 msgid "Profile"
-msgstr "Perfil"
+msgstr "Profil"
 
 #: CTFd/themes/core-beta/templates/settings.html:26
 msgid "Access Tokens"
-msgstr "Fichas de acceso"
+msgstr "Tilgangsnøkler"
 
 #: CTFd/themes/core-beta/templates/settings.html:95
 msgid "Your profile has been updated"
-msgstr "Su perfil ha sido actualizado"
+msgstr "Profilen din er oppdatert"
 
 #: CTFd/themes/core-beta/templates/settings.html:103
 #: CTFd/themes/core-beta/templates/teams/private.html:83
 #: CTFd/themes/core-beta/templates/teams/private.html:198
 msgid "Error:"
-msgstr "Error:"
+msgstr "Feil:"
 
 #: CTFd/themes/core-beta/templates/settings.html:129
 msgid "API Key Generated"
-msgstr "Clave API generada"
+msgstr "Generert API-nøkkel"
 
 #: CTFd/themes/core-beta/templates/settings.html:137
 msgid "Please copy your API Key, it won't be shown again!"
-msgstr "Por favor, copie su clave API, ¡no se volverá a mostrar!"
+msgstr "Vennligst kopier API-nøkkelen din, den vil ikke bli vist igjen!"
 
 #: CTFd/themes/core-beta/templates/settings.html:183
 msgid "Active Tokens"
-msgstr "Fichas activas"
+msgstr "Aktive tilgangsnøkler"
 
 #: CTFd/themes/core-beta/templates/settings.html:195
 msgid "Delete Token"
-msgstr "Borrar token"
+msgstr "Slett tilgangsnøkkel"
 
 #: CTFd/themes/core-beta/templates/settings.html:204
 msgid "Are you sure you want to delete this token?"
-msgstr "¿Estás seguro de que quieres borrar este token?"
+msgstr "Er du sikker på at du vil slette denne tilgangsnøkkelen?"
 
 #: CTFd/themes/core-beta/templates/settings.html:224
 msgid "Created"
-msgstr "Creado"
+msgstr "Opprettet"
 
 #: CTFd/themes/core-beta/templates/settings.html:226
 msgid "Description"
-msgstr "Descripción"
+msgstr "Beskrivelse"
 
 #: CTFd/themes/core-beta/templates/settings.html:227
 msgid "Delete"
-msgstr "Borrar"
+msgstr "Slett"
 
 #: CTFd/themes/core-beta/templates/setup.html:24
 msgid "Setup"
-msgstr "Configurar"
+msgstr "Oppsett"
 
 #: CTFd/themes/core-beta/templates/setup.html:44
 msgid "General"
-msgstr "General"
+msgstr "Generelt"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
 msgid "Mode"
-msgstr "Modo"
+msgstr "Modus"
 
 #: CTFd/themes/core-beta/templates/setup.html:53
 msgid "Administration"
-msgstr "Administración"
+msgstr "Administrasjon"
 
 #: CTFd/themes/core-beta/templates/setup.html:56
 msgid "Style"
-msgstr "Estilo"
+msgstr "Stil"
 
 #: CTFd/themes/core-beta/templates/setup.html:59
 msgid "Date &amp; Time"
-msgstr "Fecha &amp; Hora"
+msgstr "Dato &amp; tid"
 
 #: CTFd/themes/core-beta/templates/setup.html:62
 msgid "Integrations"
-msgstr "Integraciones"
+msgstr "Integrasjoner"
 
 #: CTFd/themes/core-beta/templates/setup.html:86
 #: CTFd/themes/core-beta/templates/setup.html:138
@@ -557,51 +557,51 @@ msgstr "Integraciones"
 #: CTFd/themes/core-beta/templates/setup.html:296
 #: CTFd/themes/core-beta/templates/setup.html:345
 msgid "Next"
-msgstr "Siguiente"
+msgstr "Neste"
 
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "Participants register accounts and form teams"
-msgstr "Los participantes registran sus cuentas y forman equipos"
+msgstr "Spillerene registrerer kontoer og danner lag"
 
 #: CTFd/themes/core-beta/templates/setup.html:113
 msgid "If a team member solves a challenge, the entire team receives credit"
-msgstr "Si un miembro del equipo resuelve un reto, todo el equipo recibe créditos"
+msgstr "Hvis et teammedlem løser en oppgave, får hele laget poeng"
 
 #: CTFd/themes/core-beta/templates/setup.html:115
 msgid "Easier to see which team member solved a challenge"
-msgstr "Es más fácil ver qué miembro del equipo ha resuelto un reto"
+msgstr "Lettere å se hvilket teammedlem som løste en oppgave"
 
 #: CTFd/themes/core-beta/templates/setup.html:116
 msgid "May be slightly more difficult to administer"
-msgstr "Puede ser ligeramente más difícil de administrar"
+msgstr "Kan bli bittelitt vanskeligere å administrere"
 
 #: CTFd/themes/core-beta/templates/setup.html:120
 msgid "Participants only register an individual account"
-msgstr "Los participantes sólo registran una cuenta individual"
+msgstr "Spillerene registrerer en individuell konto"
 
 #: CTFd/themes/core-beta/templates/setup.html:121
 msgid "Players can share accounts to form pseudo-teams"
-msgstr "Los jugadores pueden compartir cuentas para formar pseudoequipos"
+msgstr "Spillere kan dele kontoer for å danne \"lag\""
 
 #: CTFd/themes/core-beta/templates/setup.html:123
 msgid "Easier to organize"
-msgstr "Más fácil de organizar"
+msgstr "Enklere å organisere"
 
 #: CTFd/themes/core-beta/templates/setup.html:124
 msgid "Difficult to attribute solutions to individual team members"
-msgstr "Dificultad para atribuir soluciones a miembros individuales del equipo"
+msgstr "Vanskeligere å tilskrive løsninger til individuelle teammedlemmer"
 
 #: CTFd/themes/core-beta/templates/setup.html:143
 msgid "Visibility Settings"
-msgstr "Ajustes de visibilidad"
+msgstr "Innstillinger for synlighet"
 
 #: CTFd/themes/core-beta/templates/setup.html:146
 msgid "Control the visibility of different sections of CTFd"
-msgstr "Controlar la visibilidad de las diferentes secciones de CTFd"
+msgstr "Endre synligheten til forskjellige deler av CTFd"
 
 #: CTFd/themes/core-beta/templates/setup.html:232
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
-msgstr "Suscriba su dirección de correo electrónico al boletín de CTFd LLC para recibir noticias y actualizaciones"
+msgstr "Abonner på CTFd LLCs nyhetsbrev for nyheter og oppdateringer"
 
 #: CTFd/themes/core-beta/templates/setup.html:309
 #: CTFd/themes/core-beta/templates/setup.html:330
@@ -610,67 +610,67 @@ msgstr "Suscriba su dirección de correo electrónico al boletín de CTFd LLC pa
 #: CTFd/themes/core-beta/templates/users/private.html:127
 #: CTFd/themes/core-beta/templates/users/public.html:126
 msgid "Time"
-msgstr "Tiempo"
+msgstr "Tid"
 
 #: CTFd/themes/core-beta/templates/setup.html:334
 msgid "UTC Preview"
-msgstr "Avance de la UTC"
+msgstr "UTC-forhåndsvisning"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:36
 #: CTFd/themes/core-beta/templates/users/users.html:6
 msgid "Users"
-msgstr "Usuarios"
+msgstr "Brukere"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:43
 #: CTFd/themes/core-beta/templates/teams/teams.html:6
 msgid "Teams"
-msgstr "Equipos"
+msgstr "Lag"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:72
 #: CTFd/themes/core-beta/templates/components/navbar.html:77
 msgid "Admin Panel"
-msgstr "Panel de administración"
+msgstr "Administratorpanel"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:99
 #: CTFd/themes/core-beta/templates/components/navbar.html:104
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
 #: CTFd/themes/core-beta/templates/teams/teams.html:49
 msgid "Team"
-msgstr "Equipo"
+msgstr "Lag"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:136
 #: CTFd/themes/core-beta/templates/components/navbar.html:141
 msgid "Logout"
-msgstr "Cierre de sesión"
+msgstr "Logg ut"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:180
 msgid "Change language"
-msgstr "Cambiar idioma"
+msgstr "Endre språk"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:199
 #: CTFd/themes/core-beta/templates/components/navbar.html:204
 msgid "Toggle theme"
-msgstr "Alternar tema"
+msgstr "Bytt tema"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:12
 msgid "403 Forbidden"
-msgstr "403 Prohibido"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
-msgstr "Archivo no encontrado"
+msgstr "Klarte ikke finne filen"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "404 Not Found"
-msgstr "404 No encontrado"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
-msgstr "Demasiadas intentos"
+msgstr "For mange forespørsler"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:10
 msgid "Please slow down!"
-msgstr "¡Por favor, más despacio!"
+msgstr "Vennligst ta det med ro!"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:13
 msgid "429 Too Many Requests"
@@ -684,71 +684,71 @@ msgstr ""
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
 #: CTFd/themes/core-beta/templates/macros/forms.html:65
 msgid "(Optional)"
-msgstr "(Opcional)"
+msgstr "(Valgfritt)"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:6
 #: CTFd/themes/core-beta/templates/teams/join_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
 msgid "Join Team"
-msgstr "Únete al equipo"
+msgstr "Bli med i et lag"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:15
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
 msgid "Welcome to"
-msgstr "Bienvenido a"
+msgstr "Velkommen til"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:19
 msgid "Click the button below to join the team!"
-msgstr "Haga clic en el botón de abajo para unirse al equipo!"
+msgstr "Klicken Sie auf die Schaltfläche unten, um dem Team beizutreten!"
 
 #: CTFd/themes/core-beta/templates/teams/new_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
 msgid "Create Team"
-msgstr "Crear equipo"
+msgstr "Opprett et lag"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:8
 msgid "Edit Team"
-msgstr "Editar Equipo"
+msgstr "Endre Innstillinger for lag"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:76
 msgid "Your team's profile has been updated"
-msgstr "El perfil de tu equipo ha sido actualizado"
+msgstr "Profilen til laget ditt har blitt oppdatert"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:104
 msgid "Choose Captain"
-msgstr "Elige Capitán"
+msgstr "Velg kaptein"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
-msgstr "Sus derechos de capitán han sido transferidos"
+msgstr "Kapteinrettighetene har blitt overført"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:152
 msgid "Invite Users"
-msgstr "Invitar a usuarios"
+msgstr "inviter spillere"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:171
 msgid "Share this link with your team members for them to join your team"
-msgstr "Comparte este enlace con los miembros de tu equipo para que se unan"
+msgstr "Del denne lenken med lagmedlemmene dine for at de skal kunne bli med i laget ditt"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:174
 msgid "Invite links can be re-used and expire after 1 day"
-msgstr "Los enlaces de invitación pueden reutilizarse y caducan al cabo de 1 día"
+msgstr "Invitasjonslenker kan brukes flere ganger og utløper etter 1 dag"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:188
 msgid "Disband Team"
-msgstr "Disolver el equipo"
+msgstr "Oppløs lag"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:193
 msgid "Are you sure you want to disband your team?"
-msgstr "¿Seguro que quieres disolver tu equipo?"
+msgstr "Er du sikker på at du vil oppløse laget ditt?"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:206
 msgid "No"
-msgstr "No"
+msgstr "Nei"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:207
 msgid "Yes"
-msgstr "Sí"
+msgstr "Ja"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:218
 #: CTFd/themes/core-beta/templates/teams/public.html:10
@@ -756,104 +756,103 @@ msgstr "Sí"
 #: CTFd/themes/core-beta/templates/users/public.html:21
 #: CTFd/themes/core-beta/templates/users/users.html:70
 msgid "Official"
-msgstr "Oficial"
+msgstr "Offisiell"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:260
 msgid "place"
-msgstr "lugar"
+msgstr "Sted"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:268
 msgid "points"
-msgstr "puntos"
+msgstr "Poeng"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:325
 #: CTFd/themes/core-beta/templates/teams/public.html:91
 msgid "Members"
-msgstr "Miembros"
+msgstr "Medlemmer"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:345
 #: CTFd/themes/core-beta/templates/teams/public.html:110
 msgid "Captain"
-msgstr "Capitán"
+msgstr "Kaptein"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:361
 #: CTFd/themes/core-beta/templates/teams/public.html:125
 #: CTFd/themes/core-beta/templates/users/private.html:98
 #: CTFd/themes/core-beta/templates/users/public.html:98
 msgid "Awards"
-msgstr "Premios"
+msgstr "Utmerkelser"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:384
 #: CTFd/themes/core-beta/templates/teams/public.html:153
 #: CTFd/themes/core-beta/templates/users/private.html:120
 msgid "Solves"
-msgstr "Resuelve"
+msgstr "Løsninger"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:389
 #: CTFd/themes/core-beta/templates/teams/public.html:158
 #: CTFd/themes/core-beta/templates/users/private.html:125
 #: CTFd/themes/core-beta/templates/users/public.html:124
 msgid "Category"
-msgstr "Categoría"
+msgstr "Kategori"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:390
 #: CTFd/themes/core-beta/templates/teams/public.html:159
 #: CTFd/themes/core-beta/templates/users/private.html:126
 #: CTFd/themes/core-beta/templates/users/public.html:125
 msgid "Value"
-msgstr "Valor"
+msgstr "Verdi"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:481
 #: CTFd/themes/core-beta/templates/teams/public.html:248
 #: CTFd/themes/core-beta/templates/users/private.html:213
 #: CTFd/themes/core-beta/templates/users/public.html:214
 msgid "No solves yet"
-msgstr "Aún no hay soluciones"
+msgstr "Ingen løsninger ennå"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
-msgstr "Para participar debes unirte o crear un equipo."
+msgstr "For å delta må du enten bli med i eller opprette et lag."
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
-msgstr "Jugar con el equipo oficial"
+msgstr "Spill med et offisielt lag"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
 msgid "Join Unofficial Team"
-msgstr "Únete al equipo no oficial"
+msgstr "Bli med i et uoffisielt lag"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
 msgid "Create Unofficial Team"
-msgstr "Crear equipo no oficial"
+msgstr "Opprett uoffisielt lag"
 
 #: CTFd/themes/core-beta/templates/teams/teams.html:128
 #: CTFd/themes/core-beta/templates/users/users.html:118
 msgid "Page"
-msgstr "Página"
+msgstr "Side"
 
 #: CTFd/themes/core-beta/templates/users/users.html:14
 #, python-format
 msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
-msgstr ""
+msgstr "Søker etter brukere med <strong>%(field)s</strong> som matcher <strong>%(q)s</strong>"
 
 #: CTFd/themes/core-beta/templates/users/users.html:17
 #, python-format
 msgid "Page %(page)s of %(total)s results"
-msgstr ""
+msgstr "Side %(page)s av %(total)s resultater"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"
-msgstr "Usuario"
+msgstr "Spiller"
 
 #: CTFd/utils/modes/__init__.py:35
 msgid "user"
 msgid_plural "users"
-msgstr[0] "usuario"
-msgstr[1] "usuarios"
+msgstr[0] "spiller"
+msgstr[1] "spillere"
 
 #: CTFd/utils/modes/__init__.py:37
 msgid "team"
 msgid_plural "teams"
-msgstr[0] "equipo"
-msgstr[1] "equipos"
-
+msgstr[0] "lag"
+msgstr[1] "lag"

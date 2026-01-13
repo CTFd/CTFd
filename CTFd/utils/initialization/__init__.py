@@ -247,6 +247,7 @@ def init_request_processors(app):
             if ip not in user_ips or request.method in (
                 "POST",
                 "PATCH",
+                "PUT",
                 "DELETE",
             ):
                 track = Tracking.query.filter_by(
