@@ -29,7 +29,10 @@
           <form method="post" accept-charset="utf-8" role="form">
 
             <div class="mb-3">
-              <b>{{ form.name.label(class="form-label") }}</b>
+              <b>
+                {{ form.name.label(class="form-label") }}
+                <span class="text-danger">*</span>
+              </b>
               {{ form.name(class="form-control", value=name, autocomplete="username") }}
               <small class="form-text text-muted">
                 {% trans %}Your username on the site{% endtrans %}
@@ -37,7 +40,10 @@
             </div>
 
             <div class="mb-3">
-              <b>{{ form.email.label(class="form-label") }}</b>
+              <b>
+                {{ form.email.label(class="form-label") }}
+                <span class="text-danger">*</span>
+              </b>
               {{ form.email(class="form-control", value=email, autocomplete="email") }}
               <small class="form-text text-muted">
                 {% trans %}Never shown to the public{% endtrans %}
@@ -45,7 +51,10 @@
             </div>
 
             <div class="mb-3">
-              <b>{{ form.password.label(class="form-label") }}</b>
+              <b>
+                {{ form.password.label(class="form-label") }}
+                <span class="text-danger">*</span>
+              </b>
               {{ form.password(class="form-control", value=password, autocomplete="new-password") }}
               <small class="form-text text-muted">
                 {% trans %}Password used to log into your account{% endtrans %}

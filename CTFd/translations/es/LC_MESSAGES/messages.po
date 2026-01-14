@@ -117,11 +117,11 @@ msgstr "Descripción del evento"
 
 #: CTFd/forms/setup.py:32
 msgid "Description for the CTF"
-msgstr "Descripción de la FPC"
+msgstr "Descripción del CTF"
 
 #: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
 msgid "User Mode"
-msgstr "Modo Usuario"
+msgstr "Modo individual"
 
 #: CTFd/forms/setup.py:36
 msgid "Team Mode"
@@ -185,11 +185,11 @@ msgstr "Tema"
 
 #: CTFd/forms/setup.py:77
 msgid "CTFd Theme to use. Can be changed later."
-msgstr "CTFd Tema a utilizar. Se puede cambiar más tarde."
+msgstr "Tema CTFd a utilizar. Se puede cambiar más tarde."
 
 #: CTFd/forms/setup.py:84
 msgid "Theme Color"
-msgstr "Tema Color"
+msgstr "Color del tema"
 
 #: CTFd/forms/setup.py:86
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
@@ -217,7 +217,7 @@ msgstr "Hora a la que está previsto que finalice tu CTF. Opcional."
 
 #: CTFd/forms/setup.py:150
 msgid "Finish"
-msgstr "Acabado"
+msgstr "Finalizar"
 
 #: CTFd/forms/teams.py:102 CTFd/forms/teams.py:109 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:229
@@ -230,11 +230,11 @@ msgstr "Contraseña del equipo"
 
 #: CTFd/forms/teams.py:104 CTFd/forms/teams.py:289
 msgid "Join"
-msgstr "Únete a"
+msgstr "Unirse"
 
 #: CTFd/forms/teams.py:111
 msgid "Create"
-msgstr "Cree"
+msgstr "Crear"
 
 #: CTFd/forms/teams.py:128
 msgid "Your team's public name shown to other competitors"
@@ -329,8 +329,8 @@ msgstr "Desafío"
 #, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] "%(num)d Resolver"
-msgstr[1] "%(num)d Resolver"
+msgstr[0] "%(num)d Resolución"
+msgstr[1] "%(num)d Resoluciones"
 
 #: CTFd/themes/core-beta/templates/challenge.html:77
 msgid "View Hint"
@@ -666,7 +666,7 @@ msgstr "404 No encontrado"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
-msgstr "Demasiadas solicitudes"
+msgstr "Demasiadas intentos"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:10
 msgid "Please slow down!"
@@ -708,7 +708,7 @@ msgstr "Crear equipo"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:8
 msgid "Edit Team"
-msgstr "Equipo de edición"
+msgstr "Editar Equipo"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:76
 msgid "Your team's profile has been updated"
@@ -728,7 +728,7 @@ msgstr "Invitar a usuarios"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:171
 msgid "Share this link with your team members for them to join your team"
-msgstr "Comparte este enlace con los miembros de tu equipo para que se unan a él"
+msgstr "Comparte este enlace con los miembros de tu equipo para que se unan"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:174
 msgid "Invite links can be re-used and expire after 1 day"

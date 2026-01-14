@@ -9,6 +9,7 @@ from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessRespon
 from CTFd.constants import RawEnum
 from CTFd.models import Solutions, SolutionUnlocks, db
 from CTFd.schemas.solutions import SolutionSchema
+from CTFd.utils.challenges import get_solve_ids_for_user_id
 from CTFd.utils.decorators import (
     admins_only,
     authed_only,
@@ -154,8 +155,22 @@ class Solution(Resource):
         if is_admin():
             view = "admin"
         else:
+            if solution.state == "hidden":
+                abort(404)
             if solution.challenge.state == "hidden":
-                abort(403)
+                abort(404)
+
+            # If the solution state is visible we just let it through
+            if solution.state == "visible":
+                pass
+            elif solution.state == "solved":
+                user_solves = get_solve_ids_for_user_id(user_id=user.id)
+                if solution.challenge.id not in user_solves:
+                    abort(404)
+            else:
+                # Different behavior can be implemented in a plugin for the route
+                abort(404)
+
             view = "locked"
             unlocked = SolutionUnlocks.query.filter_by(
                 account_id=user.account_id, target=solution.id

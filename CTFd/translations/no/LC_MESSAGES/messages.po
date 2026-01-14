@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2026-01-14 01:01\n"
+"POT-Creation-Date: 2025-11-17 21:57\n"
+"PO-Revision-Date: 2025-11-17 21:57\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Crowdin-Language: no\n"
 "X-Crowdin-File: /master/messages.pot\n"
 "X-Crowdin-File-ID: 188\n"
-"Language: no_NO\n"
+"Language: nb_NO\n"
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
@@ -283,7 +283,7 @@ msgstr "Navn"
 
 #: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
 msgid "Parameter"
-msgstr "Parametere"
+msgstr "Parameter"
 
 #: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
 msgid "Search"
@@ -389,7 +389,7 @@ msgstr "Endre epostadresse"
 #: CTFd/themes/core-beta/templates/components/navbar.html:169
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
-msgstr "Logg på"
+msgstr "Logg inn"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
@@ -654,7 +654,7 @@ msgstr "Bytt tema"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:12
 msgid "403 Forbidden"
-msgstr "403 Forbidden"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
@@ -662,7 +662,7 @@ msgstr "Klarte ikke finne filen"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "404 Not Found"
-msgstr "404 Not Found"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
@@ -674,11 +674,11 @@ msgstr "Vennligst ta det med ro!"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:13
 msgid "429 Too Many Requests"
-msgstr "429 Too Many Requests"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/errors/502.html:12
 msgid "502 Bad Gateway"
-msgstr "502 Bad Gateway"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
@@ -856,4 +856,3 @@ msgid "team"
 msgid_plural "teams"
 msgstr[0] "lag"
 msgstr[1] "lag"
-

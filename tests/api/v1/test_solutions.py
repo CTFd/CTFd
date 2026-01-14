@@ -8,7 +8,9 @@ from tests.helpers import (
     ctftime,
     destroy_ctfd,
     gen_challenge,
+    gen_flag,
     gen_solution,
+    gen_solve,
     gen_user,
     login_as_user,
     register_user,
@@ -145,7 +147,7 @@ def test_api_solutions_get_detail_non_admin_locked():
     app = create_ctfd()
     with app.app_context():
         gen_challenge(app.db)
-        solution_id = gen_solution(app.db, challenge_id=1).id
+        solution_id = gen_solution(app.db, challenge_id=1, state="visible").id
         register_user(app)
 
         with login_as_user(app) as client:
@@ -167,7 +169,7 @@ def test_api_solutions_get_detail_non_admin_unlocked():
     app = create_ctfd()
     with app.app_context():
         gen_challenge(app.db)
-        solution_id = gen_solution(app.db, challenge_id=1).id
+        solution_id = gen_solution(app.db, challenge_id=1, state="visible").id
         user_id = gen_user(app.db, name="user", email="user@user.com").id
 
         # Create solution unlock
@@ -603,7 +605,7 @@ def test_api_solutions_cannot_be_viewed_if_challenge_is_hidden():
         # Regular user cannot access solution for hidden challenge
         with login_as_user(app, name="testuser", password="password") as client:
             r = client.get(f"/api/v1/solutions/{hidden_solution_id}")
-            assert r.status_code == 403
+            assert r.status_code == 404
 
         # Admin can access solution for hidden challenge
         with login_as_user(app, "admin") as admin_client:
@@ -623,7 +625,7 @@ def test_api_solutions_cannot_be_viewed_if_challenge_is_hidden():
         # User still cannot access the solution because the challenge is hidden
         with login_as_user(app, name="testuser", password="password") as client:
             r = client.get(f"/api/v1/solutions/{hidden_solution_id}")
-            assert r.status_code == 403
+            assert r.status_code == 404
 
         # Make the challenge visible, now user should be able to see the unlocked solution
         challenge = Challenges.query.filter_by(id=1).first()
@@ -642,5 +644,380 @@ def test_api_solutions_cannot_be_viewed_if_challenge_is_hidden():
             assert "content" in data["data"]
             assert "html" in data["data"]
             assert data["data"]["content"] == "Hidden challenge solution"
+
+    destroy_ctfd(app)
+
+
+def test_api_user_cannot_access_hidden_state_solution():
+    """Test that a user cannot access a solution if the solution state is hidden"""
+    app = create_ctfd()
+    with app.app_context():
+        # Create a challenge and solution with state="hidden"
+        challenge = gen_challenge(app.db)
+        solution = gen_solution(
+            app.db,
+            challenge_id=challenge.id,
+            content="This is a hidden solution",
+            state="hidden",
+        )
+        solution_id = solution.id
+
+        # Create a regular user
+        user = gen_user(app.db, name="testuser", email="test@example.com")
+        user_id = user.id
+
+        # User should not be able to see the solution when state is hidden (locked view)
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+        # Even if user unlocks the solution, state=hidden means content should still be locked
+        unlock = SolutionUnlocks(user_id=user_id, target=solution_id)
+        app.db.session.add(unlock)
+        app.db.session.commit()
+
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+        # Admin should always be able to see the solution regardless of state
+        with login_as_user(app, "admin") as admin_client:
+            r = admin_client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "content" in data["data"]
+            assert data["data"]["content"] == "This is a hidden solution"
+            assert data["data"]["state"] == "hidden"
+
+        # Now test with state="visible"
+        solution = Solutions.query.filter_by(id=1).first()
+        solution.state = "visible"
+        app.db.session.commit()
+
+        # User with unlock should be able to see it
+        with login_as_user(app, name="testuser", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "content" in data["data"]
+            assert data["data"]["state"] == "visible"
+
+    destroy_ctfd(app)
+
+
+def test_api_challenge_detail_includes_solution_state():
+    """Test that the challenge detail API returns the solution_state field"""
+    app = create_ctfd()
+    with app.app_context():
+        # Test 1: Challenge without solution should have solution_state = "hidden"
+        challenge = gen_challenge(app.db)
+        challenge_id = challenge.id
+
+        assert challenge.solution_id is None
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["solution_state"] == "hidden"
+            assert data["data"]["solution_id"] is None
+
+        # Test 2: Challenge with hidden solution should have solution_state = "hidden"
+        solution = gen_solution(app.db, challenge_id=challenge_id, state="hidden")
+        solution_id = solution.id
+
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "solution_state" in data["data"]
+            assert data["data"]["solution_state"] == "hidden"
+            assert data["data"]["solution_id"] is None
+
+        # Test 3: Challenge with visible solution should have solution_state = "visible"
+        solution = Solutions.query.filter_by(id=solution_id).first()
+        solution.state = "visible"
+        app.db.session.commit()
+
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "solution_state" in data["data"]
+            assert data["data"]["solution_state"] == "visible"
+            assert data["data"]["solution_id"] == solution_id
+
+        # Test 4: Challenge with solved solution should have solution_state = "solved"
+        solution = Solutions.query.filter_by(id=solution_id).first()
+        solution.state = "solved"
+        app.db.session.commit()
+
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "solution_state" in data["data"]
+            assert data["data"]["solution_state"] == "solved"
+            # solution_id should be None for non-solvers when state is "solved"
+            assert data["data"]["solution_id"] is None
+
+            # Even if user unlocks the solution, state=hidden means content should still be locked
+            unlock = SolutionUnlocks(user_id=2, target=solution_id)
+            app.db.session.add(unlock)
+            app.db.session.commit()
+
+            r = client.get("/api/v1/solutions/1")
+            assert r.status_code == 404
+
+        # Test 5: After solving, solution_id should be present for solver
+        user_id = gen_user(app.db, name="solver", email="solver@example.com").id
+        gen_solve(app.db, user_id=user_id, challenge_id=challenge_id)
+
+        with login_as_user(app, name="solver", password="password") as client:
+            r = client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert "solution_state" in data["data"]
+            assert data["data"]["solution_state"] == "solved"
+            # solution_id should be present for users who have solved the challenge
+            assert data["data"]["solution_id"] == solution_id
+
+            r = client.get("/api/v1/solutions/1")
+            resp = r.get_json()
+            assert r.status_code == 200
+            assert resp["data"].get("content") is None
+
+            unlock = SolutionUnlocks(user_id=3, target=solution_id)
+            app.db.session.add(unlock)
+            app.db.session.commit()
+
+            r = client.get("/api/v1/solutions/1")
+            resp = r.get_json()
+            assert r.status_code == 200
+            assert resp["data"]["content"]
+
+    destroy_ctfd(app)
+
+
+def test_api_complete_solution_unlock_flow():
+    """Test the complete flow of solving a challenge, discovering a solution, unlocking it, and viewing it"""
+    app = create_ctfd()
+    with app.app_context():
+        # Setup: Create a challenge with a flag and a solution with "solved" state
+        challenge = gen_challenge(app.db)
+        challenge_id = challenge.id
+        gen_flag(app.db, challenge_id=challenge_id, content="flag{test_flag}")
+
+        solution = gen_solution(
+            app.db,
+            challenge_id=challenge_id,
+            content="This is the detailed solution content",
+            state="solved",  # Solution is only visible to users who solve the challenge
+        )
+        solution_id = solution.id
+
+        # Create a user
+        user = gen_user(app.db, name="testuser", email="test@example.com")
+        user_id = user.id
+
+        with login_as_user(app, name="testuser", password="password") as client:
+            # Step 1: Before solving, user queries the challenge detail endpoint
+            # They should see the challenge but NOT the solution_id (since they haven't solved it)
+            r = client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] == challenge_id
+            assert data["data"]["solution_id"] is None  # Not solved yet
+            assert data["data"]["solution_state"] == "solved"
+
+            # Step 2: Check the challenge solution endpoint - should also return no solution_id
+            r = client.get(f"/api/v1/challenges/{challenge_id}/solution")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] is None  # Not solved yet
+            assert data["data"]["state"] == "solved"
+
+            # Step 3: User attempts to view the solution directly - should fail (404 for hidden solutions)
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+            # Step 4: User solves the challenge
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag{test_flag}"},
+            )
+            assert r.status_code == 200
+            attempt_data = r.get_json()
+            assert attempt_data["success"] is True
+            assert attempt_data["data"]["status"] == "correct"
+
+            # Step 5: After solving, user queries the challenge detail endpoint again
+            # Now they SHOULD see the solution_id
+            r = client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] == challenge_id
+            assert data["data"]["solution_id"] == solution_id  # Now visible!
+            assert data["data"]["solution_state"] == "solved"
+
+            # Step 6: User queries the challenge solution endpoint - should now return solution_id
+            r = client.get(f"/api/v1/challenges/{challenge_id}/solution")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] == solution_id  # Now visible!
+            assert data["data"]["state"] == "solved"
+
+            # Step 7: User tries to view the solution - should see it but content is locked (not unlocked yet)
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] == solution_id
+            assert data["data"]["challenge_id"] == challenge_id
+            assert data["data"]["state"] == "solved"
+            # Content should NOT be visible yet (not unlocked)
+            assert "content" not in data["data"]
+            assert "html" not in data["data"]
+
+            # Step 8: User unlocks the solution via the unlock API
+            r = client.post(
+                "/api/v1/unlocks",
+                json={"target": solution_id, "type": "solutions"},
+            )
+            assert r.status_code == 200
+            unlock_data = r.get_json()
+            assert unlock_data["success"] is True
+            assert unlock_data["data"]["target"] == solution_id
+            assert unlock_data["data"]["type"] == "solutions"
+            assert unlock_data["data"]["user_id"] == user_id
+
+            # Step 9: Verify the unlock was recorded in the database
+            unlock = SolutionUnlocks.query.filter_by(
+                user_id=user_id, target=solution_id
+            ).first()
+            assert unlock is not None
+            assert unlock.user_id == user_id
+            assert unlock.target == solution_id
+
+            # Step 10: User views the solution again - now they should see the full content
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] == solution_id
+            assert data["data"]["state"] == "solved"
+            # Content SHOULD now be visible (unlocked)
+            assert data["data"]["content"] == "This is the detailed solution content"
+            assert "html" in data["data"]
+
+        # Step 12: Create another user who has NOT solved the challenge
+        other_user = gen_user(app.db, name="otheruser", email="other@example.com")
+        other_user_id = other_user.id
+
+        with login_as_user(app, name="otheruser", password="password") as other_client:
+            # Step 13: Other user queries the challenge detail endpoint
+            # Should NOT see the solution_id (hasn't solved it)
+            r = other_client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["solution_id"] is None  # Not solved
+            assert data["data"]["solution_state"] == "solved"
+
+            # Step 14: Other user queries the solution endpoint directly
+            # Should NOT see the solution_id
+            r = other_client.get(f"/api/v1/challenges/{challenge_id}/solution")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] is None  # Not solved
+            assert data["data"]["state"] == "solved"
+
+            # Step 15: Other user tries to view the solution directly
+            # Should return 404 (solution not accessible to non-solvers)
+            r = other_client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+            # Step 16: Other user attempts to unlock the solution
+            # Should succeed in creating the unlock record
+            r = other_client.post(
+                "/api/v1/unlocks",
+                json={"target": solution_id, "type": "solutions"},
+            )
+            assert r.status_code == 200
+            unlock_data = r.get_json()
+            assert unlock_data["success"] is True
+            assert unlock_data["data"]["target"] == solution_id
+            assert unlock_data["data"]["type"] == "solutions"
+            assert unlock_data["data"]["user_id"] == other_user_id
+
+            # Step 17: Verify the unlock was recorded for the other user
+            other_unlock = SolutionUnlocks.query.filter_by(
+                user_id=other_user_id, target=solution_id
+            ).first()
+            assert other_unlock is not None
+            assert other_unlock.user_id == other_user_id
+            assert other_unlock.target == solution_id
+
+            # Step 18: Other user tries to view the solution AGAIN after unlocking
+            # Should STILL return 404 because they haven't solved the challenge
+            # (unlock without solve should not grant access to "solved" state solutions)
+            r = other_client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+            # Test that the other original user can still access the solution
+            with login_as_user(
+                app, name="testuser", password="password"
+            ) as test_user_client:
+                r = test_user_client.get(f"/api/v1/solutions/{solution_id}")
+                data = r.get_json()
+                assert r.status_code == 200
+                assert data["data"]["id"] == solution_id
+                assert data["data"]["state"] == "solved"
+                assert (
+                    data["data"]["content"] == "This is the detailed solution content"
+                )
+
+            # Step 19: Other user now solves the challenge
+            r = other_client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag{test_flag}"},
+            )
+            assert r.status_code == 200
+            attempt_data = r.get_json()
+            assert attempt_data["success"] is True
+            assert attempt_data["data"]["status"] == "correct"
+
+            # Step 20: After solving, other user should now see the solution_id
+            r = other_client.get(f"/api/v1/challenges/{challenge_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["solution_id"] == solution_id  # Now visible!
+
+            # Step 21: Other user can now view the solution with full content
+            # (because they both solved AND already unlocked it)
+            r = other_client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+            assert data["data"]["id"] == solution_id
+            assert data["data"]["state"] == "solved"
+            # Content SHOULD be visible (solved + already unlocked)
+            assert "content" in data["data"]
+            assert data["data"]["content"] == "This is the detailed solution content"
+            assert "html" in data["data"]
 
     destroy_ctfd(app)

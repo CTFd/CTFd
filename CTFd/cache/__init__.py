@@ -2,10 +2,47 @@ from functools import lru_cache, wraps
 from hashlib import md5
 from time import monotonic_ns
 
-from flask import request
+from flask import current_app, request
 from flask_caching import Cache, make_template_fragment_key
 
-cache = Cache()
+
+class CTFdCache(Cache):
+    """
+    This subclass exists to give flask-caching some additional features
+    Ideally likely we should have our own isolated redis connection but that might introduce more issues
+    """
+
+    def inc(self, *args, **kwargs):
+        """
+        Support redis INCR in flask-caching
+        Note that redis INCR does not expire by default
+        https://github.com/pallets-eco/flask-caching/issues/418
+        """
+        inc = getattr(self.cache, "inc", None)
+        if inc is not None and callable(inc):
+            return inc(*args, **kwargs)
+        raise NotImplementedError
+
+    def expire(self, key, timeout):
+        """
+        Support redis EXPIRE in flask-caching
+        """
+        if current_app.config["CACHE_TYPE"] == "redis":
+            return self.cache._write_client.expire(
+                f"{self.cache.key_prefix}{key}", timeout
+            )
+        else:
+            # Generic alternative that leverages flask-caching built-ins to do expiration
+            if timeout <= 0:
+                self.cache.delete(key)
+            value = self.get(key)
+            if value:
+                self.set(key=key, value=value, timeout=timeout)
+                return True
+            return False
+
+
+cache = CTFdCache()
 
 
 def timed_lru_cache(timeout: int = 300, maxsize: int = 64, typed: bool = False):

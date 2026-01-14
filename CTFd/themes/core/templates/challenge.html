@@ -25,13 +25,11 @@
           {% endblock %}
 
           {% block solution %}
-            {% if challenge.solution_id %}
             <li class="nav-item" x-show="getSolutionId()">
               <button class="nav-link challenge-solution" data-bs-target="#solution" @click="showSolution()">
                 {% trans %}Solution{% endtrans %}
               </button>
             </li>
-            {% endif %}
           {% endblock %}
 
           {% block solves %}
