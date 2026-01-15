@@ -2,7 +2,7 @@
   <div>
     <div class="matrix-container">
       <table
-        class="table table-striped table-bordered table-sm mb-0"
+        class="table table-striped table-sm mb-0"
         id="matrix-scoreboard"
       >
         <thead class="thead-dark">
@@ -15,7 +15,7 @@
             <th
               v-for="challenge in displayChallenges"
               :key="challenge.id"
-              class="text-center text-white challenge-col"
+              class="text-center text-white challenge-col sticky-header"
             >
               <a
                 :href="challenge.url"
@@ -99,7 +99,7 @@
               </div>
 
               <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
+                <div class="col-md-4 mb-3 mb-md-0">
                   <div class="card p-2 shadow-sm">
                     <h6>Filter Users / Teams</h6>
                     <input
@@ -142,7 +142,48 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
+
+                <div class="col-md-4 mb-3 mb-md-0">
+                  <div class="card p-2 shadow-sm">
+                    <h6>Filter Categories</h6>
+                    <div class="filter-list">
+                      <div
+                        v-for="cat in uniqueCategories"
+                        :key="cat"
+                        class="px-2 py-1"
+                      >
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :value="cat"
+                            v-model="selectedCategories"
+                            :id="'cat-' + cat"
+                          />
+                          <label
+                            class="form-check-label small"
+                            :for="'cat-' + cat"
+                          >
+                            {{ cat }}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-1">
+                      <small>
+                        <a href="#" @click.prevent="selectAllCategories"
+                          >Select All</a
+                        >
+                        /
+                        <a href="#" @click.prevent="deselectAllCategories"
+                          >None</a
+                        >
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
                   <div class="card p-2 shadow-sm">
                     <h6>Filter Challenges</h6>
                     <input
@@ -151,6 +192,18 @@
                       v-model="challengeSearch"
                       placeholder="Search challenges..."
                     />
+                    <select
+                      class="form-control form-control-sm mb-2"
+                      v-model="challengeSort"
+                    >
+                      <option value="id">Sort by ID (Default)</option>
+                      <option value="name-asc">Alphabetical (A-Z)</option>
+                      <option value="name-desc">
+                        Reverse Alphabetical (Z-A)
+                      </option>
+                      <option value="value-asc">Points (Ascending)</option>
+                      <option value="value-desc">Points (Descending)</option>
+                    </select>
                     <div class="filter-list">
                       <div
                         v-for="chal in filteredChallengeList"
@@ -216,12 +269,15 @@ export default {
       challengeSearch: "",
       selectedUserIds: [],
       selectedChallengeIds: [],
+      selectedCategories: [],
+      challengeSort: "id",
     };
   },
   created() {
     this.users = [...this.initialData];
     this.selectAllUsers();
     this.selectAllChallenges();
+    this.selectAllCategories();
   },
   computed: {
     filteredUserList() {
@@ -236,23 +292,40 @@ export default {
         c.name.toLowerCase().includes(lower),
       );
     },
+    uniqueCategories() {
+      return [...new Set(this.challenges.map((c) => c.category))].sort();
+    },
     displayUsers() {
       return this.users
         .filter((u) => this.selectedUserIds.includes(u.id))
         .sort((a, b) => a.rank - b.rank);
     },
     displayChallenges() {
-      return this.challenges.filter((c) =>
-        this.selectedChallengeIds.includes(c.id),
+      let filtered = this.challenges.filter(
+        (c) =>
+          this.selectedChallengeIds.includes(c.id) &&
+          this.selectedCategories.includes(c.category),
       );
+
+      return filtered.sort((a, b) => {
+        if (this.challengeSort === "name-asc")
+          return a.name.localeCompare(b.name);
+        if (this.challengeSort === "name-desc")
+          return b.name.localeCompare(a.name);
+        if (this.challengeSort === "value-asc") return a.value - b.value;
+        if (this.challengeSort === "value-desc") return b.value - a.value;
+        return a.id - b.id;
+      });
     },
   },
   methods: {
     resetFilters() {
       this.userSearch = "";
       this.challengeSearch = "";
+      this.challengeSort = "id";
       this.selectAllUsers();
       this.selectAllChallenges();
+      this.selectAllCategories();
     },
     selectAllUsers() {
       this.selectedUserIds = this.users.map((u) => u.id);
@@ -265,6 +338,12 @@ export default {
     },
     deselectAllChallenges() {
       this.selectedChallengeIds = [];
+    },
+    selectAllCategories() {
+      this.selectedCategories = this.uniqueCategories;
+    },
+    deselectAllCategories() {
+      this.selectedCategories = [];
     },
     getCellStyle(user, challenge) {
       const isSolved = user.solves.includes(challenge.id);

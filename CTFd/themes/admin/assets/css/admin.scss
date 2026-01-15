@@ -132,7 +132,7 @@ input[type="checkbox"] {
 .matrix-container {
   max-height: 600px;
   overflow: auto;
-  border: 1px solid #dee2e6;
+  padding-bottom: 10px; // horizontal scroll
 }
 
 #matrix-scoreboard {
@@ -156,7 +156,7 @@ input[type="checkbox"] {
 .sticky-header {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 30;
   vertical-align: middle !important;
 }
 
