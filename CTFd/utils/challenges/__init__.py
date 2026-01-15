@@ -5,7 +5,7 @@ from sqlalchemy import func as sa_func
 from sqlalchemy.sql import and_, false, true
 
 from CTFd.cache import cache
-from CTFd.models import Challenges, Ratings, Solves, Submissions, Users, db
+from CTFd.models import Challenges, Ratings, Solves, Submissions, Users, Flags, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import get_config
@@ -113,6 +113,44 @@ def get_solve_ids_for_user_id(user_id):
         .all()
     )
     solve_ids = {value for value, in solve_ids}
+
+    # Include `for_each` challenges as "solved" for a user/account when
+    # they have submitted all distinct flags for that challenge. Solves
+    # aren't created for `for_each`, so we infer completion from
+    # Submissions of type `for_each` matching the number of Flags.
+    # This guarantees solutions gated by "solved" state become visible
+    # once all flags are collected.
+    flag_counts = dict(
+        Flags.query.with_entities(Flags.challenge_id, sa_func.count(Flags.id))
+        .group_by(Flags.challenge_id)
+        .all()
+    )
+
+    for challenge_id, total_flags in flag_counts.items():
+        # Only consider challenges that use `for_each` logic
+        chal = Challenges.query.filter_by(id=challenge_id).first()
+        if not chal or getattr(chal, "logic", None) != "for_each":
+            continue
+
+        submitted_count = (
+            Submissions.query.with_entities(
+                sa_func.count(sa_func.distinct(Submissions.provided))
+            )
+            .filter(
+                Submissions.challenge_id == challenge_id,
+                Submissions.account_id == user.account_id,
+                Submissions.type == "for_each",
+            )
+            .scalar()
+        )
+
+        try:
+            submitted_count = int(submitted_count or 0)
+        except Exception:
+            submitted_count = 0
+
+        if submitted_count >= int(total_flags or 0):
+            solve_ids.add(challenge_id)
     return solve_ids
 
 

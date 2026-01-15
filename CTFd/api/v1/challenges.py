@@ -794,9 +794,13 @@ class ChallengeAttempt(Resource):
         cache.inc(acc_kpm_key)
         cache.expire(acc_kpm_key, time_delay)
 
-        solves = Solves.query.filter_by(
-            account_id=user.account_id, challenge_id=challenge_id
-        ).first()
+        # For `for_each` challenges we allow repeated correct submissions
+        if getattr(challenge, "logic", None) == "for_each":
+            solves = None
+        else:
+            solves = Solves.query.filter_by(
+                account_id=user.account_id, challenge_id=challenge_id
+            ).first()
 
         # Challenge not solved yet
         if not solves:
@@ -821,25 +825,31 @@ class ChallengeAttempt(Resource):
                         )
 
                     # ChallengeSoleException is raised on duplicate solve - so treat it as already_solved
-                    except ChallengeSolveException:
+                    except ChallengeSolveException as e:
+                        # Distinguish duplicate for_each submissions from standard already-solved
                         log(
                             "submissions",
-                            "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                            "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED/DUPLICATE]",
                             name=user.name,
-                            submission=request_data.get("submission", "").encode(
-                                "utf-8"
-                            ),
+                            submission=request_data.get("submission", "").encode("utf-8"),
                             challenge_id=challenge_id,
                             kpm=kpm,
                         )
 
-                        return {
-                            "success": True,
-                            "data": {
-                                "status": "already_solved",
-                                "message": f"{message} but you already solved this",
-                            },
-                        }
+                        if getattr(challenge, "logic", None) == "for_each":
+                            # Return a duplicate status so the frontend can display a duplicate submission box
+                            return {
+                                "success": True,
+                                "data": {"status": "duplicate", "message": str(e)},
+                            }
+                        else:
+                            return {
+                                "success": True,
+                                "data": {
+                                    "status": "already_solved",
+                                    "message": f"{message} but you already solved this",
+                                },
+                            }
 
                     clear_standings()
                     clear_challenges()

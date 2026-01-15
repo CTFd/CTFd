@@ -198,7 +198,7 @@
                       :class="{
                         'alert-success': response.data.status == 'correct',
                         'alert-info': response.data.status == 'already_solved',
-                        'alert-danger': response.data.status == 'incorrect',
+                        'alert-danger': response.data.status == 'incorrect' || response.data.status == 'duplicate',
                         'alert-warning': response.data.status == 'paused',
                       }" role="alert"
                   >

@@ -3,6 +3,24 @@ import dayjs from "dayjs";
 
 import CTFd from "./index";
 
+// Ensure solution reveal logic doesn't treat a single `for_each` correct submission as a full solve.
+CTFd._functions = CTFd._functions || {};
+CTFd._functions.challenge = CTFd._functions.challenge || {};
+CTFd._functions.challenge.checkSolution = (solution_state, challenge, status) => {
+  if (solution_state === "visible") {
+    return true;
+  }
+
+  if (solution_state === "solved") {
+    if (challenge && challenge.logic === "for_each") {
+      return false;
+    }
+    return status === "correct";
+  }
+
+  return false;
+};
+
 import { Modal, Tab, Tooltip } from "bootstrap";
 import highlight from "./theme/highlight";
 
@@ -243,6 +261,21 @@ Alpine.data("Challenge", () => ({
       this.response.data.status != "ratelimited"
     ) {
       this.attempts += 1;
+    }
+
+    // If duplicate submission, mark input as wrong briefly to mirror incorrect UX
+    if (this.response.data.status === "duplicate") {
+      try {
+        const input = document.getElementById("challenge-input");
+        if (input) {
+          input.classList.add("wrong");
+          setTimeout(() => {
+            input.classList.remove("wrong");
+          }, 3000);
+        }
+      } catch (err) {
+        // ignore DOM errors
+      }
     }
 
     // Dispatch load-challenges event to call loadChallenges in the ChallengeBoard

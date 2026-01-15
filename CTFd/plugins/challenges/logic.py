@@ -128,3 +128,17 @@ def challenge_attempt_team(submission, challenge, flags):
             status="incorrect",
             message="Incorrect",
         )
+
+def challenge_attempt_for_each(submission, challenge, flags):
+    from CTFd.plugins.challenges import ChallengeResponse
+
+    # `for_each` logic treats any matching flag as a correct submission.
+    # Behavior mirrors `any` for correctness checking.
+    for flag in flags:
+        try:
+            if get_flag_class(flag.type).compare(flag, submission):
+                return ChallengeResponse(status="correct", message="Correct")
+        except FlagException as e:
+            return ChallengeResponse(status="incorrect", message=str(e))
+
+    return ChallengeResponse(status="incorrect", message="Incorrect")
