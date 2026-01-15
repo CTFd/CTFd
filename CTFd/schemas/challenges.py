@@ -67,6 +67,18 @@ class ChallengeSchema(ma.ModelSchema):
         ],
     )
 
+    weight = field_for(
+        Challenges,
+        "weight",
+        validate=[
+            validate.Range(
+                min=-32767,
+                max=32767,
+                error="Challenge could not be saved. Challenge weight is invalid",
+            )
+        ],
+    )
+
     requirements = field_for(
         Challenges,
         "requirements",

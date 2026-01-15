@@ -14,7 +14,8 @@ from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import generate_account_url, get_model
 
 Challenge = namedtuple(
-    "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
+    "Challenge",
+    ["id", "type", "name", "value", "weight", "category", "tags", "requirements"],
 )
 
 Rating = namedtuple("Rating", ["up", "down", "count"])
@@ -32,7 +33,7 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
     chal_q = (
         chal_q.filter_by(**query_args)
         .filter(*filters)
-        .order_by(Challenges.value, Challenges.id)
+        .order_by(Challenges.weight.asc(), Challenges.value, Challenges.id)
     )
     tag_schema = TagSchema(view="user", many=True)
 
@@ -43,6 +44,7 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
             type=c.type,
             name=c.name,
             value=c.value,
+            weight=c.weight,
             category=c.category,
             requirements=c.requirements,
             tags=tag_schema.dump(c.tags).data,
@@ -112,7 +114,7 @@ def get_solve_ids_for_user_id(user_id):
         .filter(Solves.account_id == user.account_id)
         .all()
     )
-    solve_ids = {value for value, in solve_ids}
+    solve_ids = {value for (value,) in solve_ids}
     return solve_ids
 
 

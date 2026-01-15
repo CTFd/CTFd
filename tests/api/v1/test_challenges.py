@@ -158,6 +158,51 @@ def test_api_challenges_get_hidden_admin():
     destroy_ctfd(app)
 
 
+def test_api_challenges_get_sort_by_weight():
+    """Test that challenges are sorted by weight ascending"""
+    app = create_ctfd()
+    with app.app_context():
+        c1_id = gen_challenge(app.db, name="chal1", value=10, weight=10).id
+        c2_id = gen_challenge(app.db, name="chal2", value=10, weight=5).id
+        c3_id = gen_challenge(app.db, name="chal3", value=10, weight=15).id
+        c4_id = gen_challenge(app.db, name="chal4", value=10, weight=0).id
+
+        with login_as_user(app, "admin") as client:
+            r = client.get("/api/v1/challenges?view=admin")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+
+            # Expected order: c4 (0), c2 (5), c1 (10), c3 (15)
+            assert data[0]["id"] == c4_id
+            assert data[1]["id"] == c2_id
+            assert data[2]["id"] == c1_id
+            assert data[3]["id"] == c3_id
+
+    destroy_ctfd(app)
+
+
+def test_api_challenges_get_sort_by_weight_fallback():
+    """Test that challenges with same weight are sorted by value then ID"""
+    app = create_ctfd()
+    with app.app_context():
+        c1_id = gen_challenge(app.db, name="chal1", value=20, weight=0).id
+        c2_id = gen_challenge(app.db, name="chal2", value=10, weight=0).id
+        c3_id = gen_challenge(app.db, name="chal3", value=15, weight=0).id
+        c4_id = gen_challenge(app.db, name="chal4", value=15, weight=0).id
+
+        with login_as_user(app, "admin") as client:
+            r = client.get("/api/v1/challenges?view=admin")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+
+            assert data[0]["id"] == c2_id  # 1. c2 (weight 0, value 10)
+            assert data[1]["id"] == c3_id  # 2. c3 (weight 0, value 15, id lower)
+            assert data[2]["id"] == c4_id  # 3. c4 (weight 0, value 15, id higher)
+            assert data[3]["id"] == c1_id  # 4. c1 (weight 0, value 20)
+
+    destroy_ctfd(app)
+
+
 def test_api_challenges_get_solve_status():
     """Does the challenge list API show the current user's solve status?"""
     app = create_ctfd()
@@ -422,11 +467,13 @@ def test_api_challenges_post_admin():
                     "category": "cate",
                     "description": "desc",
                     "value": "100",
+                    "weight": 5,
                     "state": "hidden",
                     "type": "standard",
                 },
             )
             assert r.status_code == 200
+            assert r.get_json()["data"]["weight"] == 5
     destroy_ctfd(app)
 
 
@@ -858,10 +905,12 @@ def test_api_challenge_patch_admin():
         gen_challenge(app.db)
         with login_as_user(app, "admin") as client:
             r = client.patch(
-                "/api/v1/challenges/1", json={"name": "chal_name", "value": "200"}
+                "/api/v1/challenges/1",
+                json={"name": "chal_name", "value": "200", "weight": "10"},
             )
             assert r.status_code == 200
             assert r.get_json()["data"]["value"] == 200
+            assert r.get_json()["data"]["weight"] == 10
     destroy_ctfd(app)
 
 
