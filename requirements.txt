@@ -187,7 +187,7 @@ urllib3==2.6.0
     #   -r requirements.in
     #   botocore
     #   requests
-werkzeug==2.2.3
+werkzeug==3.1.5
     # via
     #   -r requirements.in
     #   flask
