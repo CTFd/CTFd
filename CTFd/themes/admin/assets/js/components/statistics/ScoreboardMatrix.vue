@@ -1,5 +1,29 @@
 <template>
   <div>
+    <div class="d-flex justify-content-end mb-2">
+      <div class="d-flex align-items-center mr-3">
+        <div
+          style="width: 15px; height: 15px; background-color: #28a745"
+          class="mr-1 border"
+        ></div>
+        <small>Solved</small>
+      </div>
+      <div class="d-flex align-items-center mr-3">
+        <div
+          style="width: 15px; height: 15px; background-color: #ffc107"
+          class="mr-1 border"
+        ></div>
+        <small>Attempted</small>
+      </div>
+      <div class="d-flex align-items-center">
+        <div
+          style="width: 15px; height: 15px; background-color: #17a2b8"
+          class="mr-1 border"
+        ></div>
+        <small>Opened</small>
+      </div>
+    </div>
+
     <div class="matrix-container">
       <table class="table table-striped table-sm mb-0" id="matrix-scoreboard">
         <thead class="thead-dark">
