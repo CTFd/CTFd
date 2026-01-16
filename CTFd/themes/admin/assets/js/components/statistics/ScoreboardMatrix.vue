@@ -379,9 +379,9 @@ export default {
 
       return filtered.sort((a, b) => {
         if (this.challengeSort === "weight") {
-          // weight, then value, then alphabetical finally id
+          // weight (desc), then value, then name, finally id
           return (
-            a.weight - b.weight ||
+            b.weight - a.weight ||
             a.value - b.value ||
             a.category.localeCompare(b.category) ||
             a.id - b.id
