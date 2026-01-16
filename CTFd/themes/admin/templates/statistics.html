@@ -154,6 +154,7 @@
                     id: {{ challenge.id }},
                     name: {{ challenge.name | tojson }},
                     value: {{ challenge.value }},
+                    weight: {{ challenge.weight }},
                     category: {{ challenge.category | tojson }},
                     url: "{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}"
                 },
