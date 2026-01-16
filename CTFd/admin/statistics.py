@@ -74,10 +74,10 @@ def statistics():
 
     account_scores = get_standings(count=100, admin=True)
 
-    # Get all challenges ordered by category and value
+    # Get all challenges ordered by weight, value and category
     all_challenges = (
         Challenges.query.filter(Challenges.state == "visible")
-        .order_by(Challenges.value.asc(), Challenges.category)
+        .order_by(Challenges.weight.desc(), Challenges.value.asc(), Challenges.category)
         .all()
     )
 

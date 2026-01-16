@@ -159,7 +159,7 @@ def test_api_challenges_get_hidden_admin():
 
 
 def test_api_challenges_get_sort_by_weight():
-    """Test that challenges are sorted by weight ascending"""
+    """Test that challenges are sorted by weight descending"""
     app = create_ctfd()
     with app.app_context():
         c1_id = gen_challenge(app.db, name="chal1", value=10, weight=10).id
@@ -172,11 +172,11 @@ def test_api_challenges_get_sort_by_weight():
             assert r.status_code == 200
             data = r.get_json()["data"]
 
-            # Expected order: c4 (0), c2 (5), c1 (10), c3 (15)
-            assert data[0]["id"] == c4_id
-            assert data[1]["id"] == c2_id
-            assert data[2]["id"] == c1_id
-            assert data[3]["id"] == c3_id
+            # Expected order: c3 (15), c1 (10), c2 (5), c4 (0)
+            assert data[0]["id"] == c3_id
+            assert data[1]["id"] == c1_id
+            assert data[2]["id"] == c2_id
+            assert data[3]["id"] == c4_id
 
     destroy_ctfd(app)
 

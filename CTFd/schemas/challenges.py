@@ -72,7 +72,7 @@ class ChallengeSchema(ma.ModelSchema):
         "weight",
         validate=[
             validate.Range(
-                min=-32767,
+                min=0,
                 max=32767,
                 error="Challenge could not be saved. Challenge weight is invalid",
             )
