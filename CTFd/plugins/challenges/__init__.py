@@ -26,6 +26,7 @@ from CTFd.plugins.challenges.logic import (
     challenge_attempt_all,
     challenge_attempt_any,
     challenge_attempt_team,
+    challenge_attempt_for_each,
 )
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
@@ -208,6 +209,8 @@ class BaseChallenge(object):
             return challenge_attempt_all(submission, challenge, flags)
         elif challenge.logic == "team":
             return challenge_attempt_team(submission, challenge, flags)
+        elif challenge.logic == "for_each":  # <- new
+            return challenge_attempt_for_each(submission, challenge, flags)
         else:
             return challenge_attempt_any(submission, challenge, flags)
 

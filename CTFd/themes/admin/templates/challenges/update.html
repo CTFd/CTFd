@@ -141,6 +141,7 @@
 			<option value="any" {% if challenge.logic == "any" or not challenge.logic %}selected{% endif %}>Require Any Flag</option>
 			<option value="all" {% if challenge.logic == "all" %}selected{% endif %}>Require All Flags</option>
 			<option value="team" {% if challenge.logic == "team" %}selected{% endif %}>Require Any Flags by All Team Members</option>
+			<option value="for_each" {% if challenge.logic == "for_each" %}selected{% endif %}>Require All Flags, Points Per Submission</option>
 		</select>
 	</div>
 	{% endblock %}
