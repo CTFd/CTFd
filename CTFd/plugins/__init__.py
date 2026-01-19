@@ -15,6 +15,7 @@ from CTFd.utils.plugins import (
 from CTFd.utils.plugins import (
     register_admin_stylesheet as utils_register_admin_plugin_stylesheet,
 )
+from CTFd.utils.plugins import register_override as utils_register_override
 from CTFd.utils.plugins import register_script as utils_register_plugin_script
 from CTFd.utils.plugins import register_stylesheet as utils_register_plugin_stylesheet
 
@@ -106,6 +107,16 @@ def register_admin_plugin_stylesheet(*args, **kwargs):
     utils_register_admin_plugin_stylesheet(*args, **kwargs)
 
 
+def register_plugin_override(*args, **kwargs):
+    """
+    Registers an override for a specific function.
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    utils_register_override(*args, **kwargs)
+
+
 def register_admin_plugin_menu_bar(title, route, link_target=None):
     """
     Registers links on the Admin Panel menubar/navbar
@@ -194,6 +205,7 @@ def init_plugins(app):
 
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
+    app.plugin_overrides = {}
     app.plugins_dir = os.path.dirname(__file__)
 
     if app.config.get("SAFE_MODE", False) is False:

@@ -21,6 +21,10 @@ def register_admin_stylesheet(url):
     app.admin_plugin_stylesheets.append(url)
 
 
+def register_override(name, func):
+    app.plugin_overrides[name] = func
+
+
 def get_registered_scripts():
     return app.plugin_scripts
 

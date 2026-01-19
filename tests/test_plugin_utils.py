@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import zipfile
 
 from CTFd.plugins import (
     bypass_csrf_protection,
@@ -11,9 +12,11 @@ from CTFd.plugins import (
     register_admin_plugin_stylesheet,
     register_plugin_asset,
     register_plugin_assets_directory,
+    register_plugin_override,
     register_plugin_script,
     register_user_page_menu_bar,
 )
+from CTFd.utils.exports import export_ctf, import_ctf
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -223,4 +226,48 @@ def test_challenges_model_access_plugin_class():
 
         chal = gen_challenge(app.db)
         assert chal.plugin_class == get_chal_class("standard")
+    destroy_ctfd(app)
+
+
+def test_import_ctf_override():
+    """Test that import_ctf can be overridden"""
+    app = create_ctfd()
+    with app.app_context():
+
+        def override_func(backup, *args, **kwargs):
+            return "OVERRIDDEN"
+
+        register_plugin_override("import_ctf", override_func)
+        result = import_ctf("dummy_backup")
+        assert result == "OVERRIDDEN"
+        assert app.plugin_overrides["import_ctf"] is override_func
+
+        # Test real import_ctf can still be called
+        try:
+            import_ctf("dummy_backup", ignore_overrides=True)
+        except zipfile.BadZipfile:
+            # This is expected
+            pass
+
+    destroy_ctfd(app)
+
+
+def test_export_ctf_override():
+    """Test that export_ctf can be overridden"""
+    app = create_ctfd()
+    with app.app_context():
+
+        def override_func():
+            return "EXPORT_OVERRIDDEN"
+
+        register_plugin_override("export_ctf", override_func)
+        result = export_ctf()
+        assert result == "EXPORT_OVERRIDDEN"
+        assert app.plugin_overrides["export_ctf"] is override_func
+
+        # Test real export_ctf can still be called
+        result = export_ctf(ignore_overrides=True)
+        assert result != "EXPORT_OVERRIDDEN"
+        assert hasattr(result, "read")
+
     destroy_ctfd(app)
