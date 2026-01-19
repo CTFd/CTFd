@@ -798,6 +798,10 @@ class ChallengeAttempt(Resource):
             account_id=user.account_id, challenge_id=challenge_id
         ).first()
 
+        # For `for_each` challenges we allow repeated correct submissions
+        if getattr(challenge, "logic", None) == "for_each":
+            solves = None
+
         # Challenge not solved yet
         if not solves:
             response = chal_class.attempt(challenge, request)
@@ -859,9 +863,21 @@ class ChallengeAttempt(Resource):
             elif status == "partial":
                 # The challenge plugin says that the input is a partial solve
                 if ctftime() or current_user.is_admin():
-                    chal_class.partial(
-                        user=user, team=team, challenge=challenge, request=request
-                    )
+                    try:
+                        chal_class.partial(
+                            user=user, team=team, challenge=challenge, request=request
+                        )
+                    except Exception:
+                        # Ensure we always return JSON to the client even if
+                        # recording the partial/award fails (e.g. duplicate
+                        # DB entry). The front-end expects a consistent JSON
+                        # response shape and will error if it receives HTML/500.
+                        log(
+                            "submissions",
+                            "[{date}] {name} encountered error recording partial for {challenge_id}",
+                            name=user.name,
+                            challenge_id=challenge_id,
+                        )
                     clear_standings()
                     clear_challenges()
 
