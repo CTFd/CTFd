@@ -17,6 +17,8 @@ from CTFd.models import (
     Partials,
     Ratelimiteds,
     Solves,
+    Submissions,
+    Awards,
     Tags,
     db,
 )
@@ -226,6 +228,35 @@ class BaseChallenge(object):
             provided=submission,
         )
         db.session.add(partial)
+
+        # Support `for_each` scoring: award points per successful submission
+        if getattr(challenge, "logic", None) == "for_each":
+            # Prevent duplicate awards for identical submissions
+            existing = Submissions.query.filter_by(
+                challenge_id=challenge.id, user_id=user.id, provided=submission, type="for_each"
+            ).first()
+            if not existing:
+                # Record the submission for audit
+                sub = Submissions(
+                    challenge_id=challenge.id,
+                    user_id=user.id,
+                    team_id=team.id if team else None,
+                    ip=get_ip(req=request),
+                    provided=submission,
+                    type="for_each",
+                )
+                db.session.add(sub)
+
+                # Create an award to increment the account's score by the challenge value
+                award = Awards(
+                    user_id=user.id,
+                    team_id=team.id if team else None,
+                    name=f"For Each: {challenge.name}",
+                    description=f"For-each award for challenge {challenge.id}",
+                    value=challenge.value,
+                )
+                db.session.add(award)
+
         db.session.commit()
 
     @classmethod
