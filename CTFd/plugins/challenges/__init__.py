@@ -9,6 +9,7 @@ from CTFd.exceptions.challenges import (
     ChallengeUpdateException,
 )
 from CTFd.models import (
+    Awards,
     ChallengeFiles,
     Challenges,
     Fails,
@@ -18,7 +19,6 @@ from CTFd.models import (
     Ratelimiteds,
     Solves,
     Submissions,
-    Awards,
     Tags,
     db,
 )
@@ -27,8 +27,8 @@ from CTFd.plugins.challenges.decay import DECAY_FUNCTIONS, logarithmic
 from CTFd.plugins.challenges.logic import (
     challenge_attempt_all,
     challenge_attempt_any,
-    challenge_attempt_team,
     challenge_attempt_for_each,
+    challenge_attempt_team,
 )
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
@@ -211,7 +211,7 @@ class BaseChallenge(object):
             return challenge_attempt_all(submission, challenge, flags)
         elif challenge.logic == "team":
             return challenge_attempt_team(submission, challenge, flags)
-        elif challenge.logic == "for_each":  # <- new
+        elif challenge.logic == "for_each":
             return challenge_attempt_for_each(submission, challenge, flags)
         else:
             return challenge_attempt_any(submission, challenge, flags)
@@ -228,35 +228,6 @@ class BaseChallenge(object):
             provided=submission,
         )
         db.session.add(partial)
-
-        # Support `for_each` scoring: award points per successful submission
-        if getattr(challenge, "logic", None) == "for_each":
-            # Prevent duplicate awards for identical submissions
-            existing = Submissions.query.filter_by(
-                challenge_id=challenge.id, user_id=user.id, provided=submission, type="for_each"
-            ).first()
-            if not existing:
-                # Record the submission for audit
-                sub = Submissions(
-                    challenge_id=challenge.id,
-                    user_id=user.id,
-                    team_id=team.id if team else None,
-                    ip=get_ip(req=request),
-                    provided=submission,
-                    type="for_each",
-                )
-                db.session.add(sub)
-
-                # Create an award to increment the account's score by the challenge value
-                award = Awards(
-                    user_id=user.id,
-                    team_id=team.id if team else None,
-                    name=f"For Each: {challenge.name}",
-                    description=f"For-each award for challenge {challenge.id}",
-                    value=challenge.value,
-                )
-                db.session.add(award)
-
         db.session.commit()
 
     @classmethod
@@ -286,22 +257,66 @@ class BaseChallenge(object):
         data = request.form or request.get_json()
         submission = data["submission"].strip()
 
-        solve = Solves(
-            user_id=user.id,
-            team_id=team.id if team else None,
-            challenge_id=challenge.id,
-            ip=get_ip(req=request),
-            provided=submission,
-        )
+        # Support `for_each` scoring: award points per successful submission
+        if getattr(challenge, "logic", None) == "for_each":
+            # Prevent duplicate awards for identical submissions.
+            # In teams mode, prevent duplicates per-team; otherwise per-user.
+            filters = {
+                "challenge_id": challenge.id,
+                "provided": submission,
+                "type": "for_each",
+            }
+            if team:
+                filters["team_id"] = team.id
+            else:
+                filters["user_id"] = user.id
 
-        try:
-            db.session.add(solve)
+            existing = Submissions.query.filter_by(**filters).first()
+            if existing:
+                return ChallengeResponse(
+                    status="duplicate",
+                    message="You already submitted this flag"
+                )
+
+
+            # Record the submission for audit
+            sub = Submissions(
+                challenge_id=challenge.id,
+                user_id=user.id,
+                team_id=team.id if team else None,
+                ip=get_ip(req=request),
+                provided=submission,
+                type="for_each",
+            )
+            db.session.add(sub)
+
+            # Create an award to increment the account's score by the challenge value
+            award = Awards(
+                user_id=user.id,
+                team_id=team.id if team else None,
+                name=f"For Each: {challenge.name}",
+                description=f"For-each award for challenge {challenge.id}",
+                value=challenge.value,
+            )
+            db.session.add(award)
             db.session.commit()
-        except IntegrityError as e:
-            db.session.rollback()
-            raise ChallengeSolveException(
-                f"Duplicate solve for user {user.id} on challenge {challenge.id}"
-            ) from e
+        else:
+            solve = Solves(
+                user_id=user.id,
+                team_id=team.id if team else None,
+                challenge_id=challenge.id,
+                ip=get_ip(req=request),
+                provided=submission,
+            )
+
+            try:
+                db.session.add(solve)
+                db.session.commit()
+            except IntegrityError as e:
+                db.session.rollback()
+                raise ChallengeSolveException(
+                    f"Duplicate solve for user {user.id} on challenge {challenge.id}"
+                ) from e
 
         # If the challenge is dynamic we should calculate a new value
         if challenge.function in DECAY_FUNCTIONS:
