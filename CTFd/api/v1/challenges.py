@@ -243,7 +243,6 @@ class ChallengeList(Resource):
 
         db.session.close()
         return {"success": True, "data": response}
-
     @admins_only
     @challenges_namespace.doc(
         description="Endpoint to create a Challenge object",
