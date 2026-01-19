@@ -254,6 +254,7 @@ class ChallengeList(Resource):
             ),
         },
     )
+    
     def post(self):
         data = request.form or request.get_json()
 
