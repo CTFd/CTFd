@@ -3,319 +3,319 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2026-01-14 02:21\n"
+"PO-Revision-Date: 2026-01-14 01:01\n"
 "Last-Translator: \n"
-"Language-Team: Greek\n"
+"Language-Team: Croatian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Crowdin-Project: CTFd\n"
 "X-Crowdin-Project-ID: 659064\n"
-"X-Crowdin-Language: el\n"
+"X-Crowdin-Language: hr\n"
 "X-Crowdin-File: /master/messages.pot\n"
 "X-Crowdin-File-ID: 188\n"
-"Language: el_GR\n"
+"Language: hr_HR\n"
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr "Η Ορατότητα Δοκιμασιών έχει οριστεί ως Μόνο για Διαχειριστές"
+msgstr "Izazovi su vidljivi samo administratorima"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr "%(ctf_name)s δεν έχει ξεκινήσει ακόμα"
+msgstr "%(ctf_name)s još nije počelo"
 
 #: CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
-msgstr "%(ctf_name)s είναι σε παύση"
+msgstr "%(ctf_name)s je pauzirano"
 
 #: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
-msgstr "%(ctf_name)s έχει τελειώσει"
+msgstr "%(ctf_name)s je završilo"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
 #: CTFd/themes/core-beta/templates/teams/private.html:329
 #: CTFd/themes/core-beta/templates/teams/public.html:95
 msgid "User Name"
-msgstr "Όνομα Χρήστη"
+msgstr "Korisničko ime"
 
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
 #: CTFd/forms/teams.py:230
 msgid "Email"
-msgstr "Ηλεκτρονική Διεύθυνση"
+msgstr "E-pošta"
 
 #: CTFd/forms/auth.py:24 CTFd/forms/auth.py:50 CTFd/forms/auth.py:67
 #: CTFd/forms/self.py:24 CTFd/forms/teams.py:231
 msgid "Password"
-msgstr "Κωδικός"
+msgstr "Lozinka"
 
 #: CTFd/forms/auth.py:25 CTFd/forms/auth.py:51 CTFd/forms/auth.py:62
 #: CTFd/forms/auth.py:69 CTFd/forms/self.py:29 CTFd/forms/teams.py:154
 #: CTFd/forms/teams.py:237 CTFd/themes/core-beta/templates/challenge.html:147
 msgid "Submit"
-msgstr "Υποβολή"
+msgstr "Pošalji"
 
 #: CTFd/forms/auth.py:46
 msgid "User Name or Email"
-msgstr "Όνομα Χρήστη ή Ηλεκτρονική Διεύθυνση"
+msgstr "Korisničko ime ili e-pošta"
 
 #: CTFd/forms/auth.py:55
 msgid "Resend Confirmation Email"
-msgstr "Επαναποστολή email επιβεβαίωσης"
+msgstr "Ponovno pošalji e-poštu za potvrdu"
 
 #: CTFd/forms/self.py:23 CTFd/forms/users.py:181
 msgid "Language"
-msgstr "Γλώσσα"
+msgstr "Jezik"
 
 #: CTFd/forms/self.py:25
 msgid "Current Password"
-msgstr "Τρέχων κωδικός πρόσβασης"
+msgstr "Trenutna lozinka"
 
 #: CTFd/forms/self.py:26 CTFd/forms/teams.py:140 CTFd/forms/teams.py:218
 #: CTFd/forms/teams.py:233 CTFd/forms/users.py:164
 #: CTFd/themes/core-beta/templates/teams/teams.html:51
 #: CTFd/themes/core-beta/templates/users/users.html:48
 msgid "Affiliation"
-msgstr "Σύνδεση"
+msgstr "Pripadnost"
 
 #: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:219
 #: CTFd/forms/teams.py:232 CTFd/forms/users.py:165
 #: CTFd/themes/core-beta/templates/teams/teams.html:50
 #: CTFd/themes/core-beta/templates/users/users.html:47
 msgid "Website"
-msgstr "Ιστοσελίδα"
+msgstr "Web stranica"
 
 #: CTFd/forms/self.py:28 CTFd/forms/teams.py:150 CTFd/forms/teams.py:234
 #: CTFd/themes/core-beta/templates/teams/teams.html:52
 #: CTFd/themes/core-beta/templates/users/users.html:49
 msgid "Country"
-msgstr "Χώρα"
+msgstr "Država"
 
 #: CTFd/forms/self.py:59 CTFd/themes/core-beta/templates/settings.html:225
 msgid "Expiration"
-msgstr "Λήξη"
+msgstr "Istek"
 
 #: CTFd/forms/self.py:61
 msgid "Generate"
-msgstr "Δημιουργία"
+msgstr "Stvori"
 
 #: CTFd/forms/setup.py:29
 msgid "Event Name"
-msgstr "Όνομα εκδήλωσης"
+msgstr "Ime događaja"
 
 #: CTFd/forms/setup.py:29
 msgid "The name of your CTF event/workshop"
-msgstr "Το όνομα της εκδήλωσης/εργαστηρίου CTF"
+msgstr "Ime vašega CTF događaja/radionice"
 
 #: CTFd/forms/setup.py:32
 msgid "Event Description"
-msgstr "Περιγραφή Εκδήλωσης"
+msgstr "Opis događaja"
 
 #: CTFd/forms/setup.py:32
 msgid "Description for the CTF"
-msgstr "Περιγραφή για το CTF"
+msgstr "Opis za CTF"
 
 #: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
 msgid "User Mode"
-msgstr "Λειτουργία Χρήστη"
+msgstr "Pojedinačni način"
 
 #: CTFd/forms/setup.py:36
 msgid "Team Mode"
-msgstr "Λειτουργία ομάδας"
+msgstr "Ekipni način"
 
 #: CTFd/forms/setup.py:39
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
-msgstr "Ελέγχει αν οι χρήστες θα συμμετέχουν σε ομάδες για να παίξουν (Λειτουργία Ομάδας) ή θα παίζουν ως ξεχωριστοί χρήστες (Λειτουργία Χρήστη)"
+msgstr "Kontrolira hoće li se korisnici udružiti u ekipu ​​(Ekipni način) ili će igrati kao pojedinci (Pojedinačni način)"
 
 #: CTFd/forms/setup.py:45
 msgid "Admin Username"
-msgstr "Όνομα χρήστη διαχειριστή"
+msgstr "Administratorsko ime"
 
 #: CTFd/forms/setup.py:46
 msgid "Your username for the administration account"
-msgstr "Το όνομα χρήστη σας για τον λογαριασμό του διαχειριστή"
+msgstr "Korisničko ime za administratorski račun"
 
 #: CTFd/forms/setup.py:50
 msgid "Admin Email"
-msgstr "Ηλεκτρονική Διεύθυνση Διαχειριστή"
+msgstr "Administratorska e-pošta"
 
 #: CTFd/forms/setup.py:51
 msgid "Your email address for the administration account"
-msgstr "Ηλεκτρονική διεύθυνση για τον λογαριασμό διαχείρισης"
+msgstr "Adresa e-pošte za administratorski račun"
 
 #: CTFd/forms/setup.py:55
 msgid "Admin Password"
-msgstr "Κωδικός Διαχειριστή"
+msgstr "Administratorska lozinka"
 
 #: CTFd/forms/setup.py:56
 msgid "Your password for the administration account"
-msgstr "Ο κωδικός πρόσβασής σας για τον λογαριασμό διαχείρισης"
+msgstr "Lozinka za administratorski račun"
 
 #: CTFd/forms/setup.py:61
 msgid "Logo"
-msgstr "Λογότυπο"
+msgstr "Logo"
 
 #: CTFd/forms/setup.py:63
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
-msgstr "Λογότυπο που θα χρησιμοποιηθεί στον ιστότοπο αντί για το όνομα CTF. Χρησιμοποιείται ως κουμπί αρχικής σελίδας. Προαιρετικό."
+msgstr "Logo koji će se koristiti umjesto imena CTF-a. Koristi se kao gumb za početnu stranicu. Neobavezno."
 
 #: CTFd/forms/setup.py:67
 msgid "Banner"
-msgstr "Μπάνερ"
+msgstr "Transparent"
 
 #: CTFd/forms/setup.py:67
 msgid "Banner to use for the homepage. Optional."
-msgstr "Μπάνερ για χρήση στην αρχική σελίδα. Προαιρετικό."
+msgstr "Transparent za početnu stranicu. Neobavezno."
 
 #: CTFd/forms/setup.py:70
 msgid "Small Icon"
-msgstr "Μικρό Εικονίδιο"
+msgstr "Mala ikona"
 
 #: CTFd/forms/setup.py:72
 msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
-msgstr "favicon που χρησιμοποιείται στα προγράμματα περιήγησης του χρήστη. Αποδεκτά μόνο PNG. Πρέπει να είναι 32x32px. Προαιρετικό."
+msgstr "favicon korišten u pregledniku korisnika. Dozvoljene samo PNG datoteke. Mora biti 32x32px. Neobavezno."
 
 #: CTFd/forms/setup.py:76
 msgid "Theme"
-msgstr "Θέμα"
+msgstr "Tema"
 
 #: CTFd/forms/setup.py:77
 msgid "CTFd Theme to use. Can be changed later."
-msgstr "Θέμα CTFd για χρήση. Μπορεί να αλλάξει αργότερα."
+msgstr "CTFd tema koja će se koristiti. Moguće su naknadne promjene."
 
 #: CTFd/forms/setup.py:84
 msgid "Theme Color"
-msgstr "Χρώμα θέματος"
+msgstr "Boja teme"
 
 #: CTFd/forms/setup.py:86
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
-msgstr "Χρώμα που χρησιμοποιείται από το θέμα για τον έλεγχο της αισθητικής. Απαιτεί υποστήριξη θέματος. Προαιρετικό."
+msgstr "Boja koju tema koristi za kontrolu estetike. Zahtijeva podršku teme. Neobavezno."
 
 #: CTFd/forms/setup.py:91
 msgid "Verify Emails"
-msgstr "Επαλήθευση μηνυμάτων ηλεκτρονικού ταχυδρομείου"
+msgstr "Potvrdi e-pošte"
 
 #: CTFd/forms/setup.py:143
 msgid "Start Time"
-msgstr "Ώρα έναρξης"
+msgstr "Vrijeme početka"
 
 #: CTFd/forms/setup.py:144
 msgid "Time when your CTF is scheduled to start. Optional."
-msgstr "Ώρα που έχει προγραμματιστεί να ξεκινήσει το CTF. Προαιρετικό."
+msgstr "Vrijeme, kada je predviđen početak vašega CTF-a. Neobavezno."
 
 #: CTFd/forms/setup.py:147
 msgid "End Time"
-msgstr "Ώρα Λήξης"
+msgstr "Vrijeme završetka"
 
 #: CTFd/forms/setup.py:148
 msgid "Time when your CTF is scheduled to end. Optional."
-msgstr "Ώρα κατά την οποία έχει προγραμματιστεί η λήξη του CTF σας."
+msgstr "Vrijeme, kada je predviđen zavšetak vašega CTF-a. Neobavezno."
 
 #: CTFd/forms/setup.py:150
 msgid "Finish"
-msgstr "Λήξη"
+msgstr "Završi"
 
 #: CTFd/forms/teams.py:102 CTFd/forms/teams.py:109 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:229
 msgid "Team Name"
-msgstr "Όνομα Ομάδας"
+msgstr "Ime ekipe"
 
 #: CTFd/forms/teams.py:103 CTFd/forms/teams.py:110
 msgid "Team Password"
-msgstr "Κωδικός Ομάδας"
+msgstr "Lozinka skupine"
 
 #: CTFd/forms/teams.py:104 CTFd/forms/teams.py:289
 msgid "Join"
-msgstr "Γίνετε μέλος"
+msgstr "Pridruži se"
 
 #: CTFd/forms/teams.py:111
 msgid "Create"
-msgstr "Δημιουργία"
+msgstr "Stvori"
 
 #: CTFd/forms/teams.py:128
 msgid "Your team's public name shown to other competitors"
-msgstr "Το δημόσιο όνομα της ομάδας σας εμφανίζεται σε άλλους ανταγωνιστές"
+msgstr "Ima vaše ekipe prikazano konkurentima"
 
 #: CTFd/forms/teams.py:131
 msgid "New Team Password"
-msgstr "Νέος Κωδικός Πρόσβασης Ομάδας"
+msgstr "Nova lozinka za ekipu"
 
 #: CTFd/forms/teams.py:131
 msgid "Set a new team join password"
-msgstr "Ορίστε έναν νέο κωδικό πρόσβασης για συμμετοχή στην ομάδα"
+msgstr "Postavi novu lozinku za pridruživanje ekipi"
 
 #: CTFd/forms/teams.py:134
 msgid "Confirm Current Team Password"
-msgstr "Επιβεβαιώστε τον τρέχοντα κωδικό πρόσβασης ομάδας"
+msgstr "Potvrdi trenutnu lozinku od ekipe"
 
 #: CTFd/forms/teams.py:136
 msgid "Provide your current team password (or your password) to update your team's password"
-msgstr "Καταχωρίστε τον τρέχοντα κωδικό πρόσβασης της ομάδας σας (ή τον κωδικό πρόσβασής σας) για να ενημερώσετε τον κωδικό πρόσβασης της ομάδας σας"
+msgstr ""
 
 #: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
-msgstr "Η συνεργασία της ομάδας σας εμφανίζεται δημόσια σε άλλους ανταγωνιστές"
+msgstr ""
 
 #: CTFd/forms/teams.py:147
 msgid "Your team's website publicly shown to other competitors"
-msgstr "Ο ιστότοπος της ομάδας σας εμφανίζεται δημόσια σε άλλους ανταγωνιστές"
+msgstr ""
 
 #: CTFd/forms/teams.py:152
 msgid "Your team's country publicly shown to other competitors"
-msgstr "Η χώρα της ομάδας σας εμφανίζεται δημόσια σε άλλους ανταγωνιστές"
+msgstr "Država vaše ekipe prikazana konkurentima"
 
 #: CTFd/forms/teams.py:192
 msgid "Team Captain"
-msgstr "Αρχηγός Ομάδας"
+msgstr "Kapetan ekipe"
 
 #: CTFd/forms/teams.py:215 CTFd/forms/users.py:161
 msgid "Search Field"
-msgstr "Πεδίο αναζήτησης"
+msgstr "Polje za pretraživanje"
 
 #: CTFd/forms/teams.py:217 CTFd/forms/users.py:163
 #: CTFd/themes/core-beta/templates/challenge.html:206
 msgid "Name"
-msgstr "Όνομα"
+msgstr "Ime"
 
 #: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
 msgid "Parameter"
-msgstr "Παράμετρος"
+msgstr "Parametar"
 
 #: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
 msgid "Search"
-msgstr "Αναζήτηση"
+msgstr "Pretraživanje"
 
 #: CTFd/forms/teams.py:235
 msgid "Hidden"
-msgstr "Κρυμμένο"
+msgstr "Skriveno"
 
 #: CTFd/forms/teams.py:236
 msgid "Banned"
-msgstr "Απαγορευμένο"
+msgstr "Izopćen"
 
 #: CTFd/forms/teams.py:285
 msgid "Invite Link"
-msgstr "Σύνδεσμος πρόσκλησης"
+msgstr "Poveznica za poziv"
 
 #: CTFd/forms/users.py:133
 msgid "Bracket"
-msgstr "Ταμπλό"
+msgstr ""
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
-msgstr "Διαγωνιστικό ταμπλό για τον χρήστη σας"
+msgstr ""
 
 #: CTFd/forms/users.py:172
 msgid "Search for matching users"
-msgstr "Αναζήτηση για αντίστοιχους χρήστες"
+msgstr "Pretraživanje odgovarajućih korisnika"
 
 #: CTFd/themes/core-beta/templates/base.html:53
 msgid "Powered by CTFd"
-msgstr "Με την υποστήριξη του CTFd"
+msgstr "Pokreće CTFd"
 
 #: CTFd/themes/core-beta/templates/challenge.html:11
 #: CTFd/themes/core-beta/templates/teams/private.html:388
@@ -323,232 +323,235 @@ msgstr "Με την υποστήριξη του CTFd"
 #: CTFd/themes/core-beta/templates/users/private.html:124
 #: CTFd/themes/core-beta/templates/users/public.html:123
 msgid "Challenge"
-msgstr "Πρόκληση"
+msgstr "Izazov"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
 #, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] "%(num)d Λύση"
-msgstr[1] "%(num)d Λύσεις"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: CTFd/themes/core-beta/templates/challenge.html:77
 msgid "View Hint"
-msgstr "Δείτε Υπόδειξη"
+msgstr "Prikaži savjet"
 
 #: CTFd/themes/core-beta/templates/challenge.html:120
 msgid "attempt"
 msgid_plural "attempts"
-msgstr[0] "προσπάθεια"
-msgstr[1] "προσπάθειες"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
-msgstr "Σημαία"
+msgstr "Zastavica"
 
 #: CTFd/themes/core-beta/templates/challenge.html:169
 msgid "Next Challenge"
-msgstr "Επόμενη Πρόκληση"
+msgstr "Sljedeći izazov"
 
 #: CTFd/themes/core-beta/templates/challenge.html:175
 msgid "Share"
-msgstr "Κοινοποίηση"
+msgstr "Podijeli"
 
 #: CTFd/themes/core-beta/templates/challenge.html:207
 #: CTFd/themes/core-beta/templates/setup.html:305
 #: CTFd/themes/core-beta/templates/setup.html:326
 msgid "Date"
-msgstr "Ημερομηνία"
+msgstr "Datum"
 
 #: CTFd/themes/core-beta/templates/challenges.html:7
 #: CTFd/themes/core-beta/templates/components/navbar.html:59
 msgid "Challenges"
-msgstr "Προκλήσεις"
+msgstr "Izazovi"
 
 #: CTFd/themes/core-beta/templates/confirm.html:7
 msgid "Confirm"
-msgstr "Επιβεβαίωση"
+msgstr "Potvrdi"
 
 #: CTFd/themes/core-beta/templates/confirm.html:18
 msgid "We've sent a confirmation email to your email address."
-msgstr "Στείλαμε email επιβεβαίωσης στη διεύθυνση email σας."
+msgstr "Poslali smo vam poruku s potvrdom na vašu adresu e-pošte."
 
 #: CTFd/themes/core-beta/templates/confirm.html:24
 msgid "Please click the link in that email to confirm your account."
-msgstr "Κάντε κλικ στον σύνδεσμο πρόσκλησης που εστάλη μέσω email για να επιβεβαιώσετε τον λογαριασμό σας."
+msgstr "Molimo kliknite na poveznicu u toj e-pošti kako biste potvrdili svoj račun."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
 msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
-msgstr "Αν το email δε φτάσει, ελέγξτε το φάκελο ανεπιθύμητης αλληλογραφίας σας ή επικοινωνήστε με τον διαχειριστή για να επαληθεύσετε χειροκίνητα τον λογαριασμό σας."
+msgstr "Ako niste zaprimili e-poštu, provjerite mapu spam ili kontaktirajte administratora da ručno potvrdi vaš račun."
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
-msgstr "Αλλαγή Διεύθυνσης Ηλεκτρονικού ταχυδρομείου"
+msgstr "Promijeni adresu e-pošte"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:164
 #: CTFd/themes/core-beta/templates/components/navbar.html:169
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
-msgstr "Είσοδος"
+msgstr "Prijava"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
-msgstr "Ξεχάσατε τον κωδικό πρόσβασής σας;"
+msgstr "Zaboravili ste lozinku?"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:85
 #: CTFd/themes/core-beta/templates/components/navbar.html:91
 #: CTFd/themes/core-beta/templates/notifications.html:7
 msgid "Notifications"
-msgstr "Ειδοποιήσεις"
+msgstr "Obavijest"
 
 #: CTFd/themes/core-beta/templates/notifications.html:14
 msgid "There are no notifications yet"
-msgstr "Δεν υπάρχουν ακόμη ειδοποιήσεις"
+msgstr "Nema obavijesti"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:151
 #: CTFd/themes/core-beta/templates/components/navbar.html:156
 #: CTFd/themes/core-beta/templates/register.html:7
 msgid "Register"
-msgstr "Εγγραφή"
+msgstr "Registriraj se"
 
 #: CTFd/themes/core-beta/templates/register.html:35
 msgid "Your username on the site"
-msgstr "Το όνομα χρήστη σας στον ιστότοπο"
+msgstr "Vaše korisničko ime na ovaj stranici"
 
 #: CTFd/themes/core-beta/templates/register.html:43
 msgid "Never shown to the public"
-msgstr "Να μην εμφανίζεται ποτέ δημόσια"
+msgstr "Nikada ne pokazati javnosti"
 
 #: CTFd/themes/core-beta/templates/register.html:51
 msgid "Password used to log into your account"
-msgstr "Κωδικός πρόσβασης που χρησιμοποιείται για τη σύνδεση"
+msgstr "Lozinka koja se koristi za prijavu u vaš korisnički račun"
 
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr "Με την εγγραφή σας, συμφωνείτε με την <a href=\"%(privacy_link)s\" target=\"_blank\">πολιτική απορρήτου</a> και τους <a href=\"%(tos_link)s\" target=\"_blank\">όρους χρήσης</a>"
+msgstr "S registracijom se slažete s <a href=\"%(privacy_link)s\" target=\"_blank\">politikom privatnosti</a> i <a href=\"%(tos_link)s\" target=\"_blank\">uvjetima korištenja</a>"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
-msgstr "Επαναφορά κωδικού πρόσβασης"
+msgstr "Resetiraj lozinku"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:21
 msgid "You can now reset the password for your account and log in. Please enter in a new password below."
-msgstr "Τώρα μπορείτε να επαναφέρετε τον κωδικό πρόσβασής σας και να συνδεθείτε. Εισαγάγετε τον νέο σας κωδικό πρόσβασης παρακάτω."
+msgstr "Sada možete resetirati lozinku za svoj račun i prijaviti se.\n"
+"Molimo unesite novu lozinku u nastavku."
 
 #: CTFd/themes/core-beta/templates/reset_password.html:44
 msgid "Please provide the email address associated with your account below."
-msgstr "Εισαγάγετε τη διεύθυνση ηλεκτρονικού ταχυδρομείου που σχετίζεται με τον λογαριασμό σας παρακάτω."
+msgstr "Molimo vas da u nastavku navedete adresu e-pošte povezanu s vašim računom."
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:52
 #: CTFd/themes/core-beta/templates/scoreboard.html:7
 msgid "Scoreboard"
-msgstr "Πίνακας αποτελεσμάτων"
+msgstr "Ljestvica rezultata"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:24
 msgid "All"
-msgstr "Όλες"
+msgstr "Sve"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:36
 msgid "Place"
-msgstr "Θέση"
+msgstr "Mjesto"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:38
 #: CTFd/themes/core-beta/templates/teams/private.html:330
 #: CTFd/themes/core-beta/templates/teams/public.html:96
 msgid "Score"
-msgstr "Βαθμολογία"
+msgstr "Rezultat"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:60
 msgid "Scoreboard is empty"
-msgstr "Ο πίνακας βαθμολογίας είναι κενός"
+msgstr "Ljestvica rezultata je prazna"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:124
 #: CTFd/themes/core-beta/templates/components/navbar.html:129
 #: CTFd/themes/core-beta/templates/settings.html:8
 #: CTFd/themes/core-beta/templates/setup.html:50
 msgid "Settings"
-msgstr "Ρυθμίσεις"
+msgstr "Postavke"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:112
 #: CTFd/themes/core-beta/templates/components/navbar.html:117
 #: CTFd/themes/core-beta/templates/settings.html:21
 msgid "Profile"
-msgstr "Προφίλ"
+msgstr "Profil"
 
 #: CTFd/themes/core-beta/templates/settings.html:26
 msgid "Access Tokens"
-msgstr "Κλειδί Πρόσβασης"
+msgstr "Pristupni žetoni"
 
 #: CTFd/themes/core-beta/templates/settings.html:95
 msgid "Your profile has been updated"
-msgstr "Το προφίλ σας έχει ενημερωθεί"
+msgstr "Vaš profil je bio ažuriran"
 
 #: CTFd/themes/core-beta/templates/settings.html:103
 #: CTFd/themes/core-beta/templates/teams/private.html:83
 #: CTFd/themes/core-beta/templates/teams/private.html:198
 msgid "Error:"
-msgstr "Σφάλμα:"
+msgstr "Greška:"
 
 #: CTFd/themes/core-beta/templates/settings.html:129
 msgid "API Key Generated"
-msgstr "Δημιουργήθηκε κλειδί API"
+msgstr "Stvoren API ključ"
 
 #: CTFd/themes/core-beta/templates/settings.html:137
 msgid "Please copy your API Key, it won't be shown again!"
-msgstr "Αντιγράψτε το κλειδί API σας, δεν θα εμφανιστεί ξανά!"
+msgstr "Molimo kopirajte svoj API ključ, više se neće prikazati!"
 
 #: CTFd/themes/core-beta/templates/settings.html:183
 msgid "Active Tokens"
-msgstr "Διακριτικά Πρόσβασης"
+msgstr "Aktivni žetoni"
 
 #: CTFd/themes/core-beta/templates/settings.html:195
 msgid "Delete Token"
-msgstr "Διαγραφή Διακριτικού"
+msgstr "Izbriši žeton"
 
 #: CTFd/themes/core-beta/templates/settings.html:204
 msgid "Are you sure you want to delete this token?"
-msgstr "Επιβεβαιώνετε τη διαγραφή αυτού του κλειδιού;"
+msgstr "Jeste li sigurni da želite izbrisati ovaj žeton?"
 
 #: CTFd/themes/core-beta/templates/settings.html:224
 msgid "Created"
-msgstr "Δημιουργήθηκε"
+msgstr "Stvoreno"
 
 #: CTFd/themes/core-beta/templates/settings.html:226
 msgid "Description"
-msgstr "Περιγραφή"
+msgstr "Opis"
 
 #: CTFd/themes/core-beta/templates/settings.html:227
 msgid "Delete"
-msgstr "Διαγραφή"
+msgstr "Izbriši"
 
 #: CTFd/themes/core-beta/templates/setup.html:24
 msgid "Setup"
-msgstr "Εγκατάσταση"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/setup.html:44
 msgid "General"
-msgstr "Γενικός"
+msgstr "Općenito"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
 msgid "Mode"
-msgstr "Λειτουργία"
+msgstr "Način"
 
 #: CTFd/themes/core-beta/templates/setup.html:53
 msgid "Administration"
-msgstr "Διαχειριστής"
+msgstr "Administracija"
 
 #: CTFd/themes/core-beta/templates/setup.html:56
 msgid "Style"
-msgstr "Στυλ"
+msgstr "Stil"
 
 #: CTFd/themes/core-beta/templates/setup.html:59
 msgid "Date &amp; Time"
-msgstr "Ημερομηνία &amp; Ώρα"
+msgstr "Datum i vrijeme"
 
 #: CTFd/themes/core-beta/templates/setup.html:62
 msgid "Integrations"
-msgstr "Ενσωματώσεις"
+msgstr "Integracije"
 
 #: CTFd/themes/core-beta/templates/setup.html:86
 #: CTFd/themes/core-beta/templates/setup.html:138
@@ -557,51 +560,51 @@ msgstr "Ενσωματώσεις"
 #: CTFd/themes/core-beta/templates/setup.html:296
 #: CTFd/themes/core-beta/templates/setup.html:345
 msgid "Next"
-msgstr "Επόμενο"
+msgstr "Sljedeće"
 
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "Participants register accounts and form teams"
-msgstr "Οι συμμετέχοντες εγγράφονται και σχηματίζουν ομάδες"
+msgstr "Sudionici registriraju račune i formiraju ekipe"
 
 #: CTFd/themes/core-beta/templates/setup.html:113
 msgid "If a team member solves a challenge, the entire team receives credit"
-msgstr "Εάν ένα μέλος της ομάδας λύσει μια πρόκληση, ολόκληρη η ομάδα λαμβάνει τους βαθμούς"
+msgstr "Ako član ekipe riješi izazov, cijeli tim dobiva zasluge"
 
 #: CTFd/themes/core-beta/templates/setup.html:115
 msgid "Easier to see which team member solved a challenge"
-msgstr "Πιο εύκολο να δούμε ποιο μέλος της ομάδας έλυσε μια πρόκληση"
+msgstr "Jednostavnije je vidjeti koji je član tima riješio izazov"
 
 #: CTFd/themes/core-beta/templates/setup.html:116
 msgid "May be slightly more difficult to administer"
-msgstr "Μπορεί να είναι λίγο πιο δύσκολη η διαχείριση"
+msgstr "Može biti malo teže za administriranje"
 
 #: CTFd/themes/core-beta/templates/setup.html:120
 msgid "Participants only register an individual account"
-msgstr "Οι συμμετέχοντες καταχωρούν μόνο έναν ατομικό λογαριασμό"
+msgstr "Sudionici registriraju samo individualni račun"
 
 #: CTFd/themes/core-beta/templates/setup.html:121
 msgid "Players can share accounts to form pseudo-teams"
-msgstr "Οι παίκτες μπορούν να μοιράζονται λογαριασμούς για να σχηματίσουν ψευδο-ομάδες"
+msgstr "Igrači mogu dijeliti račune kako bi formirali pseudo-ekipe"
 
 #: CTFd/themes/core-beta/templates/setup.html:123
 msgid "Easier to organize"
-msgstr "Πιο εύκολο να οργανωθεί"
+msgstr "Jednostavnije za organizirati"
 
 #: CTFd/themes/core-beta/templates/setup.html:124
 msgid "Difficult to attribute solutions to individual team members"
-msgstr "Δύσκολο να αποδοθούν λύσεις σε μεμονωμένα μέλη της ομάδας"
+msgstr "Teško je pripisati rješenja pojedinačnim članovima ekipe"
 
 #: CTFd/themes/core-beta/templates/setup.html:143
 msgid "Visibility Settings"
-msgstr "Ρυθμίσεις ορατότητας"
+msgstr "Postavke vidljivosti"
 
 #: CTFd/themes/core-beta/templates/setup.html:146
 msgid "Control the visibility of different sections of CTFd"
-msgstr "Ελέγξτε την ορατότητα διαφορετικών τμημάτων του CTFd"
+msgstr "Kontrolirajte vidljivost različitih dijelova CTFd-a"
 
 #: CTFd/themes/core-beta/templates/setup.html:232
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
-msgstr "Εγγραφείτε στα νέα της CTFd LLC μέσω email"
+msgstr "Pretplatite se na bilten CTFd LLC-a za novosti i ažuriranja"
 
 #: CTFd/themes/core-beta/templates/setup.html:309
 #: CTFd/themes/core-beta/templates/setup.html:330
@@ -610,145 +613,145 @@ msgstr "Εγγραφείτε στα νέα της CTFd LLC μέσω email"
 #: CTFd/themes/core-beta/templates/users/private.html:127
 #: CTFd/themes/core-beta/templates/users/public.html:126
 msgid "Time"
-msgstr "Ώρα"
+msgstr "Vrijeme"
 
 #: CTFd/themes/core-beta/templates/setup.html:334
 msgid "UTC Preview"
-msgstr "Προεπισκόπηση UTC"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:36
 #: CTFd/themes/core-beta/templates/users/users.html:6
 msgid "Users"
-msgstr "Χρήστες"
+msgstr "Korisnici"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:43
 #: CTFd/themes/core-beta/templates/teams/teams.html:6
 msgid "Teams"
-msgstr "Ομάδες"
+msgstr "Ekipe"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:72
 #: CTFd/themes/core-beta/templates/components/navbar.html:77
 msgid "Admin Panel"
-msgstr "Πίνακας Διαχειριστή"
+msgstr "Administrativno sučelje"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:99
 #: CTFd/themes/core-beta/templates/components/navbar.html:104
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
 #: CTFd/themes/core-beta/templates/teams/teams.html:49
 msgid "Team"
-msgstr "Ομάδα"
+msgstr "Ekipa"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:136
 #: CTFd/themes/core-beta/templates/components/navbar.html:141
 msgid "Logout"
-msgstr "Αποσύνδεση"
+msgstr "Odjava"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:180
 msgid "Change language"
-msgstr "Αλλαγή γλώσσας"
+msgstr "Promijeni jezik"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:199
 #: CTFd/themes/core-beta/templates/components/navbar.html:204
 msgid "Toggle theme"
-msgstr "Εναλλαγή θέματος"
+msgstr "Preklopi temu"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:12
 msgid "403 Forbidden"
-msgstr "403 Απαγορεύεται"
+msgstr "403 Zabranjeno"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
-msgstr "Το αρχείο δεν βρέθηκε"
+msgstr "Datoteka nije pronađena"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "404 Not Found"
-msgstr "404 Δε βρέθηκε"
+msgstr "404 Nije pronađeno"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
-msgstr "Πάρα πολλά αιτήματα"
+msgstr "Previše zahtjeva"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:10
 msgid "Please slow down!"
-msgstr "Παρακαλώ σιγά!"
+msgstr "Molimo vas, usporite!"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:13
 msgid "429 Too Many Requests"
-msgstr "429 Πάρα Πολλά Αιτήματα"
+msgstr "429 Previše zahtjeva"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:12
 msgid "502 Bad Gateway"
-msgstr "502 Εσφαλμένη Πύλη"
+msgstr "502 Loš ulaz"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
 #: CTFd/themes/core-beta/templates/macros/forms.html:65
 msgid "(Optional)"
-msgstr "(Προαιρετικό)"
+msgstr "(neobavezno)"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:6
 #: CTFd/themes/core-beta/templates/teams/join_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
 msgid "Join Team"
-msgstr "Γίνετε μέλος της ομάδας"
+msgstr "Pridruži se ekipi"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:15
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
 msgid "Welcome to"
-msgstr "Καλώς ήρθατε στην"
+msgstr "Dobrodošli na"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:19
 msgid "Click the button below to join the team!"
-msgstr "Κάντε κλικ στο παρακάτω κουμπί για να γίνετε μέλος της ομάδας!"
+msgstr "Kliknite na gumb ispod da biste se pridružili ekipi!"
 
 #: CTFd/themes/core-beta/templates/teams/new_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
 msgid "Create Team"
-msgstr "Δημιουργία Ομάδας"
+msgstr "Stvori ekipu"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:8
 msgid "Edit Team"
-msgstr "Επεξεργασία Ομάδας"
+msgstr "Uredi ekipu"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:76
 msgid "Your team's profile has been updated"
-msgstr "Το προφίλ της ομάδας σας έχει ενημερωθεί"
+msgstr "Profil vaše ekipe je bio ažuriran"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:104
 msgid "Choose Captain"
-msgstr "Επιλέξτε Αρχηγό"
+msgstr "Izaberi kapetana"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
-msgstr "Τα δικαιώματα του αρχηγού σας έχουν μεταφερθεί"
+msgstr "Vaša kapetanska prava su bila prenesena"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:152
 msgid "Invite Users"
-msgstr "Πρόσκληση χρηστών"
+msgstr "Pozovi korisnike"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:171
 msgid "Share this link with your team members for them to join your team"
-msgstr "Μοιραστείτε αυτόν τον σύνδεσμο με τα μέλη της ομάδας σας για να ενταχθούν στην ομάδα σας"
+msgstr "Podijelite ovu poveznicu s članovima kako bi se i oni mogli pridružiti ekipi"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:174
 msgid "Invite links can be re-used and expire after 1 day"
-msgstr "Οι σύνδεσμοι πρόσκλησης μπορούν να επαναχρησιμοποιηθούν και λήγουν μετά από 1 ημέρα"
+msgstr "Pozivne poveznice se mogu ponovno koristiti i istječu nakon 1 dana"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:188
 msgid "Disband Team"
-msgstr "Διάλυση Ομάδας"
+msgstr "Raspusti ekipu"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:193
 msgid "Are you sure you want to disband your team?"
-msgstr "Είστε σίγουροι ότι θέλετε να διαλύσετε την ομάδα σας;"
+msgstr "Jeste li sigurni da želite raspustiti ekipu?"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:206
 msgid "No"
-msgstr "Όχι"
+msgstr "Ne"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:207
 msgid "Yes"
-msgstr "Ναι"
+msgstr "Da"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:218
 #: CTFd/themes/core-beta/templates/teams/public.html:10
@@ -756,104 +759,106 @@ msgstr "Ναι"
 #: CTFd/themes/core-beta/templates/users/public.html:21
 #: CTFd/themes/core-beta/templates/users/users.html:70
 msgid "Official"
-msgstr "Επίσημα"
+msgstr "Službeno"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:260
 msgid "place"
-msgstr "θέση"
+msgstr "mjesto"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:268
 msgid "points"
-msgstr "πόντοι"
+msgstr "bodovi"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:325
 #: CTFd/themes/core-beta/templates/teams/public.html:91
 msgid "Members"
-msgstr "Μέλη"
+msgstr "Članovi"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:345
 #: CTFd/themes/core-beta/templates/teams/public.html:110
 msgid "Captain"
-msgstr "Αρχηγός"
+msgstr "Kapetan"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:361
 #: CTFd/themes/core-beta/templates/teams/public.html:125
 #: CTFd/themes/core-beta/templates/users/private.html:98
 #: CTFd/themes/core-beta/templates/users/public.html:98
 msgid "Awards"
-msgstr "Βραβεία"
+msgstr "Nagrade"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:384
 #: CTFd/themes/core-beta/templates/teams/public.html:153
 #: CTFd/themes/core-beta/templates/users/private.html:120
 msgid "Solves"
-msgstr "Λύσεις"
+msgstr "Rješenja"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:389
 #: CTFd/themes/core-beta/templates/teams/public.html:158
 #: CTFd/themes/core-beta/templates/users/private.html:125
 #: CTFd/themes/core-beta/templates/users/public.html:124
 msgid "Category"
-msgstr "Κατηγορία"
+msgstr "Kategorija"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:390
 #: CTFd/themes/core-beta/templates/teams/public.html:159
 #: CTFd/themes/core-beta/templates/users/private.html:126
 #: CTFd/themes/core-beta/templates/users/public.html:125
 msgid "Value"
-msgstr "Τιμή"
+msgstr "Vrijednost"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:481
 #: CTFd/themes/core-beta/templates/teams/public.html:248
 #: CTFd/themes/core-beta/templates/users/private.html:213
 #: CTFd/themes/core-beta/templates/users/public.html:214
 msgid "No solves yet"
-msgstr "Καμία λύση ακόμα"
+msgstr "Još nema rješenja"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
-msgstr "Για να συμμετάσχετε πρέπει είτε να εγγραφείτε είτε να δημιουργήσετε μια ομάδα."
+msgstr "Za sudjelovanje se je potrebno pridružiti postojećoj ili stvori novu ekipu."
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
-msgstr "Παίξτε με την επίσημη ομάδα"
+msgstr "Igraj sa službenom ekipom"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
 msgid "Join Unofficial Team"
-msgstr "Εγγραφείτε σε μια ανεπίσημη ομάδα"
+msgstr "Pridruži se neslužbenoj ekipi"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
 msgid "Create Unofficial Team"
-msgstr "Δημιουργήστε μια ανεπίσημη ομάδα"
+msgstr "Stvori neslužbenu ekipu"
 
 #: CTFd/themes/core-beta/templates/teams/teams.html:128
 #: CTFd/themes/core-beta/templates/users/users.html:118
 msgid "Page"
-msgstr "Σελίδα"
+msgstr "Stranica"
 
 #: CTFd/themes/core-beta/templates/users/users.html:14
 #, python-format
 msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
-msgstr "Αναζήτηση χρηστών με <strong>%(field)s</strong> που ταιριάζουν με <strong>%(q)s</strong>"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/users/users.html:17
 #, python-format
 msgid "Page %(page)s of %(total)s results"
-msgstr "Σελίδα %(page)s από %(total)s αποτελέσματα"
+msgstr "Stranica %(page)s od %(total)s rezultata"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"
-msgstr "Χρήστης"
+msgstr ""
 
 #: CTFd/utils/modes/__init__.py:35
 msgid "user"
 msgid_plural "users"
-msgstr[0] "Χρήστης"
-msgstr[1] "Χρήστες"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: CTFd/utils/modes/__init__.py:37
 msgid "team"
 msgid_plural "teams"
-msgstr[0] "ομάδα"
-msgstr[1] "ομάδες"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
