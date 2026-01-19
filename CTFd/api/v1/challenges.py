@@ -1289,3 +1289,4 @@ class ChallengeSolution(Resource):
         response["id"] = solution_id
         response["state"] = solution_state
         return {"success": True, "data": response}
+
