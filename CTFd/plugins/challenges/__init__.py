@@ -273,8 +273,9 @@ class BaseChallenge(object):
 
             existing = Submissions.query.filter_by(**filters).first()
             if existing:
-                return ChallengeResponse(status="duplicate", message="You already submitted this flag")
-
+                return ChallengeResponse(
+                    status="duplicate", message="You already submitted this flag"
+                )
 
             # Record the submission for audit
             sub = Submissions(
