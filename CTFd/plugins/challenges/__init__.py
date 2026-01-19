@@ -12,7 +12,6 @@ from CTFd.models import (
     Awards,
     ChallengeFiles,
     Challenges,
-    db,
     Fails,
     Flags,
     Hints,
@@ -21,6 +20,7 @@ from CTFd.models import (
     Solves,
     Submissions,
     Tags,
+    db,
 )
 from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges.decay import DECAY_FUNCTIONS, logarithmic
