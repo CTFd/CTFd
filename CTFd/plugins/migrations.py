@@ -97,7 +97,12 @@ def upgrade(plugin_name=None, revision=None, lower="current", force_all=False):
     # If the plugin wants we should force all migrations to apply
     if force_all is True:
         revs = list(script.walk_revisions())
+        # If we do have revisions and we want to force all we should correct the upper field
+        # Note that the first revision is the latest because we havent reversed yet
+        if revs:
+            upper = revs[0].revision
 
+    # Revisions must be reversed as they came in from upper to lower
     revs.reverse()
 
     try:
