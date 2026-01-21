@@ -33,7 +33,12 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
     chal_q = (
         chal_q.filter_by(**query_args)
         .filter(*filters)
-        .order_by(Challenges.weight.desc(), Challenges.value, Challenges.id)
+        .order_by(
+            (Challenges.weight == 0).asc(),  # Weight of 0 should go to the end/bottom
+            Challenges.weight.asc(),  # Ordered challenges should go first
+            Challenges.value,
+            Challenges.id,
+        )
     )
     tag_schema = TagSchema(view="user", many=True)
 
