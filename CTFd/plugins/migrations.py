@@ -49,7 +49,7 @@ def current(plugin_name=None):
     return version
 
 
-def upgrade(plugin_name=None, revision=None, lower="current"):
+def upgrade(plugin_name=None, revision=None, lower="current", force_all=False):
     database_url = current_app.config.get("SQLALCHEMY_DATABASE_URI")
     if database_url.startswith("sqlite"):
         current_app.db.create_all()
@@ -93,6 +93,11 @@ def upgrade(plugin_name=None, revision=None, lower="current"):
 
     # Apply from lower to upper
     revs = list(script.iterate_revisions(lower=lower, upper=upper))
+
+    # If the plugin wants we should force all migrations to apply
+    if force_all is True:
+        revs = list(script.walk_revisions())
+
     revs.reverse()
 
     try:
