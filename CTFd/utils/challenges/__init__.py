@@ -15,7 +15,7 @@ from CTFd.utils.modes import generate_account_url, get_model
 
 Challenge = namedtuple(
     "Challenge",
-    ["id", "type", "name", "value", "weight", "category", "tags", "requirements"],
+    ["id", "type", "name", "value", "position", "category", "tags", "requirements"],
 )
 
 Rating = namedtuple("Rating", ["up", "down", "count"])
@@ -34,8 +34,8 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
         chal_q.filter_by(**query_args)
         .filter(*filters)
         .order_by(
-            (Challenges.weight == 0).asc(),  # Weight of 0 should go to the end/bottom
-            Challenges.weight.asc(),  # Ordered challenges should go first
+            (Challenges.position == 0).asc(),  # Position of 0 should go to the end/bottom
+            Challenges.position.asc(),  # Ordered challenges should go first
             Challenges.value,
             Challenges.id,
         )
@@ -49,7 +49,7 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
             type=c.type,
             name=c.name,
             value=c.value,
-            weight=c.weight,
+            position=c.position,
             category=c.category,
             requirements=c.requirements,
             tags=tag_schema.dump(c.tags).data,

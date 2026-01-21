@@ -232,7 +232,7 @@ class ChallengeList(Resource):
                     "type": challenge_type.name,
                     "name": challenge.name,
                     "value": challenge.value,
-                    "weight": challenge.weight,
+                    "position": challenge.position,
                     "solves": solve_counts.get(challenge.id, solve_count_dfl),
                     "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
