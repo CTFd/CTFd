@@ -81,7 +81,7 @@ def statistics():
             (Challenges.position == 0).asc(),  # Weight of 0 should go to the end/bottom
             Challenges.position.asc(),  # Ordered challenges should go first
             Challenges.value,
-            Challenges.category
+            Challenges.category,
         )
         .all()
     )
