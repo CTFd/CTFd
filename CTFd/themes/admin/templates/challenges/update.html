@@ -72,17 +72,17 @@
         </div>
     {% endblock %}
 
-    {% block weight %}
-        <div class="form-group">
-            <label for="weight">
-                Weight<br>
-                <small class="form-text text-muted">
-                    This is used to order the challenge. Higher weight is higher on the list (first).
-                </small>
-            </label>
-            <input type="number" class="form-control chal-weight" name="weight" value="{{ challenge.weight }}" required>
-        </div>
-    {% endblock %}
+	{% block position %}
+	<div class="form-group">
+		<label for="position">
+			Position<br>
+			<small class="form-text text-muted">
+				This is used to order the challenge. Lower positions are first. Position 0 goes to the end to be sorted by challenge value.
+			</small>
+		</label>
+		<input type="number" class="form-control chal-position" name="position" value="{{ challenge.position }}" required>
+	</div>
+	{% endblock %}
 
     {% block function %}
         <div class="form-group">

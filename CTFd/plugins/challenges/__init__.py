@@ -110,7 +110,7 @@ class BaseChallenge(object):
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
-            "weight": challenge.weight,
+            "position": challenge.position,
             "logic": challenge.logic,
             "initial": challenge.initial if challenge.function != "static" else None,
             "decay": challenge.decay if challenge.function != "static" else None,

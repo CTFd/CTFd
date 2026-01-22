@@ -1,4 +1,4 @@
-"""add_weight_to_challenges
+"""Add position to challenges
 
 Revision ID: 48d8250d19bd
 Revises: 67ebab6de598
@@ -19,9 +19,9 @@ depends_on = None
 def upgrade():
     op.add_column(
         "challenges",
-        sa.Column("weight", sa.SmallInteger(), nullable=False, server_default="0"),
+        sa.Column("position", sa.Integer(), nullable=False, server_default="0"),
     )
 
 
 def downgrade():
-    op.drop_column("challenges", "weight")
+    op.drop_column("challenges", "position")
