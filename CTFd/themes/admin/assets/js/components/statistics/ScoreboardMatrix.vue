@@ -230,7 +230,7 @@
                       class="form-control form-control-sm mb-2"
                       v-model="challengeSort"
                     >
-                      <option value="weight">Weight (Default)</option>
+                      <option value="position">Position (Default)</option>
                       <option value="id">ID (Ascending)</option>
                       <option value="id-desc">ID (Descending)</option>
                       <option value="name-asc">
@@ -309,7 +309,7 @@ export default {
       selectedUserIds: [],
       selectedChallengeIds: [],
       selectedCategories: [],
-      challengeSort: "weight",
+      challengeSort: "position",
     };
   },
   created() {
@@ -324,7 +324,7 @@ export default {
         this.userSearch = settings.userSearch || "";
         this.challengeSearch = settings.challengeSearch || "";
         this.categorySearch = settings.categorySearch || "";
-        this.challengeSort = settings.challengeSort || "weight";
+        this.challengeSort = settings.challengeSort || "position";
         this.selectedUserIds =
           settings.selectedUserIds || this.users.map((u) => u.id);
         this.selectedChallengeIds =
@@ -402,10 +402,12 @@ export default {
       );
 
       return filtered.sort((a, b) => {
-        if (this.challengeSort === "weight") {
-          // weight (desc), then value, then name, finally id
+        if (this.challengeSort === "position") {
+          // position (asc), 0 is last, then value, then name, finally id
+          if (a.position === 0 && b.position !== 0) return 1;
+          if (b.position === 0 && a.position !== 0) return -1;
           return (
-            b.weight - a.weight ||
+            a.position - b.position ||
             a.value - b.value ||
             a.category.localeCompare(b.category) ||
             a.id - b.id
@@ -427,7 +429,7 @@ export default {
       this.userSearch = "";
       this.challengeSearch = "";
       this.categorySearch = "";
-      this.challengeSort = "weight";
+      this.challengeSort = "position";
       this.selectAllUsers();
       this.selectAllChallenges();
       this.selectAllCategories();
