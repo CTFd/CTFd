@@ -39,9 +39,9 @@ from CTFd.utils.uploads import get_uploader
 
 def export_ctf(ignore_overrides=False):
     if not ignore_overrides:
-        export_ctf_func = getattr(app, "plugin_overrides", {}).get("export_ctf")
-        if export_ctf_func:
-            return export_ctf_func()
+        custom_export_ctf = app.overridden_functions.get("export_ctf")
+        if custom_export_ctf:
+            return custom_export_ctf()
 
     # TODO: For some unknown reason dataset is only able to see alembic_version during tests.
     # Even using a real sqlite database. This makes this test impossible to pass in sqlite.
@@ -119,9 +119,9 @@ def set_import_end_time(value, timeout=604800, skip_print=False):
 
 def import_ctf(backup, erase=True, ignore_overrides=False):
     if not ignore_overrides:
-        import_ctf_func = getattr(app, "plugin_overrides", {}).get("import_ctf")
-        if import_ctf_func:
-            return import_ctf_func(backup, erase=erase)
+        custom_import_ctf = app.overridden_functions.get("import_ctf")
+        if custom_import_ctf:
+            return custom_import_ctf(backup, erase=erase)
 
     # Reset import cache keys and don't print these values
     set_import_error(value=None, skip_print=True)

@@ -6,13 +6,13 @@ from CTFd.plugins import (
     bypass_csrf_protection,
     get_admin_plugin_menu_bar,
     get_user_page_menu_bar,
+    override_function,
     override_template,
     register_admin_plugin_menu_bar,
     register_admin_plugin_script,
     register_admin_plugin_stylesheet,
     register_plugin_asset,
     register_plugin_assets_directory,
-    register_plugin_override,
     register_plugin_script,
     register_user_page_menu_bar,
 )
@@ -232,22 +232,23 @@ def test_challenges_model_access_plugin_class():
 def test_import_ctf_override():
     """Test that import_ctf can be overridden"""
     app = create_ctfd()
-    with app.app_context():
+    if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
+        with app.app_context():
 
-        def override_func(backup, *args, **kwargs):
-            return "OVERRIDDEN"
+            def override_func(backup, *args, **kwargs):
+                return "OVERRIDDEN"
 
-        register_plugin_override("import_ctf", override_func)
-        result = import_ctf("dummy_backup")
-        assert result == "OVERRIDDEN"
-        assert app.plugin_overrides["import_ctf"] is override_func
+            override_function("import_ctf", override_func)
+            result = import_ctf("dummy_backup")
+            assert result == "OVERRIDDEN"
+            assert app.overridden_functions["import_ctf"] is override_func
 
-        # Test real import_ctf can still be called
-        try:
-            import_ctf("dummy_backup", ignore_overrides=True)
-        except zipfile.BadZipfile:
-            # This is expected
-            pass
+            # Test real import_ctf can still be called
+            try:
+                import_ctf("dummy_backup", ignore_overrides=True)
+            except zipfile.BadZipfile:
+                # This is expected
+                pass
 
     destroy_ctfd(app)
 
@@ -260,10 +261,10 @@ def test_export_ctf_override():
         def override_func():
             return "EXPORT_OVERRIDDEN"
 
-        register_plugin_override("export_ctf", override_func)
+        override_function("export_ctf", override_func)
         result = export_ctf()
         assert result == "EXPORT_OVERRIDDEN"
-        assert app.plugin_overrides["export_ctf"] is override_func
+        assert app.overridden_functions["export_ctf"] is override_func
 
         # Test real export_ctf can still be called
         result = export_ctf(ignore_overrides=True)

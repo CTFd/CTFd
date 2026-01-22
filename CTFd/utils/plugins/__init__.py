@@ -21,10 +21,6 @@ def register_admin_stylesheet(url):
     app.admin_plugin_stylesheets.append(url)
 
 
-def register_override(name, func):
-    app.plugin_overrides[name] = func
-
-
 def get_registered_scripts():
     return app.plugin_scripts
 
@@ -43,6 +39,10 @@ def get_registered_admin_stylesheets():
 
 def override_template(template, html):
     app.overridden_templates[template] = html
+
+
+def override_function(name, func):
+    app.overridden_functions[name] = func
 
 
 def get_menubar_plugins():
