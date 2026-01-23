@@ -37,7 +37,12 @@ from CTFd.utils.migrations import (
 from CTFd.utils.uploads import get_uploader
 
 
-def export_ctf():
+def export_ctf(ignore_overrides=False):
+    if not ignore_overrides:
+        custom_export_ctf = app.overridden_functions.get("export_ctf")
+        if custom_export_ctf:
+            return custom_export_ctf()
+
     # TODO: For some unknown reason dataset is only able to see alembic_version during tests.
     # Even using a real sqlite database. This makes this test impossible to pass in sqlite.
     db = dataset.connect(get_app_config("SQLALCHEMY_DATABASE_URI"))
@@ -112,7 +117,12 @@ def set_import_end_time(value, timeout=604800, skip_print=False):
         print(value)
 
 
-def import_ctf(backup, erase=True):
+def import_ctf(backup, erase=True, ignore_overrides=False):
+    if not ignore_overrides:
+        custom_import_ctf = app.overridden_functions.get("import_ctf")
+        if custom_import_ctf:
+            return custom_import_ctf(backup, erase=erase)
+
     # Reset import cache keys and don't print these values
     set_import_error(value=None, skip_print=True)
     set_import_status(value=None, skip_print=True)

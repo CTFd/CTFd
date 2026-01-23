@@ -41,6 +41,10 @@ def override_template(template, html):
     app.overridden_templates[template] = html
 
 
+def override_function(name, func):
+    app.overridden_functions[name] = func
+
+
 def get_menubar_plugins():
     plugins = get_configurable_plugins()
     return [plugin for plugin in plugins if plugin.route is not None]
