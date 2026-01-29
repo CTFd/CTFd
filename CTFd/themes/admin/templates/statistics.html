@@ -1,168 +1,168 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-    <div class="jumbotron">
-        <div class="container">
-            <h1>Statistics</h1>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row mb-4">
-            <div class="col-md-12 text-center">
-                <div class="d-flex justify-content-center align-items-center flex-wrap">
-                    <div class="mx-4 my-2">
-                        <h5><b>{{ user_count }}</b> <small class="text-muted">users</small></h5>
-                    </div>
-                    {% if get_config('user_mode') == 'teams' %}
-                        <div class="mx-4 my-2">
-                            <h5><b>{{ team_count }}</b> <small class="text-muted">teams</small></h5>
-                        </div>
-                    {% endif %}
-                    <div class="mx-4 my-2">
-                        <h5><b>{{ ip_count }}</b> <small class="text-muted">IPs</small></h5>
-                    </div>
-                    <div class="mx-4 my-2">
-                        <h5><b>{{ total_points }}</b> <small class="text-muted">points</small></h5>
-                    </div>
-                    <div class="mx-4 my-2">
-                        <h5><b>{{ challenge_count }}</b> <small class="text-muted">challenges</small></h5>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-center align-items-center flex-wrap">
-                    {% if most_solved %}
-                        <div class="mx-4 my-2">
-                            <small>Most Solved: <b>{{ most_solved }}</b> ({{ solve_data[most_solved] }})</small>
-                        </div>
-                    {% endif %}
-                    {% if least_solved %}
-                        <div class="mx-4 my-2">
-                            <small>Least Solved: <b>{{ least_solved }}</b> ({{ solve_data[least_solved] }})</small>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Statistics</h1>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row mb-4">
+			<div class="col-md-12 text-center">
+				<div class="d-flex justify-content-center align-items-center flex-wrap">
+					<div class="mx-4 my-2">
+						<h5><b>{{ user_count }}</b> <small class="text-muted">users</small></h5>
+					</div>
+					{% if get_config('user_mode') == 'teams' %}
+						<div class="mx-4 my-2">
+							<h5><b>{{ team_count }}</b> <small class="text-muted">teams</small></h5>
+						</div>
+					{% endif %}
+					<div class="mx-4 my-2">
+						<h5><b>{{ ip_count }}</b> <small class="text-muted">IPs</small></h5>
+					</div>
+					<div class="mx-4 my-2">
+						<h5><b>{{ total_points }}</b> <small class="text-muted">points</small></h5>
+					</div>
+					<div class="mx-4 my-2">
+						<h5><b>{{ challenge_count }}</b> <small class="text-muted">challenges</small></h5>
+					</div>
+				</div>
+				<div class="d-flex justify-content-center align-items-center flex-wrap">
+					{% if most_solved %}
+						<div class="mx-4 my-2">
+							<small>Most Solved: <b>{{ most_solved }}</b> ({{ solve_data[most_solved] }})</small>
+						</div>
+					{% endif %}
+					{% if least_solved %}
+						<div class="mx-4 my-2">
+							<small>Least Solved: <b>{{ least_solved }}</b> ({{ solve_data[least_solved] }})</small>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Player Progression <sup class="text-muted">(Top 100)</sup></h3>
-                <div id="scoreboard-matrix">
-                    <div class="text-center py-5">
-                        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+		<div class="row">
+			<div class="col-md-12">
+				<h3>Player Progression <sup class="text-muted">(Top 100)</sup></h3>
+				<div id="scoreboard-matrix">
+					<div class="text-center py-5">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <hr>
-    </div>
+		<hr>
+	</div>
 
-    <div class="container">
-        <div class="row d-flex align-items-center">
-            <div class="col-md-12">
-                <div id="solves-graph" class="d-flex align-items-center">
-                    <div class="text-center w-100">
-                        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+	<div class="container">
+		<div class="row d-flex align-items-center">
+			<div class="col-md-12">
+				<div id="solves-graph" class="d-flex align-items-center">
+					<div class="text-center w-100">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <hr>
+		<hr>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div id="score-distribution-graph" class="d-flex align-items-center">
-                    <div class="text-center w-100">
-                        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+		<div class="row">
+			<div class="col-md-12">
+				<div id="score-distribution-graph" class="d-flex align-items-center">
+					<div class="text-center w-100">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <hr>
+		<hr>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div id="solve-percentages-graph" class="d-flex align-items-center">
-                    <div class="text-center w-100">
-                        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+		<div class="row">
+			<div class="col-md-12">
+				<div id="solve-percentages-graph" class="d-flex align-items-center">
+					<div class="text-center w-100">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <hr>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4">
-                <div id="keys-pie-graph" class="d-flex align-items-center">
-                    <div class="text-center w-100">
-                        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <h5><b>{{ solve_count }}</b> right submissions</h5>
-                    <h5><b>{{ wrong_count }}</b> wrong submissions</h5>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div id="categories-pie-graph" class="d-flex align-items-center">
-                    <div class="text-center w-100">
-                        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div id="points-pie-graph" class="d-flex align-items-center">
-                    <div class="text-center w-100">
-                        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
+		<hr>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-4">
+				<div id="keys-pie-graph" class="d-flex align-items-center">
+					<div class="text-center w-100">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+				<div class="text-center">
+					<h5><b>{{ solve_count }}</b> right submissions</h5>
+					<h5><b>{{ wrong_count }}</b> wrong submissions</h5>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div id="categories-pie-graph" class="d-flex align-items-center">
+					<div class="text-center w-100">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div id="points-pie-graph" class="d-flex align-items-center">
+					<div class="text-center w-100">
+						<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+					</div>
+				</div>
+			</div>
+		</div>
 
-    </div>
+	</div>
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        var user_mode = "{{ get_config('user_mode') }}";
-        var scoreboardData = [
-            {% for user in top_users %}
-                {
-                    id: {{ user.account_id }},
-                    name: {{ user.name | tojson }},
-                    score: {{ user.score }},
-                    rank: {{ loop.index }},
-                    {% if get_config('user_mode') == 'teams' %}
-                        url: "{{ url_for('admin.teams_detail', team_id=user.account_id) }}",
-                    {% else %}
-                        url: "{{ url_for('admin.users_detail', user_id=user.account_id) }}",
-                    {% endif %}
-                    solves: {{ account_solves[user.account_id]['solved_challenges'] | list | tojson }},
-                    attempts: {{ account_solves[user.account_id]['attempted_challenges'] | list | tojson }},
-                    opens: {{ account_solves[user.account_id]['opened_challenges'] | list | tojson }}
-                },
-            {% endfor %}
-        ];
+	<script>
+		var user_mode = "{{ get_config('user_mode') }}";
+		var scoreboardData = [
+			{% for user in top_users %}
+				{
+					id: {{ user.account_id }},
+					name: {{ user.name | tojson }},
+					score: {{ user.score }},
+					rank: {{ loop.index }},
+					{% if get_config('user_mode') == 'teams' %}
+						url: "{{ url_for('admin.teams_detail', team_id=user.account_id) }}",
+					{% else %}
+						url: "{{ url_for('admin.users_detail', user_id=user.account_id) }}",
+					{% endif %}
+					solves: {{ account_solves[user.account_id]['solved_challenges'] | list | tojson }},
+					attempts: {{ account_solves[user.account_id]['attempted_challenges'] | list | tojson }},
+					opens: {{ account_solves[user.account_id]['opened_challenges'] | list | tojson }}
+				},
+			{% endfor %}
+		];
 
-        var challenges = [
-            {% for challenge in all_challenges %}
-                {
-                    id: {{ challenge.id }},
-                    name: {{ challenge.name | tojson }},
-                    value: {{ challenge.value }},
-                    position: {{ challenge.position }},
-                    category: {{ challenge.category | tojson }},
-                    url: "{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}"
-                },
-            {% endfor %}
-        ];
-    </script>
+		var challenges = [
+			{% for challenge in all_challenges %}
+				{
+					id: {{ challenge.id }},
+					name: {{ challenge.name | tojson }},
+					value: {{ challenge.value }},
+					position: {{ challenge.position }},
+					category: {{ challenge.category | tojson }},
+					url: "{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}"
+				},
+			{% endfor %}
+		];
+	</script>
 {% endblock %}
 
 {% block entrypoint %}
-    {{ Assets.js("assets/js/pages/statistics.js", theme="admin") }}
+	{{ Assets.js("assets/js/pages/statistics.js", theme="admin") }}
 {% endblock %}
