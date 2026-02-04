@@ -1,6 +1,12 @@
 import configparser
 import json
 import os
+# Force PostgreSQL if DATABASE_URL is provided (Railway fix)
+if os.getenv("DATABASE_URL"):
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+elif os.getenv("CTFD_DATABASE_URL"):
+    SQLALCHEMY_DATABASE_URI = os.getenv("CTFD_DATABASE_URL")
+
 from distutils.util import strtobool
 from typing import Union
 
