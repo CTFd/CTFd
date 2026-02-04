@@ -1,3 +1,32 @@
+# 3.8.2 / UNRELEASED
+
+**General**
+
+- When a user is submission ratelimited, those submissions will now be the `ratelimit` submission type instead of `incorrect`
+- Fix issues with ratelimiting on max attempt challenges
+- Switch max attempt timeout messaging to seconds instead of minutes
+- Fix issue where users would get an error when solving an already solved challenge
+
+**Plugins**
+
+- Add `Ratelimiteds` submission class
+- Add `BaseChallenge.ratelimited()` method which creates `Ratelimiteds` submissions
+- Add `force_all` parameter to `CTFd.plugins.migrations.upgrade()` to allow plugins to decide if they want to force run all migrations
+- Add `app.overriden_functions` global which allows plugin developers to override functions that support the behavior
+- Raise `ChallengeSolveException` in `BaseChallenge.solve()` when encountering a duplicate solve situation
+
+**Themes**
+
+- Mark required fields in registration, login, and custom fields with a red asterisk
+
+**Deployment**
+
+- Add `PUT` method to IP address tracking
+
+**Translations**
+
+- Add Norwegian, Turkish, Croatian translation
+
 # 3.8.1 / 2025-11-06
 
 **Security**
