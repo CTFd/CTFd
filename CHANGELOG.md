@@ -2,7 +2,7 @@
 
 **Security**
 
-- Fixes a vulnerability a malicious admin user could import a crafted zip file to write files arbitrarily depending on the deployment
+- Fixes a vulnerability where a malicious admin user could import a crafted zip file to write files arbitrarily depending on the deployment
 
 **General**
 
