@@ -16,7 +16,7 @@
 - Add `Ratelimiteds` submission class
 - Add `BaseChallenge.ratelimited()` method which creates `Ratelimiteds` submissions
 - Add `force_all` parameter to `CTFd.plugins.migrations.upgrade()` to allow plugins to decide if they want to force run all migrations
-- Add `app.overriden_functions` global which allows plugin developers to override functions that support the behavior
+- Add `app.overridden_functions` global which allows plugin developers to override functions that support the behavior
 - Raise `ChallengeSolveException` in `BaseChallenge.solve()` when encountering a duplicate solve situation
 
 **Themes**
