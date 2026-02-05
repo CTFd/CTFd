@@ -21,6 +21,7 @@
 
 **Deployment**
 
+- The provided Docker Compose file will no longer use the `root` user and instead use the provided `ctfd` user
 - Add `PUT` method to IP address tracking
 
 **Translations**
