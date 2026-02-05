@@ -144,7 +144,13 @@ def import_ctf(backup, erase=True, ignore_overrides=False):
     members = backup.namelist()
     max_content_length = get_app_config("MAX_CONTENT_LENGTH")
     for f in members:
-        if f.startswith("/") or ".." in f:
+        if (
+            f.startswith("/")
+            or ".." in f
+            or os.path.isabs(f)
+            or "//" in f
+            or "\\\\" in f
+        ):
             # Abort on malicious zip files
             set_import_error("zipfile.BadZipfile: zipfile is malicious")
             raise zipfile.BadZipfile
@@ -451,6 +457,12 @@ def import_ctf(backup, erase=True, ignore_overrides=False):
             continue
 
         filename = filename[1]  # Get the second entry in the list (the actual filename)
+
+        # Handle possibility of an absolute path or traversal in the raw filename
+        if os.path.isabs(filename) or ".." in filename:
+            set_import_error("Encountered invalid upload file in import")
+            raise Exception("Encountered invalid upload file in import")
+
         source = backup.open(f)
         uploader.store(fileobj=source, filename=filename)
 
