@@ -1,93 +1,12 @@
 <template>
   <div>
-    <div class="d-flex justify-content-end mb-2">
-      <div class="d-flex align-items-center mr-3">
-        <div
-          style="width: 15px; height: 15px; background-color: #28a745"
-          class="mr-1 border"
-        ></div>
-        <small>Solved</small>
-      </div>
-      <div class="d-flex align-items-center mr-3">
-        <div
-          style="width: 15px; height: 15px; background-color: #ffc107"
-          class="mr-1 border"
-        ></div>
-        <small>Attempted</small>
-      </div>
-      <div class="d-flex align-items-center">
-        <div
-          style="width: 15px; height: 15px; background-color: #17a2b8"
-          class="mr-1 border"
-        ></div>
-        <small>Opened</small>
-      </div>
-    </div>
-
-    <div class="matrix-container">
-      <table class="table table-striped table-sm mb-0" id="matrix-scoreboard">
-        <thead class="thead-dark">
-          <tr>
-            <th class="sticky-header sticky-col-rank text-center">Rank</th>
-            <th class="sticky-header sticky-col-name text-center">
-              {{ userMode === "teams" ? "Team" : "User" }}
-            </th>
-            <th class="sticky-header sticky-col-score text-center">Score</th>
-            <th
-              v-for="challenge in displayChallenges"
-              :key="challenge.id"
-              class="text-center text-white challenge-col sticky-header"
-            >
-              <a
-                :href="challenge.url"
-                class="text-white text-decoration-none"
-                target="_blank"
-              >
-                <div class="challenge-info">
-                  {{ challenge.name }}
-                  <br />
-                  {{ challenge.value }}pt
-                </div>
-              </a>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in displayUsers" :key="user.id">
-            <td class="font-weight-bold sticky-cell sticky-col-rank">
-              {{ user.rank }}
-            </td>
-            <td
-              class="font-weight-bold sticky-cell sticky-col-name"
-              :title="user.name"
-            >
-              <a :href="user.url" class="text-decoration-none">{{
-                user.name
-              }}</a>
-            </td>
-            <td class="font-weight-bold sticky-cell sticky-col-score">
-              {{ user.score }}
-            </td>
-            <td
-              v-for="challenge in displayChallenges"
-              :key="challenge.id"
-              class="text-center challenge-cell"
-              :style="getCellStyle(user, challenge)"
-            >
-              {{ getCellSymbol(user, challenge) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
     <div class="mt-3">
       <div class="accordion" id="matrix-filters-accordion">
-        <div class="card">
+        <div class="card" style="border-bottom: 1px solid rgba(0,0,0,.125);">
           <div class="card-header p-0" id="headingFilters">
             <h2 class="mb-0">
               <button
-                class="btn btn-link btn-block text-left p-3 text-decoration-none collapsed"
+                class="btn btn-link btn-block text-left p-1 text-decoration-none collapsed"
                 type="button"
                 data-toggle="collapse"
                 data-target="#collapseFilters"
@@ -283,6 +202,87 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="d-flex justify-content-end mb-2">
+      <div class="d-flex align-items-center mr-3">
+        <div
+          style="width: 15px; height: 15px; background-color: #28a745"
+          class="mr-1 border"
+        ></div>
+        <small>Solved</small>
+      </div>
+      <div class="d-flex align-items-center mr-3">
+        <div
+          style="width: 15px; height: 15px; background-color: #ffc107"
+          class="mr-1 border"
+        ></div>
+        <small>Attempted</small>
+      </div>
+      <div class="d-flex align-items-center">
+        <div
+          style="width: 15px; height: 15px; background-color: #17a2b8"
+          class="mr-1 border"
+        ></div>
+        <small>Opened</small>
+      </div>
+    </div>
+
+    <div class="matrix-container">
+      <table class="table table-striped table-sm mb-0" id="matrix-scoreboard">
+        <thead class="thead-dark">
+          <tr>
+            <th class="sticky-header sticky-col-rank text-center">Rank</th>
+            <th class="sticky-header sticky-col-name text-center">
+              {{ userMode === "teams" ? "Team" : "User" }}
+            </th>
+            <th class="sticky-header sticky-col-score text-center">Score</th>
+            <th
+              v-for="challenge in displayChallenges"
+              :key="challenge.id"
+              class="text-center text-white challenge-col sticky-header"
+            >
+              <a
+                :href="challenge.url"
+                class="text-white text-decoration-none"
+                target="_blank"
+              >
+                <div class="challenge-info">
+                  {{ challenge.name }}
+                  <br />
+                  {{ challenge.value }}pt
+                </div>
+              </a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user in displayUsers" :key="user.id">
+            <td class="font-weight-bold sticky-cell sticky-col-rank">
+              {{ user.rank }}
+            </td>
+            <td
+              class="font-weight-bold sticky-cell sticky-col-name"
+              :title="user.name"
+            >
+              <a :href="user.url" class="text-decoration-none">{{
+                user.name
+              }}</a>
+            </td>
+            <td class="font-weight-bold sticky-cell sticky-col-score">
+              {{ user.score }}
+            </td>
+            <td
+              v-for="challenge in displayChallenges"
+              :key="challenge.id"
+              class="text-center challenge-cell"
+              :style="getCellStyle(user, challenge)"
+            >
+              {{ getCellSymbol(user, challenge) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
