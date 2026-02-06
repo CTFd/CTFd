@@ -688,11 +688,5 @@ $(() => {
     .querySelector("#scoreboard-matrix")
     .appendChild(scoreboardMatrixContainer);
 
-  new scoreboardMatrix({
-    propsData: {
-      initialData: window.scoreboardData,
-      challenges: window.challenges,
-      userMode: window.user_mode,
-    },
-  }).$mount(scoreboardMatrixContainer);
+  new scoreboardMatrix().$mount(scoreboardMatrixContainer);
 });

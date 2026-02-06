@@ -168,7 +168,7 @@ input[type="checkbox"] {
   background-color: white !important;
 }
 
-.sticky-col-rank {
+.sticky-col-place {
   left: 0;
   min-width: 50px;
   max-width: 50px;
@@ -193,7 +193,7 @@ input[type="checkbox"] {
 }
 
 /* Ensure headers for sticky columns have even higher z-index to stay above body sticky cells */
-th.sticky-col-rank,
+th.sticky-col-place,
 th.sticky-col-name,
 th.sticky-col-score {
   z-index: 40;

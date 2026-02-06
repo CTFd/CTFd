@@ -1,8 +1,14 @@
 <template>
   <div>
-    <div class="mt-3">
+    <div v-if="loading" class="text-center py-5">
+      <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+    </div>
+    <div v-else-if="error" class="text-center py-5">
+      <p class="text-danger">{{ error }}</p>
+    </div>
+    <div v-else class="mt-3">
       <div class="accordion" id="matrix-filters-accordion">
-        <div class="card" style="border-bottom: 1px solid rgba(0,0,0,.125);">
+        <div class="card" style="border-bottom: 1px solid rgba(0, 0, 0, 0.125)">
           <div class="card-header p-0" id="headingFilters">
             <h2 class="mb-0">
               <button
@@ -39,7 +45,7 @@
               </div>
 
               <div class="row">
-                <div class="col-md-4 mb-3 mb-md-0">
+                <div class="col-md-3 mb-3 mb-md-0">
                   <div class="card p-2 shadow-sm filter-col">
                     <h6>
                       Filter {{ userMode === "teams" ? "Teams" : "Users" }}
@@ -89,7 +95,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-4 mb-3 mb-md-0">
+                <div class="col-md-3 mb-3 mb-md-0">
                   <div class="card p-2 shadow-sm filter-col">
                     <h6>Filter Categories</h6>
                     <input
@@ -135,7 +141,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3 mb-3 mb-md-0">
                   <div class="card p-2 shadow-sm filter-col">
                     <h6>Filter Challenges</h6>
                     <input
@@ -197,6 +203,52 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="col-md-3">
+                  <div class="card p-2 shadow-sm filter-col">
+                    <h6>Filter Brackets</h6>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm mb-2"
+                      v-model="bracketSearch"
+                      placeholder="Search brackets..."
+                    />
+                    <div class="filter-list">
+                      <div
+                        v-for="bracket in filteredBracketList"
+                        :key="bracket.id"
+                        class="px-2 py-1"
+                      >
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            :value="bracket.id"
+                            v-model="selectedBracketIds"
+                            :id="'bracket-' + bracket.id"
+                          />
+                          <label
+                            class="form-check-label small"
+                            :for="'bracket-' + bracket.id"
+                          >
+                            {{ bracket.name }}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-1">
+                      <small>
+                        <a href="#" @click.prevent="selectAllBrackets"
+                          >Select All</a
+                        >
+                        /
+                        <a href="#" @click.prevent="deselectAllBrackets"
+                          >None</a
+                        >
+                      </small>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -232,7 +284,7 @@
       <table class="table table-striped table-sm mb-0" id="matrix-scoreboard">
         <thead class="thead-dark">
           <tr>
-            <th class="sticky-header sticky-col-rank text-center">Rank</th>
+            <th class="sticky-header sticky-col-place text-center">Place</th>
             <th class="sticky-header sticky-col-name text-center">
               {{ userMode === "teams" ? "Team" : "User" }}
             </th>
@@ -258,8 +310,8 @@
         </thead>
         <tbody>
           <tr v-for="user in displayUsers" :key="user.id">
-            <td class="font-weight-bold sticky-cell sticky-col-rank">
-              {{ user.rank }}
+            <td class="font-weight-bold sticky-cell sticky-col-place">
+              {{ user.place }}
             </td>
             <td
               class="font-weight-bold sticky-cell sticky-col-name"
@@ -268,6 +320,9 @@
               <a :href="user.url" class="text-decoration-none">{{
                 user.name
               }}</a>
+              <span class="badge bg-secondary ml-1 text-white">{{
+                user.bracket_name
+              }}</span>
             </td>
             <td class="font-weight-bold sticky-cell sticky-col-score">
               {{ user.score }}
@@ -288,60 +343,29 @@
 </template>
 
 <script>
+import CTFd from "../../compat/CTFd";
+
 export default {
-  props: {
-    initialData: {
-      type: Array,
-      default: () => [],
-    },
-    challenges: {
-      type: Array,
-      default: () => [],
-    },
-    userMode: String,
-  },
   data() {
     return {
       users: [],
+      challenges: [],
+      brackets: [],
+      loading: true,
+      error: null,
       userSearch: "",
       challengeSearch: "",
       categorySearch: "",
+      bracketSearch: "",
       selectedUserIds: [],
       selectedChallengeIds: [],
       selectedCategories: [],
+      selectedBracketIds: [],
       challengeSort: "position",
     };
   },
   created() {
-    this.users = [...this.initialData];
-    const savedSettings = localStorage.getItem(
-      "ctfd-scoreboard-matrix-settings",
-    );
-
-    if (savedSettings) {
-      try {
-        const settings = JSON.parse(savedSettings);
-        this.userSearch = settings.userSearch || "";
-        this.challengeSearch = settings.challengeSearch || "";
-        this.categorySearch = settings.categorySearch || "";
-        this.challengeSort = settings.challengeSort || "position";
-        this.selectedUserIds =
-          settings.selectedUserIds || this.users.map((u) => u.id);
-        this.selectedChallengeIds =
-          settings.selectedChallengeIds || this.challenges.map((c) => c.id);
-        this.selectedCategories =
-          settings.selectedCategories || this.uniqueCategories;
-      } catch (e) {
-        console.error("Failed to load scoreboard matrix settings", e);
-        this.selectAllUsers();
-        this.selectAllChallenges();
-        this.selectAllCategories();
-      }
-    } else {
-      this.selectAllUsers();
-      this.selectAllChallenges();
-      this.selectAllCategories();
-    }
+    this.fetchMatrixData();
   },
   watch: {
     userSearch() {
@@ -365,6 +389,12 @@ export default {
     selectedCategories() {
       this.persistSettings();
     },
+    bracketSearch() {
+      this.persistSettings();
+    },
+    selectedBracketIds() {
+      this.persistSettings();
+    },
   },
   computed: {
     filteredUserList() {
@@ -382,6 +412,11 @@ export default {
     uniqueCategories() {
       return [...new Set(this.challenges.map((c) => c.category))].sort();
     },
+    filteredBracketList() {
+      if (!this.bracketSearch) return this.brackets;
+      const lower = this.bracketSearch.toLowerCase();
+      return this.brackets.filter((b) => b.name.toLowerCase().includes(lower));
+    },
     filteredCategoryList() {
       if (!this.categorySearch) return this.uniqueCategories;
       const lower = this.categorySearch.toLowerCase();
@@ -391,8 +426,12 @@ export default {
     },
     displayUsers() {
       return this.users
-        .filter((u) => this.selectedUserIds.includes(u.id))
-        .sort((a, b) => a.rank - b.rank);
+        .filter(
+          (u) =>
+            this.selectedUserIds.includes(u.id) &&
+            this.selectedBracketIds.includes(u.bracket_id),
+        )
+        .sort((a, b) => a.place - b.place);
     },
     displayChallenges() {
       let filtered = this.challenges.filter(
@@ -425,14 +464,75 @@ export default {
     },
   },
   methods: {
+    fetchMatrixData() {
+      this.loading = true;
+      this.error = null;
+      this.userMode = CTFd.config.userMode;
+      CTFd.fetch("/api/v1/statistics/progression/matrix", {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {},
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.success) {
+            this.users = result.data.scoreboard;
+            this.challenges = result.data.challenges;
+            this.brackets = result.data.brackets;
+            this.restoreSettings();
+          } else {
+            this.error = "Failed to load progression data";
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch progression data", err);
+          this.error = "Failed to load progression data";
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
     resetFilters() {
       this.userSearch = "";
       this.challengeSearch = "";
       this.categorySearch = "";
+      this.bracketSearch = "";
       this.challengeSort = "position";
       this.selectAllUsers();
       this.selectAllChallenges();
       this.selectAllCategories();
+      this.selectAllBrackets();
+    },
+    restoreSettings() {
+      const savedSettings = localStorage.getItem(
+        "ctfd-scoreboard-matrix-settings",
+      );
+
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          this.userSearch = settings.userSearch || "";
+          this.challengeSearch = settings.challengeSearch || "";
+          this.categorySearch = settings.categorySearch || "";
+          this.challengeSort = settings.challengeSort || "position";
+          this.selectedUserIds =
+            settings.selectedUserIds || this.users.map((u) => u.id);
+          this.selectedChallengeIds =
+            settings.selectedChallengeIds || this.challenges.map((c) => c.id);
+          this.selectedCategories =
+            settings.selectedCategories || this.uniqueCategories;
+          this.selectedBracketIds =
+            settings.selectedBracketIds || this.brackets.map((b) => b.id);
+        } catch (e) {
+          console.error("Failed to load scoreboard matrix settings", e);
+          this.resetFilters();
+        }
+      } else {
+        this.selectAllUsers();
+        this.selectAllChallenges();
+        this.selectAllCategories();
+        this.selectAllBrackets();
+      }
     },
     persistSettings() {
       const settings = {
@@ -443,6 +543,8 @@ export default {
         selectedUserIds: this.selectedUserIds,
         selectedChallengeIds: this.selectedChallengeIds,
         selectedCategories: this.selectedCategories,
+        bracketSearch: this.bracketSearch,
+        selectedBracketIds: this.selectedBracketIds,
       };
       localStorage.setItem(
         "ctfd-scoreboard-matrix-settings",
@@ -466,6 +568,12 @@ export default {
     },
     deselectAllCategories() {
       this.selectedCategories = [];
+    },
+    selectAllBrackets() {
+      this.selectedBracketIds = this.brackets.map((b) => b.id);
+    },
+    deselectAllBrackets() {
+      this.selectedBracketIds = [];
     },
     getCellStyle(user, challenge) {
       const isSolved = user.solves.includes(challenge.id);
