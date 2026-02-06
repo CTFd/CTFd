@@ -126,43 +126,6 @@
     </div>
 {% endblock %}
 
-{% block scripts %}
-    <script>
-        var user_mode = "{{ get_config('user_mode') }}";
-        var scoreboardData = [
-            {% for user in top_users %}
-                {
-                    id: {{ user.account_id }},
-                    name: {{ user.name | tojson }},
-                    score: {{ user.score }},
-                    rank: {{ loop.index }},
-                    {% if get_config('user_mode') == 'teams' %}
-                        url: "{{ url_for('admin.teams_detail', team_id=user.account_id) }}",
-                    {% else %}
-                        url: "{{ url_for('admin.users_detail', user_id=user.account_id) }}",
-                    {% endif %}
-                    solves: {{ account_solves[user.account_id]['solved_challenges'] | list | tojson }},
-                    attempts: {{ account_solves[user.account_id]['attempted_challenges'] | list | tojson }},
-                    opens: {{ account_solves[user.account_id]['opened_challenges'] | list | tojson }}
-                },
-            {% endfor %}
-        ];
-
-        var challenges = [
-            {% for challenge in all_challenges %}
-                {
-                    id: {{ challenge.id }},
-                    name: {{ challenge.name | tojson }},
-                    value: {{ challenge.value }},
-                    position: {{ challenge.position }},
-                    category: {{ challenge.category | tojson }},
-                    url: "{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}"
-                },
-            {% endfor %}
-        ];
-    </script>
-{% endblock %}
-
 {% block entrypoint %}
     {{ Assets.js("assets/js/pages/statistics.js", theme="admin") }}
 {% endblock %}
