@@ -2,10 +2,8 @@ from flask import render_template
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Fails, Solves, Teams, Tracking, Users, db
-from CTFd.utils.config import get_config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.modes import get_model
-from CTFd.utils.scores import get_standings
 from CTFd.utils.updates import update_check
 
 
