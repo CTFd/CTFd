@@ -362,6 +362,7 @@ export default {
       selectedCategories: [],
       selectedBracketIds: [],
       challengeSort: "position",
+      userMode: "",
     };
   },
   created() {
@@ -429,7 +430,9 @@ export default {
         .filter(
           (u) =>
             this.selectedUserIds.includes(u.id) &&
-            this.selectedBracketIds.includes(u.bracket_id),
+            this.selectedBracketIds.includes(
+              u.bracket_id !== null ? u.bracket_id : "no_bracket",
+            ),
         )
         .sort((a, b) => a.place - b.place);
     },
@@ -479,6 +482,16 @@ export default {
             this.users = result.data.scoreboard;
             this.challenges = result.data.challenges;
             this.brackets = result.data.brackets;
+            // Add a "No Bracket" entry if any users have no bracket assigned
+            const hasNoBracketUsers = this.users.some(
+              (u) => u.bracket_id === null,
+            );
+            if (hasNoBracketUsers) {
+              this.brackets.unshift({
+                id: "no_bracket",
+                name: "(No Bracket)",
+              });
+            }
             this.restoreSettings();
           } else {
             this.error = "Failed to load progression data";
