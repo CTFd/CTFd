@@ -146,7 +146,7 @@ class ProgressionMatrix(Resource):
             entry = {
                 "id": user.account_id,
                 "name": user.name,
-                "score": user.score,
+                "score": int(user.score),
                 "place": idx,
                 "url": account_url,
                 "bracket_id": user.bracket_id,
