@@ -3,6 +3,8 @@ import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import echarts from "echarts/dist/echarts.common";
 import { colorHash } from "../compat/styles";
+import Vue from "vue";
+import ScoreboardMatrix from "../components/statistics/ScoreboardMatrix.vue";
 
 const graph_configs = {
   "#solves-graph": {
@@ -677,4 +679,14 @@ function updateGraphs() {
 $(() => {
   createGraphs();
   setInterval(updateGraphs, 300000);
+
+  const scoreboardMatrix = Vue.extend(ScoreboardMatrix);
+  // Clear the spinner
+  document.querySelector("#scoreboard-matrix").innerHTML = "";
+  let scoreboardMatrixContainer = document.createElement("div");
+  document
+    .querySelector("#scoreboard-matrix")
+    .appendChild(scoreboardMatrixContainer);
+
+  new scoreboardMatrix().$mount(scoreboardMatrixContainer);
 });
