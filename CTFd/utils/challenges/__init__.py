@@ -13,9 +13,21 @@ from CTFd.utils.dates import isoformat, unix_time_to_utc
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import generate_account_url, get_model
 
+# TODO: CTFd 4.0. Consider changing to a dataclass
+ChallengeFields = [
+    "id",
+    "type",
+    "name",
+    "value",
+    "category",
+    "tags",
+    "requirements",
+    "position",
+]
 Challenge = namedtuple(
     "Challenge",
-    ["id", "type", "name", "value", "position", "category", "tags", "requirements"],
+    ChallengeFields,
+    defaults=(None,) * len(ChallengeFields),
 )
 
 Rating = namedtuple("Rating", ["up", "down", "count"])
