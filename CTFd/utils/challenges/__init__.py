@@ -63,10 +63,10 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
             type=c.type,
             name=c.name,
             value=c.value,
-            position=c.position,
             category=c.category,
-            requirements=c.requirements,
             tags=tag_schema.dump(c.tags).data,
+            requirements=c.requirements,
+            position=c.position,
         )
         results.append(ct)
     return results
