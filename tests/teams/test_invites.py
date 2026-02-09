@@ -62,7 +62,7 @@ def test_api_user_facing_invite_tokens():
                 }
             r = user.post(url, data=data)
             assert r.status_code == 302
-            assert r.location.endswith("/challenges")
+            assert r.location.endswith("/team")
         assert Users.query.filter_by(id=new_user.id).first().team_id == team1.id
 
         # Test team size limits
