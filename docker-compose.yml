@@ -3,7 +3,7 @@ services:
     build: .
     restart: always
     ports:
-      - "8000:8000"
+      - 8000
     environment:
       - UPLOAD_FOLDER=/var/uploads
       - DATABASE_URL=mysql+pymysql://ctfd:ctfd@db/ctfd
@@ -13,26 +13,16 @@ services:
       - ACCESS_LOG=-
       - ERROR_LOG=-
       - REVERSE_PROXY=true
+      - SERVER_SENT_EVENTS=true
     volumes:
-      - .data/CTFd/logs:/var/log/CTFd
-      - .data/CTFd/uploads:/var/uploads
-      - .:/opt/CTFd:ro
+      - ctfd-logs:/var/log/CTFd
+      - ctfd-uploads:/var/uploads
+      - ctfd-source:/opt/CTFd:ro
     depends_on:
       - db
+      - cache
     networks:
-        default:
-        internal:
-
-  nginx:
-    image: nginx:stable
-    restart: always
-    volumes:
-      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
-    ports:
-      - 80:80
-    depends_on:
-      - ctfd
-
+      - astu-network
   db:
     image: mariadb:10.11
     restart: always
@@ -43,9 +33,9 @@ services:
       - MARIADB_DATABASE=ctfd
       - MARIADB_AUTO_UPGRADE=1
     volumes:
-      - .data/mysql:/var/lib/mysql
+      - ctfd-mysql:/var/lib/mysql
     networks:
-        internal:
+        - astu-network
     # This command is required to set important mariadb defaults
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
@@ -53,11 +43,16 @@ services:
     image: redis:4
     restart: always
     volumes:
-    - .data/redis:/data
+    - ctfd-redis:/data
     networks:
-        internal:
+        - astu-network
 
 networks:
-    default:
-    internal:
-        internal: true
+  astu-network:
+    driver: bridge
+volumes:
+  ctfd-mysql:
+  ctfd-logs:
+  ctfd-uploads:
+  ctfd-source:
+  ctfd-redis:
