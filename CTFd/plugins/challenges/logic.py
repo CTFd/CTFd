@@ -128,3 +128,55 @@ def challenge_attempt_team(submission, challenge, flags):
             status="incorrect",
             message="Incorrect",
         )
+
+
+def challenge_attempt_for_each(submission, challenge, flags):
+    """
+    Each flag submission gives points individually.
+    Challenge is only fully solved when all flags are submitted.
+    """
+    from CTFd.plugins.challenges import ChallengeResponse
+
+    user = get_current_user()
+    partials = Partials.query.filter_by(
+        account_id=user.account_id, challenge_id=challenge.id
+    ).all()
+
+    # Keep track of flags already submitted by this user
+    submitted_flags = {partial.provided for partial in partials}
+    submitted_flags.add(submission)  # include current submission
+
+    target_flag_ids = {flag.id for flag in flags}
+    matched_flag_ids = set()
+
+    for flag in flags:
+        if flag.id in matched_flag_ids:
+            continue
+        flag_class = get_flag_class(flag.type)
+        for provided in submitted_flags:
+            try:
+                if flag_class.compare(flag, provided):
+                    matched_flag_ids.add(flag.id)
+                    break
+            except FlagException:
+                continue
+
+    # If all flags submitted, challenge is fully solved
+    if target_flag_ids == matched_flag_ids:
+        return ChallengeResponse(
+            status="correct",
+            message="Correct",
+        )
+
+    # If some flags matched, but not all, partial points
+    if matched_flag_ids:
+        return ChallengeResponse(
+            status="partial",
+            message="Correct! More flags are required",
+        )
+
+    # No flags matched
+    return ChallengeResponse(
+        status="incorrect",
+        message="Incorrect",
+    )
