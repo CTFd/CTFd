@@ -301,6 +301,9 @@ def init_request_processors(app):
         if request.endpoint in ("views.themes", "auth.logout", "auth.reset_password"):
             return
 
+        if session.get("mfa_pending"):
+            return
+
         if authed():
             user = get_current_user_attrs()
 
@@ -344,7 +347,36 @@ def init_request_processors(app):
             except Exception:
                 abort(401)
             else:
-                login_user(user)
+                # Do not enforce MFA for Token Auth
+                login_user(user, enforce_mfa=False)
+
+    @app.before_request
+    def mfa_required():
+        if request.headers.get("Authorization"):
+            return
+
+        if not authed() or not session.get("mfa_pending"):
+            return
+
+        allowed_endpoints = {
+            "auth.login",
+            "auth.logout",
+            "views.themes",
+            "views.healthcheck",
+            "views.robots",
+        }
+
+        if request.endpoint in allowed_endpoints:
+            return
+
+        if (
+            # Return 403 to fetch requests before MFA is completed instead of a redirect
+            request.content_type == "application/json"
+            or request.accept_mimetypes.best == "text/event-stream"
+        ):
+            abort(403, description="Multi-factor authentication required")
+
+        return redirect(url_for("auth.login"))
 
     @app.before_request
     def csrf():

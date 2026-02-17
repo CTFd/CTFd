@@ -8,6 +8,8 @@ Flask-Script==2.0.6
 SQLAlchemy==1.4.54
 SQLAlchemy-Utils==0.41.1
 passlib==1.7.4
+pyotp==2.9.0
+qrcode==8.2
 bcrypt==4.0.1
 requests==2.32.4
 PyMySQL[rsa]==1.1.1

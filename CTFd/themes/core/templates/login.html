@@ -14,48 +14,165 @@
       <div class="col-md-8 col offset-md-2 col-lg-6 offset-lg-3">
         {% include "components/errors.html" %}
 
-        {% if integrations.mlc() %}
+        {% if mfa_pending %}
+          <form method="post" accept-charset="utf-8">
+            <div class="mb-3">
+              <p class="mb-2">
+                {% trans %}Enter the code from your authenticator app to finish logging in.{% endtrans %}
+              </p>
+            </div>
+
+            <div class="mb-3">
+              <div id="mfa-otp-wrapper">
+                <b class="form-label">{% trans %}Authenticator Code{% endtrans %}</b>
+                <input
+                    class="form-control"
+                    id="mfa-otp-input"
+                    name="mfa_code"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    autofocus
+                >
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div id="mfa-backup-wrapper" class="d-none">
+                <b class="form-label">{% trans %}Backup Code{% endtrans %}</b>
+                <input
+                    class="form-control"
+                    id="mfa-backup-input"
+                    name="mfa_backup_code"
+                    type="text"
+                    autocomplete="one-time-code"
+                >
+                <small class="text-muted">
+                  {% trans %}Use this only if you cannot access your authenticator app.{% endtrans %}
+                </small>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button
+                  class="btn btn-link btn-sm px-0"
+                  id="mfa-toggle-method"
+                  type="button"
+                  data-backup-label="{% trans %}Use a backup code instead{% endtrans %}"
+                  data-auth-label="{% trans %}Use an authenticator code instead{% endtrans %}"
+              >
+                {% trans %}Use a backup code instead{% endtrans %}
+              </button>
+            </div>
+
+            <div class="row pt-3">
+              <div class="col-6 col-md-8">
+                <a class="align-middle" href="{{ url_for('auth.logout') }}">
+                  {% trans %}Log out{% endtrans %}
+                </a>
+              </div>
+              <div class="col-6 col-md-4">
+                <button class="btn btn-block btn-primary w-100" type="submit">
+                  {% trans %}Verify{% endtrans %}
+                </button>
+              </div>
+            </div>
+
+            <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+          </form>
+        {% else %}
+          {% if integrations.mlc() %}
           <a class="btn btn-secondary btn-lg btn-block w-100" href="{{ url_for('auth.oauth_login') }}">
             Login with Major League Cyber
           </a>
 
           <hr>
+          {% endif %}
+
+          {% with form = Forms.auth.LoginForm() %}
+            <form method="post" accept-charset="utf-8">
+              <div class="mb-3">
+                <b>
+                  {{ form.name.label(class="form-label") }}
+                  <span class="text-danger">*</span>
+                </b>
+                {{ form.name(class="form-control", value=name, autocomplete="username email") }}
+              </div>
+
+              <div class="mb-3">
+                <b>
+                  {{ form.password.label(class="form-label") }}
+                  <span class="text-danger">*</span>
+                </b>
+                {{ form.password(class="form-control", value=password, autocomplete="current-password") }}
+              </div>
+
+              <div class="row pt-3">
+                <div class="col-6 col-md-8">
+                  <a class="align-middle" href="{{ url_for('auth.reset_password') }}">
+                    {% trans %}Forgot your password?{% endtrans %}
+                  </a>
+                </div>
+
+                <div class="col-6 col-md-4">
+                  {{ form.submit(class="btn btn-block btn-primary w-100") }}
+                </div>
+              </div>
+
+              {{ form.nonce() }}
+            </form>
+          {% endwith %}
         {% endif %}
-
-        {% with form = Forms.auth.LoginForm() %}
-          <form method="post" accept-charset="utf-8">
-            <div class="mb-3">
-              <b>
-                {{ form.name.label(class="form-label") }}
-                <span class="text-danger">*</span>
-              </b>
-              {{ form.name(class="form-control", value=name, autocomplete="username email") }}
-            </div>
-
-            <div class="mb-3">
-              <b>
-                {{ form.password.label(class="form-label") }}
-                <span class="text-danger">*</span>
-              </b>
-              {{ form.password(class="form-control", value=password, autocomplete="current-password") }}
-            </div>
-
-            <div class="row pt-3">
-              <div class="col-6 col-md-8">
-                <a class="align-middle" href="{{ url_for('auth.reset_password') }}">
-                  {% trans %}Forgot your password?{% endtrans %}
-                </a>
-              </div>
-
-              <div class="col-6 col-md-4">
-                {{ form.submit(class="btn btn-block btn-primary w-100") }}
-              </div>
-            </div>
-
-            {{ form.nonce() }}
-          </form>
-        {% endwith %}
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  {% if mfa_pending %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggle = document.getElementById("mfa-toggle-method");
+        const otpWrapper = document.getElementById("mfa-otp-wrapper");
+        const backupWrapper = document.getElementById("mfa-backup-wrapper");
+        const otpInput = document.getElementById("mfa-otp-input");
+        const backupInput = document.getElementById("mfa-backup-input");
+
+        if (!toggle || !otpWrapper || !backupWrapper || !otpInput || !backupInput) {
+          return;
+        }
+
+        const backupLabel = toggle.dataset.backupLabel;
+        const authLabel = toggle.dataset.authLabel;
+        let useBackup = false;
+
+        const applyMode = () => {
+          otpWrapper.classList.toggle("d-none", useBackup);
+          backupWrapper.classList.toggle("d-none", !useBackup);
+
+          otpInput.disabled = useBackup;
+          backupInput.disabled = !useBackup;
+
+          if (useBackup) {
+            otpInput.value = "";
+            toggle.textContent = authLabel;
+            backupInput.focus();
+          } else {
+            backupInput.value = "";
+            toggle.textContent = backupLabel;
+            otpInput.focus();
+          }
+        };
+
+        toggle.addEventListener("click", () => {
+          useBackup = !useBackup;
+          applyMode();
+        });
+
+        applyMode();
+      });
+    </script>
+  {% endif %}
 {% endblock %}

@@ -25,6 +25,11 @@
               role="tab"
           >{% trans %}Access Tokens{% endtrans %}
           </button>
+          <button
+              class="nav-link" id="settings-security-tab" data-bs-toggle="pill" data-bs-target="#security"
+              role="tab"
+          >{% trans %}Security{% endtrans %}
+          </button>
         </div>
       </div>
 
@@ -254,6 +259,181 @@
               </div>
             {% endif %}
 
+          </div>
+
+          <div class="tab-pane fade" id="security" role="tabpanel" x-data="MFASettings" x-init="init()">
+            <div class="alert alert-info" role="alert" x-show="$store.mfa.loading" x-cloak>
+              {% trans %}Loading security settings...{% endtrans %}
+            </div>
+
+            <template x-if="$store.mfa.backupCodes.length">
+              <div class="alert alert-warning" role="alert">
+                <p class="mb-2">
+                  {% trans %}Store these backup codes now. Each code can only be used once and will not be shown again.{% endtrans %}
+                </p>
+                <textarea
+                    class="form-control font-monospace"
+                    rows="10"
+                    style="resize: none;"
+                    readonly
+                    x-ref="backupCodes"
+                    :value="backupCodesText()"
+                ></textarea>
+                <div class="d-flex justify-content-end mt-2">
+                  <button class="btn btn-outline-secondary btn-sm" type="button" @click="copyBackupCodes()">
+                    <i class="fas fa-clipboard"></i>
+                    {% trans %}Copy Codes{% endtrans %}
+                  </button>
+                </div>
+              </div>
+            </template>
+
+            <template x-for="(msg, idx) in $store.mfa.errors" :key="`mfa-err-${idx}`">
+              <div class="alert alert-danger alert-dismissible" role="alert">
+                <span class="sr-only">{% trans %}Error:{% endtrans %}</span>
+                <span x-text="msg"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </template>
+
+            <template x-if="!$store.mfa.loading && $store.mfa.enabled">
+              <div>
+                <div class="alert alert-success" role="alert">
+                  {% trans %}Multi-factor authentication is enabled on your account.{% endtrans %}
+                  <br>
+                  <small>{% trans %}Backup codes remaining:{% endtrans %} <span x-text="$store.mfa.backupRemaining"></span></small>
+                </div>
+
+                <form class="mb-4" x-data="MFABackupManager" @submit.prevent="regenerateBackupCodes()">
+                  <h5>{% trans %}Generate New Backup Codes{% endtrans %}</h5>
+                  <div class="mb-3">
+                    <label class="form-label">{% trans %}Current Password{% endtrans %}</label>
+                    <input
+                        class="form-control"
+                        x-model="regenerateConfirm"
+                        type="password"
+                        autocomplete="current-password"
+                    >
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">{% trans %}Authenticator Code{% endtrans %}</label>
+                    <input
+                        class="form-control" x-model="regenerateCode" type="text" inputmode="numeric"
+                        autocomplete="one-time-code"
+                    >
+                  </div>
+                  <button class="btn btn-outline-primary" type="submit" :disabled="$store.mfa.working">
+                    {% trans %}Regenerate Backup Codes{% endtrans %}
+                  </button>
+                </form>
+
+                <hr>
+
+                <form class="mb-3" x-data="MFADisableManager" @submit.prevent="disableMFA()">
+                  <h5>{% trans %}Disable Multi-factor Authentication{% endtrans %}</h5>
+                  <div class="mb-3">
+                    <label class="form-label">{% trans %}Current Password{% endtrans %}</label>
+                    <input
+                        class="form-control"
+                        x-model="disableConfirm"
+                        type="password"
+                        autocomplete="current-password"
+                    >
+                  </div>
+
+                  <div class="mb-3" x-show="!disableUseBackupCode">
+                    <label class="form-label">{% trans %}Authenticator Code{% endtrans %}</label>
+                    <input
+                        class="form-control" x-model="disableCode" type="text" inputmode="numeric"
+                        autocomplete="one-time-code"
+                    >
+                  </div>
+
+                  <div class="mb-3" x-show="disableUseBackupCode" x-cloak>
+                    <label class="form-label">{% trans %}Backup Code{% endtrans %}</label>
+                    <input
+                        class="form-control"
+                        x-model="disableBackupCode"
+                        type="text"
+                        autocomplete="one-time-code"
+                    >
+                  </div>
+
+                  <div class="mb-3">
+                    <button class="btn btn-link btn-sm px-0" type="button" @click="toggleDisableCodeMode()">
+                      <span x-show="!disableUseBackupCode">{% trans %}Use a backup code instead{% endtrans %}</span>
+                      <span x-show="disableUseBackupCode" x-cloak>{% trans %}Use an authenticator code instead{% endtrans %}</span>
+                    </button>
+                  </div>
+
+                  <button class="btn btn-outline-danger" type="submit" :disabled="$store.mfa.working">
+                    {% trans %}Disable MFA{% endtrans %}
+                  </button>
+                </form>
+              </div>
+            </template>
+
+            <template x-if="!$store.mfa.loading && !$store.mfa.enabled && !$store.mfa.enrolling">
+              <div x-data="MFASetupManager">
+                <div class="alert alert-secondary" role="alert">
+                  {% trans %}Protect your account by enabling time-based one-time password (TOTP) login codes.{% endtrans %}
+                </div>
+                <button class="btn btn-primary" type="button" @click="beginSetup()" :disabled="$store.mfa.working">
+                  {% trans %}Set Up Multi-factor Authentication{% endtrans %}
+                </button>
+              </div>
+            </template>
+
+            <template x-if="!$store.mfa.loading && !$store.mfa.enabled && $store.mfa.enrolling">
+              <div x-data="MFASetupManager">
+                <div class="alert alert-info" role="alert">
+                  {% trans %}Scan this QR code with your authenticator app or enter the secret manually, then verify one code below.{% endtrans %}
+                </div>
+
+                <div class="mb-3">
+                  <div class="border rounded d-inline-block p-2 bg-white">
+                    <img :src="$store.mfa.qrDataUrl" width="220" height="220" alt="MFA QR code">
+                  </div>
+                </div>
+
+                <div class="mb-3" x-show="!showSecret">
+                  <button class="btn btn-link btn-sm px-0" type="button" @click="showSecret = true">
+                    {% trans %}Use the secret key instead{% endtrans %}
+                  </button>
+                </div>
+
+                <div class="mb-3" x-show="showSecret" x-cloak>
+                  <label class="form-label">{% trans %}Secret Key{% endtrans %}</label>
+                  <input class="form-control" readonly :value="$store.mfa.secret">
+                </div>
+
+                <form class="mb-3" @submit.prevent="enableMFA()">
+                  <div class="mb-3">
+                    <label class="form-label">{% trans %}Current Password{% endtrans %}</label>
+                    <input
+                        class="form-control"
+                        x-model="enableConfirm"
+                        type="password"
+                        autocomplete="current-password"
+                    >
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">{% trans %}Authenticator Code{% endtrans %}</label>
+                    <input
+                        class="form-control" x-model="enableCode" type="text" inputmode="numeric"
+                        autocomplete="one-time-code"
+                    >
+                  </div>
+                  <button class="btn btn-primary" type="submit" :disabled="$store.mfa.working">
+                    {% trans %}Enable MFA{% endtrans %}
+                  </button>
+                </form>
+
+                <button class="btn btn-outline-secondary" type="button" @click="cancelSetup()" :disabled="$store.mfa.working">
+                  {% trans %}Cancel Setup{% endtrans %}
+                </button>
+              </div>
+            </template>
           </div>
         </div>
       </div>

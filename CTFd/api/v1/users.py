@@ -19,6 +19,7 @@ from CTFd.models import (
     Tracking,
     Unlocks,
     Users,
+    UsersMFA,
     db,
 )
 from CTFd.schemas.awards import AwardSchema
@@ -34,6 +35,20 @@ from CTFd.utils.decorators.visibility import (
 from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.security.auth import update_user
+from CTFd.utils.security.mfa import (
+    generate_totp_qrcode,
+    build_totp_uri,
+    consume_backup_code,
+    count_backup_codes,
+    decrypt_totp_secret,
+    encrypt_totp_secret,
+    generate_backup_codes,
+    generate_totp_secret,
+    get_mfa_labels,
+    hash_backup_codes,
+    verify_totp_code,
+)
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
@@ -248,6 +263,11 @@ class UserPublic(Resource):
         # the polymorphic identity resulting in an ObjectDeletedError
         # https://github.com/CTFd/CTFd/issues/1794
         response = schema.dump(response.data)
+
+        reset_mfa = data.pop("reset_mfa", "false") == "true"
+        if user.mfa and reset_mfa:
+            db.session.delete(user.mfa)
+
         db.session.commit()
         db.session.close()
 
@@ -343,6 +363,359 @@ class UserPrivate(Resource):
         clear_challenges()
 
         return {"success": True, "data": response.data}
+
+
+@users_namespace.route("/me/mfa")
+class UserPrivateMFA(Resource):
+    @authed_only
+    @users_namespace.doc(
+        description="Endpoint to get MFA status for the current user",
+        responses={
+            200: ("Success", "APISimpleSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
+    def get(self):
+        user = get_current_user()
+        mfa = UsersMFA.query.filter_by(user_id=user.id, enabled=True).first()
+
+        if mfa:
+            session.pop("mfa_enroll_secret", None)
+            return {
+                "success": True,
+                "data": {
+                    "enabled": True,
+                    "enrolling": False,
+                    "backup_remaining": count_backup_codes(mfa.backup_codes),
+                },
+            }
+
+        mfa_qrcode = None
+        mfa_secret = session.get("mfa_enroll_secret")
+        if mfa_secret:
+            issuer, account_name = get_mfa_labels(user)
+            mfa_uri = build_totp_uri(
+                secret=mfa_secret,
+                account_name=account_name,
+                issuer_name=issuer,
+            )
+            mfa_qrcode = generate_totp_qrcode(mfa_uri)
+
+        return {
+            "success": True,
+            "data": {
+                "enabled": False,
+                "enrolling": bool(mfa_secret),
+                "backup_remaining": 0,
+                "secret": mfa_secret,
+                "qrcode": mfa_qrcode,
+            },
+        }
+
+
+@users_namespace.route("/me/mfa/setup")
+class UserPrivateMFASetup(Resource):
+    @authed_only
+    @users_namespace.doc(
+        description="Endpoint to begin MFA setup for the current user",
+        responses={
+            200: ("Success", "APISimpleSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
+    def post(self):
+        user = get_current_user()
+        mfa = UsersMFA.query.filter_by(user_id=user.id, enabled=True).first()
+        if mfa:
+            return {
+                "success": False,
+                "errors": {
+                    "setup": "Multi-factor authentication is already enabled",
+                },
+            }, 400
+
+        session["mfa_enroll_secret"] = generate_totp_secret()
+        mfa_secret = session.get("mfa_enroll_secret")
+
+        mfa_qrcode = None
+        if mfa_secret:
+            issuer, account_name = get_mfa_labels(user)
+            mfa_uri = build_totp_uri(
+                secret=mfa_secret,
+                account_name=account_name,
+                issuer_name=issuer,
+            )
+            mfa_qrcode = generate_totp_qrcode(mfa_uri)
+
+        return {
+            "success": True,
+            "data": {
+                "enrolling": True,
+                "secret": mfa_secret,
+                "qrcode": mfa_qrcode,
+            },
+        }
+
+    @authed_only
+    @users_namespace.doc(
+        description="Endpoint to cancel MFA setup for the current user",
+        responses={200: ("Success", "APISimpleSuccessResponse")},
+    )
+    def delete(self):
+        session.pop("mfa_enroll_secret", None)
+
+        return {
+            "success": True,
+            "data": {
+                "enrolling": False,
+            },
+        }
+
+
+@users_namespace.route("/me/mfa/enable")
+class UserPrivateMFAEnable(Resource):
+    @authed_only
+    @users_namespace.doc(
+        description="Endpoint to enable MFA for the current user",
+        responses={
+            200: ("Success", "APISimpleSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
+    def post(self):
+        user = get_current_user()
+        data = request.get_json(silent=True) or {}
+        otp = data.get("mfa_code", "")
+
+        mfa = UsersMFA.query.filter_by(user_id=user.id, enabled=True).first()
+        if mfa:
+            return {
+                "success": False,
+                "errors": {
+                    "enable": "Multi-factor authentication is already enabled",
+                },
+            }, 400
+
+        if user.password is not None:
+            confirm_password = data.get("confirm", "")
+
+            if not confirm_password:
+                return {
+                    "success": False,
+                    "errors": {"confirm": "Please confirm your current password"},
+                }, 400
+
+            if not verify_password(confirm_password, user.password):
+                return {
+                    "success": False,
+                    "errors": {"confirm": "Your previous password is incorrect"},
+                }, 400
+
+        mfa_secret = session.get("mfa_enroll_secret")
+        if not mfa_secret:
+            return {
+                "success": False,
+                "errors": {
+                    "setup": "Start MFA setup before verifying an authenticator code",
+                },
+            }, 400
+
+        if verify_totp_code(secret=mfa_secret, otp=otp) is False:
+            return {
+                "success": False,
+                "errors": {
+                    "mfa_code": "The authenticator code is incorrect. Please try again.",
+                },
+            }, 400
+
+        backup_codes = generate_backup_codes()
+        encrypted_secret = encrypt_totp_secret(mfa_secret)
+        hashed_codes = hash_backup_codes(backup_codes)
+
+        if user.mfa:
+            user.mfa.enabled = True
+            user.mfa.totp_secret = encrypted_secret
+            user.mfa.backup_codes = hashed_codes
+            user.mfa.last_used = None
+        else:
+            user.mfa = UsersMFA(
+                user_id=user.id,
+                enabled=True,
+                totp_secret=encrypted_secret,
+                backup_codes=hashed_codes,
+            )
+
+        db.session.commit()
+        session.pop("mfa_enroll_secret", None)
+
+        return {
+            "success": True,
+            "data": {
+                "enabled": True,
+                "enrolling": False,
+                "backup_remaining": len(backup_codes),
+                "backup_codes": backup_codes,
+            },
+        }
+
+
+@users_namespace.route("/me/mfa/disable")
+class UserPrivateMFADisable(Resource):
+    @authed_only
+    @users_namespace.doc(
+        description="Endpoint to disable MFA for the current user",
+        responses={
+            200: ("Success", "APISimpleSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
+    def post(self):
+        user = get_current_user()
+        data = request.get_json(silent=True) or {}
+
+        otp = data.get("mfa_code", "")
+        backup_code = data.get("mfa_backup_code", "")
+        confirm_password = data.get("confirm", "")
+
+        mfa = UsersMFA.query.filter_by(user_id=user.id, enabled=True).first()
+        if not mfa:
+            return {
+                "success": False,
+                "errors": {"disable": "Multi-factor authentication is not enabled"},
+            }, 400
+
+        if user.password is not None:
+            if not confirm_password:
+                return {
+                    "success": False,
+                    "errors": {"confirm": "Please confirm your current password"},
+                }, 400
+
+            if not verify_password(confirm_password, user.password):
+                return {
+                    "success": False,
+                    "errors": {"confirm": "Your previous password is incorrect"},
+                }, 400
+
+        try:
+            secret = decrypt_totp_secret(mfa.totp_secret)
+            verified = verify_totp_code(secret=secret, otp=otp)
+        except Exception:
+            verified = False
+
+        if verified is False:
+            used_backup, new_codes = consume_backup_code(
+                backup_codes=mfa.backup_codes,
+                candidate=backup_code,
+            )
+
+            if used_backup:
+                mfa.backup_codes = new_codes
+                verified = True
+
+        if verified is False:
+            return {
+                "success": False,
+                "errors": {
+                    "mfa_code": "The authenticator or backup code is incorrect. Please try again.",
+                },
+            }, 400
+
+        db.session.delete(mfa)
+        db.session.commit()
+
+        session.pop("mfa_enroll_secret", None)
+        session.pop("mfa_pending", None)
+        session["mfa_verified"] = True
+
+        return {
+            "success": True,
+            "data": {
+                "enabled": False,
+                "enrolling": False,
+                "backup_remaining": 0,
+            },
+        }
+
+
+@users_namespace.route("/me/mfa/backup")
+class UserPrivateMFABackup(Resource):
+    @authed_only
+    @users_namespace.doc(
+        description="Endpoint to regenerate MFA backup codes for the current user",
+        responses={
+            200: ("Success", "APISimpleSuccessResponse"),
+            400: (
+                "An error occured processing the provided or stored data",
+                "APISimpleErrorResponse",
+            ),
+        },
+    )
+    def post(self):
+        user = get_current_user()
+        data = request.get_json(silent=True) or {}
+        otp = data.get("mfa_code", "")
+
+        mfa = UsersMFA.query.filter_by(user_id=user.id, enabled=True).first()
+        if not mfa:
+            return {
+                "success": False,
+                "errors": {
+                    "backup": "Enable multi-factor authentication before generating backup codes",
+                },
+            }, 400
+
+        confirm_password = data.get("confirm", "")
+        if user.password is not None:
+            if not confirm_password:
+                return {
+                    "success": False,
+                    "errors": {"confirm": "Please confirm your current password"},
+                }, 400
+
+            if not verify_password(confirm_password, user.password):
+                return {
+                    "success": False,
+                    "errors": {"confirm": "Your previous password is incorrect"},
+                }, 400
+
+        try:
+            secret = decrypt_totp_secret(mfa.totp_secret)
+            verified = verify_totp_code(secret=secret, otp=otp)
+        except Exception:
+            verified = False
+
+        if verified is False:
+            return {
+                "success": False,
+                "errors": {
+                    "mfa_code": "The authenticator code is incorrect. Please try again.",
+                },
+            }, 400
+
+        backup_codes = generate_backup_codes()
+        mfa.backup_codes = hash_backup_codes(backup_codes)
+        db.session.commit()
+
+        return {
+            "success": True,
+            "data": {
+                "backup_remaining": len(backup_codes),
+                "backup_codes": backup_codes,
+            },
+        }
 
 
 @users_namespace.route("/me/submissions")

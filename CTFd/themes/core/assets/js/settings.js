@@ -97,4 +97,289 @@ Alpine.data("Tokens", () => ({
   },
 }));
 
+Alpine.store("mfa", {
+  loading: true,
+  working: false,
+  errors: [],
+  enabled: false,
+  enrolling: false,
+  backupRemaining: 0,
+  backupCodes: [],
+  secret: "",
+  qrDataUrl: "",
+});
+
+Alpine.data("MFASettings", () => ({
+  async init() {
+    await this.loadMFA();
+  },
+
+  backupCodesText() {
+    return this.$store.mfa.backupCodes.join("\n");
+  },
+
+  copyBackupCodes() {
+    if (this.$refs.backupCodes) {
+      copyToClipboard(this.$refs.backupCodes);
+    }
+  },
+
+  async loadMFA() {
+    this.$store.mfa.loading = true;
+    this.$store.mfa.errors = [];
+
+    try {
+      const response = await CTFd.fetch("/api/v1/users/me/mfa");
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        const messages = Object.values(result.errors || {});
+        this.$store.mfa.errors = messages.length
+          ? messages
+          : ["Unable to load multi-factor authentication settings."];
+
+        this.$store.mfa.loading = false;
+        return;
+      }
+
+      const data = result.data;
+      this.$store.mfa.enabled = data.enabled ?? false;
+      this.$store.mfa.enrolling = data.enrolling ?? false;
+      this.$store.mfa.backupRemaining = data.backup_remaining ?? 0;
+      this.$store.mfa.backupCodes = data.backup_codes || [];
+      this.$store.mfa.secret = data.secret || "";
+      this.$store.mfa.qrDataUrl = data.qrcode
+        ? `data:image/png;base64,${data.qrcode}`
+        : "";
+
+      this.$store.mfa.loading = false;
+    } catch (_error) {
+      this.$store.mfa.errors = ["Unable to load multi-factor authentication settings."];
+      this.$store.mfa.loading = false;
+    }
+  },
+}));
+
+Alpine.data("MFASetupManager", () => ({
+  showSecret: false,
+  enableConfirm: "",
+  enableCode: "",
+
+  async beginSetup() {
+    this.$store.mfa.working = true;
+    this.$store.mfa.errors = [];
+
+    try {
+      const response = await CTFd.fetch("/api/v1/users/me/mfa/setup", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        const messages = Object.values(result.errors || {});
+        this.$store.mfa.errors = messages.length
+          ? messages
+          : ["Unable to update multi-factor authentication settings."];
+
+        return;
+      }
+
+      const data = result.data;
+      this.$store.mfa.enabled = false;
+      this.$store.mfa.enrolling = data.enrolling ?? false;
+      this.$store.mfa.backupRemaining = 0;
+      this.$store.mfa.backupCodes = [];
+      this.$store.mfa.secret = data.secret || "";
+      this.$store.mfa.qrDataUrl = data.qrcode
+        ? `data:image/png;base64,${data.qrcode}`
+        : "";
+      this.showSecret = false;
+    } catch (_error) {
+      this.$store.mfa.errors = [
+        "Unable to update multi-factor authentication settings.",
+      ];
+    } finally {
+      this.$store.mfa.working = false;
+    }
+  },
+
+  async cancelSetup() {
+    this.$store.mfa.working = true;
+    this.$store.mfa.errors = [];
+
+    try {
+      const response = await CTFd.fetch("/api/v1/users/me/mfa/setup", {
+        method: "DELETE",
+        body: JSON.stringify({}),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        const messages = Object.values(result.errors || {});
+        this.$store.mfa.errors = messages.length
+          ? messages
+          : ["Unable to update multi-factor authentication settings."];
+
+        return;
+      }
+
+      const data = result.data;
+      this.$store.mfa.enrolling = data.enrolling ?? false;
+      this.$store.mfa.secret = "";
+      this.$store.mfa.qrDataUrl = "";
+      this.showSecret = false;
+      this.enableConfirm = "";
+      this.enableCode = "";
+    } catch (_error) {
+      this.$store.mfa.errors = [
+        "Unable to update multi-factor authentication settings.",
+      ];
+    } finally {
+      this.$store.mfa.working = false;
+    }
+  },
+
+  async enableMFA() {
+    this.$store.mfa.working = true;
+    this.$store.mfa.errors = [];
+
+    try {
+      const response = await CTFd.fetch("/api/v1/users/me/mfa/enable", {
+        method: "POST",
+        body: JSON.stringify({
+          confirm: this.enableConfirm,
+          mfa_code: this.enableCode,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        const messages = Object.values(result.errors || {});
+        this.$store.mfa.errors = messages.length
+          ? messages
+          : ["Unable to update multi-factor authentication settings."];
+
+        return;
+      }
+
+      const data = result.data;
+      this.$store.mfa.enabled = data.enabled ?? false;
+      this.$store.mfa.enrolling = data.enrolling ?? false;
+      this.$store.mfa.backupRemaining = data.backup_remaining ?? 0;
+      this.$store.mfa.backupCodes = data.backup_codes || [];
+      this.$store.mfa.secret = "";
+      this.$store.mfa.qrDataUrl = "";
+      this.showSecret = false;
+      this.enableConfirm = "";
+      this.enableCode = "";
+    } catch (_error) {
+      this.$store.mfa.errors = [
+        "Unable to update multi-factor authentication settings.",
+      ];
+    } finally {
+      this.$store.mfa.working = false;
+    }
+  },
+}));
+
+Alpine.data("MFABackupManager", () => ({
+  regenerateConfirm: "",
+  regenerateCode: "",
+
+  async regenerateBackupCodes() {
+    this.$store.mfa.working = true;
+    this.$store.mfa.errors = [];
+
+    try {
+      const response = await CTFd.fetch("/api/v1/users/me/mfa/backup", {
+        method: "POST",
+        body: JSON.stringify({
+          confirm: this.regenerateConfirm,
+          mfa_code: this.regenerateCode,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        const messages = Object.values(result.errors || {});
+        this.$store.mfa.errors = messages.length
+          ? messages
+          : ["Unable to update multi-factor authentication settings."];
+
+        return;
+      }
+
+      const data = result.data;
+      this.$store.mfa.backupRemaining = data.backup_remaining ?? 0;
+      this.$store.mfa.backupCodes = data.backup_codes || [];
+      this.regenerateConfirm = "";
+      this.regenerateCode = "";
+    } catch (_error) {
+      this.$store.mfa.errors = [
+        "Unable to update multi-factor authentication settings.",
+      ];
+    } finally {
+      this.$store.mfa.working = false;
+    }
+  },
+}));
+
+Alpine.data("MFADisableManager", () => ({
+  disableUseBackupCode: false,
+  disableConfirm: "",
+  disableCode: "",
+  disableBackupCode: "",
+
+  toggleDisableCodeMode() {
+    this.disableUseBackupCode = !this.disableUseBackupCode;
+    this.disableCode = "";
+    this.disableBackupCode = "";
+  },
+
+  async disableMFA() {
+    this.$store.mfa.working = true;
+    this.$store.mfa.errors = [];
+
+    try {
+      const response = await CTFd.fetch("/api/v1/users/me/mfa/disable", {
+        method: "POST",
+        body: JSON.stringify({
+          confirm: this.disableConfirm,
+          mfa_code: this.disableUseBackupCode ? "" : this.disableCode,
+          mfa_backup_code: this.disableUseBackupCode ? this.disableBackupCode : "",
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        const messages = Object.values(result.errors || {});
+        this.$store.mfa.errors = messages.length
+          ? messages
+          : ["Unable to update multi-factor authentication settings."];
+
+        return;
+      }
+
+      const data = result.data;
+      this.$store.mfa.enabled = data.enabled ?? false;
+      this.$store.mfa.enrolling = data.enrolling ?? false;
+      this.$store.mfa.backupRemaining = data.backup_remaining ?? 0;
+      this.$store.mfa.backupCodes = [];
+      this.$store.mfa.secret = "";
+      this.$store.mfa.qrDataUrl = "";
+      this.disableUseBackupCode = false;
+      this.disableConfirm = "";
+      this.disableCode = "";
+      this.disableBackupCode = "";
+    } catch (_error) {
+      this.$store.mfa.errors = [
+        "Unable to update multi-factor authentication settings.",
+      ];
+    } finally {
+      this.$store.mfa.working = false;
+    }
+  },
+}));
+
 Alpine.start();
