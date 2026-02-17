@@ -174,6 +174,22 @@
                   {{ form.description(class="form-control", rows="3") }}
                 </div>
 
+                {% if mfa_enabled %}
+                  <div class="mb-3">
+                    <b>{{ form.mfa_code.label(class="form-label") }}</b>
+                    {{ form.mfa_code(class="form-control", type="text", inputmode="numeric", autocomplete="one-time-code") }}
+                    <small class="form-text text-muted">{% trans %}Required when MFA is enabled{% endtrans %}</small>
+                  </div>
+                {% endif %}
+
+                <template x-for="(msg, idx) in errors" :key="`token-err-${idx}`">
+                  <div class="alert alert-danger alert-dismissible" role="alert">
+                    <span class="sr-only">{% trans %}Error:{% endtrans %}</span>
+                    <span x-text="msg"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                </template>
+
                 <div class="row">
                   <div class="col">
                     {{ form.submit(class="btn btn-block btn-primary float-end px-4") }}

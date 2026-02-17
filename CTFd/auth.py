@@ -25,16 +25,16 @@ from CTFd.utils.helpers import error_for, get_errors, markup
 from CTFd.utils.logging import log
 from CTFd.utils.modes import TEAMS_MODE
 from CTFd.utils.security.auth import generate_preset_admin, login_user, logout_user
-from CTFd.utils.security.mfa import (
-    consume_backup_code,
-    decrypt_totp_secret,
-    verify_totp_code,
-)
 from CTFd.utils.security.email import (
     remove_email_confirm_token,
     remove_reset_password_token,
     verify_email_confirm_token,
     verify_reset_password_token,
+)
+from CTFd.utils.security.mfa import (
+    consume_backup_code,
+    decrypt_totp_secret,
+    verify_totp_code,
 )
 from CTFd.utils.validators import ValidationError
 

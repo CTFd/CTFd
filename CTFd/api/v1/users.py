@@ -27,6 +27,7 @@ from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.schemas.users import UserSchema
 from CTFd.utils.challenges import get_submissions_for_user_id_for_challenge_id
 from CTFd.utils.config import get_config, get_mail_provider
+from CTFd.utils.crypto import verify_password
 from CTFd.utils.decorators import admins_only, authed_only, ratelimit
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
@@ -36,19 +37,18 @@ from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.security.auth import update_user
 from CTFd.utils.security.mfa import (
-    generate_totp_qrcode,
     build_totp_uri,
     consume_backup_code,
     count_backup_codes,
     decrypt_totp_secret,
     encrypt_totp_secret,
     generate_backup_codes,
+    generate_totp_qrcode,
     generate_totp_secret,
     get_mfa_labels,
     hash_backup_codes,
     verify_totp_code,
 )
-from CTFd.utils.crypto import verify_password
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")

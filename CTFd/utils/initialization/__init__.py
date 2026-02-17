@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-from flask import abort, redirect, render_template, request, session, url_for
+from flask import abort, g, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
@@ -327,6 +327,7 @@ def init_request_processors(app):
 
     @app.before_request
     def tokens():
+        g.token_auth = False
         token = request.headers.get("Authorization")
         if token and (
             request.mimetype == "application/json"
@@ -349,10 +350,11 @@ def init_request_processors(app):
             else:
                 # Do not enforce MFA for Token Auth
                 login_user(user, enforce_mfa=False)
+                g.token_auth = True
 
     @app.before_request
     def mfa_required():
-        if request.headers.get("Authorization"):
+        if getattr(g, "token_auth", False):
             return
 
         if not authed() or not session.get("mfa_pending"):

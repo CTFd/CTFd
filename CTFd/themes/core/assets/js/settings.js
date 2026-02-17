@@ -61,17 +61,26 @@ Alpine.data("SettingsForm", () => ({
 
 Alpine.data("TokensForm", () => ({
   token: null,
+  errors: [],
 
   async generateToken() {
+    this.errors = [];
     const data = serializeJSON(this.$el);
 
     if (!data.expiration) {
       delete data.expiration;
     }
+
     const response = await CTFd.pages.settings.generateToken(data);
+    if (!response.success) {
+      this.errors = Object.values(response.errors || {});
+      return;
+    }
+
     this.token = response.data.value;
 
     new Modal(this.$refs.tokenModal).show();
+    this.$el.reset();
   },
 
   copyToken() {

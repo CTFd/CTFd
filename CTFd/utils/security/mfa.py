@@ -46,7 +46,9 @@ def build_totp(secret):
 
 
 def build_totp_uri(secret, account_name, issuer_name):
-    return build_totp(secret).provisioning_uri(name=account_name, issuer_name=issuer_name)
+    return build_totp(secret).provisioning_uri(
+        name=account_name, issuer_name=issuer_name
+    )
 
 
 def generate_totp_qrcode(uri):
