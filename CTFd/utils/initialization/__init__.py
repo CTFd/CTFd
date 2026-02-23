@@ -354,37 +354,23 @@ def init_request_processors(app):
 
     @app.before_request
     def csrf():
-        # Early exit: no CSRF for safe methods (see RFC 7231, Section 4.2.1)
-        if request.method in ("GET", "HEAD", "OPTIONS", "TRACE"):
-            return
-        # Early exit: no CSRF for functions explicitly marked as bypassing CSRF
         try:
             func = app.view_functions[request.endpoint]
         except KeyError:
             abort(404)
         if hasattr(func, "_bypass_csrf"):
             return
-        # Early exit: no CSRF for API requests with an Authorization header
         if request.headers.get("Authorization"):
             return
-
-        # For any remaining requests => ensure a CSRF nonce is present and it's valid
-        if session.get("nonce") is None:
+        if not session.get("nonce"):
             session["nonce"] = generate_nonce()
-        if request.content_type == "application/json":
-            # API requests with JSON body => token in header
-            if session["nonce"] != request.headers.get("CSRF-Token"):
-                abort(403)
-        elif request.content_type in (
-            "application/x-www-form-urlencoded",
-            "multipart/form-data",
-        ):
-            # Form submissions => token in form body
-            if session["nonce"] != request.form.get("nonce"):
-                abort(403)
-        else:
-            # status 415 == unsupported media type => incorrect content type header
-            abort(415)
+        if request.method not in ("GET", "HEAD", "OPTIONS", "TRACE"):
+            if request.content_type == "application/json":
+                if session["nonce"] != request.headers.get("CSRF-Token"):
+                    abort(403)
+            if request.content_type != "application/json":
+                if session["nonce"] != request.form.get("nonce"):
+                    abort(403)
 
     @app.after_request
     def response_headers(response):
