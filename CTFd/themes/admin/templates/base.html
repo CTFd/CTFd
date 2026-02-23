@@ -99,7 +99,7 @@
 							<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
 							<ul class="dropdown-menu">
 									{% for plugin in plugins %}
-											<a class="dropdown-item" href="{{ request.script_root }}{{ plugin.route }}">{{ plugin.name }}</a>
+											<a class="dropdown-item" href="{{ plugin.route }}">{{ plugin.name }}</a>
 									{% endfor %}
 							</ul>
 						</li>
