@@ -362,8 +362,16 @@ def init_request_processors(app):
         if hasattr(func, "_bypass_csrf"):
             return
         # No CSRF for theme files using safe methods
-        safe_methods = ("GET", "HEAD", "OPTIONS", "TRACE")  # See RFC 7231, Section 4.2.1
-        if request.endpoint in ("views.themes", "views.themes_beta") and request.method in safe_methods:
+        safe_methods = (
+            "GET",
+            "HEAD",
+            "OPTIONS",
+            "TRACE",
+        )  # See RFC 7231, Section 4.2.1
+        if (
+            request.endpoint in ("views.themes", "views.themes_beta")
+            and request.method in safe_methods
+        ):
             return
         # No CSRF for API requests with an Authorization header
         if request.headers.get("Authorization"):
