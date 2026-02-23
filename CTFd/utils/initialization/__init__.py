@@ -354,6 +354,7 @@ def init_request_processors(app):
 
     @app.before_request
     def csrf():
+        # TODO: CTFd 4.0 Consider reorganizing this function to only run on non safe methods
         # Early exit: no CSRF for functions explicitly marked as bypassing CSRF
         try:
             func = app.view_functions[request.endpoint]
