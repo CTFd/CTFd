@@ -3,7 +3,7 @@ pip-tools==5.4.0
 pytest==8.4.2
 pytest-randomly==4.0.1
 coverage==7.10.7
-psycopg2-binary==2.9.6
+psycopg2-binary==2.9.10
 moto==4.1.11
 bandit==1.8.6
 flask_profiler==1.8.1
