@@ -1,0 +1,44 @@
+FROM python:3.11-alpine3.22 AS build
+
+WORKDIR /opt/CTFd
+
+RUN apk add --no-cache \
+        build-base \
+        libffi-dev \
+        openssl-dev \
+        git \
+    && python -m venv /opt/venv
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY . /opt/CTFd
+
+RUN pip install --no-cache-dir -r requirements.txt \
+    && for d in CTFd/plugins/*; do \
+        if [ -f "$d/requirements.txt" ]; then \
+            pip install --no-cache-dir -r "$d/requirements.txt";\
+        fi; \
+    done;
+
+
+FROM python:3.11-alpine3.22 AS release
+WORKDIR /opt/CTFd
+
+RUN apk add --no-cache \
+        libffi \
+        openssl \
+        bash \
+    && addgroup -g 1001 ctfd \
+    && adduser -D -H -u 1001 -G ctfd -s /bin/bash ctfd \
+    && mkdir -p /var/log/CTFd /var/uploads /opt/CTFd \
+    && chown -R ctfd:ctfd /var/log/CTFd /var/uploads /opt/CTFd
+
+COPY --chown=ctfd:ctfd . /opt/CTFd
+RUN chmod +x /opt/CTFd/docker-entrypoint.sh
+
+COPY --chown=ctfd:ctfd --from=build /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+USER ctfd
+EXPOSE 8000
+ENTRYPOINT ["/opt/CTFd/docker-entrypoint.sh"]
