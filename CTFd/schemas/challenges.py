@@ -67,6 +67,18 @@ class ChallengeSchema(ma.ModelSchema):
         ],
     )
 
+    position = field_for(
+        Challenges,
+        "position",
+        validate=[
+            validate.Range(
+                min=0,
+                max=32767,
+                error="Challenge could not be saved. Challenge position is invalid",
+            )
+        ],
+    )
+
     requirements = field_for(
         Challenges,
         "requirements",
