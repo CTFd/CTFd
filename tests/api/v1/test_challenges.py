@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from unittest.mock import patch
 
 from freezegun import freeze_time
+from sqlalchemy.exc import IntegrityError
 
+from CTFd.exceptions.challenges import ChallengeSolveException
 from CTFd.models import Challenges, Flags, Hints, Solves, Tags, Tracking, Users
 from CTFd.utils import set_config
 from tests.helpers import (
@@ -152,6 +155,51 @@ def test_api_challenges_get_hidden_admin():
                 "/api/v1/challenges?view=admin", json=""
             ).get_json()["data"]
             assert len(challenges_list) == 2
+    destroy_ctfd(app)
+
+
+def test_api_challenges_get_sort_by_position():
+    """Test that challenges are sorted by position ascending, with position 0 at the end"""
+    app = create_ctfd()
+    with app.app_context():
+        c1_id = gen_challenge(app.db, name="chal1", value=10, position=10).id
+        c2_id = gen_challenge(app.db, name="chal2", value=10, position=5).id
+        c3_id = gen_challenge(app.db, name="chal3", value=10, position=15).id
+        c4_id = gen_challenge(app.db, name="chal4", value=10, position=0).id
+
+        with login_as_user(app, "admin") as client:
+            r = client.get("/api/v1/challenges?view=admin")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+
+            # Expected order: c2 (5), c1 (10), c3 (15), c4 (0 at end)
+            assert data[0]["id"] == c2_id
+            assert data[1]["id"] == c1_id
+            assert data[2]["id"] == c3_id
+            assert data[3]["id"] == c4_id
+
+    destroy_ctfd(app)
+
+
+def test_api_challenges_get_sort_by_position_fallback():
+    """Test that challenges with position 0 are sorted by value then ID"""
+    app = create_ctfd()
+    with app.app_context():
+        c1_id = gen_challenge(app.db, name="chal1", value=20, position=0).id
+        c2_id = gen_challenge(app.db, name="chal2", value=10, position=0).id
+        c3_id = gen_challenge(app.db, name="chal3", value=15, position=0).id
+        c4_id = gen_challenge(app.db, name="chal4", value=15, position=0).id
+
+        with login_as_user(app, "admin") as client:
+            r = client.get("/api/v1/challenges?view=admin")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+
+            assert data[0]["id"] == c2_id  # 1. c2 (position 0, value 10)
+            assert data[1]["id"] == c3_id  # 2. c3 (position 0, value 15, id lower)
+            assert data[2]["id"] == c4_id  # 3. c4 (position 0, value 15, id higher)
+            assert data[3]["id"] == c1_id  # 4. c1 (position 0, value 20)
+
     destroy_ctfd(app)
 
 
@@ -419,11 +467,13 @@ def test_api_challenges_post_admin():
                     "category": "cate",
                     "description": "desc",
                     "value": "100",
+                    "position": 5,
                     "state": "hidden",
                     "type": "standard",
                 },
             )
             assert r.status_code == 200
+            assert r.get_json()["data"]["position"] == 5
     destroy_ctfd(app)
 
 
@@ -855,10 +905,12 @@ def test_api_challenge_patch_admin():
         gen_challenge(app.db)
         with login_as_user(app, "admin") as client:
             r = client.patch(
-                "/api/v1/challenges/1", json={"name": "chal_name", "value": "200"}
+                "/api/v1/challenges/1",
+                json={"name": "chal_name", "value": "200", "position": "10"},
             )
             assert r.status_code == 200
             assert r.get_json()["data"]["value"] == 200
+            assert r.get_json()["data"]["position"] == 10
     destroy_ctfd(app)
 
 
@@ -1028,6 +1080,38 @@ def test_api_challenge_attempt_post_admin():
             )
             assert r.status_code == 200
             assert r.get_json()["data"]["status"] == "already_solved"
+    destroy_ctfd(app)
+
+
+def test_api_challenge_attempt_post_duplicate_solve_race_condition():
+    """Test that a race condition resulting in ChallengeSolveException returns 'already_solved' status"""
+    app = create_ctfd()
+    with app.app_context():
+        challenge = gen_challenge(app.db)
+        challenge_id = challenge.id
+        gen_flag(app.db, challenge_id=challenge.id, content="flag")
+        register_user(app)
+        client = login_as_user(app)
+
+        # Mock BaseChallenge.solve raising ChallengeSolveException - it's hard to trigger this race condition in tests
+        # The exception should be handled and API should return an already_solved status
+        with patch("CTFd.plugins.challenges.BaseChallenge.solve") as mock_solve:
+            exception = ChallengeSolveException("Duplicate solve")
+            exception.__cause__ = IntegrityError(
+                "INSERT test...", {}, Exception("UNIQUE constraint failed")
+            )
+            mock_solve.side_effect = exception
+
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": challenge_id, "submission": "flag"},
+            )
+
+            assert r.status_code == 200
+            resp = r.get_json()
+            assert resp["data"]["status"] == "already_solved"
+            assert "already solved this" in resp["data"]["message"]
+
     destroy_ctfd(app)
 
 
