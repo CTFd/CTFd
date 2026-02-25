@@ -209,6 +209,7 @@ Alpine.data("Challenge", () => ({
   },
 
   async submitChallenge() {
+    this.response = null;
     this.response = await CTFd.pages.challenge.submitChallenge(
       this.id,
       this.submission,
