@@ -210,7 +210,7 @@ class TeamSchema(ma.ModelSchema):
         if is_admin():
             bracket = Brackets.query.filter_by(id=bracket_id).first()
             if bracket is None:
-                ValidationError(
+                raise ValidationError(
                     "Please provide a valid bracket id", field_names=["bracket_id"]
                 )
         else:
@@ -226,7 +226,7 @@ class TeamSchema(ma.ModelSchema):
             ):
                 bracket = Brackets.query.filter_by(id=bracket_id, type="teams").first()
                 if bracket is None:
-                    ValidationError(
+                    raise ValidationError(
                         "Please provide a valid bracket id", field_names=["bracket_id"]
                     )
             else:
