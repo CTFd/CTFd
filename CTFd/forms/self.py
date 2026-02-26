@@ -58,4 +58,5 @@ def SettingsForm(*args, **kwargs):
 class TokensForm(BaseForm):
     expiration = DateField(_l("Expiration"))
     description = TextAreaField("Usage Description")
+    mfa_code = StringField(_l("Authenticator Code"))
     submit = SubmitField(_l("Generate"))

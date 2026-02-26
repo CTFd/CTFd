@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-from flask import abort, redirect, render_template, request, session, url_for
+from flask import abort, g, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
@@ -307,6 +307,9 @@ def init_request_processors(app):
         ):
             return
 
+        if session.get("mfa_pending"):
+            return
+
         if authed():
             user = get_current_user_attrs()
 
@@ -330,6 +333,7 @@ def init_request_processors(app):
 
     @app.before_request
     def tokens():
+        g.token_auth = False
         token = request.headers.get("Authorization")
         if token and (
             request.mimetype == "application/json"
@@ -350,7 +354,37 @@ def init_request_processors(app):
             except Exception:
                 abort(401)
             else:
-                login_user(user)
+                # Do not enforce MFA for Token Auth
+                login_user(user, enforce_mfa=False)
+                g.token_auth = True
+
+    @app.before_request
+    def mfa_required():
+        if getattr(g, "token_auth", False):
+            return
+
+        if not authed() or not session.get("mfa_pending"):
+            return
+
+        allowed_endpoints = {
+            "auth.login",
+            "auth.logout",
+            "views.themes",
+            "views.healthcheck",
+            "views.robots",
+        }
+
+        if request.endpoint in allowed_endpoints:
+            return
+
+        if (
+            # Return 403 to fetch requests before MFA is completed instead of a redirect
+            request.content_type == "application/json"
+            or request.accept_mimetypes.best == "text/event-stream"
+        ):
+            abort(403, description="Multi-factor authentication required")
+
+        return redirect(url_for("auth.login"))
 
     @app.before_request
     def csrf():

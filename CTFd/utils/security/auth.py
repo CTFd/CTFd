@@ -9,14 +9,24 @@ from CTFd.models import Users, UserTokens, db
 from CTFd.utils import get_app_config
 from CTFd.utils.encoding import hexencode
 from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.mfa import is_mfa_enabled
 from CTFd.utils.security.signing import hmac
 
 
-def login_user(user):
+def login_user(user, enforce_mfa=True):
     session["id"] = user.id
     session["nonce"] = generate_nonce()
     session["hash"] = hmac(user.password)
     session.permanent = True
+
+    # Allow bypassing MFA specifically for API Token Auth
+    if enforce_mfa and is_mfa_enabled(user):
+        session["mfa_pending"] = True
+        session["mfa_verified"] = False
+    else:
+        session.pop("mfa_pending", None)
+        session.pop("mfa_verified", None)
+        session.pop("mfa_next", None)
 
     # Clear out any currently cached user attributes
     clear_user_session(user_id=user.id)
