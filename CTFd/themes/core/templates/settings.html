@@ -357,29 +357,17 @@
                     >
                   </div>
 
-                  <div class="mb-3" x-show="!disableUseBackupCode">
-                    <label class="form-label">{% trans %}Authenticator Code{% endtrans %}</label>
-                    <input
-                        class="form-control" x-model="disableCode" type="text" inputmode="numeric"
-                        autocomplete="one-time-code"
-                    >
-                  </div>
-
-                  <div class="mb-3" x-show="disableUseBackupCode" x-cloak>
-                    <label class="form-label">{% trans %}Backup Code{% endtrans %}</label>
+                  <div class="mb-3">
+                    <label class="form-label">{% trans %}Authentication Code{% endtrans %}</label>
                     <input
                         class="form-control"
-                        x-model="disableBackupCode"
+                        x-model="disableCode"
                         type="text"
                         autocomplete="one-time-code"
                     >
-                  </div>
-
-                  <div class="mb-3">
-                    <button class="btn btn-link btn-sm px-0" type="button" @click="toggleDisableCodeMode()">
-                      <span x-show="!disableUseBackupCode">{% trans %}Use a backup code instead{% endtrans %}</span>
-                      <span x-show="disableUseBackupCode" x-cloak>{% trans %}Use an authenticator code instead{% endtrans %}</span>
-                    </button>
+                    <small class="text-muted">
+                      {% trans %}Enter an authenticator code or a backup code.{% endtrans %}
+                    </small>
                   </div>
 
                   <button class="btn btn-outline-danger" type="submit" :disabled="$store.mfa.working">

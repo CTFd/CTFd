@@ -585,8 +585,7 @@ class UserPrivateMFADisable(Resource):
         user = get_current_user()
         data = request.get_json(silent=True) or {}
 
-        otp = data.get("mfa_code", "")
-        backup_code = data.get("mfa_backup_code", "")
+        code = data.get("mfa_code", "")
         confirm_password = data.get("confirm", "")
 
         mfa = UsersMFA.query.filter_by(user_id=user.id, enabled=True).first()
@@ -611,14 +610,14 @@ class UserPrivateMFADisable(Resource):
 
         try:
             secret = decrypt_totp_secret(mfa.totp_secret)
-            verified = verify_totp_code(secret=secret, otp=otp)
+            verified = verify_totp_code(secret=secret, otp=code)
         except Exception:
             verified = False
 
         if verified is False:
             used_backup, new_codes = consume_backup_code(
                 backup_codes=mfa.backup_codes,
-                candidate=backup_code,
+                candidate=code,
             )
 
             if used_backup:

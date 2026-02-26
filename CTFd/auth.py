@@ -469,19 +469,18 @@ def login():
             return redirect(url_for("challenges.listing"))
 
         if request.method == "POST":
-            otp = request.form.get("mfa_code", "")
-            backup_code = request.form.get("mfa_backup_code", "")
+            code = request.form.get("mfa_code", "")
 
             try:
                 secret = decrypt_totp_secret(user.mfa.totp_secret)
-                verified = verify_totp_code(secret=secret, otp=otp)
+                verified = verify_totp_code(secret=secret, otp=code)
             except Exception:
                 verified = False
 
             if not verified:
                 used_backup, backup_codes = consume_backup_code(
                     backup_codes=user.mfa.backup_codes,
-                    candidate=backup_code,
+                    candidate=code,
                 )
                 if used_backup:
                     user.mfa.backup_codes = backup_codes

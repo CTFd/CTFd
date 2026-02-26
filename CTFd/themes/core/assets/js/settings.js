@@ -335,16 +335,8 @@ Alpine.data("MFABackupManager", () => ({
 }));
 
 Alpine.data("MFADisableManager", () => ({
-  disableUseBackupCode: false,
   disableConfirm: "",
   disableCode: "",
-  disableBackupCode: "",
-
-  toggleDisableCodeMode() {
-    this.disableUseBackupCode = !this.disableUseBackupCode;
-    this.disableCode = "";
-    this.disableBackupCode = "";
-  },
 
   async disableMFA() {
     this.$store.mfa.working = true;
@@ -355,8 +347,7 @@ Alpine.data("MFADisableManager", () => ({
         method: "POST",
         body: JSON.stringify({
           confirm: this.disableConfirm,
-          mfa_code: this.disableUseBackupCode ? "" : this.disableCode,
-          mfa_backup_code: this.disableUseBackupCode ? this.disableBackupCode : "",
+          mfa_code: this.disableCode,
         }),
       });
 
@@ -377,10 +368,8 @@ Alpine.data("MFADisableManager", () => ({
       this.$store.mfa.backupCodes = [];
       this.$store.mfa.secret = "";
       this.$store.mfa.qrDataUrl = "";
-      this.disableUseBackupCode = false;
       this.disableConfirm = "";
       this.disableCode = "";
-      this.disableBackupCode = "";
     } catch (_error) {
       this.$store.mfa.errors = [
         "Unable to update multi-factor authentication settings.",
