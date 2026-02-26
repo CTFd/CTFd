@@ -208,7 +208,7 @@ class UserSchema(ma.ModelSchema):
         if is_admin():
             bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
             if bracket is None:
-                ValidationError(
+                raise ValidationError(
                     "Please provide a valid bracket id", field_names=["bracket_id"]
                 )
         else:
@@ -224,7 +224,7 @@ class UserSchema(ma.ModelSchema):
             ):
                 bracket = Brackets.query.filter_by(id=bracket_id, type="users").first()
                 if bracket is None:
-                    ValidationError(
+                    raise ValidationError(
                         "Please provide a valid bracket id", field_names=["bracket_id"]
                     )
             else:
