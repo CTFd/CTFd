@@ -48,11 +48,14 @@
 			{{ form.banned(class="form-check-input", autocomplete="off") }}
 			{{ form.banned.label(class="form-check-label") }}
 		</div>
-	</div>
-	<div class="form-group">
+	</div><div class="form-group">
 		<div class="form-check form-check-inline">
 			{{ form.change_password(class="form-check-input", autocomplete="off") }}
 			{{ form.change_password.label(class="form-check-label") }}
+		</div>
+		<div class="form-check form-check-inline">
+			{{ form.reset_mfa(class="form-check-input", autocomplete="off") }}
+			{{ form.reset_mfa.label(class="form-check-label") }}
 		</div>
 	</div>
 	<div id="results">

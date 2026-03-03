@@ -100,7 +100,10 @@
 			{% if user.banned %}
 				<span class="badge badge-danger">banned</span>
 			{% endif %}
-		</div>
+			{% if user.mfa and user.mfa.enabled %}
+				<span class="badge badge-info">mfa</span>
+			{% endif %}
+			</div>
 
 			{% if user.affiliation %}
 				<h3 class="d-inline-block">
