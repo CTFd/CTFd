@@ -5,9 +5,13 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'CTFd/themes/**'
   pull_request:
     branches:
       - master
+    paths:
+      - 'CTFd/themes/**'
 
 jobs:
   build:
