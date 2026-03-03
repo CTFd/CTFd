@@ -302,6 +302,8 @@
                 <div class="challenge-info">
                   {{ challenge.name }}
                   <br />
+                  <small>{{ challenge.category }}</small>
+                  <br />
                   {{ challenge.value }}pt
                 </div>
               </a>
