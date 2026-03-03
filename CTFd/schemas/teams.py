@@ -207,6 +207,9 @@ class TeamSchema(ma.ModelSchema):
     @pre_load
     def validate_bracket_id(self, data):
         bracket_id = data.get("bracket_id")
+        if bracket_id is None:
+            return
+
         if is_admin():
             bracket = Brackets.query.filter_by(id=bracket_id).first()
             if bracket is None:
