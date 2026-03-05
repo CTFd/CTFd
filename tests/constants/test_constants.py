@@ -39,15 +39,14 @@ def test_JSEnum():
 
 
 def test_JinjaEnum():
+    @JinjaEnum
+    class Colors(str, RawEnum):
+        RED = "red"
+        GREEN = "green"
+        BLUE = "blue"
+
     app = create_ctfd()
     with app.app_context():
-
-        @JinjaEnum
-        class Colors(str, RawEnum):
-            RED = "red"
-            GREEN = "green"
-            BLUE = "blue"
-
         assert app.jinja_env.globals["Colors"] is Colors
         assert app.jinja_env.globals["Colors"].RED == "red"
     destroy_ctfd(app)

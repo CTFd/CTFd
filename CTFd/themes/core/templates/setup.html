@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block stylesheets %}
+{{ super() }}
 <style>
 .card-radio:checked + .card {
 	background-color: transparent !important;
@@ -20,7 +21,7 @@
 {% block content %}
 	<div class="jumbotron">
 		<div class="container">
-			<h1>Setup</h1>
+			<h1>{% trans %}Setup{% endtrans %}</h1>
 		</div>
 	</div>
 	<div class="container">
@@ -28,31 +29,43 @@
 			{% include "components/errors.html" %}
 
 			{% with form = Forms.setup.SetupForm() %}
-			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" id="setup-form" enctype="multipart/form-data">
+			<form 
+				x-data="SetupForm"
+				@submit="submitSetup"
+				method="post" 
+				accept-charset="utf-8" 
+				autocomplete="off" 
+				role="form" class="form-horizontal" 
+				id="setup-form" 
+				enctype="multipart/form-data"
+			>
 				<ul class="nav nav-pills nav-fill mb-4">
 					<li class="nav-item">
-						<a class="nav-link active" data-toggle="pill" href="#general">General</a>
+						<a class="nav-link active" data-bs-toggle="pill" data-bs-target="#general" role="button">{% trans %}General{% endtrans %}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#mode">Mode</a>
+						<a class="nav-link" data-bs-toggle="pill" data-bs-target="#mode" role="button">{% trans %}Mode{% endtrans %}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#administration">Administration</a>
+						<a class="nav-link" data-bs-toggle="pill" data-bs-target="#settings" role="button">{% trans %}Settings{% endtrans %}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#style">Style</a>
+						<a class="nav-link" data-bs-toggle="pill" data-bs-target="#administration" role="button">{% trans %}Administration{% endtrans %}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#datetime">Date &amp; Time</a>
+						<a class="nav-link" data-bs-toggle="pill" data-bs-target="#style" role="button">{% trans %}Style{% endtrans %}</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" data-toggle="pill" href="#integrations">Integrations</a>
+						<a class="nav-link" data-bs-toggle="pill" data-bs-target="#datetime" role="button">{% trans %}Date &amp; Time{% endtrans %}</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-bs-toggle="pill" data-bs-target="#integrations" role="button">{% trans %}Integrations{% endtrans %}</a>
 					</li>
 				</ul>
 
 				<div class="tab-content">
 					<div class="tab-pane fade show active" id="general" role="tabpanel">
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.ctf_name.label }}</b>
 							{{ form.ctf_name(class="form-control") }}
 							<small class="form-text text-muted">
@@ -60,7 +73,7 @@
 							</small>
 						</div>
 
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.ctf_description.label }}</b>
 							{{ form.ctf_description(class="form-control", rows="5") }}
 							<small class="form-text text-muted">
@@ -68,15 +81,16 @@
 							</small>
 						</div>
 
-						<div class="text-right">
-							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#mode">
-								Next
+						<div class="text-right float-end">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#mode" @click="switchTab">
+								{% trans %}Next{% endtrans %}
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="mode" role="tabpanel">
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.user_mode.label }}</b>
+							<br>
 							<small class="form-text text-muted">
 								{{ form.user_mode.description }}
 							</small>
@@ -95,19 +109,19 @@
 													</span>
 													{% if radio.data == "teams" %}
 													<ul class="p-0 small">
-														<li>Participants register accounts and form teams</li>
-														<li>If a team member solves a challenge, the entire team receives credit</li>
+														<li>{% trans %}Participants register accounts and form teams{% endtrans %}</li>
+														<li>{% trans %}If a team member solves a challenge, the entire team receives credit{% endtrans %}</li>
 														<br>
-														<li>Easier to see which team member solved a challenge</li>
-														<li>May be slightly more difficult to administer</li>
+														<li>{% trans %}Easier to see which team member solved a challenge{% endtrans %}</li>
+														<li>{% trans %}May be slightly more difficult to administer{% endtrans %}</li>
 													</ul>
 													{% elif radio.data == "users" %}
 													<ul class="p-0 small">
-														<li>Participants only register an individual account</li>
-														<li>Players can share accounts to form pseudo-teams</li>
+														<li>{% trans %}Participants only register an individual account{% endtrans %}</li>
+														<li>{% trans %}Players can share accounts to form pseudo-teams{% endtrans %}</li>
 														<br>
-														<li>Easier to organize</li>
-														<li>Difficult to attribute solutions to individual team members</li>
+														<li>{% trans %}Easier to organize{% endtrans %}</li>
+														<li>{% trans %}Difficult to attribute solutions to individual team members{% endtrans %}</li>
 													</ul>
 													{% endif %}
 												</div>
@@ -119,28 +133,92 @@
 							</div>
 						</div>
 
-						<div class="text-right">
-							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#administration">
-								Next
+						<div class="text-right float-end">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#settings" @click="switchTab">
+								{% trans %}Next{% endtrans %}
+							</button>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="settings" role="tabpanel">
+						<b>{% trans %}Visibility Settings{% endtrans %}</b>
+						<br>
+						<small class="form-text text-muted">
+							{% trans %}Control the visibility of different sections of CTFd{% endtrans %}
+						</small>
+						<div class="row pt-3">
+							<div class="col-md-3 mb-3">
+								<b>
+									{{ form.challenge_visibility.label }}
+									<i class="far fa-question float-end text-muted" data-bs-toggle="tooltip" data-bs-title="{{ form.challenge_visibility.description }}"></i>
+								</b>
+								{{ form.challenge_visibility(class="form-control custom-select") }}
+							</div>
+
+							<div class="col-md-3 mb-3">
+								<b>
+									{{ form.account_visibility.label }}
+									<i class="far fa-question float-end text-muted" data-bs-toggle="tooltip" data-bs-title="{{ form.account_visibility.description }}"></i>
+								</b>
+								{{ form.account_visibility(class="form-control custom-select") }}
+							</div>
+
+							<div class="col-md-3 mb-3">
+								<b>
+									{{ form.score_visibility.label }}
+									<i class="far fa-question float-end text-muted" data-bs-toggle="tooltip" data-bs-title="{{ form.score_visibility.description }}"></i>
+								</b>
+								{{ form.score_visibility(class="form-control custom-select") }}
+							</div>
+
+							<div class="col-md-3 mb-3">
+								<b>
+									{{ form.registration_visibility.label }}
+									<i class="far fa-question float-end text-muted" data-bs-toggle="tooltip" data-bs-title="{{ form.registration_visibility.description }}"></i>
+								</b>
+								{{ form.registration_visibility(class="form-control custom-select") }}
+							</div>
+						</div>
+
+						<hr>
+
+						<div class="mb-3">
+							<b>{{ form.verify_emails.label }}</b>
+							{{ form.verify_emails(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.verify_emails.description }}
+							</small>
+						</div>
+
+						<div class="mb-3">
+							<b>{{ form.team_size.label }}</b>
+							{{ form.team_size(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.team_size.description }}
+							</small>
+						</div>
+
+						<div class="text-right float-end">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#administration" @click="switchTab">
+								{% trans %}Next{% endtrans %}
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="administration" role="tabpanel">
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.name.label }}</b>
 							{{ form.name(class="form-control") }}
 							<small class="form-text text-muted">
 								{{ form.name.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.email.label }}</b>
 							{{ form.email(class="form-control") }}
 							<small class="form-text text-muted">
 								{{ form.email.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.password.label }}</b>
 							{{ form.password(class="form-control") }}
 							<small class="form-text text-muted">
@@ -148,81 +226,88 @@
 							</small>
 						</div>
 
-						<div class="form-check">
+						<div class="mb-3 form-check">
 							<label class="form-check-label">
 								<input class="form-check-input" type="checkbox" value="" id="newsletter-checkbox" checked>
-								Subscribe email address to the CTFd LLC Newsletter for news and updates
+								{% trans %}Subscribe email address to the CTFd LLC Newsletter for news and updates{% endtrans %}
 							</label>
 						</div>
 
-						<div class="text-right">
-							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#style">
-								Next
+						<div class="text-right float-end">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#style" @click="switchTab">
+								{% trans %}Next{% endtrans %}
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="style" role="tabpanel">
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.ctf_logo.label }}</b>
-							{{ form.ctf_logo(class="form-control-file", accept="image/*") }}
-							<small class="form-text text-muted">
-								{{ form.ctf_logo.description }}
-							</small>
+							<div class="row">
+								{{ form.ctf_logo(class="form-control-file", accept="image/*", **{'@change': 'validateFileSize($event, 128000)'}) }}
+								<small class="form-text text-muted">
+									{{ form.ctf_logo.description }}
+								</small>
+							</div>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.ctf_banner.label }}</b>
-							{{ form.ctf_banner(class="form-control-file", accept="image/*") }}
-							<small class="form-text text-muted">
-								{{ form.ctf_banner.description }}
-							</small>
+							<div class="row">
+								{{ form.ctf_banner(class="form-control-file", accept="image/*", **{'@change': 'validateFileSize($event, 512000)'}) }}
+								<small class="form-text text-muted">
+									{{ form.ctf_banner.description }}
+								</small>
+							</div>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.ctf_small_icon.label }}</b>
-							{{ form.ctf_small_icon(class="form-control-file", accept=".png") }}
-							<small class="form-text text-muted">
-								{{ form.ctf_small_icon.description }}
-							</small>
+							<div class="row">
+								{{ form.ctf_small_icon(class="form-control-file", accept=".png", **{'@change': 'validateFileSize($event, 32000)'}) }}
+								<small class="form-text text-muted">
+									{{ form.ctf_small_icon.description }}
+								</small>
+							</div>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.ctf_theme.label }}</b>
 							{{ form.ctf_theme(class="form-control custom-select") }}
 							<small class="form-text text-muted">
 								{{ form.ctf_theme.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.theme_color.label }}</b>
-							<br>
-							<div class="d-inline-block">
-								{{ form.theme_color(id="config-color-input") }}
-								<div class="btn-group">
-									<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="">
+							<div class="row">
+								<div class="d-inline-block">
+									{{ form.theme_color(id="config-color-input") }}
+									<div class="btn-group">
+										<input type="color" id="config-color-picker" class="pr-1" style="width: 100px; height: 30px;" value="" @input="setThemeColor">
+									</div>
+									<div class="btn-group">
+										<button type="button" id="config-color-reset" @click="resetThemeColor">Reset</button>
+									</div>
 								</div>
-								<div class="btn-group">
-									<button type="button" id="config-color-reset">Reset</button>
-								</div>
+								<small class="form-text text-muted">
+									{{ form.theme_color.description }}
+								</small>
 							</div>
-							<small class="form-text text-muted">
-								{{ form.theme_color.description }}
-							</small>
 						</div>
-						<div class="text-right">
-							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#datetime">
-								Next
+						<div class="text-right float-end">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#datetime" @click="switchTab">
+								{% trans %}Next{% endtrans %}
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="datetime" role="tabpanel">
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.start.label }}</b>
 							<div class="row">
 								<div class="col-md-4">
-									<label>Date</label>
-									<input class="form-control" id="start-date" type="date" placeholder="yyyy-mm-dd" data-preview="#start"/>
+									<label>{% trans %}Date{% endtrans %}</label>
+									<input class="form-control" id="start-date" type="date" placeholder="yyyy-mm-dd" data-preview="#start" @click="processDateTime('start')"/>
 								</div>
 								<div class="col-md-4">
-									<label>Time</label>
-									<input class="form-control" id="start-time" type="time" placeholder="hh:mm" data-preview="#start"/>
+									<label>{% trans %}Time{% endtrans %}</label>
+									<input class="form-control" id="start-time" type="time" placeholder="hh:mm" data-preview="#start" @click="processDateTime('start')"/>
 								</div>
 								<div class="col-md-4">
 									<label>UTC Preview</label>
@@ -234,19 +319,19 @@
 							</small>
 						</div>
 
-						<div class="form-group">
+						<div class="mb-3">
 							<b>{{ form.end.label }}</b>
 							<div class="row">
 								<div class="col-md-4">
-									<label>Date</label>
-									<input class="form-control" id="end-date" type="date" placeholder="yyyy-mm-dd" data-preview="#end"/>
+									<label>{% trans %}Date{% endtrans %}</label>
+									<input class="form-control" id="end-date" type="date" placeholder="yyyy-mm-dd" data-preview="#end" @click="processDateTime('end')"/>
 								</div>
 								<div class="col-md-4">
-									<label>Time</label>
-									<input class="form-control" id="end-time" type="time" placeholder="hh:mm" data-preview="#end"/>
+									<label>{% trans %}Time{% endtrans %}</label>
+									<input class="form-control" id="end-time" type="time" placeholder="hh:mm" data-preview="#end" @click="processDateTime('end')"/>
 								</div>
 								<div class="col-md-4">
-									<label>UTC Preview</label>
+									<label>{% trans %}UTC Preview{% endtrans %}</label>
 									{{ form.end(class="form-control", id="end-preview", readonly=True) }}
 								</div>
 							</div>
@@ -255,26 +340,24 @@
 							</small>
 						</div>
 
-						<div class="text-right">
-							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#integrations">
-								Next
+						<div class="text-right float-end">
+							<button type="button" class="btn btn-primary btn-outlined tab-next" data-href="#integrations" @click="switchTab">
+								{% trans %}Next{% endtrans %}
 							</button>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="integrations" role="tabpanel">
-						<div class="form-group">
-							<h4>MajorLeagueCyber Integration</h4>
-							<p>
-							MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.
-							Set up MLC integration to:
-							<ul>
-								<li>display your event on the MLC website and mailing list</li>
-								<li>share and track participant statistics</li>
-								<li>provide live updates in team Slack or Discord groups</li>
-								<li>archive challenges, team participation &amp; more</li>
-							</ul>
-							</p>
-							<button type="button" id="integration-mlc" class="btn btn-primary btn-block">
+						<div class="mb-3">
+							<b>{{ form.social_shares.label }}</b>
+							{{ form.social_shares(class="form-control custom-select") }}
+							<small class="form-text text-muted">
+								{{ form.social_shares.description }}
+							</small>
+						</div>
+						<div class="mb-3">
+							<b>MajorLeagueCyber Integration</b>
+							<p>MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.</p>
+							<button type="button" id="integration-mlc" class="btn btn-primary btn-block" @click="mlcSetup()">
 								Setup
 							</button>
 						</div>
@@ -283,7 +366,7 @@
 						<hr>
 						<br>
 
-						<div class="submit-row text-right">
+						<div class="submit-row text-right float-end">
 							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
 						</div>
 					</div>
@@ -301,8 +384,5 @@
 <script>
 	var STATE = {{ state | tojson }};
 </script>
-{% endblock %}
-
-{% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/setup.js') }}"></script>
+{{ Assets.js("assets/js/setup.js") }}
 {% endblock %}

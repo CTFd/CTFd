@@ -216,17 +216,32 @@ def get_user_recent_ips(user_id):
     return {ip for (ip,) in addrs}
 
 
-def get_wrong_submissions_per_minute(account_id):
+def get_wrong_submissions_per_minute(account_id, return_objects=False):
     """
     Get incorrect submissions per minute.
+
+    TODO: CTFd 4.0 Consider removal
 
     :param account_id:
     :return:
     """
     one_min_ago = datetime.datetime.utcnow() + datetime.timedelta(minutes=-1)
-    fails = (
-        db.session.query(Fails)
-        .filter(Fails.account_id == account_id, Fails.date >= one_min_ago)
-        .all()
+    fails = db.session.query(Fails).filter(
+        Fails.account_id == account_id, Fails.date >= one_min_ago
     )
-    return len(fails)
+    if return_objects:
+        return fails.order_by(Fails.id.asc()).all()
+    else:
+        return len(fails.all())
+
+
+def get_wrong_submissions_per_delta(account_id, challenge_id=None, delta=None):
+    if delta is None:
+        delta = datetime.timedelta(minutes=-1)
+    delta_ago = datetime.datetime.utcnow() + delta
+    fails = db.session.query(Fails).filter(
+        Fails.account_id == account_id, Fails.date >= delta_ago
+    )
+    if challenge_id:
+        fails = fails.filter(Fails.challenge_id == challenge_id)
+    return fails.order_by(Fails.id.asc()).all()

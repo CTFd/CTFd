@@ -1,7 +1,6 @@
 services:
   ctfd:
     build: .
-    user: root
     restart: always
     ports:
       - "8000:8000"

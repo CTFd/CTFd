@@ -9,7 +9,7 @@ from CTFd.api.v1.schemas import (
     APIDetailedSuccessResponse,
     PaginatedAPIListSuccessResponse,
 )
-from CTFd.cache import clear_challenges, clear_standings
+from CTFd.cache import cache, clear_challenges, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import Solves, Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
@@ -190,6 +190,19 @@ class Submission(Resource):
         submission_type = req.get("type")
 
         if submission_type == "correct":
+            existing_solve = Solves.query.filter_by(
+                challenge_id=submission.challenge_id,
+                user_id=submission.user_id,
+                team_id=submission.team_id if submission.team_id else None,
+            ).first()
+
+            # If a solve for this user / team pair exists, don't create a new solve
+            if existing_solve:
+                return {
+                    "success": False,
+                    "errors": {"type": ["Solve already exists for this submission"]},
+                }, 400
+
             solve = Solves(
                 user_id=submission.user_id,
                 challenge_id=submission.challenge_id,
@@ -229,9 +242,16 @@ class Submission(Resource):
     )
     def delete(self, submission_id):
         submission = Submissions.query.filter_by(id=submission_id).first_or_404()
+        account_id = submission.account_id
+        challenge_id = submission.challenge_id
         db.session.delete(submission)
         db.session.commit()
         db.session.close()
+
+        # Clear out the user's recent attempt count
+        # This is a little lossy but I don't think it matters in practice
+        acc_kpm_key = f"account_kpm_{account_id}_{challenge_id}"
+        cache.expire(acc_kpm_key, 0)
 
         # Delete standings cache
         clear_standings()

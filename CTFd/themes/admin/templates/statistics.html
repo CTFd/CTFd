@@ -6,9 +6,9 @@
 		<h1>Statistics</h1>
 	</div>
 </div>
-<div class="container">
-	<div class="row d-flex align-items-center">
-		<div class="col-md-4 text-right">
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 offset-1 text-right pt-5">
 			<h5><b>{{ user_count }}</b> users registered</h5>
 			{% if get_config('user_mode') == 'teams' %}
 			<h5><b>{{ team_count }}</b> teams registered</h5>
@@ -26,6 +26,99 @@
 		</div>
 
 		<div class="col-md-8">
+			<h3>Player Progression <sup class="text-muted">(Top 100)</sup></h3>
+			<div class="matrix-container">
+				<table class="table table-striped table-bordered table-sm" id="matrix-scoreboard">
+					<thead class="thead-dark">
+						<tr>
+							<th class="text-white" style="background-color: #343a40; z-index: 10; width: 60px;">Rank</th>
+							<th class="sticky-col text-white" style="left: 0; background-color: #343a40; z-index: 10; min-width: 200px; max-width: 200px;">{% if get_config('user_mode') == 'teams' %}Team{% else %}User{% endif %}</th>
+							<th class="text-white" style="background-color: #343a40; z-index: 10; width: 80px;">Score</th>
+							{% for challenge in all_challenges %}
+							<th class="text-center text-white" style="min-width: 120px; max-width: 120px; background-color: #343a40;">
+								<a href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}" class="text-white text-decoration-none">
+									<div style="font-size: 10px; margin-top: 5px; overflow: hidden; text-overflow: ellipsis;">
+										{{ challenge.name }}
+										<br>
+										{{ challenge.value }}pt
+									</div>
+								</a>
+							</th>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for user in top_users %}
+						<tr>
+							<td class="font-weight-bold" style="background-color: white;">{{ loop.index }}</td>
+							<td class="sticky-col font-weight-bold" style="left: 0; background-color: white; z-index: 5; overflow: hidden; text-overflow: ellipsis;" title="{{ user.name }}">
+								{% if get_config('user_mode') == 'teams' %}
+									<a href="{{ url_for('admin.teams_detail', team_id=user.account_id) }}" class="text-decoration-none">{{ user.name }}</a>
+								{% else %}
+									<a href="{{ url_for('admin.users_detail', user_id=user.account_id) }}" class="text-decoration-none">{{ user.name }}</a>
+								{% endif %}
+							</td>
+							<td class="font-weight-bold" style="background-color: white;">{{ user.score }}</td>
+							{% for challenge in all_challenges %}
+								{% set is_solved = challenge.id in account_solves[user.account_id]['solved_challenges'] %}
+								{% set is_attempted = challenge.id in account_solves[user.account_id]['attempted_challenges'] %}
+								{% set is_opened = challenge.id in account_solves[user.account_id]['opened_challenges'] %}
+								{% if is_solved %}
+									{% set bg_color = '#28a745' %}
+									{% set text_color = 'white' %}
+									{% set symbol = '✓' %}
+								{% elif is_attempted and not is_solved %}
+									{% set bg_color = '#ffc107' %}
+									{% set text_color = '#212529' %}
+									{% set symbol = '-' %}
+								{% elif is_opened and not is_attempted and not is_solved %}
+									{% set bg_color = '#17a2b8' %}
+									{% set text_color = 'white' %}
+									{% set symbol = '-' %}
+								{% else %}
+									{% set bg_color = '#f8f9fa' %}
+									{% set text_color = '#6c757d' %}
+									{% set symbol = '-' %}
+								{% endif %}
+								<td class="text-center" style="height: 30px; border: 1px solid #dee2e6; background-color: {{ bg_color }}; color: {{ text_color }};">
+									{{ symbol }}
+								</td>
+							{% endfor %}
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="mt-3 float-right">
+				<div class="d-flex flex-wrap">
+					<div class="mr-4 mb-2">
+						<span class="badge px-2 py-1" style="background-color: #28a745; color: white;">✓</span>
+						<small class="ml-2">Solved</small>
+					</div>
+					<div class="mr-4 mb-2">
+						<span class="badge px-2 py-1" style="background-color: #ffc107; color: #212529;">-</span>
+						<small class="ml-2">Attempted</small>
+					</div>
+					<div class="mr-4 mb-2">
+						<span class="badge px-2 py-1" style="background-color: #17a2b8; color: white;">-</span>
+						<small class="ml-2">Opened</small>
+					</div>
+					<div class="mr-4 mb-2">
+						<span class="badge px-2 py-1" style="background-color: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6;">-</span>
+						<small class="ml-2">Not viewed</small>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+</div>
+
+<div class="container">
+	<div class="row d-flex align-items-center">
+		<div class="col-md-12">
 			<div id="solves-graph" class="d-flex align-items-center">
 				<div class="text-center w-100">
 					<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
@@ -59,7 +152,6 @@
 	</div>
 
 	<hr>
-
 </div>
 <div class="container-fluid">
 	<div class="row">
@@ -93,7 +185,55 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block stylesheets %}
+<style>
+#matrix-scoreboard {
+	font-size: 12px;
+}
+
+#matrix-scoreboard th {
+	vertical-align: bottom;
+	padding: 4px;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+#matrix-scoreboard td {
+	padding: 2px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#matrix-scoreboard .sticky-col {
+	position: sticky;
+	background-color: white;
+	z-index: 5;
+}
+
+#matrix-scoreboard thead .sticky-col {
+	background-color: #343a40 !important;
+	z-index: 20;
+}
+
+#matrix-scoreboard tbody .sticky-col {
+	background-color: white !important;
+	z-index: 5;
+}
+
+.matrix-container {
+	height: 600px;
+	overflow: auto;
+	border: 1px solid #dee2e6;
+}
+
+.challenge-header {
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	height: 100px;
+	white-space: nowrap;
+}
+</style>
 {% endblock %}
 
 {% block entrypoint %}

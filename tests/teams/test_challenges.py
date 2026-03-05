@@ -51,7 +51,7 @@ def test_anonymous_users_view_public_challenges_without_team():
         with app.test_client() as client:
             r = client.get("/challenges")
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/login")
+            assert r.location.startswith("/login")
 
         set_config("challenge_visibility", "public")
         with app.test_client() as client:
@@ -61,5 +61,5 @@ def test_anonymous_users_view_public_challenges_without_team():
         with login_as_user(app) as client:
             r = client.get("/challenges")
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/team")
+            assert r.location.startswith("/team")
     destroy_ctfd(app)

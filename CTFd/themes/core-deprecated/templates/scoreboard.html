@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Scoreboard</h1>
+	</div>
+</div>
+<div class="container">
+	{% include "components/errors.html" %}
+
+	<div id="score-graph" class="row d-flex align-items-center">
+		<div class="col-md-12 text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+
+	{% cache 60, CacheKeys.PUBLIC_SCOREBOARD_TABLE %}
+	{% if standings %}
+	<div id="scoreboard" class="row">
+		<div class="col-md-12">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<td scope="col" width="10px"><b>Place</b></td>
+						<td scope="col"><b>{{ get_mode_as_word(capitalize=True) }}</b></td>
+						<td scope="col"><b>Score</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for standing in standings %}
+					<tr>
+						<th scope="row" class="text-center">{{ loop.index }}</th>
+						<td>
+							<a href="{{ generate_account_url(standing.account_id) }}">
+								{{ standing.name | truncate(50) }}
+
+								{% if standing.oauth_id %}
+									{% if Configs.user_mode == 'teams' %}
+									<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
+										<span class="badge badge-primary">Official</span>
+									</a>
+									{% elif Configs.user_mode == 'users' %}
+									<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
+										<span class="badge badge-primary">Official</span>
+									</a>
+									{% endif %}
+								{% endif %}
+							</a>
+						</td>
+						<td>{{ standing.score }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% endif %}
+	{% endcache %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
+{% endblock %}

@@ -2,10 +2,47 @@ from functools import lru_cache, wraps
 from hashlib import md5
 from time import monotonic_ns
 
-from flask import request
+from flask import current_app, request
 from flask_caching import Cache, make_template_fragment_key
 
-cache = Cache()
+
+class CTFdCache(Cache):
+    """
+    This subclass exists to give flask-caching some additional features
+    Ideally likely we should have our own isolated redis connection but that might introduce more issues
+    """
+
+    def inc(self, *args, **kwargs):
+        """
+        Support redis INCR in flask-caching
+        Note that redis INCR does not expire by default
+        https://github.com/pallets-eco/flask-caching/issues/418
+        """
+        inc = getattr(self.cache, "inc", None)
+        if inc is not None and callable(inc):
+            return inc(*args, **kwargs)
+        raise NotImplementedError
+
+    def expire(self, key, timeout):
+        """
+        Support redis EXPIRE in flask-caching
+        """
+        if current_app.config["CACHE_TYPE"] == "redis":
+            return self.cache._write_client.expire(
+                f"{self.cache.key_prefix}{key}", timeout
+            )
+        else:
+            # Generic alternative that leverages flask-caching built-ins to do expiration
+            if timeout <= 0:
+                self.cache.delete(key)
+            value = self.get(key)
+            if value:
+                self.set(key=key, value=value, timeout=timeout)
+                return True
+            return False
+
+
+cache = CTFdCache()
 
 
 def timed_lru_cache(timeout: int = 300, maxsize: int = 64, typed: bool = False):
@@ -82,7 +119,7 @@ def calculate_param_hash(params, allowed_params=None):
         )
     else:
         args_as_sorted_tuple = tuple(sorted(pair for pair in params))
-    args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()  # nosec B303
+    args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()  # nosec B303 B324
     return args_hash
 
 
@@ -138,15 +175,25 @@ def clear_standings():
 def clear_challenges():
     from CTFd.utils.challenges import get_all_challenges  # noqa: I001
     from CTFd.utils.challenges import (
+        get_rating_average_for_challenge_id,
         get_solve_counts_for_challenges,
         get_solve_ids_for_user_id,
         get_solves_for_challenge_id,
+        get_submissions_for_user_id_for_challenge_id,
     )
 
     cache.delete_memoized(get_all_challenges)
     cache.delete_memoized(get_solves_for_challenge_id)
+    cache.delete_memoized(get_submissions_for_user_id_for_challenge_id)
     cache.delete_memoized(get_solve_ids_for_user_id)
     cache.delete_memoized(get_solve_counts_for_challenges)
+    cache.delete_memoized(get_rating_average_for_challenge_id)
+
+
+def clear_ratings():
+    from CTFd.utils.challenges import get_rating_average_for_challenge_id
+
+    cache.delete_memoized(get_rating_average_for_challenge_id)
 
 
 def clear_pages():

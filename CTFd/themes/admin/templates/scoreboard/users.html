@@ -8,6 +8,7 @@
 			</th>
 			<th class="sort-col text-center"><b>Place</b></th>
 			<th class="sort-col"><b>User</b></th>
+			<th class="sort-col"><b>Bracket</b></th>
 			<th class="sort-col"><b>Score</b></th>
 			<th class="sort-col"><b>Visibility</b></th>
 		</tr>
@@ -36,6 +37,9 @@
 						{% endif %}
 					{% endif %}
 				</a>
+			</td>
+			<td>
+				<span class="badge badge-secondary">{{ standing.bracket_name }}</span>
 			</td>
 			<td>{{ standing.score }}</td>
 			<td>

@@ -30,6 +30,16 @@ class SubmissionSchema(ma.ModelSchema):
             "id",
         ],
         "user": ["challenge_id", "challenge", "user", "team", "date", "type", "id"],
+        "self": [
+            "challenge_id",
+            "challenge",
+            "user",
+            "team",
+            "date",
+            "type",
+            "id",
+            "provided",
+        ],
     }
 
     def __init__(self, view=None, *args, **kwargs):

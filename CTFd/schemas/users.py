@@ -182,6 +182,13 @@ class UserSchema(ma.ModelSchema):
                 )
 
             if password and confirm:
+                password_min_length = int(get_config("password_min_length", default=0))
+                if len(password) < password_min_length:
+                    raise ValidationError(
+                        f"Password must be at least {password_min_length} characters",
+                        field_names=["password"],
+                    )
+
                 test = verify_password(
                     plaintext=confirm, ciphertext=target_user.password
                 )
@@ -392,6 +399,7 @@ class UserSchema(ma.ModelSchema):
             "password",
             "type",
             "verified",
+            "change_password",
             "fields",
             "team_id",
         ],

@@ -16,9 +16,9 @@ jobs:
 
     name: Theme Verification
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 20.19
 
@@ -30,9 +30,9 @@ jobs:
         working-directory: ./CTFd/themes/admin
 
       # TODO: Replace in 4.0 with deprecation of previous core theme
-      - name: Verify core-beta theme
+      - name: Verify core theme
         run: |
             pwd
             yarn install --non-interactive
             yarn verify
-        working-directory: ./CTFd/themes/core-beta
+        working-directory: ./CTFd/themes/core

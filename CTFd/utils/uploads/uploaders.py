@@ -242,5 +242,8 @@ class S3Uploader(BaseUploader):
     def open(self, filename, mode="rb"):
         local_folder = current_app.config.get("UPLOAD_FOLDER")
         local_path = os.path.join(local_folder, filename)
+        directory = os.path.dirname(local_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         self.s3.download_file(self.bucket, filename, local_path)
         return Path(local_path).open(mode=mode)

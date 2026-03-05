@@ -90,7 +90,7 @@ def test_that_ctfd_can_be_deployed_in_subdir():
         with app.test_client() as client:
             r = client.get("/")
             assert r.status_code == 302
-            assert r.location == "http://localhost/ctf/setup"
+            assert r.location == "/ctf/setup"
 
             r = client.get("/setup")
             with client.session_transaction() as sess:
@@ -105,13 +105,13 @@ def test_that_ctfd_can_be_deployed_in_subdir():
                 }
             r = client.post("/setup", data=data)
             assert r.status_code == 302
-            assert r.location == "http://localhost/ctf/"
+            assert r.location == "/ctf/"
 
             c = Client(app)
             response = c.get("/")
             headers = dict(response.headers)
             assert response.status == "302 FOUND"
-            assert headers["Location"] == "http://localhost/ctf/"
+            assert headers["Location"] == "/ctf/?"
 
             r = client.get("/challenges")
             assert r.status_code == 200
@@ -174,7 +174,7 @@ def test_theme_fallback_config():
             except TemplateNotFound:
                 pass
             try:
-                r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
+                r = client.get("/themes/foo_fallback/static/manifest.json")
             except TemplateNotFound:
                 pass
     destroy_ctfd(app)
@@ -186,7 +186,7 @@ def test_theme_fallback_config():
         with app.test_client() as client:
             r = client.get("/")
             assert r.status_code == 200
-            r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
+            r = client.get("/themes/foo_fallback/static/manifest.json")
             assert r.status_code == 200
     destroy_ctfd(app)
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from CTFd.models import Flags
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -124,3 +125,116 @@ def test_api_flag_delete_admin():
             assert r.status_code == 200
             assert r.get_json().get("data") is None
     destroy_ctfd(app)
+
+
+def test_flag_content_stripped_on_create_and_update():
+    """Test that flag content is stripped of whitespace on create and update"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        with login_as_user(app, "admin") as client:
+            # Create flag with whitespace
+            r = client.post(
+                "/api/v1/flags",
+                json={
+                    "content": "   flag_with_spaces   ",
+                    "type": "static",
+                    "challenge": 1,
+                },
+            )
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["content"] == "flag_with_spaces"
+
+            flag_id = data["id"]
+
+            f = Flags.query.filter_by(id=flag_id).first()
+            assert f.content == "flag_with_spaces"
+
+            # Update flag with whitespace
+            r = client.patch(
+                f"/api/v1/flags/{flag_id}",
+                json={"content": "   updated_flag   ", "type": "static"},
+            )
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["content"] == "updated_flag"
+
+            f = Flags.query.filter_by(id=flag_id).first()
+            assert f.content == "updated_flag"
+    destroy_ctfd(app)
+
+
+def test_flag_content_stripped_on_create_and_update_regex():
+    """Test that regex flag content is stripped of whitespace on create and update"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        with login_as_user(app, "admin") as client:
+            # Create regex flag with whitespace
+            r = client.post(
+                "/api/v1/flags",
+                json={
+                    "content": "   ^flag\\d+$   ",
+                    "type": "regex",
+                    "challenge": 1,
+                },
+            )
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["content"] == "^flag\\d+$"
+
+            flag_id = data["id"]
+
+            f = Flags.query.filter_by(id=flag_id).first()
+            assert f.content == "^flag\\d+$"
+
+            # Update regex flag with whitespace
+            r = client.patch(
+                f"/api/v1/flags/{flag_id}",
+                json={"content": "   ^updated_flag\\d+$   ", "type": "regex"},
+            )
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["content"] == "^updated_flag\\d+$"
+
+            f = Flags.query.filter_by(id=flag_id).first()
+            assert f.content == "^updated_flag\\d+$"
+
+
+def test_flag_content_not_stripped_on_other_types():
+    """Test that flag content is not stripped for non-static and non-regex types"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        with login_as_user(app, "admin") as client:
+            # Create flag with a custom type
+            r = client.post(
+                "/api/v1/flags",
+                json={
+                    "content": "   custom_flag   ",
+                    "type": "custom",
+                    "challenge": 1,
+                },
+            )
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            # Should not be stripped
+            assert data["content"] == "   custom_flag   "
+
+            flag_id = data["id"]
+
+            f = Flags.query.filter_by(id=flag_id).first()
+            assert f.content == "   custom_flag   "
+
+            # Update flag with whitespace
+            r = client.patch(
+                f"/api/v1/flags/{flag_id}",
+                json={"content": "   updated_custom_flag   ", "type": "custom"},
+            )
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["content"] == "   updated_custom_flag   "
+
+            f = Flags.query.filter_by(id=flag_id).first()
+            assert f.content == "   updated_custom_flag   "

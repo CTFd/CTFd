@@ -14,11 +14,14 @@ from tests.helpers import (
 
 def test_share_endpoints():
     """Test that social share endpoints and disabling are working"""
-    app = create_ctfd(ctf_theme="core-beta")
+    app = create_ctfd(ctf_theme="core")
     with app.app_context():
         chal_id = gen_challenge(app.db).id
         register_user(app)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
+
+        # social_shares are enabled by default now
+        set_config("social_shares", False)
 
         # Test disabled shares dont work
         with login_as_user(app) as client:
@@ -64,7 +67,7 @@ def test_share_endpoints():
 
 def test_share_security():
     """Test that shares and their assets do not load without a valid mac"""
-    app = create_ctfd(ctf_theme="core-beta")
+    app = create_ctfd(ctf_theme="core")
     with app.app_context():
         chal_id = gen_challenge(app.db).id
         register_user(app)

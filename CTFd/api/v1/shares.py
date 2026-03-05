@@ -13,7 +13,7 @@ shares_namespace = Namespace("shares", description="Endpoint to create Share lin
 class Share(Resource):
     @authed_only
     def post(self):
-        if bool(get_config("social_shares")) is False:
+        if bool(get_config("social_shares", default=True)) is False:
             abort(403)
         req = request.get_json()
         share_type = req.get("type")

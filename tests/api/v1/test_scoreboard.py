@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from flask import jsonify
-from flask_caching import make_template_fragment_key
 
 from CTFd.cache import clear_standings
 from CTFd.models import Users
@@ -55,24 +54,12 @@ def test_scoreboard_is_cached():
             assert cached["data"] == orig
             assert app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
 
-            # Check scoreboard page
-            assert (
-                app.cache.get(make_template_fragment_key("public_scoreboard_table"))
-                is None
-            )
-            client.get("/scoreboard")
-            assert app.cache.get(make_template_fragment_key("public_scoreboard_table"))
-
             # Empty standings and check that the cached data is gone
             clear_standings()
             assert app.cache.get("view/api.scoreboard_scoreboard_list") is None
             # Clearing an entire function bumps flask-cachings version identify instead of setting it to null
             new = app.cache.get("CTFd.utils.scoreboard.get_scoreboard_detail_memver")
             assert new != saved
-            assert (
-                app.cache.get(make_template_fragment_key("public_scoreboard_table"))
-                is None
-            )
     destroy_ctfd(app)
 
 
