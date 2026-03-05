@@ -283,4 +283,15 @@
 
 {% block scripts %}
   {{ Assets.js("assets/js/settings.js") }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const billingBtn = document.getElementById('manage-billing-btn');
+      if (billingBtn) {
+        billingBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = "https://billing.stripe.com/p/login/14k4hX9Oh4Fr2lO3cc";
+        });
+      }
+    });
+  </script>
 {% endblock %}
