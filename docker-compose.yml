@@ -13,6 +13,9 @@ services:
       - ACCESS_LOG=-
       - ERROR_LOG=-
       - REVERSE_PROXY=true
+      - AWS_ACCESS_KEY_ID=dummy_access_key_id
+      - AWS_SECRET_ACCESS_KEY=dummy_secret_access_key
+      - AWS_DEFAULT_REGION=us-east-1
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
