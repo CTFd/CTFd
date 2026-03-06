@@ -2,55 +2,58 @@ from CTFd.constants import RawEnum
 
 
 class Languages(str, RawEnum):
-    ENGLISH = "en"
-    GERMAN = "de"
-    POLISH = "pl"
-    SPANISH = "es"
-    ARABIC = "ar"
-    CHINESE = "zh_CN"
-    TAIWANESE = "zh_TW"
-    FRENCH = "fr"
-    KOREAN = "ko"
-    RUSSIAN = "ru"
-    BRAZILIAN_PORTUGESE = "pt_BR"
-    SLOVAK = "sk"
-    JAPANESE = "ja"
-    ITALIAN = "it"
-    VIETNAMESE = "vi"
-    CATALAN = "ca"
-    GREEK = "el"
-    FINNISH = "fi"
-    ROMANIAN = "ro"
-    SLOVENIAN = "sl"
-    SWEDISH = "sv"
-    HEBREW = "he"
-    UZBEK = "uz"
+ENGLISH = "en"
+ARABIC = "ar"
+BRAZILIAN_PORTUGESE = "pt_BR"
+CATALAN = "ca"
+CHINESE = "zh_CN"
+CROATIAN = "hr"
+FINNISH = "fi"
+FRENCH = "fr"
+GERMAN = "de"
+GREEK = "el"
+HEBREW = "he"
+ITALIAN = "it"
+JAPANESE = "ja"
+KOREAN = "ko"
+NORWEGIAN = "no"
+POLISH = "pl"
+ROMANIAN = "ro"
+RUSSIAN = "ru"
+SLOVAK = "sk"
+SLOVENIAN = "sl"
+SPANISH = "es"
+SWEDISH = "sv"
+TAIWANESE = "zh_TW"
+UZBEK = "uz"
+VIETNAMESE = "vi"
 
 
 LANGUAGE_NAMES = {
     "en": "English",
-    "de": "Deutsch",
-    "pl": "Polski",
-    "es": "Español",
-    "ar": "اَلْعَرَبِيَّةُ",
-    "zh_CN": "简体中文",
-    "zh_TW": "繁體中文",
-    "fr": "Français",
-    "ko": "한국어",
-    "ru": "русский язык",
-    "pt_BR": "Português do Brasil",
-    "sk": "Slovenský jazyk",
-    "ja": "日本語",
-    "it": "Italiano",
-    "vi": "tiếng Việt",
     "ca": "Català",
-    "el": "Ελληνικά",
+    "de": "Deutsch",
+    "es": "Español",
     "fi": "Suomi",
+    "fr": "Français",
+    "it": "Italiano",
+    "no": "Norsk",
+    "pl": "Polski",
+    "pt_BR": "Português do Brasil",
     "ro": "Română",
+    "sk": "Slovenský jazyk",
     "sl": "Slovenščina",
     "sv": "Svenska",
-    "he": "עברית",
     "uz": "oʻzbekcha",
+    "ar": "اَلْعَرَبِيَّةُ",
+    "el": "Ελληνικά",
+    "he": "עברית",
+    "ja": "日本語",
+    "ko": "한국어",
+    "ru": "русский язык",
+    "vi": "tiếng Việt",
+    "zh_CN": "简体中文",
+    "zh_TW": "繁體中文",
 }
 
 SELECT_LANGUAGE_LIST = [("", "")] + [
