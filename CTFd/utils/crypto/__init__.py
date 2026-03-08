@@ -9,10 +9,15 @@ from CTFd.utils import string_types
 
 # Passlib bcrypt-sha256 (v1.7.2): $bcrypt-sha256$2b,12$<salt>$<digest>
 # Passlib bcrypt-sha256 (v1.7.4): $bcrypt-sha256$v=2,t=2b,r=12$<salt>$<digest>
-_PASSLIB_V1_RE = re.compile(r"^\$bcrypt-sha256\$(2[ab]),(\d+)\$([A-Za-z0-9./]{22})\$([A-Za-z0-9./]{31})$")
-_PASSLIB_V2_RE = re.compile(r"^\$bcrypt-sha256\$v=2,t=(2[ab]),r=(\d+)\$([A-Za-z0-9./]{22})\$([A-Za-z0-9./]{31})$")
+_PASSLIB_V1_RE = re.compile(
+    r"^\$bcrypt-sha256\$(2[ab]),(\d+)\$([A-Za-z0-9./]{22})\$([A-Za-z0-9./]{31})$"
+)
+_PASSLIB_V2_RE = re.compile(
+    r"^\$bcrypt-sha256\$v=2,t=(2[ab]),r=(\d+)\$([A-Za-z0-9./]{22})\$([A-Za-z0-9./]{31})$"
+)
 
 _bcrypt = bcrypt.BcryptHasher()
+
 
 class PasslibBcryptSha256Hasher:
     """Backwards-compatible hasher for passlib's bcrypt_sha256 hashes.
@@ -38,7 +43,9 @@ class PasslibBcryptSha256Hasher:
         return m.group(1), m.group(2), m.group(3), m.group(4)
 
     def hash(self, password: str | bytes, *, salt: bytes | None = None) -> str:
-        raise NotImplementedError("PasslibBcryptSha256Hasher is verification-only, use Argon2Hasher for new hashes.")
+        raise NotImplementedError(
+            "PasslibBcryptSha256Hasher is verification-only, use Argon2Hasher for new hashes."
+        )
 
     def verify(self, password: str | bytes, hash: str | bytes) -> bool:
         if isinstance(hash, bytes):
@@ -53,7 +60,9 @@ class PasslibBcryptSha256Hasher:
         alg, cost, salt, digest = parsed
         bcrypt_hash = f"${alg}${cost}${salt}{digest}".encode("utf-8")
         # passlib used base64(sha256(password)) as bcrypt input
-        sha256_digest = base64.b64encode(hashlib.sha256(password.encode("utf-8")).digest())
+        sha256_digest = base64.b64encode(
+            hashlib.sha256(password.encode("utf-8")).digest()
+        )
         return _bcrypt.verify(sha256_digest, bcrypt_hash)
 
     # We don't actually use this method, but it may be useful in the future
