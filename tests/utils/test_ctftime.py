@@ -39,6 +39,7 @@ def test_ctftime_prevents_accessing_challenges_before_ctf():
                 client = login_as_user(app)
                 r = client.get("/challenges")
                 assert r.status_code == 403
+                assert b"has not started yet" in r.data
 
                 with client.session_transaction() as sess:
                     data = {"key": "flag", "nonce": sess.get("nonce")}
@@ -84,6 +85,7 @@ def test_ctftime_redirects_to_teams_page_in_teams_mode_before_ctf():
                 client = login_as_user(app)
                 r = client.get("/challenges")
                 assert r.status_code == 403
+                assert b"has not started yet" in r.data
     destroy_ctfd(app)
 
 
@@ -130,6 +132,7 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
                 client = login_as_user(app)
                 r = client.get("/challenges")
                 assert r.status_code == 403
+                assert b"has ended" in r.data
 
                 with client.session_transaction() as sess:
                     data = {
