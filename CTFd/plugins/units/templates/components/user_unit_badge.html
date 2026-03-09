@@ -1,0 +1,13 @@
+{% set unit_info = get_user_unit(user.id) %}
+{% if unit_info %}
+  <h2>
+    <a href="/units/scoreboard">
+      <span class="badge bg-secondary">
+        {% if unit_info.emblem_url %}
+          <img src="{{ unit_info.emblem_url }}" alt="" style="height: 1em; vertical-align: middle;">
+        {% endif %}
+        {{ unit_info.name }}
+      </span>
+    </a>
+  </h2>
+{% endif %}

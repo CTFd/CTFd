@@ -1,0 +1,216 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a1a;
+  color: #e0e0e0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.scoreboard-header {
+  text-align: center;
+  padding: 32px 20px 16px;
+}
+
+.scoreboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #d4af37;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* View tabs */
+.view-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.view-tab {
+  background: transparent;
+  border: 1px solid #2a2a4a;
+  color: #888;
+  padding: 8px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-tab:hover {
+  color: #ccc;
+  border-color: #444;
+}
+
+.view-tab.active {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: #d4af37;
+  color: #d4af37;
+}
+
+/* View panels */
+.view-panel {
+  display: none;
+}
+
+.view-panel.active {
+  display: block;
+}
+
+/* Chart container */
+#score-chart {
+  width: 100%;
+  height: 500px;
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 24px;
+}
+
+/* Cards container */
+.scoreboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+/* Unit row */
+.unit-row {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #12122a 0%, #1a1a35 100%);
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  padding: 16px 24px;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.4s ease,
+              box-shadow 0.3s ease;
+}
+
+.unit-row:hover {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+/* Top 3 styling */
+.unit-row.rank-1 {
+  border-color: #d4af37;
+  background: linear-gradient(135deg, #1a1a10 0%, #2a2518 100%);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.unit-row.rank-2 {
+  border-color: #c0c0c0;
+  background: linear-gradient(135deg, #181820 0%, #222230 100%);
+}
+
+.unit-row.rank-3 {
+  border-color: #cd7f32;
+  background: linear-gradient(135deg, #1a1510 0%, #25201a 100%);
+}
+
+/* Rank number */
+.unit-rank {
+  font-size: 2rem;
+  font-weight: 800;
+  min-width: 60px;
+  text-align: center;
+  color: #666;
+}
+
+.rank-1 .unit-rank { color: #d4af37; text-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
+.rank-2 .unit-rank { color: #c0c0c0; }
+.rank-3 .unit-rank { color: #cd7f32; }
+
+/* Emblem */
+.unit-emblem {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: contain;
+  margin: 0 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #2a2a4a;
+}
+
+.unit-emblem-empty {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  margin: 0 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #2a2a4a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: #333;
+}
+
+/* Unit info */
+.unit-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.unit-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unit-members {
+  font-size: 0.95rem;
+  color: #888;
+  margin-top: 2px;
+}
+
+/* Score */
+.unit-score {
+  font-size: 3.5rem;
+  font-weight: 800;
+  min-width: 180px;
+  text-align: right;
+  color: #d4af37;
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-2 .unit-score { color: #c0c0c0; }
+.rank-3 .unit-score { color: #cd7f32; }
+
+/* Score flash animation */
+@keyframes scoreFlash {
+  0%   { color: #fff; transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.score-changed {
+  animation: scoreFlash 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Empty state */
+.scoreboard-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: #555;
+  font-size: 1.4rem;
+}
+
+/* Auto-scroll for overflow */
+@keyframes autoScroll {
+  0%, 10%  { transform: translateY(0); }
+  90%, 100% { transform: translateY(var(--scroll-distance)); }
+}
+
+.scoreboard-container.scrolling {
+  animation: autoScroll 30s ease-in-out infinite alternate;
+}

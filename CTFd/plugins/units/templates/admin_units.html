@@ -1,0 +1,241 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="/plugins/units/assets/admin_units.css">
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+  <div class="container">
+    <h1>Units</h1>
+  </div>
+</div>
+
+<div class="container">
+  <div id="status-msg" class="alert" role="alert"></div>
+
+  <!-- Create form -->
+  <div class="card mb-4">
+    <div class="card-header"><strong>Create New Unit</strong></div>
+    <div class="card-body">
+      <form id="create-form" enctype="multipart/form-data">
+        <div class="form-row align-items-end">
+          <div class="form-group col-md-3">
+            <label for="create-name">Name</label>
+            <input type="text" class="form-control" id="create-name" name="name" required>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="create-desc">Description</label>
+            <input type="text" class="form-control" id="create-desc" name="description">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="create-emblem">Emblem</label>
+            <input type="file" class="form-control-file" id="create-emblem" name="emblem" accept="image/*">
+            <div class="emblem-preview-wrap" id="create-preview-wrap">
+              <img id="create-preview-img" src="" alt="Preview">
+              <button type="button" class="emblem-preview-cancel" id="create-preview-cancel">&times;</button>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <button type="submit" class="btn btn-success btn-block">Create Unit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Units table -->
+  <div class="card">
+    <div class="card-header"><strong>Units</strong></div>
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead class="thead-light">
+          <tr>
+            <th style="width:60px">Emblem</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Members</th>
+            <th style="width:200px">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="units-table">
+          {% for unit in units %}
+          <tr data-id="{{ unit.id }}">
+            <td>
+              {% if unit.emblem_path %}
+              <img src="/files/{{ unit.emblem_path }}" class="unit-emblem" alt="">
+              {% else %}
+              <div class="unit-emblem-placeholder">?</div>
+              {% endif %}
+            </td>
+            <td class="unit-name">{{ unit.name }}</td>
+            <td class="unit-desc">{{ unit.description }}</td>
+            <td>{{ unit.members | length }}</td>
+            <td>
+              <button class="btn btn-sm btn-primary btn-edit" title="Edit">Edit</button>
+              <button class="btn btn-sm btn-danger btn-delete" title="Delete">Delete</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="edit-form" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Unit</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="edit-id">
+          <div class="form-group">
+            <label for="edit-name">Name</label>
+            <input type="text" class="form-control" id="edit-name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-desc">Description</label>
+            <textarea class="form-control" id="edit-desc" name="description" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-emblem">Replace Emblem</label>
+            <input type="file" class="form-control-file" id="edit-emblem" name="emblem" accept="image/*">
+            <div class="emblem-preview-wrap" id="edit-preview-wrap">
+              <img id="edit-preview-img" src="" alt="Preview">
+              <button type="button" class="emblem-preview-cancel" id="edit-preview-cancel">&times;</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var csrfNonce = init.csrfNonce;
+
+  function showStatus(msg, type) {
+    var el = document.getElementById("status-msg");
+    el.className = "alert alert-" + type;
+    el.textContent = msg;
+    el.style.display = "block";
+    setTimeout(function() { el.style.display = "none"; }, 3000);
+  }
+
+  // Create
+  document.getElementById("create-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var fd = new FormData(this);
+    fd.append("nonce", csrfNonce);
+    fetch("/api/v1/units/", { method: "POST", body: fd })
+      .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+      .then(function(res) {
+        if (res.ok) {
+          showStatus("Unit created!", "success");
+          setTimeout(function() { location.reload(); }, 500);
+        } else {
+          var errors = res.data.errors || {};
+          showStatus(errors.name || "Error creating unit", "danger");
+        }
+      });
+  });
+
+  // Edit - open modal
+  document.getElementById("units-table").addEventListener("click", function(e) {
+    if (e.target.classList.contains("btn-edit")) {
+      var row = e.target.closest("tr");
+      document.getElementById("edit-id").value = row.dataset.id;
+      document.getElementById("edit-name").value = row.querySelector(".unit-name").textContent;
+      document.getElementById("edit-desc").value = row.querySelector(".unit-desc").textContent;
+      document.getElementById("edit-emblem").value = "";
+      document.getElementById("edit-preview-wrap").style.display = "none";
+      document.getElementById("edit-preview-img").src = "";
+      $("#editModal").modal("show");
+    }
+
+    // Delete
+    if (e.target.classList.contains("btn-delete")) {
+      var row = e.target.closest("tr");
+      var unitId = row.dataset.id;
+      var unitName = row.querySelector(".unit-name").textContent;
+      if (!confirm('Delete unit "' + unitName + '"? This will remove all member associations.')) return;
+      fetch("/api/v1/units/" + unitId, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", "CSRF-Token": csrfNonce }
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) {
+            row.remove();
+            showStatus("Unit deleted", "success");
+          } else {
+            showStatus("Error deleting unit", "danger");
+          }
+        });
+    }
+  });
+
+  // Emblem preview + cancel
+  function setupPreview(inputId, wrapId, imgId, cancelId) {
+    var input = document.getElementById(inputId);
+    var wrap = document.getElementById(wrapId);
+    var img = document.getElementById(imgId);
+    var cancel = document.getElementById(cancelId);
+
+    input.addEventListener("change", function() {
+      var file = input.files[0];
+      if (file && file.type.startsWith("image/")) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          img.src = e.target.result;
+          wrap.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        wrap.style.display = "none";
+        img.src = "";
+      }
+    });
+
+    cancel.addEventListener("click", function() {
+      input.value = "";
+      wrap.style.display = "none";
+      img.src = "";
+    });
+  }
+
+  setupPreview("create-emblem", "create-preview-wrap", "create-preview-img", "create-preview-cancel");
+  setupPreview("edit-emblem", "edit-preview-wrap", "edit-preview-img", "edit-preview-cancel");
+
+  // Edit - save
+  document.getElementById("edit-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var unitId = document.getElementById("edit-id").value;
+    var fd = new FormData(this);
+    fd.append("nonce", csrfNonce);
+    fetch("/api/v1/units/" + unitId, { method: "PATCH", body: fd })
+      .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+      .then(function(res) {
+        if (res.ok) {
+          $("#editModal").modal("hide");
+          showStatus("Unit updated!", "success");
+          setTimeout(function() { location.reload(); }, 500);
+        } else {
+          var errors = res.data.errors || {};
+          showStatus(errors.name || "Error updating unit", "danger");
+        }
+      });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit Scoreboard</title>
+  <link rel="stylesheet" href="/plugins/units/assets/unit_scoreboard.css">
+</head>
+<body>
+  <div class="scoreboard-header">
+    <h1>UNIT STANDINGS</h1>
+    <div class="view-tabs">
+      <button class="view-tab active" data-view="chart">Chart</button>
+      <button class="view-tab" data-view="cards">Cards</button>
+    </div>
+  </div>
+
+  <!-- Chart view (default) -->
+  <div id="chart-view" class="view-panel active">
+    <div id="score-chart"></div>
+  </div>
+
+  <!-- Cards view -->
+  <div id="cards-view" class="view-panel">
+    <div id="scoreboard" class="scoreboard-container"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="/plugins/units/assets/unit_scoreboard.js"></script>
+</body>
+</html>
