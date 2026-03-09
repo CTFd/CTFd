@@ -1,8 +1,9 @@
 services:
   ctfd:
     build: .
-    user: root
     restart: always
+    ports:
+      - "8000:8000"
     environment:
       - UPLOAD_FOLDER=/var/uploads
       - DATABASE_URL=mysql+pymysql://${MARIADB_USER}:${MARIADB_PASSWORD}@db/${MARIADB_DATABASE}
@@ -11,39 +12,12 @@ services:
       - LOG_FOLDER=/var/log/CTFd
       - ACCESS_LOG=-
       - ERROR_LOG=-
-      - REVERSE_PROXY=true
     volumes:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
       - .:/opt/CTFd:ro
     depends_on:
       - db
-    networks:
-      default:
-      internal:
-
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: swag
-    restart: always
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - URL=${DOMAIN}
-      - SUBDOMAINS=${SUBDOMAIN}
-      - VALIDATION=dns
-      - DNSPLUGIN=cloudflare
-    volumes:
-      - .data/swag:/config
-      - ./conf/swag/proxy-confs/ctfd.subdomain.conf:/config/nginx/proxy-confs/ctfd.subdomain.conf:ro
-    ports:
-      - 443:443
-      - 80:80
-    depends_on:
-      - ctfd
     networks:
       default:
       internal:
@@ -61,11 +35,10 @@ services:
       - .data/mysql:/var/lib/mysql
     networks:
       internal:
-    # This command is required to set important mariadb defaults
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
   cache:
-    image: redis:7
+    image: redis:4
     restart: always
     volumes:
       - .data/redis:/data
