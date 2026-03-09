@@ -4,6 +4,7 @@ from datetime import timezone as TimeZone
 import pytest
 
 from CTFd.models import Solves
+from CTFd.utils import set_config
 from CTFd.utils.dates import (
     ctf_ended,
     ctf_started,
@@ -144,6 +145,41 @@ def test_ctftime_prevents_accessing_challenges_after_ctf():
                 assert r.status_code == 403
             solve_count = app.db.session.query(app.db.func.count(Solves.id)).first()[0]
             assert solve_count == 0
+    destroy_ctfd(app)
+
+
+def test_ctftime_custom_not_started_message():
+    """Test that a custom not-started message is shown when configured"""
+    app = create_ctfd()
+    with app.app_context():
+        with ctftime.init():
+            register_user(app)
+            set_config(
+                "ctf_not_started_message",
+                "Thanks for registering! The CTF will start soon.",
+            )
+
+            with ctftime.not_started():
+                client = login_as_user(app)
+                r = client.get("/challenges")
+                assert r.status_code == 403
+                assert b"Thanks for registering! The CTF will start soon." in r.data
+    destroy_ctfd(app)
+
+
+def test_ctftime_custom_ended_message():
+    """Test that a custom ended message is shown when configured"""
+    app = create_ctfd()
+    with app.app_context():
+        with ctftime.init():
+            register_user(app)
+            set_config("ctf_ended_message", "Thanks for playing! See you next year.")
+
+            with ctftime.ended():
+                client = login_as_user(app)
+                r = client.get("/challenges")
+                assert r.status_code == 403
+                assert b"Thanks for playing! See you next year." in r.data
     destroy_ctfd(app)
 
 
