@@ -1,5 +1,6 @@
 import csv
 import json
+import secrets
 from io import BytesIO, StringIO
 
 from CTFd.models import (
@@ -18,6 +19,7 @@ from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.teams import TeamSchema
 from CTFd.schemas.users import UserSchema
 from CTFd.utils.config import is_teams_mode, is_users_mode
+from CTFd.utils.crypto import hash_password
 from CTFd.utils.scores import get_standings
 
 
@@ -301,6 +303,156 @@ def dump_teams_with_members_fields_csv():
     return output
 
 
+def _resolve_password(raw):
+    if not raw:
+        return None
+
+    if raw.startswith("$bcrypt-sha256$"):
+        return raw
+
+    return hash_password(raw)
+
+
+def dump_users_teams_csv():
+    temp = StringIO()
+    writer = csv.writer(temp)
+
+    user_fields = UserFields.query.all()
+    user_field_ids = [f.id for f in user_fields]
+    user_field_names = [f.name for f in user_fields]
+
+    team_fields = TeamFields.query.all()
+    team_field_ids = [f.id for f in team_fields]
+    team_field_names = [f.name for f in team_fields]
+
+    user_mapper_cols = [col.name for col in Users.__mapper__.columns]
+
+    header = (
+        user_mapper_cols
+        + user_field_names
+        + ["team_name", "team_email", "team_captain"]
+        + team_field_names
+    )
+    writer.writerow(header)
+
+    for user in Users.query.all():
+        user_field_entries = {f.field_id: f.value for f in user.field_entries}
+        user_field_values = [
+            user_field_entries.get(f_id, "") for f_id in user_field_ids
+        ]
+        user_data = [getattr(user, col) for col in user_mapper_cols] + user_field_values
+
+        team = user.team
+        if team:
+            team_field_entries = {f.field_id: f.value for f in team.field_entries}
+            team_field_values = [
+                team_field_entries.get(f_id, "") for f_id in team_field_ids
+            ]
+            is_captain = team.captain_id == user.id
+            team_data = [team.name, team.email or "", is_captain] + team_field_values
+        else:
+            team_data = ["", "", ""] + [""] * len(team_field_names)
+
+        writer.writerow(user_data + team_data)
+
+    temp.seek(0)
+
+    output = BytesIO()
+    output.write(temp.getvalue().encode("utf-8"))
+    output.seek(0)
+    temp.close()
+
+    return output
+
+
+def load_users_teams_csv(dict_reader):
+    errors = []
+    for i, line in enumerate(dict_reader):
+        user_email = (line.get("email") or "").strip()
+        team_name = (line.get("team_name") or "").strip()
+        team_email = (line.get("team_email") or "").strip() or None
+        team_captain = (line.get("team_captain") or "").strip().lower() in (
+            "true",
+            "1",
+            "yes",
+        )
+        raw_password = (line.get("password") or "").strip()
+
+        if not user_email:
+            errors.append((i, {"email": "Missing user email"}))
+            continue
+
+        user = Users.query.filter_by(email=user_email).first()
+        if user is None:
+            user = Users(
+                name=(line.get("name") or "").strip() or user_email,
+                email=user_email,
+                password=secrets.token_hex(16),  # temporary; overwritten below
+                type="user",
+            )
+            db.session.add(user)
+            db.session.flush()
+
+        for col in Users.__mapper__.columns:
+            if col.name in {
+                "id",
+                "oauth_id",
+                "type",
+                "email",
+                "team_id",
+                "bracket_id",
+                "created",
+                "password",  # handled via update to bypass the ORM transformation
+            }:
+                continue
+
+            val = line.get(col.name, "")
+            if val == "":
+                continue
+
+            if col.name in {"hidden", "banned", "verified", "change_password"}:
+                val = val.lower() in ("true", "1", "yes")
+
+            setattr(user, col.name, val)
+
+        db.session.flush()
+
+        # Write password directly, bypassing the ORM validator, so pre-hashed
+        # values are stored as-is and plaintext values are hashed exactly once.
+        resolved_pw = _resolve_password(raw_password)
+        if resolved_pw:
+            db.session.execute(
+                Users.__table__.update()
+                .where(Users.id == user.id)
+                .values(password=resolved_pw)
+            )
+
+        if not team_name:
+            db.session.commit()
+            continue
+
+        team = Teams.query.filter_by(name=team_name).first()
+        if team is None:
+            team = Teams(
+                name=team_name,
+                email=team_email,
+                password=secrets.token_hex(16),
+            )
+            db.session.add(team)
+            db.session.flush()
+
+        user.team_id = team.id
+        if team_captain:
+            team.captain_id = user.id
+
+        db.session.commit()
+
+    if errors:
+        return errors
+
+    return True
+
+
 def dump_database_table(tablename):
     # TODO: It might make sense to limit dumpable tables. Config could potentially leak sensitive information.
     model = get_class_by_tablename(tablename)
@@ -467,6 +619,7 @@ def load_challenges_csv(dict_reader):
 CSV_KEYS = {
     "scoreboard": dump_scoreboard_csv,
     "users+fields": dump_users_with_fields_csv,
+    "users+teams": dump_users_teams_csv,
     "teams+fields": dump_teams_with_fields_csv,
     "teams+members+fields": dump_teams_with_members_fields_csv,
 }
