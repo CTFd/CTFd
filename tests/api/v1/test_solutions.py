@@ -129,6 +129,27 @@ def test_api_solutions_post_admin_default_state():
     destroy_ctfd(app)
 
 
+def test_api_solutions_post_admin_duplicate_challenge_solution():
+    """Does posting a second solution for the same challenge return an API error"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        gen_solution(app.db, challenge_id=1, content="existing solution")
+
+        with login_as_user(app, "admin") as client:
+            r = client.post(
+                "/api/v1/solutions",
+                json={"challenge_id": 1, "content": "duplicate solution"},
+            )
+            assert r.status_code == 400
+            data = r.get_json()
+            assert data["success"] is False
+            assert data["errors"]["challenge_id"] == [
+                "A solution for this challenge already exists"
+            ]
+    destroy_ctfd(app)
+
+
 def test_api_solutions_get_detail_public():
     """Can a public user get /api/v1/solutions/<solution_id>"""
     app = create_ctfd()
