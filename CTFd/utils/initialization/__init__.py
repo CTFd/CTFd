@@ -220,6 +220,7 @@ def init_request_processors(app):
                 "views.setup",
                 "views.integrations",
                 "views.themes",
+                "views.themes_beta",
                 "views.files",
                 "views.healthcheck",
                 "views.robots",
@@ -230,7 +231,7 @@ def init_request_processors(app):
 
     @app.before_request
     def tracker():
-        if request.endpoint == "views.themes":
+        if request.endpoint in ("views.themes", "views.themes_beta"):
             return
 
         if import_in_progress():
@@ -272,7 +273,7 @@ def init_request_processors(app):
 
     @app.before_request
     def banned():
-        if request.endpoint == "views.themes":
+        if request.endpoint in ("views.themes", "views.themes_beta"):
             return
 
         if authed():
@@ -298,7 +299,12 @@ def init_request_processors(app):
 
     @app.before_request
     def change_password():
-        if request.endpoint in ("views.themes", "auth.logout", "auth.reset_password"):
+        if request.endpoint in (
+            "views.themes",
+            "views.themes_beta",
+            "auth.logout",
+            "auth.reset_password",
+        ):
             return
 
         if authed():
@@ -348,21 +354,39 @@ def init_request_processors(app):
 
     @app.before_request
     def csrf():
+        # TODO: CTFd 4.0 Consider reorganizing this function to only run on non safe methods
+        # Early exit: no CSRF for functions explicitly marked as bypassing CSRF
         try:
             func = app.view_functions[request.endpoint]
         except KeyError:
             abort(404)
         if hasattr(func, "_bypass_csrf"):
             return
+        # No CSRF for theme files using safe methods
+        safe_methods = (
+            "GET",
+            "HEAD",
+            "OPTIONS",
+            "TRACE",
+        )  # See RFC 7231, Section 4.2.1
+        if (
+            request.endpoint in ("views.themes", "views.themes_beta")
+            and request.method in safe_methods
+        ):
+            return
+        # No CSRF for API requests with an Authorization header
         if request.headers.get("Authorization"):
             return
+        # Ensure a session and CSRF nonce are present
         if not session.get("nonce"):
             session["nonce"] = generate_nonce()
-        if request.method not in ("GET", "HEAD", "OPTIONS", "TRACE"):
+        if request.method not in safe_methods:
             if request.content_type == "application/json":
+                # API requests with JSON body => token in header
                 if session["nonce"] != request.headers.get("CSRF-Token"):
                     abort(403)
             if request.content_type != "application/json":
+                # Form submissions => token in form body
                 if session["nonce"] != request.form.get("nonce"):
                     abort(403)
 

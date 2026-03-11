@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import io
 import json
 import os
 import zipfile
 
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import Challenges, Flags, Teams, Users
-from CTFd.utils import text_type
+from CTFd.utils import get_config, text_type
 from CTFd.utils.exports import export_ctf, import_ctf
 from tests.helpers import (
     create_ctfd,
@@ -101,4 +103,61 @@ def test_import_ctf():
 
                 chal = Challenges.query.filter_by(name="chal_name10").first()
                 assert chal.requirements == {"prerequisites": [1]}
+    destroy_ctfd(app)
+
+
+def test_import_ctf_restores_installed_theme():
+    """Test that import_ctf restores the theme from backup if it is installed"""
+    app = create_ctfd(ctf_theme="core-deprecated")
+    if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
+        with app.app_context():
+            backup = export_ctf()
+            with open("export.test_import_ctf_restores_installed_theme.zip", "wb") as f:
+                f.write(backup.read())
+    destroy_ctfd(app)
+
+    app = create_ctfd()
+    if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
+        with app.app_context():
+            import_ctf("export.test_import_ctf_restores_installed_theme.zip")
+            assert get_config("ctf_theme") == "core-deprecated"
+    destroy_ctfd(app)
+
+
+def test_import_ctf_defaults_theme_when_not_installed():
+    """Test that import_ctf falls back to the default theme if the backup theme is not installed"""
+    app = create_ctfd()
+    if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
+        with app.app_context():
+            backup = export_ctf()
+
+            # Patch the backup zip to set ctf_theme to a nonexistent theme
+            src_zip = zipfile.ZipFile(backup, "r")
+            config_data = json.loads(src_zip.read("db/config.json"))
+            for entry in config_data["results"]:
+                if entry.get("key") == "ctf_theme":
+                    entry["value"] = "nonexistent-theme"
+                    break
+
+            patched = io.BytesIO()
+            with zipfile.ZipFile(patched, "w") as dst_zip:
+                for name in src_zip.namelist():
+                    if name == "db/config.json":
+                        dst_zip.writestr(name, json.dumps(config_data))
+                    else:
+                        dst_zip.writestr(name, src_zip.read(name))
+            src_zip.close()
+            patched.seek(0)
+
+            with open(
+                "export.test_import_ctf_defaults_theme_when_not_installed.zip", "wb"
+            ) as f:
+                f.write(patched.read())
+    destroy_ctfd(app)
+
+    app = create_ctfd()
+    if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
+        with app.app_context():
+            import_ctf("export.test_import_ctf_defaults_theme_when_not_installed.zip")
+            assert get_config("ctf_theme") == DEFAULT_THEME
     destroy_ctfd(app)

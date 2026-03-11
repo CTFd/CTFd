@@ -2,6 +2,7 @@ from typing import List
 
 from flask import abort, request
 from flask_restx import Namespace, Resource
+from sqlalchemy.exc import IntegrityError
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -123,7 +124,16 @@ class SolutionList(Resource):
         schema = SolutionSchema()
 
         db.session.add(solution)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return {
+                "success": False,
+                "errors": {
+                    "challenge_id": ["A solution for this challenge already exists"]
+                },
+            }, 400
 
         response = schema.dump(solution)
         db.session.close()
