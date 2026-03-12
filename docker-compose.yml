@@ -22,28 +22,12 @@ services:
       default:
       internal:
 
-  swag:
-    image: lscr.io/linuxserver/swag:latest
-    container_name: swag
-    restart: always
-    cap_add:
-      - NET_ADMIN
+  cloudflared:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - URL=${DOMAIN}
-      - SUBDOMAINS=${SUBDOMAIN}
-      - VALIDATION=dns
-      - DNSPLUGIN=cloudflare
-    volumes:
-      - .data/swag:/config
-      - ./conf/swag/proxy-confs/ctfd.subdomain.conf:/config/nginx/proxy-confs/ctfd.subdomain.conf:ro
-    ports:
-      - 443:443
-      - 80:80
-    depends_on:
-      - ctfd
+      - TUNNEL_TOKEN=${CLOUDFLARED_TUNNEL_TOKEN}
     networks:
       default:
       internal:

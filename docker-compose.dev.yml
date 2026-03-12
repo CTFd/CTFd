@@ -2,8 +2,8 @@ services:
   ctfd:
     build: .
     restart: always
-    ports:
-      - "8000:8000"
+    ports: 
+      - "8000:8000" # Needed on my dev network since I'm on WSL
     environment:
       - UPLOAD_FOLDER=/var/uploads
       - DATABASE_URL=mysql+pymysql://${MARIADB_USER}:${MARIADB_PASSWORD}@db/${MARIADB_DATABASE}
