@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 
 from flask import Blueprint
+from sqlalchemy.exc import IntegrityError
 
 from CTFd.exceptions.challenges import (
     ChallengeCreateException,
+    ChallengeSolveException,
     ChallengeUpdateException,
 )
 from CTFd.models import (
@@ -108,6 +110,7 @@ class BaseChallenge(object):
             "category": challenge.category,
             "state": challenge.state,
             "max_attempts": challenge.max_attempts,
+            "position": challenge.position,
             "logic": challenge.logic,
             "initial": challenge.initial if challenge.function != "static" else None,
             "decay": challenge.decay if challenge.function != "static" else None,
@@ -249,6 +252,7 @@ class BaseChallenge(object):
         """
         data = request.form or request.get_json()
         submission = data["submission"].strip()
+
         solve = Solves(
             user_id=user.id,
             team_id=team.id if team else None,
@@ -256,8 +260,15 @@ class BaseChallenge(object):
             ip=get_ip(req=request),
             provided=submission,
         )
-        db.session.add(solve)
-        db.session.commit()
+
+        try:
+            db.session.add(solve)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            raise ChallengeSolveException(
+                f"Duplicate solve for user {user.id} on challenge {challenge.id}"
+            ) from e
 
         # If the challenge is dynamic we should calculate a new value
         if challenge.function in DECAY_FUNCTIONS:

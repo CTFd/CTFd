@@ -13,8 +13,21 @@ from CTFd.utils.dates import isoformat, unix_time_to_utc
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modes import generate_account_url, get_model
 
+# TODO: CTFd 4.0. Consider changing to a dataclass
+ChallengeFields = [
+    "id",
+    "type",
+    "name",
+    "value",
+    "category",
+    "tags",
+    "requirements",
+    "position",
+]
 Challenge = namedtuple(
-    "Challenge", ["id", "type", "name", "value", "category", "tags", "requirements"]
+    "Challenge",
+    ChallengeFields,
+    defaults=(None,) * len(ChallengeFields),
 )
 
 Rating = namedtuple("Rating", ["up", "down", "count"])
@@ -32,7 +45,14 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
     chal_q = (
         chal_q.filter_by(**query_args)
         .filter(*filters)
-        .order_by(Challenges.value, Challenges.id)
+        .order_by(
+            (
+                Challenges.position == 0
+            ).asc(),  # Position of 0 should go to the end/bottom
+            Challenges.position.asc(),  # Ordered challenges should go first
+            Challenges.value,
+            Challenges.id,
+        )
     )
     tag_schema = TagSchema(view="user", many=True)
 
@@ -44,8 +64,9 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
             name=c.name,
             value=c.value,
             category=c.category,
-            requirements=c.requirements,
             tags=tag_schema.dump(c.tags).data,
+            requirements=c.requirements,
+            position=c.position,
         )
         results.append(ct)
     return results
@@ -112,7 +133,7 @@ def get_solve_ids_for_user_id(user_id):
         .filter(Solves.account_id == user.account_id)
         .all()
     )
-    solve_ids = {value for value, in solve_ids}
+    solve_ids = {value for (value,) in solve_ids}
     return solve_ids
 
 
