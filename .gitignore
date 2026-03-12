@@ -83,3 +83,6 @@ flask_profiler.sql
 
 # Environment
 .env
+
+# Logs
+*.txti
