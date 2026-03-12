@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-24 00:30\n"
+"PO-Revision-Date: 2026-01-14 02:21\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -20,22 +20,22 @@ msgstr ""
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr ""
+msgstr "Η Ορατότητα Δοκιμασιών έχει οριστεί ως Μόνο για Διαχειριστές"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr ""
+msgstr "%(ctf_name)s δεν έχει ξεκινήσει ακόμα"
 
 #: CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
-msgstr ""
+msgstr "%(ctf_name)s είναι σε παύση"
 
 #: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
-msgstr ""
+msgstr "%(ctf_name)s έχει τελειώσει"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
 #: CTFd/themes/core-beta/templates/teams/private.html:329
@@ -303,11 +303,11 @@ msgstr "Σύνδεσμος πρόσκλησης"
 
 #: CTFd/forms/users.py:133
 msgid "Bracket"
-msgstr ""
+msgstr "Ταμπλό"
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
-msgstr ""
+msgstr "Διαγωνιστικό ταμπλό για τον χρήστη σας"
 
 #: CTFd/forms/users.py:172
 msgid "Search for matching users"
@@ -339,8 +339,8 @@ msgstr "Δείτε Υπόδειξη"
 #: CTFd/themes/core-beta/templates/challenge.html:120
 msgid "attempt"
 msgid_plural "attempts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "προσπάθεια"
+msgstr[1] "προσπάθειες"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
@@ -352,7 +352,7 @@ msgstr "Επόμενη Πρόκληση"
 
 #: CTFd/themes/core-beta/templates/challenge.html:175
 msgid "Share"
-msgstr ""
+msgstr "Κοινοποίηση"
 
 #: CTFd/themes/core-beta/templates/challenge.html:207
 #: CTFd/themes/core-beta/templates/setup.html:305
@@ -426,7 +426,7 @@ msgstr "Κωδικός πρόσβασης που χρησιμοποιείται 
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr ""
+msgstr "Με την εγγραφή σας, συμφωνείτε με την <a href=\"%(privacy_link)s\" target=\"_blank\">πολιτική απορρήτου</a> και τους <a href=\"%(tos_link)s\" target=\"_blank\">όρους χρήσης</a>"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
@@ -447,11 +447,11 @@ msgstr "Πίνακας αποτελεσμάτων"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:24
 msgid "All"
-msgstr ""
+msgstr "Όλες"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:36
 msgid "Place"
-msgstr ""
+msgstr "Θέση"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:38
 #: CTFd/themes/core-beta/templates/teams/private.html:330
@@ -461,7 +461,7 @@ msgstr "Βαθμολογία"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:60
 msgid "Scoreboard is empty"
-msgstr ""
+msgstr "Ο πίνακας βαθμολογίας είναι κενός"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:124
 #: CTFd/themes/core-beta/templates/components/navbar.html:129
@@ -645,16 +645,16 @@ msgstr "Αποσύνδεση"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:180
 msgid "Change language"
-msgstr ""
+msgstr "Αλλαγή γλώσσας"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:199
 #: CTFd/themes/core-beta/templates/components/navbar.html:204
 msgid "Toggle theme"
-msgstr ""
+msgstr "Εναλλαγή θέματος"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:12
 msgid "403 Forbidden"
-msgstr ""
+msgstr "403 Απαγορεύεται"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
@@ -662,7 +662,7 @@ msgstr "Το αρχείο δεν βρέθηκε"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "404 Not Found"
-msgstr ""
+msgstr "404 Δε βρέθηκε"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
@@ -674,11 +674,11 @@ msgstr "Παρακαλώ σιγά!"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:13
 msgid "429 Too Many Requests"
-msgstr ""
+msgstr "429 Πάρα Πολλά Αιτήματα"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:12
 msgid "502 Bad Gateway"
-msgstr ""
+msgstr "502 Εσφαλμένη Πύλη"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
@@ -834,12 +834,12 @@ msgstr "Σελίδα"
 #: CTFd/themes/core-beta/templates/users/users.html:14
 #, python-format
 msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
-msgstr ""
+msgstr "Αναζήτηση χρηστών με <strong>%(field)s</strong> που ταιριάζουν με <strong>%(q)s</strong>"
 
 #: CTFd/themes/core-beta/templates/users/users.html:17
 #, python-format
 msgid "Page %(page)s of %(total)s results"
-msgstr ""
+msgstr "Σελίδα %(page)s από %(total)s αποτελέσματα"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"

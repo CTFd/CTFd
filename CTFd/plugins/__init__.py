@@ -8,6 +8,7 @@ from flask import send_file, send_from_directory, url_for
 
 from CTFd.utils.config.pages import get_pages
 from CTFd.utils.decorators import admins_only as admins_only_wrapper
+from CTFd.utils.plugins import override_function as utils_override_function
 from CTFd.utils.plugins import override_template as utils_override_template
 from CTFd.utils.plugins import (
     register_admin_script as utils_register_admin_plugin_script,
@@ -70,6 +71,16 @@ def override_template(*args, **kwargs):
     e.g. override_template('scoreboard.html', '<h1>scores</h1>')
     """
     utils_override_template(*args, **kwargs)
+
+
+def override_function(*args, **kwargs):
+    """
+    Registers an override for a specific function.
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    utils_override_function(*args, **kwargs)
 
 
 def register_plugin_script(*args, **kwargs):
@@ -194,6 +205,7 @@ def init_plugins(app):
 
     app.admin_plugin_menu_bar = []
     app.plugin_menu_bar = []
+    app.overridden_functions = {}
     app.plugins_dir = os.path.dirname(__file__)
 
     if app.config.get("SAFE_MODE", False) is False:

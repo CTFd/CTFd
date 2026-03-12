@@ -13,6 +13,7 @@ from CTFd.cache import cache, clear_challenges, clear_ratings, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.exceptions.challenges import (
     ChallengeCreateException,
+    ChallengeSolveException,
     ChallengeUpdateException,
 )
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
@@ -231,6 +232,7 @@ class ChallengeList(Resource):
                     "type": challenge_type.name,
                     "name": challenge.name,
                     "value": challenge.value,
+                    "position": challenge.position,
                     "solves": solve_counts.get(challenge.id, solve_count_dfl),
                     "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
@@ -349,7 +351,7 @@ class Challenge(Resource):
                 else:
                     # We need to handle the case where a user is viewing challenges anonymously
                     solve_ids = []
-                solve_ids = {value for value, in solve_ids}
+                solve_ids = {value for (value,) in solve_ids}
                 prereqs = set(requirements).intersection(all_challenge_ids)
                 if solve_ids >= prereqs or is_admin():
                     pass
@@ -677,7 +679,7 @@ class ChallengeAttempt(Resource):
                 .order_by(Solves.challenge_id.asc())
                 .all()
             )
-            solve_ids = {solve_id for solve_id, in solve_ids}
+            solve_ids = {solve_id for (solve_id,) in solve_ids}
             # Gather all challenge IDs so that we can determine invalid challenge prereqs
             all_challenge_ids = {
                 c.id for c in Challenges.query.with_entities(Challenges.id).all()
@@ -811,9 +813,35 @@ class ChallengeAttempt(Resource):
             if status == "correct" or status is True:
                 # The challenge plugin says the input is right
                 if ctftime() or current_user.is_admin():
-                    chal_class.solve(
-                        user=user, team=team, challenge=challenge, request=request
-                    )
+                    try:
+                        chal_class.solve(
+                            user=user,
+                            team=team,
+                            challenge=challenge,
+                            request=request,
+                        )
+
+                    # ChallengeSoleException is raised on duplicate solve - so treat it as already_solved
+                    except ChallengeSolveException:
+                        log(
+                            "submissions",
+                            "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                            name=user.name,
+                            submission=request_data.get("submission", "").encode(
+                                "utf-8"
+                            ),
+                            challenge_id=challenge_id,
+                            kpm=kpm,
+                        )
+
+                        return {
+                            "success": True,
+                            "data": {
+                                "status": "already_solved",
+                                "message": f"{message} but you already solved this",
+                            },
+                        }
+
                     clear_standings()
                     clear_challenges()
 
