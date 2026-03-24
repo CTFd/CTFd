@@ -301,6 +301,115 @@ def dump_teams_with_members_fields_csv():
     return output
 
 
+def dump_users_teams_csv():
+    temp = StringIO()
+    writer = csv.writer(temp)
+
+    user_fields = UserFields.query.all()
+    user_field_ids = [f.id for f in user_fields]
+    user_field_names = [f.name for f in user_fields]
+
+    team_fields = TeamFields.query.all()
+    team_field_ids = [f.id for f in team_fields]
+    team_field_names = [f.name for f in team_fields]
+
+    header = (
+        ["name", "email", "password"]
+        + user_field_names
+        + ["team_name", "team_email", "team_password", "team_captain"]
+        + team_field_names
+    )
+    writer.writerow(header)
+
+    for user in Users.query.all():
+        user_field_entries = {f.field_id: f.value for f in user.field_entries}
+        user_field_values = [
+            user_field_entries.get(f_id, "") for f_id in user_field_ids
+        ]
+        user_data = [user.name, user.email, ""] + user_field_values
+
+        team = user.team
+        if team:
+            team_field_entries = {f.field_id: f.value for f in team.field_entries}
+            team_field_values = [
+                team_field_entries.get(f_id, "") for f_id in team_field_ids
+            ]
+            is_captain = team.captain_id == user.id
+            team_data = [
+                team.name,
+                team.email or "",
+                "",
+                is_captain,
+            ] + team_field_values
+        else:
+            team_data = ["", "", "", ""] + [""] * len(team_field_names)
+
+        writer.writerow(user_data + team_data)
+
+    temp.seek(0)
+
+    output = BytesIO()
+    output.write(temp.getvalue().encode("utf-8"))
+    output.seek(0)
+    temp.close()
+
+    return output
+
+
+def load_users_teams_csv(dict_reader):
+    user_schema = UserSchema()
+    team_schema = TeamSchema()
+    errors = []
+    for i, line in enumerate(dict_reader):
+        team_name = (line.pop("team_name", "") or "").strip()
+        team_email = (line.pop("team_email", "") or "").strip() or None
+        team_password = (line.pop("team_password", "") or "").strip()
+        team_captain = (line.pop("team_captain", "") or "").strip().lower() in (
+            "true",
+            "1",
+            "yes",
+        )
+
+        response = user_schema.load(line)
+        if response.errors:
+            errors.append((i, response.errors))
+            continue
+
+        user = response.data
+        db.session.add(user)
+        db.session.commit()
+
+        if not team_name:
+            continue
+
+        team = Teams.query.filter_by(name=team_name).first()
+        if team is None:
+            team_data = {
+                "name": team_name,
+                "email": team_email,
+                "password": team_password,
+            }
+            response = team_schema.load(team_data)
+            if response.errors:
+                errors.append((i, response.errors))
+                continue
+
+            team = response.data
+            db.session.add(team)
+            db.session.commit()
+
+        user.team_id = team.id
+        if team_captain:
+            team.captain_id = user.id
+
+        db.session.commit()
+
+    if errors:
+        return errors
+
+    return True
+
+
 def dump_database_table(tablename):
     # TODO: It might make sense to limit dumpable tables. Config could potentially leak sensitive information.
     model = get_class_by_tablename(tablename)
@@ -467,6 +576,7 @@ def load_challenges_csv(dict_reader):
 CSV_KEYS = {
     "scoreboard": dump_scoreboard_csv,
     "users+fields": dump_users_with_fields_csv,
+    "users+teams": dump_users_teams_csv,
     "teams+fields": dump_teams_with_fields_csv,
     "teams+members+fields": dump_teams_with_members_fields_csv,
 }
