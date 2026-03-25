@@ -429,6 +429,15 @@ class Users(db.Model):
         back_populates="user",
     )
 
+    mfa = db.relationship(
+        "UsersMFA",
+        foreign_keys="UsersMFA.user_id",
+        lazy="select",
+        uselist=False,
+        cascade="all, delete-orphan",
+        back_populates="user",
+    )
+
     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     __mapper_args__ = {"polymorphic_identity": "user", "polymorphic_on": type}
@@ -614,6 +623,37 @@ class Users(db.Model):
 class Admins(Users):
     __tablename__ = "admins"
     __mapper_args__ = {"polymorphic_identity": "admin"}
+
+
+class UsersMFA(db.Model):
+    __tablename__ = "users_mfa"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        unique=True,
+    )
+
+    enabled = db.Column(db.Boolean, default=True, nullable=False)
+    totp_secret = db.Column(db.Text, nullable=False)
+    backup_codes = db.Column(db.Text, nullable=False)
+    last_used = db.Column(db.DateTime, nullable=True)
+    created = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow,
+        nullable=False,
+    )
+    updated = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.utcnow,
+        nullable=False,
+    )
+
+    user = db.relationship("Users", back_populates="mfa")
+
+    def __init__(self, *args, **kwargs):
+        super(UsersMFA, self).__init__(**kwargs)
 
 
 class Teams(db.Model):

@@ -48,6 +48,7 @@ from CTFd.utils.helpers import get_errors, get_infos, markup
 from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.security.auth import login_user
 from CTFd.utils.security.csrf import generate_nonce
+from CTFd.utils.security.mfa import is_mfa_enabled
 from CTFd.utils.security.signing import (
     BadSignature,
     BadTimeSignature,
@@ -340,6 +341,7 @@ def settings():
         affiliation=user.affiliation,
         country=user.country,
         tokens=tokens,
+        mfa_enabled=is_mfa_enabled(user),
         prevent_name_change=prevent_name_change,
         infos=infos,
         errors=errors,

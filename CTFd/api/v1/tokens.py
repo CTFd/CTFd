@@ -1,7 +1,7 @@
 import datetime
 from typing import List
 
-from flask import request, session
+from flask import g, request, session
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -10,6 +10,11 @@ from CTFd.models import Tokens, db
 from CTFd.schemas.tokens import TokenSchema
 from CTFd.utils.decorators import authed_only, require_verified_emails
 from CTFd.utils.security.auth import generate_user_token
+from CTFd.utils.security.mfa import (
+    decrypt_totp_secret,
+    is_mfa_enabled,
+    verify_totp_code,
+)
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
 
 tokens_namespace = Namespace("tokens", description="Endpoint to retrieve Tokens")
@@ -83,13 +88,29 @@ class TokenList(Resource):
         },
     )
     def post(self):
-        req = request.get_json()
+        req = request.get_json() or {}
+        user = get_current_user()
+
+        if is_mfa_enabled(user) and not getattr(g, "token_auth", False):
+            try:
+                secret = decrypt_totp_secret(user.mfa.totp_secret)
+                verified = verify_totp_code(secret=secret, otp=req.get("mfa_code", ""))
+            except Exception:
+                verified = False
+
+            if not verified:
+                return {
+                    "success": False,
+                    "errors": {
+                        "mfa_code": "The authenticator code is incorrect. Please try again."
+                    },
+                }, 400
+
         expiration = req.get("expiration")
         description = req.get("description")
         if expiration:
             expiration = datetime.datetime.strptime(expiration, "%Y-%m-%d")
 
-        user = get_current_user()
         token = generate_user_token(
             user, expiration=expiration, description=description
         )

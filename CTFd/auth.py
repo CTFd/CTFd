@@ -1,3 +1,5 @@
+import datetime
+
 import requests
 from flask import Blueprint, abort
 from flask import current_app as app
@@ -28,6 +30,11 @@ from CTFd.utils.security.email import (
     remove_reset_password_token,
     verify_email_confirm_token,
     verify_reset_password_token,
+)
+from CTFd.utils.security.mfa import (
+    consume_backup_code,
+    decrypt_totp_secret,
+    verify_totp_code,
 )
 from CTFd.utils.validators import ValidationError
 
@@ -443,6 +450,65 @@ def register():
 @ratelimit(method="POST", limit=10, interval=5)
 def login():
     errors = get_errors()
+
+    if session.get("mfa_pending"):
+        user = Users.query.filter_by(id=session.get("id")).first()
+        if user is None:
+            logout_user()
+            errors.append("Your login session has expired. Please sign in again.")
+            return render_template("login.html", errors=errors, mfa_pending=False)
+
+        if user.mfa is None or user.mfa.enabled is False:
+            session.pop("mfa_pending", None)
+            session.pop("mfa_verified", None)
+
+            next_url = session.pop("mfa_next", None)
+            if next_url and validators.is_safe_url(next_url):
+                return redirect(next_url)
+
+            return redirect(url_for("challenges.listing"))
+
+        if request.method == "POST":
+            code = request.form.get("mfa_code", "")
+
+            try:
+                secret = decrypt_totp_secret(user.mfa.totp_secret)
+                verified = verify_totp_code(secret=secret, otp=code)
+            except Exception:
+                verified = False
+
+            if not verified:
+                used_backup, backup_codes = consume_backup_code(
+                    backup_codes=user.mfa.backup_codes,
+                    candidate=code,
+                )
+                if used_backup:
+                    user.mfa.backup_codes = backup_codes
+                    verified = True
+
+            if verified:
+                user.mfa.last_used = datetime.datetime.utcnow()
+                db.session.commit()
+                db.session.close()
+
+                session["mfa_pending"] = False
+                session["mfa_verified"] = True
+
+                next_url = session.pop("mfa_next", None)
+                if next_url and validators.is_safe_url(next_url):
+                    return redirect(next_url)
+
+                return redirect(url_for("challenges.listing"))
+
+            errors.append("Your authentication code is incorrect")
+            db.session.close()
+
+        return render_template(
+            "login.html",
+            errors=errors,
+            mfa_pending=True,
+        )
+
     if request.method == "POST":
         name = request.form["name"]
 
@@ -460,6 +526,9 @@ def login():
                 admin = generate_preset_admin()
                 if admin:
                     login_user(user=admin)
+                    if session.get("mfa_pending"):
+                        session["mfa_next"] = url_for("challenges.listing")
+                        return redirect(url_for("auth.login"))
                     return redirect(url_for("challenges.listing"))
                 else:
                     errors.append(
@@ -488,10 +557,19 @@ def login():
                 log("logins", "[{date}] {ip} - {name} logged in", name=user.name)
 
                 db.session.close()
+                next_url = None
                 if request.args.get("next") and validators.is_safe_url(
                     request.args.get("next")
                 ):
-                    return redirect(request.args.get("next"))
+                    next_url = request.args.get("next")
+
+                if session.get("mfa_pending"):
+                    session["mfa_next"] = next_url or url_for("challenges.listing")
+                    return redirect(url_for("auth.login"))
+
+                if next_url:
+                    return redirect(next_url)
+
                 return redirect(url_for("challenges.listing"))
 
             else:
@@ -512,7 +590,7 @@ def login():
             return render_template("login.html", errors=errors)
     else:
         db.session.close()
-        return render_template("login.html", errors=errors)
+        return render_template("login.html", errors=errors, mfa_pending=False)
 
 
 @auth.route("/oauth")
@@ -661,7 +739,9 @@ def oauth_redirect():
                 clear_user_session(user_id=user.id)
 
             login_user(user)
-
+            if session.get("mfa_pending"):
+                session["mfa_next"] = url_for("challenges.listing")
+                return redirect(url_for("auth.login"))
             return redirect(url_for("challenges.listing"))
         else:
             log("logins", "[{date}] {ip} - OAuth token retrieval failure")

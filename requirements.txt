@@ -135,6 +135,8 @@ pymysql[rsa]==1.1.1
     # via
     #   -r requirements.in
     #   pymysql
+pyotp==2.9.0
+    # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
     #   botocore
@@ -147,6 +149,8 @@ pytz==2025.2
     # via
     #   flask-babel
     #   flask-restx
+qrcode==8.2
+    # via -r requirements.in
 redis==4.5.5
     # via -r requirements.in
 referencing==0.36.2
