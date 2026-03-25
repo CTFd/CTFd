@@ -435,6 +435,17 @@ class Users(db.Model):
 
     def __init__(self, **kwargs):
         super(Users, self).__init__(**kwargs)
+    
+    def __str__(self):
+        return (
+            f"<User id={self.id} "
+            f"name='{self.name}' "
+            f"email='{self.email}' "
+            f"type='{self.type}' "
+            f"team_id={self.team_id} "
+            f"verified={self.verified} "
+            f"banned={self.banned}>"
+        )
 
     @validates("password")
     def validate_password(self, key, plaintext):

@@ -1,0 +1,20 @@
+{% extends "challenge.html" %}
+{% block description %}
+{{ challenge.html }}
+<div class='mb-3 text-center' id='docker_container' name='{{ challenge.docker_image | safe }}'>
+    <span>
+        <a onclick="start_container('{{ challenge.docker_image | safe }}');" class='btn btn-dark'>
+            <small style='color:white;'><i class="fas fa-play"></i>  Start Docker Instance for challenge</small>
+        </a>
+    </span>
+</div>
+{% endblock %}
+{% block input %}
+<input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
+<input id="challenge-input" class="challenge-input form-control" type="text" name="submission" @keyup.enter="submitChallenge()" placeholder="Flag" x-model="submission">
+{% endblock %}
+{% block submit %}
+<button id="challenge-submit" class="challenge-submit btn btn-outline-secondary w-100 h-100" type="submit" @click.debounce.500ms="submitChallenge()">
+    Submit
+</button>
+{% endblock %}
