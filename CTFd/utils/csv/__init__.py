@@ -465,8 +465,8 @@ def load_challenges_csv(dict_reader):
 
 
 CSV_KEYS = {
-    "scoreboard+frozen": dump_scoreboard_csv,
-    "scoreboard+unfrozen": lambda: dump_scoreboard_csv(admin=True),
+    "scoreboard": dump_scoreboard_csv,
+    "scoreboard-admin": lambda: dump_scoreboard_csv(admin=True),
     "users+fields": dump_users_with_fields_csv,
     "teams+fields": dump_teams_with_fields_csv,
     "teams+members+fields": dump_teams_with_members_fields_csv,

@@ -163,7 +163,7 @@ def test_export_scoreboard_frozen_csv():
         set_config("freeze", "1507262400")
 
         client = login_as_user(app, name="admin", password="password")
-        csv_data = client.get("/admin/export/csv?table=scoreboard%2Bfrozen").get_data(
+        csv_data = client.get("/admin/export/csv?table=scoreboard").get_data(
             as_text=True
         )
 
@@ -187,7 +187,7 @@ def test_export_scoreboard_unfrozen_csv():
         set_config("freeze", "1507262400")
 
         client = login_as_user(app, name="admin", password="password")
-        csv_data = client.get("/admin/export/csv?table=scoreboard%2Bunfrozen").get_data(
+        csv_data = client.get("/admin/export/csv?table=scoreboard-admin").get_data(
             as_text=True
         )
 
@@ -209,7 +209,7 @@ def test_export_scoreboard_frozen_csv_without_freeze():
         gen_solve(app.db, user_id=user.id, challenge_id=chal.id)
 
         client = login_as_user(app, name="admin", password="password")
-        csv_data = client.get("/admin/export/csv?table=scoreboard%2Bfrozen").get_data(
+        csv_data = client.get("/admin/export/csv?table=scoreboard").get_data(
             as_text=True
         )
 
