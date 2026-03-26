@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 
-export const intl = new Intl.DateTimeFormat(undefined, {
-  month: "long",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  second: "numeric",
+// TODO: CTFd 4.0 consider removing dayjs advancedFormat
+dayjs.extend(advancedFormat);
+
+export const intl = new Intl.DateTimeFormat(navigator.language, {
+  dateStyle: "long",
+  timeStyle: "short",
 });
 
 export default () => {
