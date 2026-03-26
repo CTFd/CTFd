@@ -141,6 +141,7 @@ def clear_standings():
         get_team_place,
         get_team_score,
         get_user_place,
+        get_user_public_api,
         get_user_score,
     )
 
@@ -161,6 +162,9 @@ def clear_standings():
     cache.delete_memoized(get_user_place)
     cache.delete_memoized(get_team_score)
     cache.delete_memoized(get_team_place)
+
+    # Clear API response functions
+    cache.delete_memoized(get_user_public_api)
 
     # Clear out HTTP request responses
     cache.delete(make_cache_key(path=api.name + "." + ScoreboardList.endpoint))
@@ -213,6 +217,7 @@ def clear_user_session(user_id):
     from CTFd.utils.user import (  # noqa: I001
         get_user_attrs,
         get_user_place,
+        get_user_public_api,
         get_user_recent_ips,
         get_user_score,
     )
@@ -221,12 +226,15 @@ def clear_user_session(user_id):
     cache.delete_memoized(get_user_place, user_id=user_id)
     cache.delete_memoized(get_user_score, user_id=user_id)
     cache.delete_memoized(get_user_recent_ips, user_id=user_id)
+    cache.delete_memoized(get_user_public_api, user_id=user_id, user_type="user")
+    cache.delete_memoized(get_user_public_api, user_id=user_id, user_type="admin")
 
 
 def clear_all_user_sessions():
     from CTFd.utils.user import (  # noqa: I001
         get_user_attrs,
         get_user_place,
+        get_user_public_api,
         get_user_recent_ips,
         get_user_score,
     )
@@ -235,6 +243,7 @@ def clear_all_user_sessions():
     cache.delete_memoized(get_user_place)
     cache.delete_memoized(get_user_score)
     cache.delete_memoized(get_user_recent_ips)
+    cache.delete_memoized(get_user_public_api)
 
 
 def clear_team_session(team_id):

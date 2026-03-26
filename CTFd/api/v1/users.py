@@ -34,7 +34,13 @@ from CTFd.utils.decorators.visibility import (
 from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.security.auth import update_user
-from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
+from CTFd.utils.user import (
+    get_current_user,
+    get_current_user_type,
+    get_user_attrs,
+    get_user_public_api,
+    is_admin,
+)
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 
@@ -197,21 +203,21 @@ class UserPublic(Resource):
         },
     )
     def get(self, user_id):
-        user = Users.query.filter_by(id=user_id).first_or_404()
+        user = get_user_attrs(user_id=user_id)
+        if user is None:
+            abort(404)
 
         if (user.banned or user.hidden) and is_admin() is False:
             abort(404)
 
         user_type = get_current_user_type(fallback="user")
-        response = UserSchema(view=user_type).dump(user)
-
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
-
-        response.data["place"] = user.place
-        response.data["score"] = user.score
-
-        return {"success": True, "data": response.data}
+        success, data, status_code = get_user_public_api(
+            user_id=user_id, user_type=user_type
+        )
+        if success:
+            return {"success": success, "data": data}, status_code
+        else:
+            return {"success": success, "data": data}, status_code
 
     @admins_only
     @users_namespace.doc(
