@@ -216,7 +216,8 @@ Alpine.data("Challenge", () => ({
 
     // Challenges page might be visible to anonymous users, redirect to login on submit
     if (this.response.data.status === "authentication_required") {
-       window.location = `${window.location.origin}${CTFd.config.urlRoot}/login`;
+      window.location = `${CTFd.config.urlRoot}/login?next=${CTFd.config.urlRoot}${window.location.pathname}${window.location.hash}`;
+      return;
     }
 
     await this.renderSubmissionResponse();
