@@ -4,10 +4,13 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 // TODO: CTFd 4.0 consider removing dayjs advancedFormat
 dayjs.extend(advancedFormat);
 
-export const intl = new Intl.DateTimeFormat(localStorage.getItem("language") || navigator.language, {
-  dateStyle: "long",
-  timeStyle: "short",
-});
+export const intl = new Intl.DateTimeFormat(
+  localStorage.getItem("language") || navigator.language,
+  {
+    dateStyle: "long",
+    timeStyle: "short",
+  },
+);
 
 export default () => {
   document.querySelectorAll("[data-time]").forEach($el => {
