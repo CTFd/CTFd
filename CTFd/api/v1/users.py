@@ -217,7 +217,7 @@ class UserPublic(Resource):
         if success:
             return {"success": success, "data": data}, status_code
         else:
-            return {"success": success, "data": data}, status_code
+            return {"success": success, "errors": data}, status_code
 
     @admins_only
     @users_namespace.doc(
