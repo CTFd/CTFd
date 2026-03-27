@@ -1,0 +1,20 @@
+name: Dependency Intelligence
+on:
+  pull_request:
+    paths:
+      - '**/requirements*.txt'
+      - '**/package.json'
+
+jobs:
+  depintel:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: lunacompsia-oss/depintel-action@v1
+        with:
+          fail-on-critical: 'true'
