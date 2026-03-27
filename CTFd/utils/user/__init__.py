@@ -89,6 +89,27 @@ def get_team_score(team_id):
     return None
 
 
+@cache.memoize(timeout=300)
+def get_user_public_api(user_id, user_type):
+    from CTFd.schemas.users import UserSchema
+
+    user = Users.query.filter_by(id=user_id).first()
+    response = UserSchema(view=user_type).dump(user)
+    if response.errors:
+        success = False
+        data = response.errors
+        status_code = 400
+        return success, data, status_code
+
+    response.data["place"] = get_user_place(user_id=user_id)
+    response.data["score"] = get_user_score(user_id=user_id)
+
+    success = True
+    data = response.data
+    status_code = 200
+    return success, data, status_code
+
+
 def get_current_team():
     if authed():
         user = get_current_user()
