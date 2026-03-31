@@ -110,6 +110,41 @@ def get_user_public_api(user_id, user_type):
     return success, data, status_code
 
 
+@cache.memoize(timeout=300)
+def get_team_schema(team_id, user_type):
+    from CTFd.schemas.teams import TeamSchema
+
+    team = Teams.query.filter_by(id=team_id).first()
+    view = TeamSchema.views.get(user_type)
+    schema = TeamSchema(view=view)
+    response = schema.dump(team)
+    return response
+
+
+def get_team_public_api(team_id, user_type):
+    from CTFd.utils.config.visibility import scores_visible
+
+    # We cache the schema generation as it's easier to invalidate than this function response
+    response = get_team_schema(team_id=team_id, user_type=user_type)
+    if response.errors:
+        success = False
+        data = response.errors
+        status_code = 400
+        return success, data, status_code
+
+    if scores_visible():
+        response.data["place"] = get_team_place(team_id=team_id)
+        response.data["score"] = get_team_score(team_id=team_id)
+    else:
+        response.data["place"] = None
+        response.data["score"] = None
+
+    success = True
+    data = response.data
+    status_code = 200
+    return success, data, status_code
+
+
 def get_current_team():
     if authed():
         user = get_current_user()
