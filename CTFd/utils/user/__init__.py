@@ -90,19 +90,31 @@ def get_team_score(team_id):
 
 
 @cache.memoize(timeout=300)
-def get_user_public_api(user_id, user_type):
+def get_user_schema(user_id, user_type):
     from CTFd.schemas.users import UserSchema
 
     user = Users.query.filter_by(id=user_id).first()
     response = UserSchema(view=user_type).dump(user)
+    return response
+
+
+def get_user_public_api(user_id, user_type):
+    from CTFd.utils.config.visibility import scores_visible
+
+    # We cache the schema generation as it's easier to invalidate than this function response
+    response = get_user_schema(user_id=user_id, user_type=user_type)
     if response.errors:
         success = False
         data = response.errors
         status_code = 400
         return success, data, status_code
 
-    response.data["place"] = get_user_place(user_id=user_id)
-    response.data["score"] = get_user_score(user_id=user_id)
+    if scores_visible():
+        response.data["place"] = get_user_place(user_id=user_id)
+        response.data["score"] = get_user_score(user_id=user_id)
+    else:
+        response.data["place"] = None
+        response.data["score"] = None
 
     success = True
     data = response.data
