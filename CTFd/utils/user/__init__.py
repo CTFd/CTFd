@@ -115,8 +115,7 @@ def get_team_schema(team_id, user_type):
     from CTFd.schemas.teams import TeamSchema
 
     team = Teams.query.filter_by(id=team_id).first()
-    view = TeamSchema.views.get(user_type)
-    schema = TeamSchema(view=view)
+    schema = TeamSchema(view=user_type)
     response = schema.dump(team)
     return response
 
