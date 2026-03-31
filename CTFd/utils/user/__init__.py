@@ -101,6 +101,7 @@ def get_user_schema(user_id, user_type):
 def get_user_public_api(user_id, user_type):
     from CTFd.utils.config.visibility import scores_visible
 
+    # We cache the schema generation as it's easier to invalidate than this function response
     response = get_user_schema(user_id=user_id, user_type=user_type)
     if response.errors:
         success = False
