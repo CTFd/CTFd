@@ -198,6 +198,8 @@ class TeamPublic(Resource):
     )
     def get(self, team_id):
         team = get_team_attrs(team_id=team_id)
+        if team is None:
+            abort(404)
 
         if (team.banned or team.hidden) and is_admin() is False:
             abort(404)
