@@ -350,6 +350,10 @@ class Challenge(Resource):
                 f"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.",
             )
 
+        tags = [
+            tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
+        ]
+
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
             anonymize = chal.requirements.get("anonymize")
@@ -375,30 +379,45 @@ class Challenge(Resource):
                     pass
                 else:
                     if anonymize:
-                        return {
-                            "success": True,
-                            "data": {
-                                "id": chal.id,
-                                "type": "hidden",
-                                "name": "???",
-                                "value": 0,
-                                "logic": None,
-                                "solves": None,
-                                "solved_by_me": False,
-                                "solution_id": None,
-                                "category": "???",
-                                "tags": [],
-                                "template": "",
-                                "script": "",
-                            },
-                        }
+                        if anonymize == "preview":
+                            return {
+                                "success": True,
+                                "data": {
+                                    "id": chal.id,
+                                    "type": "hidden",
+                                    "name": chal.name,
+                                    "value": chal.value,
+                                    "logic": None,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "solution_id": None,
+                                    "category": chal.category,
+                                    "tags": tags,
+                                    "template": "",
+                                    "script": "",
+                                },
+                            }
+                        else:
+                            return {
+                                "success": True,
+                                "data": {
+                                    "id": chal.id,
+                                    "type": "hidden",
+                                    "name": "???",
+                                    "value": 0,
+                                    "logic": None,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "solution_id": None,
+                                    "category": "???",
+                                    "tags": [],
+                                    "template": "",
+                                    "script": "",
+                                },
+                            }
                     abort(403)
             else:
                 abort(403)
-
-        tags = [
-            tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
-        ]
 
         unlocked_hints = set()
         hints = []
