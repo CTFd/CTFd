@@ -49,4 +49,3 @@ jobs:
         run: |
           make translations-compile
           git diff --exit-code CTFd/translations/ || (echo "Translations need to be recompiled" && exit 1)
-
