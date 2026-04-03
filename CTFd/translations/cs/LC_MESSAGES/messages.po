@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-24 00:30\n"
+"PO-Revision-Date: 2026-04-03 16:35\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -20,302 +20,302 @@ msgstr ""
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr ""
+msgstr "Viditelnost výzvy je nastavena pouze pro administrátory"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr ""
+msgstr "%(ctf_name)s ještě nezačalo"
 
 #: CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
-msgstr ""
+msgstr "%(ctf_name)s je pozastaveno"
 
 #: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
-msgstr ""
+msgstr "%(ctf_name)s skončilo"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
 #: CTFd/themes/core-beta/templates/teams/private.html:329
 #: CTFd/themes/core-beta/templates/teams/public.html:95
 msgid "User Name"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
 #: CTFd/forms/teams.py:230
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: CTFd/forms/auth.py:24 CTFd/forms/auth.py:50 CTFd/forms/auth.py:67
 #: CTFd/forms/self.py:24 CTFd/forms/teams.py:231
 msgid "Password"
-msgstr ""
+msgstr "Heslo"
 
 #: CTFd/forms/auth.py:25 CTFd/forms/auth.py:51 CTFd/forms/auth.py:62
 #: CTFd/forms/auth.py:69 CTFd/forms/self.py:29 CTFd/forms/teams.py:154
 #: CTFd/forms/teams.py:237 CTFd/themes/core-beta/templates/challenge.html:147
 msgid "Submit"
-msgstr ""
+msgstr "Odeslat"
 
 #: CTFd/forms/auth.py:46
 msgid "User Name or Email"
-msgstr ""
+msgstr "Uživatelské jméno nebo email"
 
 #: CTFd/forms/auth.py:55
 msgid "Resend Confirmation Email"
-msgstr ""
+msgstr "Znovu odeslat potvrzovací email"
 
 #: CTFd/forms/self.py:23 CTFd/forms/users.py:181
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
 
 #: CTFd/forms/self.py:25
 msgid "Current Password"
-msgstr ""
+msgstr "Aktuální heslo"
 
 #: CTFd/forms/self.py:26 CTFd/forms/teams.py:140 CTFd/forms/teams.py:218
 #: CTFd/forms/teams.py:233 CTFd/forms/users.py:164
 #: CTFd/themes/core-beta/templates/teams/teams.html:51
 #: CTFd/themes/core-beta/templates/users/users.html:48
 msgid "Affiliation"
-msgstr ""
+msgstr "Přidělení"
 
 #: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:219
 #: CTFd/forms/teams.py:232 CTFd/forms/users.py:165
 #: CTFd/themes/core-beta/templates/teams/teams.html:50
 #: CTFd/themes/core-beta/templates/users/users.html:47
 msgid "Website"
-msgstr ""
+msgstr "Webová stránka"
 
 #: CTFd/forms/self.py:28 CTFd/forms/teams.py:150 CTFd/forms/teams.py:234
 #: CTFd/themes/core-beta/templates/teams/teams.html:52
 #: CTFd/themes/core-beta/templates/users/users.html:49
 msgid "Country"
-msgstr ""
+msgstr "Země"
 
 #: CTFd/forms/self.py:59 CTFd/themes/core-beta/templates/settings.html:225
 msgid "Expiration"
-msgstr ""
+msgstr "Vypršení"
 
 #: CTFd/forms/self.py:61
 msgid "Generate"
-msgstr ""
+msgstr "Vytvořit"
 
 #: CTFd/forms/setup.py:29
 msgid "Event Name"
-msgstr ""
+msgstr "Název události"
 
 #: CTFd/forms/setup.py:29
 msgid "The name of your CTF event/workshop"
-msgstr ""
+msgstr "Název vaší CTF události/workshopu"
 
 #: CTFd/forms/setup.py:32
 msgid "Event Description"
-msgstr ""
+msgstr "Popis události"
 
 #: CTFd/forms/setup.py:32
 msgid "Description for the CTF"
-msgstr ""
+msgstr "Popis CTF"
 
 #: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
 msgid "User Mode"
-msgstr ""
+msgstr "Režim uživatele"
 
 #: CTFd/forms/setup.py:36
 msgid "Team Mode"
-msgstr ""
+msgstr "Režim týmu"
 
 #: CTFd/forms/setup.py:39
 msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
-msgstr ""
+msgstr "Určuje, zda se uživatelé spojí v týmech (režim týmu) nebo hrají samostatně (režim uživatele)"
 
 #: CTFd/forms/setup.py:45
 msgid "Admin Username"
-msgstr ""
+msgstr "Uživatelské jméno administrátora"
 
 #: CTFd/forms/setup.py:46
 msgid "Your username for the administration account"
-msgstr ""
+msgstr "Vaše uživatelské jméno pro účet administrátora"
 
 #: CTFd/forms/setup.py:50
 msgid "Admin Email"
-msgstr ""
+msgstr "Email administrátora"
 
 #: CTFd/forms/setup.py:51
 msgid "Your email address for the administration account"
-msgstr ""
+msgstr "Váš email pro účet administrátora"
 
 #: CTFd/forms/setup.py:55
 msgid "Admin Password"
-msgstr ""
+msgstr "Heslo administrátora"
 
 #: CTFd/forms/setup.py:56
 msgid "Your password for the administration account"
-msgstr ""
+msgstr "Vaše heslo pro účet administrátora"
 
 #: CTFd/forms/setup.py:61
 msgid "Logo"
-msgstr ""
+msgstr "Logo"
 
 #: CTFd/forms/setup.py:63
 msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
-msgstr ""
+msgstr "Logo pro webovou stránku namísto názvu CTF. Používá se jako tlačítko domovské stránky. Volitelné."
 
 #: CTFd/forms/setup.py:67
 msgid "Banner"
-msgstr ""
+msgstr "Banner"
 
 #: CTFd/forms/setup.py:67
 msgid "Banner to use for the homepage. Optional."
-msgstr ""
+msgstr "Banner pro použití na domovské stránce. Volitelné."
 
 #: CTFd/forms/setup.py:70
 msgid "Small Icon"
-msgstr ""
+msgstr "Malá ikona"
 
 #: CTFd/forms/setup.py:72
 msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
-msgstr ""
+msgstr "favicon používaný v prohlížečích uživatelů. Povolené jsou pouze soubory PNG. Musí být 32x32px. Volitelné."
 
 #: CTFd/forms/setup.py:76
 msgid "Theme"
-msgstr ""
+msgstr "Motiv"
 
 #: CTFd/forms/setup.py:77
 msgid "CTFd Theme to use. Can be changed later."
-msgstr ""
+msgstr "Motiv CTFd k použití. Lze změnit později."
 
 #: CTFd/forms/setup.py:84
 msgid "Theme Color"
-msgstr ""
+msgstr "Barva motivu"
 
 #: CTFd/forms/setup.py:86
 msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
-msgstr ""
+msgstr "Barva používaná motivem k ovlivnění vzhledu. Vyžaduje podporu motivu. Volitelné."
 
 #: CTFd/forms/setup.py:91
 msgid "Verify Emails"
-msgstr ""
+msgstr "Ověřit e-maily"
 
 #: CTFd/forms/setup.py:143
 msgid "Start Time"
-msgstr ""
+msgstr "Čas zahájení"
 
 #: CTFd/forms/setup.py:144
 msgid "Time when your CTF is scheduled to start. Optional."
-msgstr ""
+msgstr "Čas, kdy je CTF naplánován ke spuštění. Volitelné."
 
 #: CTFd/forms/setup.py:147
 msgid "End Time"
-msgstr ""
+msgstr "Čas ukončení"
 
 #: CTFd/forms/setup.py:148
 msgid "Time when your CTF is scheduled to end. Optional."
-msgstr ""
+msgstr "Čas, kdy je CTF naplánován k ukončení. Volitelné."
 
 #: CTFd/forms/setup.py:150
 msgid "Finish"
-msgstr ""
+msgstr "Ukončit"
 
 #: CTFd/forms/teams.py:102 CTFd/forms/teams.py:109 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:229
 msgid "Team Name"
-msgstr ""
+msgstr "Název týmu"
 
 #: CTFd/forms/teams.py:103 CTFd/forms/teams.py:110
 msgid "Team Password"
-msgstr ""
+msgstr "Heslo týmu"
 
 #: CTFd/forms/teams.py:104 CTFd/forms/teams.py:289
 msgid "Join"
-msgstr ""
+msgstr "Připojit se"
 
 #: CTFd/forms/teams.py:111
 msgid "Create"
-msgstr ""
+msgstr "Vytvořit"
 
 #: CTFd/forms/teams.py:128
 msgid "Your team's public name shown to other competitors"
-msgstr ""
+msgstr "Veřejný název vašeho týmu zobrazovaný ostatním soutěžícím"
 
 #: CTFd/forms/teams.py:131
 msgid "New Team Password"
-msgstr ""
+msgstr "Nové týmové heslo"
 
 #: CTFd/forms/teams.py:131
 msgid "Set a new team join password"
-msgstr ""
+msgstr "Nastav nové heslo k týmu"
 
 #: CTFd/forms/teams.py:134
 msgid "Confirm Current Team Password"
-msgstr ""
+msgstr "Potvrď aktuální týmové heslo"
 
 #: CTFd/forms/teams.py:136
 msgid "Provide your current team password (or your password) to update your team's password"
-msgstr ""
+msgstr "Chceš-li aktualizovat heslo svého týmu, zadej své aktuální týmové heslo (nebo své heslo)"
 
 #: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
-msgstr ""
+msgstr "Příslušnost tvého týmu je veřejně zobrazena ostatním soutěžícím"
 
 #: CTFd/forms/teams.py:147
 msgid "Your team's website publicly shown to other competitors"
-msgstr ""
+msgstr "Web tvého týmu je veřejně zobrazen ostatním soutěžícím"
 
 #: CTFd/forms/teams.py:152
 msgid "Your team's country publicly shown to other competitors"
-msgstr ""
+msgstr "Stát tvého týmu veřejně zobrazen ostatním soutěžícím"
 
 #: CTFd/forms/teams.py:192
 msgid "Team Captain"
-msgstr ""
+msgstr "Kapitán týmu"
 
 #: CTFd/forms/teams.py:215 CTFd/forms/users.py:161
 msgid "Search Field"
-msgstr ""
+msgstr "Vyhledávací pole"
 
 #: CTFd/forms/teams.py:217 CTFd/forms/users.py:163
 #: CTFd/themes/core-beta/templates/challenge.html:206
 msgid "Name"
-msgstr ""
+msgstr "Název"
 
 #: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
 msgid "Parameter"
-msgstr ""
+msgstr "Parametr"
 
 #: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
 msgid "Search"
-msgstr ""
+msgstr "Vyhledávání"
 
 #: CTFd/forms/teams.py:235
 msgid "Hidden"
-msgstr ""
+msgstr "Skrytý"
 
 #: CTFd/forms/teams.py:236
 msgid "Banned"
-msgstr ""
+msgstr "Zakázaný"
 
 #: CTFd/forms/teams.py:285
 msgid "Invite Link"
-msgstr ""
+msgstr "Odkaz pozvánky"
 
 #: CTFd/forms/users.py:133
 msgid "Bracket"
-msgstr ""
+msgstr "Tabulka"
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
-msgstr ""
+msgstr "Soutěžní tabulka uživatele"
 
 #: CTFd/forms/users.py:172
 msgid "Search for matching users"
-msgstr ""
+msgstr "Hledat shodné uživatele"
 
 #: CTFd/themes/core-beta/templates/base.html:53
 msgid "Powered by CTFd"
-msgstr ""
+msgstr "Beží na CTFd"
 
 #: CTFd/themes/core-beta/templates/challenge.html:11
 #: CTFd/themes/core-beta/templates/teams/private.html:388
@@ -323,236 +323,236 @@ msgstr ""
 #: CTFd/themes/core-beta/templates/users/private.html:124
 #: CTFd/themes/core-beta/templates/users/public.html:123
 msgid "Challenge"
-msgstr ""
+msgstr "Výzva"
 
 #: CTFd/themes/core-beta/templates/challenge.html:19
 #, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "%(num)d Řešitel"
+msgstr[1] "%(num)d Řešitelé"
+msgstr[2] "%(num)d Řešitelů"
+msgstr[3] "%(num)d Řešitelů"
 
 #: CTFd/themes/core-beta/templates/challenge.html:77
 msgid "View Hint"
-msgstr ""
+msgstr "Zobrazit nápovědu"
 
 #: CTFd/themes/core-beta/templates/challenge.html:120
 msgid "attempt"
 msgid_plural "attempts"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "pokus"
+msgstr[1] "pokusy"
+msgstr[2] "pokusů"
+msgstr[3] "pokusů"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
-msgstr ""
+msgstr "Vlajka"
 
 #: CTFd/themes/core-beta/templates/challenge.html:169
 msgid "Next Challenge"
-msgstr ""
+msgstr "Další výzva"
 
 #: CTFd/themes/core-beta/templates/challenge.html:175
 msgid "Share"
-msgstr ""
+msgstr "Sdílet"
 
 #: CTFd/themes/core-beta/templates/challenge.html:207
 #: CTFd/themes/core-beta/templates/setup.html:305
 #: CTFd/themes/core-beta/templates/setup.html:326
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: CTFd/themes/core-beta/templates/challenges.html:7
 #: CTFd/themes/core-beta/templates/components/navbar.html:59
 msgid "Challenges"
-msgstr ""
+msgstr "Výzvy"
 
 #: CTFd/themes/core-beta/templates/confirm.html:7
 msgid "Confirm"
-msgstr ""
+msgstr "Potvrdit"
 
 #: CTFd/themes/core-beta/templates/confirm.html:18
 msgid "We've sent a confirmation email to your email address."
-msgstr ""
+msgstr "Na tvou e-mailovou adresu jsme zaslali potvrzovací e-mail."
 
 #: CTFd/themes/core-beta/templates/confirm.html:24
 msgid "Please click the link in that email to confirm your account."
-msgstr ""
+msgstr "Kliknutím na odkaz v tomto e-mailu potvrdíš svůj účet."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
 msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
-msgstr ""
+msgstr "Pokud e-mail nepřišel, zkontrolujte složku se spamem nebo kontaktujte správce, aby manuálně ověřil tvůj účet."
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
-msgstr ""
+msgstr "Změnit e‑mailovou adresu"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:164
 #: CTFd/themes/core-beta/templates/components/navbar.html:169
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
-msgstr ""
+msgstr "Přihlásit se"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Zapomněli jste heslo?"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:85
 #: CTFd/themes/core-beta/templates/components/navbar.html:91
 #: CTFd/themes/core-beta/templates/notifications.html:7
 msgid "Notifications"
-msgstr ""
+msgstr "Oznámení"
 
 #: CTFd/themes/core-beta/templates/notifications.html:14
 msgid "There are no notifications yet"
-msgstr ""
+msgstr "Zatím tu nejsou žádná oznámení"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:151
 #: CTFd/themes/core-beta/templates/components/navbar.html:156
 #: CTFd/themes/core-beta/templates/register.html:7
 msgid "Register"
-msgstr ""
+msgstr "Registrovat se"
 
 #: CTFd/themes/core-beta/templates/register.html:35
 msgid "Your username on the site"
-msgstr ""
+msgstr "Tvoje uživatelské jméno na stránce"
 
 #: CTFd/themes/core-beta/templates/register.html:43
 msgid "Never shown to the public"
-msgstr ""
+msgstr "Nikdy nezveřejněno"
 
 #: CTFd/themes/core-beta/templates/register.html:51
 msgid "Password used to log into your account"
-msgstr ""
+msgstr "Heslo používané pro přihlášení do tvého účtu"
 
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr ""
+msgstr "S registrací souhlasíte s <a href=\"%(privacy_link)s\" target=\"_blank\">zásadami ochrany osobních údajů</a> a s <a href=\"%(tos_link)s\" target=\"_blank\">podmínkami služby</a>"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
-msgstr ""
+msgstr "Obnovit heslo"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:21
 msgid "You can now reset the password for your account and log in. Please enter in a new password below."
-msgstr ""
+msgstr "Nyní můžeš obnovit heslo ke svému účtu a přihlásit se. Níže zadej nové heslo."
 
 #: CTFd/themes/core-beta/templates/reset_password.html:44
 msgid "Please provide the email address associated with your account below."
-msgstr ""
+msgstr "Níže uveďte e-mailovou adresu přiřazenou k vašemu účtu."
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:52
 #: CTFd/themes/core-beta/templates/scoreboard.html:7
 msgid "Scoreboard"
-msgstr ""
+msgstr "Žebříček"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:24
 msgid "All"
-msgstr ""
+msgstr "Vše"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:36
 msgid "Place"
-msgstr ""
+msgstr "Místo"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:38
 #: CTFd/themes/core-beta/templates/teams/private.html:330
 #: CTFd/themes/core-beta/templates/teams/public.html:96
 msgid "Score"
-msgstr ""
+msgstr "Skóre"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:60
 msgid "Scoreboard is empty"
-msgstr ""
+msgstr "Žebříček je prázdný"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:124
 #: CTFd/themes/core-beta/templates/components/navbar.html:129
 #: CTFd/themes/core-beta/templates/settings.html:8
 #: CTFd/themes/core-beta/templates/setup.html:50
 msgid "Settings"
-msgstr ""
+msgstr "Nastavení"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:112
 #: CTFd/themes/core-beta/templates/components/navbar.html:117
 #: CTFd/themes/core-beta/templates/settings.html:21
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: CTFd/themes/core-beta/templates/settings.html:26
 msgid "Access Tokens"
-msgstr ""
+msgstr "Přístupové tokeny"
 
 #: CTFd/themes/core-beta/templates/settings.html:95
 msgid "Your profile has been updated"
-msgstr ""
+msgstr "Tvůj profil byl aktualizován"
 
 #: CTFd/themes/core-beta/templates/settings.html:103
 #: CTFd/themes/core-beta/templates/teams/private.html:83
 #: CTFd/themes/core-beta/templates/teams/private.html:198
 msgid "Error:"
-msgstr ""
+msgstr "Chyba:"
 
 #: CTFd/themes/core-beta/templates/settings.html:129
 msgid "API Key Generated"
-msgstr ""
+msgstr "Vygenerovaný API klíč"
 
 #: CTFd/themes/core-beta/templates/settings.html:137
 msgid "Please copy your API Key, it won't be shown again!"
-msgstr ""
+msgstr "Zkopíruj si svůj API klíč, už se nezobrazí!"
 
 #: CTFd/themes/core-beta/templates/settings.html:183
 msgid "Active Tokens"
-msgstr ""
+msgstr "Aktivní tokeny"
 
 #: CTFd/themes/core-beta/templates/settings.html:195
 msgid "Delete Token"
-msgstr ""
+msgstr "Smazat token"
 
 #: CTFd/themes/core-beta/templates/settings.html:204
 msgid "Are you sure you want to delete this token?"
-msgstr ""
+msgstr "Opravdu chceš smazat tento token?"
 
 #: CTFd/themes/core-beta/templates/settings.html:224
 msgid "Created"
-msgstr ""
+msgstr "Vytvořený"
 
 #: CTFd/themes/core-beta/templates/settings.html:226
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 #: CTFd/themes/core-beta/templates/settings.html:227
 msgid "Delete"
-msgstr ""
+msgstr "Smazat"
 
 #: CTFd/themes/core-beta/templates/setup.html:24
 msgid "Setup"
-msgstr ""
+msgstr "Konfigurace"
 
 #: CTFd/themes/core-beta/templates/setup.html:44
 msgid "General"
-msgstr ""
+msgstr "Obecné"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
 msgid "Mode"
-msgstr ""
+msgstr "Režim"
 
 #: CTFd/themes/core-beta/templates/setup.html:53
 msgid "Administration"
-msgstr ""
+msgstr "Administrace"
 
 #: CTFd/themes/core-beta/templates/setup.html:56
 msgid "Style"
-msgstr ""
+msgstr "Styl"
 
 #: CTFd/themes/core-beta/templates/setup.html:59
 msgid "Date &amp; Time"
-msgstr ""
+msgstr "Datum &amp; čas"
 
 #: CTFd/themes/core-beta/templates/setup.html:62
 msgid "Integrations"
-msgstr ""
+msgstr "Integrace"
 
 #: CTFd/themes/core-beta/templates/setup.html:86
 #: CTFd/themes/core-beta/templates/setup.html:138
@@ -561,51 +561,51 @@ msgstr ""
 #: CTFd/themes/core-beta/templates/setup.html:296
 #: CTFd/themes/core-beta/templates/setup.html:345
 msgid "Next"
-msgstr ""
+msgstr "Další"
 
 #: CTFd/themes/core-beta/templates/setup.html:112
 msgid "Participants register accounts and form teams"
-msgstr ""
+msgstr "Účastníci se registrují a vytvářejí týmy"
 
 #: CTFd/themes/core-beta/templates/setup.html:113
 msgid "If a team member solves a challenge, the entire team receives credit"
-msgstr ""
+msgstr "Když člen týmu vyřeší úlohu, kredit získá celý tým"
 
 #: CTFd/themes/core-beta/templates/setup.html:115
 msgid "Easier to see which team member solved a challenge"
-msgstr ""
+msgstr "Snazší zjistit, který člen týmu vyřešil úlohu"
 
 #: CTFd/themes/core-beta/templates/setup.html:116
 msgid "May be slightly more difficult to administer"
-msgstr ""
+msgstr "Správa může být o něco náročnější"
 
 #: CTFd/themes/core-beta/templates/setup.html:120
 msgid "Participants only register an individual account"
-msgstr ""
+msgstr "Účastníci si zaregistrují pouze individuální účet"
 
 #: CTFd/themes/core-beta/templates/setup.html:121
 msgid "Players can share accounts to form pseudo-teams"
-msgstr ""
+msgstr "Hráči mohou sdílet účty a tak vytvořit tzv. pseudo-týmy"
 
 #: CTFd/themes/core-beta/templates/setup.html:123
 msgid "Easier to organize"
-msgstr ""
+msgstr "Jednodušší na organizaci"
 
 #: CTFd/themes/core-beta/templates/setup.html:124
 msgid "Difficult to attribute solutions to individual team members"
-msgstr ""
+msgstr "Je těžké přiřadit řešení jednotlivým členům týmu"
 
 #: CTFd/themes/core-beta/templates/setup.html:143
 msgid "Visibility Settings"
-msgstr ""
+msgstr "Nastavení viditelnosti"
 
 #: CTFd/themes/core-beta/templates/setup.html:146
 msgid "Control the visibility of different sections of CTFd"
-msgstr ""
+msgstr "Ovládej viditelnost různých sekcí CTFd"
 
 #: CTFd/themes/core-beta/templates/setup.html:232
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
-msgstr ""
+msgstr "Přihlas se k odběru novinek a aktualizací na e-mailovou adresu CTFd LLC"
 
 #: CTFd/themes/core-beta/templates/setup.html:309
 #: CTFd/themes/core-beta/templates/setup.html:330
@@ -614,145 +614,145 @@ msgstr ""
 #: CTFd/themes/core-beta/templates/users/private.html:127
 #: CTFd/themes/core-beta/templates/users/public.html:126
 msgid "Time"
-msgstr ""
+msgstr "Čas"
 
 #: CTFd/themes/core-beta/templates/setup.html:334
 msgid "UTC Preview"
-msgstr ""
+msgstr "Náhled v UTC"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:36
 #: CTFd/themes/core-beta/templates/users/users.html:6
 msgid "Users"
-msgstr ""
+msgstr "Uživatelé"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:43
 #: CTFd/themes/core-beta/templates/teams/teams.html:6
 msgid "Teams"
-msgstr ""
+msgstr "Týmy"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:72
 #: CTFd/themes/core-beta/templates/components/navbar.html:77
 msgid "Admin Panel"
-msgstr ""
+msgstr "Admin Panel"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:99
 #: CTFd/themes/core-beta/templates/components/navbar.html:104
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
 #: CTFd/themes/core-beta/templates/teams/teams.html:49
 msgid "Team"
-msgstr ""
+msgstr "Tým"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:136
 #: CTFd/themes/core-beta/templates/components/navbar.html:141
 msgid "Logout"
-msgstr ""
+msgstr "Odhlásit se"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:180
 msgid "Change language"
-msgstr ""
+msgstr "Změnit jazyk"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:199
 #: CTFd/themes/core-beta/templates/components/navbar.html:204
 msgid "Toggle theme"
-msgstr ""
+msgstr "Přepnout motiv"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:12
 msgid "403 Forbidden"
-msgstr ""
+msgstr "403 Zakázáno"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
-msgstr ""
+msgstr "Soubor nebyl nalezen"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "404 Not Found"
-msgstr ""
+msgstr "404 Nenalezeno"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
-msgstr ""
+msgstr "Příliš mnoho požadavků"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:10
 msgid "Please slow down!"
-msgstr ""
+msgstr "Zpomal prosím!"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:13
 msgid "429 Too Many Requests"
-msgstr ""
+msgstr "429 Příliš mnoho požadavků"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:12
 msgid "502 Bad Gateway"
-msgstr ""
+msgstr "502 Chyba serveru"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
 #: CTFd/themes/core-beta/templates/macros/forms.html:65
 msgid "(Optional)"
-msgstr ""
+msgstr "(Volitelné)"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:6
 #: CTFd/themes/core-beta/templates/teams/join_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
 msgid "Join Team"
-msgstr ""
+msgstr "Připojit se k týmu"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:15
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
 msgid "Welcome to"
-msgstr ""
+msgstr "Vítej v"
 
 #: CTFd/themes/core-beta/templates/teams/invite.html:19
 msgid "Click the button below to join the team!"
-msgstr ""
+msgstr "Klikni na tlačítko níže pro připojení k týmu!"
 
 #: CTFd/themes/core-beta/templates/teams/new_team.html:6
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
 msgid "Create Team"
-msgstr ""
+msgstr "Vytvořit tým"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:8
 msgid "Edit Team"
-msgstr ""
+msgstr "Upravit tým"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:76
 msgid "Your team's profile has been updated"
-msgstr ""
+msgstr "Tvůj týmový profil byl aktualizován"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:104
 msgid "Choose Captain"
-msgstr ""
+msgstr "Zvol kapitána"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
-msgstr ""
+msgstr "Tvé kapitánské práva byly převedeny"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:152
 msgid "Invite Users"
-msgstr ""
+msgstr "Pozvat uživatele"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:171
 msgid "Share this link with your team members for them to join your team"
-msgstr ""
+msgstr "Sdílej tento odkaz se členy tvého týmu, aby se mohli připojit k tvému týmu"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:174
 msgid "Invite links can be re-used and expire after 1 day"
-msgstr ""
+msgstr "Odkaz na pozvánky lze znovu použít a jejich platnost vyprší po 1 dni"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:188
 msgid "Disband Team"
-msgstr ""
+msgstr "Rozpustit tým"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:193
 msgid "Are you sure you want to disband your team?"
-msgstr ""
+msgstr "Opravdu chceš rozpustit svůj tým?"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:206
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:207
 msgid "Yes"
-msgstr ""
+msgstr "Ano"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:218
 #: CTFd/themes/core-beta/templates/teams/public.html:10
@@ -760,108 +760,108 @@ msgstr ""
 #: CTFd/themes/core-beta/templates/users/public.html:21
 #: CTFd/themes/core-beta/templates/users/users.html:70
 msgid "Official"
-msgstr ""
+msgstr "Oficiální"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:260
 msgid "place"
-msgstr ""
+msgstr "umístění"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:268
 msgid "points"
-msgstr ""
+msgstr "body"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:325
 #: CTFd/themes/core-beta/templates/teams/public.html:91
 msgid "Members"
-msgstr ""
+msgstr "Členové"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:345
 #: CTFd/themes/core-beta/templates/teams/public.html:110
 msgid "Captain"
-msgstr ""
+msgstr "Kapitán"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:361
 #: CTFd/themes/core-beta/templates/teams/public.html:125
 #: CTFd/themes/core-beta/templates/users/private.html:98
 #: CTFd/themes/core-beta/templates/users/public.html:98
 msgid "Awards"
-msgstr ""
+msgstr "Ocenění"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:384
 #: CTFd/themes/core-beta/templates/teams/public.html:153
 #: CTFd/themes/core-beta/templates/users/private.html:120
 msgid "Solves"
-msgstr ""
+msgstr "Vyřešení"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:389
 #: CTFd/themes/core-beta/templates/teams/public.html:158
 #: CTFd/themes/core-beta/templates/users/private.html:125
 #: CTFd/themes/core-beta/templates/users/public.html:124
 msgid "Category"
-msgstr ""
+msgstr "Kategorie"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:390
 #: CTFd/themes/core-beta/templates/teams/public.html:159
 #: CTFd/themes/core-beta/templates/users/private.html:126
 #: CTFd/themes/core-beta/templates/users/public.html:125
 msgid "Value"
-msgstr ""
+msgstr "Hodnota"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:481
 #: CTFd/themes/core-beta/templates/teams/public.html:248
 #: CTFd/themes/core-beta/templates/users/private.html:213
 #: CTFd/themes/core-beta/templates/users/public.html:214
 msgid "No solves yet"
-msgstr ""
+msgstr "Zatím nikdo nevyřešil"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
-msgstr ""
+msgstr "Aby ses mohl zúčastnit, musíš se připojit k týmu nebo vytvořit nový."
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
-msgstr ""
+msgstr "Hrát s oficiálním týmem"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
 msgid "Join Unofficial Team"
-msgstr ""
+msgstr "Připojit se k neoficiálnímu týmu"
 
 #: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
 msgid "Create Unofficial Team"
-msgstr ""
+msgstr "Vytvořit neoficiální tým"
 
 #: CTFd/themes/core-beta/templates/teams/teams.html:128
 #: CTFd/themes/core-beta/templates/users/users.html:118
 msgid "Page"
-msgstr ""
+msgstr "Stránka"
 
 #: CTFd/themes/core-beta/templates/users/users.html:14
 #, python-format
 msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
-msgstr ""
+msgstr "Hledání uživatelů, jejichž <strong>%(field)s</strong> odpovídá <strong>%(q)s</strong>"
 
 #: CTFd/themes/core-beta/templates/users/users.html:17
 #, python-format
 msgid "Page %(page)s of %(total)s results"
-msgstr ""
+msgstr "Stránka %(page)s z %(total)s výsledků"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"
-msgstr ""
+msgstr "Uživatel"
 
 #: CTFd/utils/modes/__init__.py:35
 msgid "user"
 msgid_plural "users"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "uživatel"
+msgstr[1] "uživatelé"
+msgstr[2] "uživatelů"
+msgstr[3] "uživatelů"
 
 #: CTFd/utils/modes/__init__.py:37
 msgid "team"
 msgid_plural "teams"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "tým"
+msgstr[1] "týmy"
+msgstr[2] "týmů"
+msgstr[3] "týmů"
 
