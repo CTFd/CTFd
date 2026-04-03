@@ -26,6 +26,8 @@ class Languages(str, RawEnum):
     HEBREW = "he"
     UZBEK = "uz"
     SERBIAN = "sr"
+    NORWEGIAN = "no"
+    CROATIAN = "hr"
 
 
 LANGUAGE_NAMES = {
@@ -53,6 +55,8 @@ LANGUAGE_NAMES = {
     "he": "עברית",
     "uz": "oʻzbekcha",
     "sr": "Српски језик",
+    "no": "Norsk",
+    "hr": "Hrvatski",
 }
 
 SELECT_LANGUAGE_LIST = [("", "")] + [
