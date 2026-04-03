@@ -187,7 +187,6 @@ class ChallengeList(Resource):
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
         response = []
-        tag_schema = TagSchema(view="user", many=True)
 
         # Gather all challenge IDs so that we can determine invalid challenge prereqs
         all_challenge_ids = {
@@ -214,7 +213,7 @@ class ChallengeList(Resource):
                                     "solves": None,
                                     "solved_by_me": False,
                                     "category": challenge.category,
-                                    "tags": tag_schema.dump(challenge.tags).data,
+                                    "tags": challenge.tags,
                                     "template": "",
                                     "script": "",
                                 }
@@ -254,7 +253,7 @@ class ChallengeList(Resource):
                     "solves": solve_counts.get(challenge.id, solve_count_dfl),
                     "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
-                    "tags": tag_schema.dump(challenge.tags).data,
+                    "tags": challenge.tags,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
                 }
