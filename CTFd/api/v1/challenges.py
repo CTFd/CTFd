@@ -202,7 +202,7 @@ class ChallengeList(Resource):
                     pass
                 else:
                     if anonymize:
-                        # TODO: We should consider doing a whole migration to better structure the unlocking schema
+                        # TODO: We should consider doing a whole migration to better structure the requirements schema
                         if anonymize == "preview":
                             # Show identifying details but don't allow actual access
                             response.append(
@@ -379,6 +379,7 @@ class Challenge(Resource):
                     pass
                 else:
                     if anonymize:
+                        # TODO: We should consider doing a whole migration to better structure the requirements schema
                         if anonymize == "preview":
                             return {
                                 "success": True,
