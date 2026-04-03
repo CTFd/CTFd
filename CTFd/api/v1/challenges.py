@@ -187,7 +187,6 @@ class ChallengeList(Resource):
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
         response = []
-        tag_schema = TagSchema(view="user", many=True)
 
         # Gather all challenge IDs so that we can determine invalid challenge prereqs
         all_challenge_ids = {
@@ -202,20 +201,38 @@ class ChallengeList(Resource):
                     pass
                 else:
                     if anonymize:
-                        response.append(
-                            {
-                                "id": challenge.id,
-                                "type": "hidden",
-                                "name": "???",
-                                "value": 0,
-                                "solves": None,
-                                "solved_by_me": False,
-                                "category": "???",
-                                "tags": [],
-                                "template": "",
-                                "script": "",
-                            }
-                        )
+                        # TODO: We should consider doing a whole migration to better structure the requirements schema
+                        if anonymize == "preview":
+                            # Show identifying details but don't allow actual access
+                            response.append(
+                                {
+                                    "id": challenge.id,
+                                    "type": "hidden",
+                                    "name": challenge.name,
+                                    "value": challenge.value,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "category": challenge.category,
+                                    "tags": challenge.tags,
+                                    "template": "",
+                                    "script": "",
+                                }
+                            )
+                        else:
+                            response.append(
+                                {
+                                    "id": challenge.id,
+                                    "type": "hidden",
+                                    "name": "???",
+                                    "value": 0,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "category": "???",
+                                    "tags": [],
+                                    "template": "",
+                                    "script": "",
+                                }
+                            )
                     # Fallthrough to continue
                     continue
 
@@ -236,7 +253,7 @@ class ChallengeList(Resource):
                     "solves": solve_counts.get(challenge.id, solve_count_dfl),
                     "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
-                    "tags": tag_schema.dump(challenge.tags).data,
+                    "tags": challenge.tags,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
                 }
@@ -332,6 +349,10 @@ class Challenge(Resource):
                 f"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.",
             )
 
+        tags = [
+            tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
+        ]
+
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
             anonymize = chal.requirements.get("anonymize")
@@ -357,30 +378,46 @@ class Challenge(Resource):
                     pass
                 else:
                     if anonymize:
-                        return {
-                            "success": True,
-                            "data": {
-                                "id": chal.id,
-                                "type": "hidden",
-                                "name": "???",
-                                "value": 0,
-                                "logic": None,
-                                "solves": None,
-                                "solved_by_me": False,
-                                "solution_id": None,
-                                "category": "???",
-                                "tags": [],
-                                "template": "",
-                                "script": "",
-                            },
-                        }
+                        # TODO: We should consider doing a whole migration to better structure the requirements schema
+                        if anonymize == "preview":
+                            return {
+                                "success": True,
+                                "data": {
+                                    "id": chal.id,
+                                    "type": "hidden",
+                                    "name": chal.name,
+                                    "value": chal.value,
+                                    "logic": None,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "solution_id": None,
+                                    "category": chal.category,
+                                    "tags": tags,
+                                    "template": "",
+                                    "script": "",
+                                },
+                            }
+                        else:
+                            return {
+                                "success": True,
+                                "data": {
+                                    "id": chal.id,
+                                    "type": "hidden",
+                                    "name": "???",
+                                    "value": 0,
+                                    "logic": None,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "solution_id": None,
+                                    "category": "???",
+                                    "tags": [],
+                                    "template": "",
+                                    "script": "",
+                                },
+                            }
                     abort(403)
             else:
                 abort(403)
-
-        tags = [
-            tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
-        ]
 
         unlocked_hints = set()
         hints = []
