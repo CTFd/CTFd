@@ -48,5 +48,5 @@ jobs:
       - name: Check translations are compiled
         run: |
           make translations-compile
-          git diff --exit-code CTFd/translations/ || (echo "Translations need to be recompiled. Run 'make translations-compile' and commit the result." && exit 1)
+          git diff --exit-code CTFd/translations/ || (echo "Translations need to be recompiled" && exit 1)
 
