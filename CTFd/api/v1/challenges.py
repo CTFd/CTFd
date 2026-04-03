@@ -202,20 +202,38 @@ class ChallengeList(Resource):
                     pass
                 else:
                     if anonymize:
-                        response.append(
-                            {
-                                "id": challenge.id,
-                                "type": "hidden",
-                                "name": "???",
-                                "value": 0,
-                                "solves": None,
-                                "solved_by_me": False,
-                                "category": "???",
-                                "tags": [],
-                                "template": "",
-                                "script": "",
-                            }
-                        )
+                        # TODO: We should consider doing a whole migration to better structure the unlocking schema
+                        if anonymize == "preview":
+                            # Show identifying details but don't allow actual access
+                            response.append(
+                                {
+                                    "id": challenge.id,
+                                    "type": "hidden",
+                                    "name": challenge.name,
+                                    "value": challenge.value,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "category": challenge.category,
+                                    "tags": tag_schema.dump(challenge.tags).data,
+                                    "template": "",
+                                    "script": "",
+                                }
+                            )
+                        else:
+                            response.append(
+                                {
+                                    "id": challenge.id,
+                                    "type": "hidden",
+                                    "name": "???",
+                                    "value": 0,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "category": "???",
+                                    "tags": [],
+                                    "template": "",
+                                    "script": "",
+                                }
+                            )
                     # Fallthrough to continue
                     continue
 
