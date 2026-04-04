@@ -2,13 +2,25 @@ from CTFd.utils.crypto import hash_password, sha256, verify_password
 
 
 def test_hash_password():
-    assert hash_password("asdf").startswith("$bcrypt-sha256")
+    assert hash_password("asdf").startswith("$argon2")
 
 
 def test_verify_password():
+    h = hash_password("asdf")
+    assert verify_password("asdf", h)
+
+
+def test_verify_password_passlib_old_v1():
     assert verify_password(
         "asdf",
         "$bcrypt-sha256$2b,12$I0CNXRkGD2Bi/lbC4vZ7Y.$1WoilsadKpOjXa/be9x3dyu7p.mslZ6",
+    )
+
+
+def test_verify_password_passlib_old_v2():
+    assert verify_password(
+        "asdf",
+        "$bcrypt-sha256$v=2,t=2b,r=12$I0CNXRkGD2Bi/lbC4vZ7Y.$1WoilsadKpOjXa/be9x3dyu7p.mslZ6",
     )
 
 
