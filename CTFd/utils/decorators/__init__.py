@@ -73,7 +73,7 @@ def require_verified_emails(f):
                     current_user.is_admin() is False
                     and current_user.is_verified() is False
                 ):  # User is not confirmed
-                    if request.content_type == "application/json":
+                    if request.is_json():
                         abort(403)
                     else:
                         return redirect(url_for("auth.confirm"))
@@ -95,7 +95,7 @@ def authed_only(f):
             return f(*args, **kwargs)
         else:
             if (
-                request.content_type == "application/json"
+                request.is_json()
                 or request.accept_mimetypes.best == "text/event-stream"
             ):
                 abort(403)
@@ -118,7 +118,7 @@ def registered_only(f):
             return f(*args, **kwargs)
         else:
             if (
-                request.content_type == "application/json"
+                request.is_json()
                 or request.accept_mimetypes.best == "text/event-stream"
             ):
                 abort(403)
@@ -140,7 +140,7 @@ def admins_only(f):
         if is_admin():
             return f(*args, **kwargs)
         else:
-            if request.content_type == "application/json":
+            if request.is_json():
                 abort(403)
             else:
                 return redirect(url_for("auth.login", next=request.full_path))
@@ -154,7 +154,7 @@ def require_team(f):
         if is_teams_mode():
             team = get_current_team()
             if team is None:
-                if request.content_type == "application/json":
+                if request.is_json():
                     abort(403)
                 else:
                     return redirect(url_for("teams.private", next=request.full_path))
