@@ -314,9 +314,9 @@ def dump_users_teams_csv():
     team_field_names = [f.name for f in team_fields]
 
     header = (
-        ["name", "email", "password"]
+        ["id", "name", "email", "password"]
         + user_field_names
-        + ["team_name", "team_email", "team_password", "team_captain"]
+        + ["team_id", "team_name", "team_email", "team_password", "team_captain"]
         + team_field_names
     )
     writer.writerow(header)
@@ -326,7 +326,7 @@ def dump_users_teams_csv():
         user_field_values = [
             user_field_entries.get(f_id, "") for f_id in user_field_ids
         ]
-        user_data = [user.name, user.email, ""] + user_field_values
+        user_data = [user.id, user.name, user.email, user.password] + user_field_values
 
         team = user.team
         if team:
@@ -336,9 +336,10 @@ def dump_users_teams_csv():
             ]
             is_captain = team.captain_id == user.id
             team_data = [
+                team.id,
                 team.name,
-                team.email or "",
-                "",
+                team.email,
+                team.password,
                 is_captain,
             ] + team_field_values
         else:
@@ -361,6 +362,10 @@ def load_users_teams_csv(dict_reader):
     team_schema = TeamSchema()
     errors = []
     for i, line in enumerate(dict_reader):
+        # Throw away fields that we can't use
+        _ = line.pop("id", None)
+        _ = line.pop("team_id", None)
+
         team_name = (line.pop("team_name", "") or "").strip()
         team_email = (line.pop("team_email", "") or "").strip() or None
         team_password = (line.pop("team_password", "") or "").strip()
@@ -576,7 +581,7 @@ def load_challenges_csv(dict_reader):
 CSV_KEYS = {
     "scoreboard": dump_scoreboard_csv,
     "users+fields": dump_users_with_fields_csv,
-    "users+teams": dump_users_teams_csv,
+    "users+teams+fields": dump_users_teams_csv,
     "teams+fields": dump_teams_with_fields_csv,
     "teams+members+fields": dump_teams_with_members_fields_csv,
 }

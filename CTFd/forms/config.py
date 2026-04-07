@@ -123,7 +123,7 @@ class ImportCSVForm(BaseForm):
         choices=[
             ("users", "Users"),
             ("teams", "Teams"),
-            ("users+teams", "Users & Teams"),
+            ("users+teams", "Users with Teams"),
             ("challenges", "Challenges"),
         ],
         description="Type of CSV data",
