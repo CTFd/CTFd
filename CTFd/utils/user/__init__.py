@@ -60,7 +60,7 @@ def get_user_attrs(user_id):
 @cache.memoize(timeout=300)
 def get_user_place(user_id):
     user = Users.query.filter_by(id=user_id).first()
-    if user:
+    if user and user.account:
         return user.account.place
     return None
 
@@ -68,7 +68,7 @@ def get_user_place(user_id):
 @cache.memoize(timeout=300)
 def get_user_score(user_id):
     user = Users.query.filter_by(id=user_id).first()
-    if user:
+    if user and user.account:
         return user.account.score
     return None
 
