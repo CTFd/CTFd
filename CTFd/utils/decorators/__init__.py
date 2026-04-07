@@ -94,10 +94,7 @@ def authed_only(f):
         if authed():
             return f(*args, **kwargs)
         else:
-            if (
-                request.is_json
-                or request.accept_mimetypes.best == "text/event-stream"
-            ):
+            if request.is_json or request.accept_mimetypes.best == "text/event-stream":
                 abort(403)
             else:
                 return redirect(url_for("auth.login", next=request.full_path))
@@ -117,10 +114,7 @@ def registered_only(f):
         if authed():
             return f(*args, **kwargs)
         else:
-            if (
-                request.is_json
-                or request.accept_mimetypes.best == "text/event-stream"
-            ):
+            if request.is_json or request.accept_mimetypes.best == "text/event-stream":
                 abort(403)
             else:
                 return redirect(url_for("auth.register", next=request.full_path))
