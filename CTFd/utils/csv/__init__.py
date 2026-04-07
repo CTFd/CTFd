@@ -39,12 +39,12 @@ def dump_csv(name):
         raise KeyError
 
 
-def dump_scoreboard_csv():
+def dump_scoreboard_csv(admin=False):
     # TODO: Add fields to scoreboard data
     temp = StringIO()
     writer = csv.writer(temp)
 
-    standings = get_standings()
+    standings = get_standings(admin=admin)
 
     # Get all user fields in a specific order
     user_fields = UserFields.query.all()
@@ -580,6 +580,7 @@ def load_challenges_csv(dict_reader):
 
 CSV_KEYS = {
     "scoreboard": dump_scoreboard_csv,
+    "scoreboard-admin": lambda: dump_scoreboard_csv(admin=True),
     "users+fields": dump_users_with_fields_csv,
     "users+teams+fields": dump_users_teams_csv,
     "teams+fields": dump_teams_with_fields_csv,

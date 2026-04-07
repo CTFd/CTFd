@@ -87,4 +87,11 @@ def test_api_public_team_place_score_hidden_if_scores_hidden():
             resp = r.get_json()
             assert resp["data"]["place"] == "1st"
             assert resp["data"]["score"] is not None
+
+        set_config("score_visibility", "private")
+        with login_as_user(app, name=u.name) as client:
+            r = client.get("/api/v1/teams/1", json="")
+            resp = r.get_json()
+            assert resp["data"]["place"] == "1st"
+            assert resp["data"]["score"] is not None
     destroy_ctfd(app)

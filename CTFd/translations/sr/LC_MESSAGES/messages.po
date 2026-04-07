@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: CTFd\n"
-"Report-Msgid-Bugs-To: ognjen.jovandic@sajberedu.rs\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-24 00:30\n"
-"Last-Translator: Ognjen Jovanović <ognjen.jovandic@sajberedu.rs>\n"
-"Language-Team: Serbian\n"
+"PO-Revision-Date: 2026-04-03 16:35\n"
+"Last-Translator: \n"
+"Language-Team: Serbian (Latin)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Crowdin-Language: sr-CS\n"
 "X-Crowdin-File: /master/messages.pot\n"
 "X-Crowdin-File-ID: 188\n"
-"Language: sr\n"
+"Language: sr_CS\n"
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
@@ -380,8 +380,8 @@ msgid "Please click the link in that email to confirm your account."
 msgstr "Molimo kliknite na link u tom email-u da biste potvrdili svoj nalog."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
-msgid "If the email doesn't arrive, check your spam folder or contact an administrator to manually verify your account."
-msgstr "Ako email ne stigne, proverite folder za spam ili kontaktirajte administratora da ručno verifikuje vaš nalog."
+msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
+msgstr "Ako imejl ne stigne, proverite svoj spam folder ili kontaktirajte administratora da ručno verifikuje vaš nalog."
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
