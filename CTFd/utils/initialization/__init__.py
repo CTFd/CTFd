@@ -344,11 +344,11 @@ def init_request_processors(app):
                 token_type, token = token.split(" ", 1)
                 user = lookup_user_token(token)
             except UserNotFoundException:
-                abort(401)
+                abort(401, description="Your access token is invalid")
             except UserTokenExpiredException:
                 abort(401, description="Your access token has expired")
             except Exception:
-                abort(401)
+                abort(401, description="Invalid authorization header")
             else:
                 login_user(user)
 
