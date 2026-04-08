@@ -385,7 +385,7 @@ def init_request_processors(app):
                 # API requests with JSON body => token in header
                 if session["nonce"] != request.headers.get("CSRF-Token"):
                     abort(403)
-            if not request.is_json:
+            else:
                 # Form submissions => token in form body
                 if session["nonce"] != request.form.get("nonce"):
                     abort(403)
