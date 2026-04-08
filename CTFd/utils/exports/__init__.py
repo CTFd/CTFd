@@ -23,7 +23,8 @@ from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
 from CTFd.plugins.migrations import current as plugin_current
 from CTFd.plugins.migrations import upgrade as plugin_upgrade
-from CTFd.utils import get_app_config, set_config, string_types
+from CTFd.utils import get_app_config, get_config, set_config, string_types
+from CTFd.utils.config import get_themes
 from CTFd.utils.dates import unix_time
 from CTFd.utils.exports.databases import is_database_mariadb
 from CTFd.utils.exports.freeze import freeze_export
@@ -490,8 +491,12 @@ def import_ctf(backup, erase=True, ignore_overrides=False):
     set_import_status("clearing caches")
     cache.clear()
 
-    # Set default theme in case the current instance or the import does not provide it
-    set_config("ctf_theme", DEFAULT_THEME)
+    # Set theme from backup if it is installed, otherwise fall back to the default theme
+    backup_theme = get_config("ctf_theme")
+    if backup_theme and backup_theme in get_themes():
+        set_config("ctf_theme", backup_theme)
+    else:
+        set_config("ctf_theme", DEFAULT_THEME)
     set_config("ctf_version", CTFD_VERSION)
 
     # Set config variables to mark import completed
