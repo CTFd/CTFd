@@ -1216,17 +1216,17 @@ magic-string@^0.30.5:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.4.15"
 
-markdown-it@^14.0.0:
-  version "14.0.0"
-  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.0.0.tgz#b4b2ddeb0f925e88d981f84c183b59bac9e3741b"
-  integrity sha512-seFjF0FIcPt4P9U39Bq1JYblX0KZCjDLFFQPHpL5AzHpqPEKtosxmdq/LTVZnjfH7tjt9BxStm+wXcDBNuYmzw==
+markdown-it@^14.1.1:
+  version "14.1.1"
+  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.1.1.tgz#856f90b66fc39ae70affd25c1b18b581d7deee1f"
+  integrity sha512-BuU2qnTti9YKgK5N+IeMubp14ZUKUUw7yeJbkjtosvHiP0AZ5c8IAgEMk79D0eC8F23r4Ac/q8cAIFdm2FtyoA==
   dependencies:
     argparse "^2.0.1"
     entities "^4.4.0"
     linkify-it "^5.0.0"
     mdurl "^2.0.0"
     punycode.js "^2.3.1"
-    uc.micro "^2.0.0"
+    uc.micro "^2.1.0"
 
 marked@^4.1.0:
   version "4.3.0"
@@ -1562,10 +1562,10 @@ typo-js@*:
   resolved "https://registry.yarnpkg.com/typo-js/-/typo-js-1.2.3.tgz#aa7fab3cfcc3bba01746df06fceb93b7f786c6ac"
   integrity sha512-67Hyl94beZX8gmTap7IDPrG5hy2cHftgsCAcGvE1tzuxGT+kRB+zSBin0wIMwysYw8RUCBCvv9UfQl8TNM75dA==
 
-uc.micro@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-2.0.0.tgz#84b3c335c12b1497fd9e80fcd3bfa7634c363ff1"
-  integrity sha512-DffL94LsNOccVn4hyfRe5rdKa273swqeA5DJpMOeFmEn1wCDc7nAbbB0gXlgBCL7TNzeTv6G7XVWzan7iJtfig==
+uc.micro@^2.0.0, uc.micro@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-2.1.0.tgz#f8d3f7d0ec4c3dea35a7e3c8efa4cb8b45c9e7ee"
+  integrity sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==
 
 undici-types@~5.26.4:
   version "5.26.5"
