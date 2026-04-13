@@ -10,6 +10,10 @@ alembic==1.16.4
     #   flask-migrate
 aniso8601==10.0.1
     # via flask-restx
+argon2-cffi==25.1.0
+    # via pwdlib
+argon2-cffi-bindings==25.1.0
+    # via argon2-cffi
 attrs==25.3.0
     # via
     #   jsonschema
@@ -18,8 +22,8 @@ babel==2.17.0
     # via flask-babel
 banal==1.0.6
     # via dataset
-bcrypt==4.0.1
-    # via -r requirements.in
+bcrypt==5.0.0
+    # via pwdlib
 boto3==1.35.27
     # via -r requirements.in
 botocore==1.35.99
@@ -33,6 +37,7 @@ certifi==2025.8.3
 cffi==1.17.1
     # via
     #   -r requirements.in
+    #   argon2-cffi-bindings
     #   cmarkgfm
     #   cryptography
 charset-normalizer==3.4.3
@@ -123,9 +128,9 @@ nh3==0.3.0
     # via -r requirements.in
 packaging==25.0
     # via gunicorn
-passlib==1.7.4
-    # via -r requirements.in
 pillow==12.1.1
+    # via -r requirements.in
+pwdlib[argon2,bcrypt]==0.3.0
     # via -r requirements.in
 pycparser==2.22
     # via cffi
