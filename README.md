@@ -1,90 +1,62 @@
-# ![](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/logo.png?raw=true)
+# ![image](CTFd/themes/core/assets/img/ctf101.png)
 
-![CTFd MySQL CI](https://github.com/CTFd/CTFd/workflows/CTFd%20MySQL%20CI/badge.svg?branch=master)
-![Linting](https://github.com/CTFd/CTFd/workflows/Linting/badge.svg?branch=master)
-[![MajorLeagueCyber Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fcommunity.majorleaguecyber.org%2F)](https://community.majorleaguecyber.org/)
-[![Documentation Status](https://api.netlify.com/api/v1/badges/6d10883a-77bb-45c1-a003-22ce1284190e/deploy-status)](https://docs.ctfd.io)
+# CTF 101 - Play/CSAW365/CTF
 
-## What is CTFd?
+## Info
 
-CTFd is a Capture The Flag framework focusing on ease of use and customizability. It comes with everything you need to run a CTF and it's easy to customize with plugins and themes.
+This is a local fork of CTFd (v.3.8.3) used to host a CTFd instance for old csawCTF challenges (this was known as csaw365; I'm branding it as ctf101 - Play). 
 
-![CTFd is a CTF in a can.](https://github.com/CTFd/CTFd/blob/master/CTFd/themes/core/static/img/scoreboard.png?raw=true)
+### Expectations
 
-## Features
+1. There will be people coming from [ctf101.org](https://ctf101.org). There's a non-zero amount of traffic going to ctf101.org every day. Therefore, I want to prepare for ~100 users of concurrency. 
+2. Theme must stay consistent between ctf101.org and Play.
+3. Accessible at all times. **0 auth needed for challenges** (very idealistic hoping people don't destroy the challenge infra, but hope there'll be countermeasures in challenges). If people want to make an account to save their progress, the option will be there.
+4. Challenges - The challenges themselves will be hosted on a different repository. This is only the web-frontend.
 
-- Create your own challenges, categories, hints, and flags from the Admin Interface
-  - Dynamic Scoring Challenges
-  - Unlockable challenge support
-  - Challenge plugin architecture to create your own custom challenges
-  - Static & Regex based flags
-    - Custom flag plugins
-  - Unlockable hints
-  - File uploads to the server or an Amazon S3-compatible backend
-  - Limit challenge attempts & hide challenges
-  - Automatic bruteforce protection
-- Individual and Team based competitions
-  - Have users play on their own or form teams to play together
-- Scoreboard with automatic tie resolution
-  - Hide Scores from the public
-  - Freeze Scores at a specific time
-- Scoregraphs comparing the top 10 teams and team progress graphs
-- Markdown content management system
-- SMTP + Mailgun email support
-  - Email confirmation support
-  - Forgot password support
-- Automatic competition starting and ending
-- Team management, hiding, and banning
-- Customize everything using the [plugin](https://docs.ctfd.io/docs/plugins/overview) and [theme](https://docs.ctfd.io/docs/themes/overview) interfaces
-- Importing and Exporting of CTF data for archival
-- And a lot more...
+### Custom Implementations
 
-## Install
+1. **postgreSQL** - I used postgreSQL instead of the default mariaDB it came with. I was concerned about scalability so I chose to plug in postgres. Untested lol.
+2. **custom theme** - The theme was something I made. To set up development for the theme, run the local Flask debug server and use Vite to watch the `themes/core/` folder. There's an `npm` ecosystem in there to help you out. Changes made to `/core/**` will be built automatically onsave.
+    ``` bash
+    pip install -r development.txt
+    python3 serve.py
+    ```
 
-1. Install dependencies: `pip install -r requirements.txt`
-   1. You can also use the `prepare.sh` script to install system dependencies using apt.
-2. Modify [CTFd/config.ini](https://github.com/CTFd/CTFd/blob/master/CTFd/config.ini) to your liking.
-3. Use `python serve.py` or `flask run` in a terminal to drop into debug mode.
+    ```bash
+    npm install
+    npm run dev
+    ```
+3. **custom nginx config** - I wanted the ability to run multiple frontends to potentially serve a lot of people. Since I was given 1 IP to work with, I load-balance across individual containers. To start the servers with 3 replicas, run the following.
+    ```bash
+    docker compose up --scale ctfd=3
+    ```
 
-You can use the auto-generated Docker images with the following command:
+    Using `docker stats` and `hey` to test the nginx load-balancing, it reached around 120mb-memory/container, ~98% CPU usage.
+    ```bash
+    hey -m GET -n 5000 http://localhost/
+    ```
+    For response data, checkout [results](/tests/5000_getreq_3replica.csv)
 
-`docker run -p 8000:8000 -it ctfd/ctfd`
+## Run
 
-Or you can use Docker Compose with the following command from the source repository:
+### Requirements
 
-`docker compose up`
+1. `docker compose` - pretty [easy](https://docs.docker.com/compose/)
 
-Check out the [CTFd docs](https://docs.ctfd.io/) for [deployment options](https://docs.ctfd.io/docs/deployment/installation) and the [Getting Started](https://docs.ctfd.io/tutorials/getting-started/) guide
+To start the application, clone the repository.
 
-## Live Demo
-
-https://demo.ctfd.io/
-
-## Support
-
-To get basic support, you can join the [MajorLeagueCyber Community](https://community.majorleaguecyber.org/): [![MajorLeagueCyber Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fcommunity.majorleaguecyber.org%2F)](https://community.majorleaguecyber.org/)
-
-If you prefer commercial support or have a special project, feel free to [contact us](https://ctfd.io/contact/).
-
-## Managed Hosting
-
-Looking to use CTFd but don't want to deal with managing infrastructure? Check out [the CTFd website](https://ctfd.io/) for managed CTFd deployments.
-
-## MajorLeagueCyber
-
-CTFd is heavily integrated with [MajorLeagueCyber](https://majorleaguecyber.org/). MajorLeagueCyber (MLC) is a CTF stats tracker that provides event scheduling, team tracking, and single sign on for events.
-
-By registering your CTF event with MajorLeagueCyber users can automatically login, track their individual and team scores, submit writeups, and get notifications of important events.
-
-To integrate with MajorLeagueCyber, simply register an account, create an event, and install the client ID and client secret in the relevant portion in `CTFd/config.py` or in the admin panel:
-
-```python
-OAUTH_CLIENT_ID = None
-OAUTH_CLIENT_SECRET = None
+```bash
+git clone
 ```
 
-## Credits
+Run application with docker compose.
 
-- Logo by [Laura Barbera](http://www.laurabb.com/)
-- Theme by [Christopher Thompson](https://github.com/breadchris)
-- Notification Sound by [Terrence Martin](https://soundcloud.com/tj-martin-composer)
+```bash
+docker compose up
+# By default, this will start 1 instance of the frontend. See Custom Implementations for scaling.
+```
+
+## In development
+
+1. **About page** - Good first PR if anyone wants to help. Write some content about CSAW and history to put in it. Then, create a route + navlink.
+2. **Sign up banner** - Banner across top of the screen to motivate more sign ups for accounts. _Still up in the air about it because it might cause people to think an account is needed to play._

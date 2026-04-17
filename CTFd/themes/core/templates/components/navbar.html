@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
   <div class="container">
-    <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
+    <a href="{{ url_for('views.static_html', route='/') }}" data-text="ctf101" class="navbar-brand glitch layers">
       {% if Configs.ctf_logo %}
         <img
             class="img-responsive ctf_logo"
@@ -9,7 +9,9 @@
             height="25"
         >
       {% else %}
+      <span>
         {{ Configs.ctf_name }}
+      </span>
       {% endif %}
     </a>
 
@@ -55,7 +57,7 @@
         {% endif %}
 
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('challenges.listing') }}">
+          <a data-text="Challenges" class="nav-link glitch2 layers text-success" href="{{ url_for('challenges.listing') }}">
             {% trans %}Challenges{% endtrans %}
           </a>
         </li>
@@ -194,7 +196,8 @@
           </form>
         </li>
 
-        <li class="nav-item">
+        <!-- TODO: FIX light theme -->
+        <!-- <li class="nav-item">
           <button class="nav-link theme-switch" type="button">
             <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Toggle theme{% endtrans %}">
               <i class="fas fa-sun d-none d-md-inline"></i>
@@ -204,7 +207,7 @@
               {% trans %}Toggle theme{% endtrans %}
             </span>
           </button>
-        </li>
+        </li> -->
       </ul>
     </div>
   </div>

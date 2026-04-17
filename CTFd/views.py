@@ -6,6 +6,7 @@ from flask import (
     make_response,
     redirect,
     render_template,
+    render_template_string,
     request,
     send_file,
     session,
@@ -345,8 +346,8 @@ def settings():
         errors=errors,
     )
 
-
-@views.route("/", defaults={"route": "index"})
+# Handle the rest of the pages using the default pages.html template
+# @views.route("/", defaults={"route": "index"})
 @views.route("/<path:route>")
 def static_html(route):
     """
@@ -360,9 +361,13 @@ def static_html(route):
     else:
         if page.auth_required and authed() is False:
             return redirect(url_for("auth.login", next=request.full_path))
-
+        # if page.route == "index":
         return render_template("page.html", content=page.html, title=page.title)
-
+    
+# Write our own front-page
+@views.route("/")
+def index():
+    return render_template("index.html")
 
 @views.route("/tos")
 def tos():

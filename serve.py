@@ -28,7 +28,10 @@ if args.profile:
 
     app.config["flask_profiler"] = {
         "enabled": app.config["DEBUG"],
-        "storage": {"engine": "sqlite"},
+        "storage": {
+            "engine": "sqlalchemy",
+            "db_url": "postgresql+psycopg2://ctfd:ctfd@db/ctfd"
+        },
         "basicAuth": {"enabled": False},
         "ignore": ["^/themes/.*", "^/events"],
     }

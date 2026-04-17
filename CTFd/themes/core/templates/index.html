@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <head>
+        <style>
+
+            /* Mouse glow */
+            .cursor-glow {
+                position: fixed;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(circle, rgba(0,255,159,0.25), transparent 70%);
+                pointer-events: none;
+                transform: translate(-50%, -50%);
+                z-index: 1;
+            }
+
+            h1 {
+                font-size: 3rem;
+                letter-spacing: 3px;
+                text-shadow: 0 0 10px #00ff9f;
+            }
+
+            p {
+                opacity: 0.7;
+            }
+
+            .btn {
+                margin-top: 20px;
+                padding: 12px 30px;
+                border: 1px solid #00ff9f;
+                background: transparent;
+                color: #00ff9f;
+                cursor: pointer;
+                transition: 0.3s;
+                text-transform: uppercase;
+            }
+            .btn:hover {
+                background: #00ff9f;
+                color: black;
+                box-shadow: 0 0 15px #00ff9f;
+            }
+            .center-container {
+                display: flex;
+                flex-direction: column;
+
+                margin-top: 30%;
+                gap: 4rem;
+            }
+        </style>
+    </head>
+    <body>
+
+    <div class="cursor-glow" id="glow"></div>
+
+    <div class="center-container">
+        <div>
+            <div class="logo-text">
+                <h2 class="scramble">csawCTF presents</h2>
+                <img alt="CTF 101 (Gaemu) logo" src="{{url_for("views.themes", path="img/ctf101.png")}}">
+            </div>
+            
+            <p>An archive of old <a href="https://csaw.io">CSAWCTF</a> challenges.</p>
+        </div>
+        
+        <div>
+            <p class="scramble">Special thanks to our <a href="https://github.com/osirislab/ctf101">contributors</a> who help keep this site open and free for all.</p>
+            <p class="scramble">Student-run and hosted by OSIRIS Lab</p>
+        </div>
+        
+    </div>
+
+    <script>
+        // Glowing mouse cursor
+        const glow = document.getElementById("glow");
+        document.addEventListener("mousemove", (e) => {
+            glow.style.left = e.clientX + "px";
+            glow.style.top = e.clientY + "px";
+        });
+
+
+        // Client side javascript to emulate the scrambling letters onmouseover.
+        const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+
+        const randomChar = () => {
+            return CHARS[Math.floor(Math.random() * CHARS.length)];
+        }
+
+        const scrambleText = (element, finalText, speed = 1 / 3) => {
+            let iteration = 0;
+
+        // Cancel any existing animation
+        if (element._raf) {
+            cancelAnimationFrame(element._raf);
+        }
+
+            const animate = () => {
+                element.innerText = finalText
+                    .split("")
+                    .map((char, index) => {
+                        if (char === " ") return " ";
+                        if (index < iteration) return finalText[index];
+                        return randomChar();
+                    })
+                    .join("");
+
+                iteration += speed;
+
+                if (iteration < finalText.length) {
+                    element._raf = requestAnimationFrame(animate);
+                }
+            }
+
+            element._raf = requestAnimationFrame(animate);
+        }
+
+        const initScramble = () => {
+            const elements = document.querySelectorAll(".scramble");
+
+            elements.forEach((el) => {
+                const originalText = el.innerText;
+
+                // Initial scrambled state
+                el.innerText = originalText
+                    .split("")
+                    .map((char) => (char === " " ? " " : randomChar()))
+                    .join("");
+
+                // Animate on load
+                setTimeout(() => {
+                    scrambleText(el, originalText);
+                }, 300);
+
+                // 🔥 Hover trigger
+                el.addEventListener("mouseover", () => {
+                    scrambleText(el, originalText);
+                });
+            });
+        }
+
+        // Run when page loads
+        window.addEventListener("DOMContentLoaded", initScramble);
+    </script>
+    </body>
+  </div>
+{% endblock %}
