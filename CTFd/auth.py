@@ -679,4 +679,4 @@ def oauth_redirect():
 def logout():
     if current_user.authed():
         logout_user()
-    return redirect(url_for("views.static_html"))
+    return redirect(url_for("views.index"))

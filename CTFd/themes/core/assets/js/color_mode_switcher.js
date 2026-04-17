@@ -25,7 +25,10 @@ function showActiveTheme(theme) {
 
 // Change body theme early to prevent flash
 let currentTheme = getPreferredTheme();
-document.documentElement.setAttribute("data-bs-theme", currentTheme);
+// document.documentElement.setAttribute("data-bs-theme", currentTheme);
+// TEMP fix to default to dark theme before fixing the theme
+document.documentElement.setAttribute("data-bs-theme", "dark");
+
 
 // On browser color-scheme change, update
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
