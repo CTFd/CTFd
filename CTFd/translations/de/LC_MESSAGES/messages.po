@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2026-04-20 22:34\n"
+"PO-Revision-Date: 2026-04-20 22:42\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -383,7 +383,7 @@ msgstr "Wenn die E-Mail nicht ankommt, überprüfen Sie Ihren Spam-Ordner oder k
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
-msgstr "E-Mail Adresse ändern"
+msgstr "E-Mail-Adresse ändern"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:164
 #: CTFd/themes/core-beta/templates/components/navbar.html:169
