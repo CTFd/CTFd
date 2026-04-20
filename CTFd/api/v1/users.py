@@ -85,6 +85,9 @@ class UserList(Resource):
             "country": (str, None),
             "bracket": (str, None),
             "q": (str, None),
+            "hidden": (bool, None),
+            "banned": (bool, None),
+            "verified": (bool, None),
             "field": (
                 RawEnum(
                     "UserFields",
@@ -122,6 +125,15 @@ class UserList(Resource):
                 .paginate(per_page=50, max_per_page=100, error_out=False)
             )
         else:
+            if (
+                "hidden" in query_args
+                or "banned" in query_args
+                or "verified" in query_args
+            ):
+                return {
+                    "success": False,
+                    "errors": {"field": "Status can only be filtered by admin"},
+                }, 400
             users = (
                 Users.query.filter_by(banned=False, hidden=False, **query_args)
                 .filter(*filters)
