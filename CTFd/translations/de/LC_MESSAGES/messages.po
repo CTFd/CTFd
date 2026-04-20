@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2026-04-20 21:47\n"
+"PO-Revision-Date: 2026-04-20 22:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr "Challenge-Sichtbarkeit ist nur auf Admins gesetzt"
+msgstr "Challenge-Sichtbarkeit ist auf Administratoren beschränkt"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
@@ -113,7 +113,7 @@ msgstr "Der Name Ihres CTF-Events/Workshops"
 
 #: CTFd/forms/setup.py:32
 msgid "Event Description"
-msgstr "Event-Beschreibung"
+msgstr "Beschreibung des Events"
 
 #: CTFd/forms/setup.py:32
 msgid "Description for the CTF"
@@ -133,7 +133,7 @@ msgstr "Legt fest, ob Benutzer in Teams zusammen spielen (Team-Modus) oder einze
 
 #: CTFd/forms/setup.py:45
 msgid "Admin Username"
-msgstr "Benutzername des Administrators"
+msgstr "Administrator-Benutzername"
 
 #: CTFd/forms/setup.py:46
 msgid "Your username for the administration account"
@@ -141,7 +141,7 @@ msgstr "Ihr Benutzername für das Administrationskonto"
 
 #: CTFd/forms/setup.py:50
 msgid "Admin Email"
-msgstr "E-Mail-Adresse des Administrators"
+msgstr "Administrator-E-Mail"
 
 #: CTFd/forms/setup.py:51
 msgid "Your email address for the administration account"
@@ -426,7 +426,7 @@ msgstr "Passwort zur Anmeldung in Ihrem Konto"
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr "Mit der Registrierung stimmen Sie den <a href=\"%(privacy_link)s\" target=\"_blank\">-Datenschutzrichtlinien</a> und <a href=\"%(tos_link)s\" target=\"_blank\">Nutzungsbedingungen</a> zu"
+msgstr "Mit der Registrierung stimmen Sie den <a href=\"%(privacy_link)s\" target=\"_blank\">Datenschutzrichtlinien</a> und <a href=\"%(tos_link)s\" target=\"_blank\">Nutzungsbedingungen</a> zu"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
