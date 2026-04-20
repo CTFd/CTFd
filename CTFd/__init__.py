@@ -293,8 +293,10 @@ def create_app(config="CTFd.config.Config"):
                 proxyfix_args = [int(i) for i in reverse_proxy.split(",")]
                 app.wsgi_app = ProxyFix(app.wsgi_app, *proxyfix_args)
             else:
+                # TODO: CTFd 4.0 We should deprecate this behavior and require that users specify the level of control they want
+                # Maybe investigate Django to see what they do
                 app.wsgi_app = ProxyFix(
-                    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1
+                    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=0
                 )
 
         version = utils.get_config("ctf_version")
