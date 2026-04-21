@@ -10,6 +10,17 @@ jobs:
     permissions:
       contents: read
       packages: write
+    strategy:
+      matrix:
+        include:
+          - name: debian-image
+            dockerfile: Dockerfile
+            latest_tag: latest
+            version_tag: ${{ github.event.release.tag_name }}
+          - name: alpine-image
+            dockerfile: Dockerfile-alpine
+            latest_tag: alpine
+            version_tag: ${{ github.event.release.tag_name }}-alpine
     steps:
       - name: Lowercase github.repository
         run: |
@@ -31,14 +42,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
+      - name: Build and push ${{ matrix.name }} image
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: ./${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}
+            ${{ env.IMAGE_NAME }}:${{ matrix.latest_tag }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ matrix.latest_tag }}
+            ${{ env.IMAGE_NAME }}:${{ matrix.version_tag }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ matrix.version_tag }}
