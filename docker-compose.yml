@@ -1,6 +1,6 @@
 services:
   ctfd:
-    image: ctfd/ctfd:latest
+    build: .
     restart: always
     ports:
       - "8000:8000"
@@ -14,8 +14,9 @@ services:
       - ERROR_LOG=-
       - REVERSE_PROXY=true
     volumes:
-      - ctfd_logs:/var/log/CTFd
-      - ctfd_uploads:/var/uploads
+      - .data/CTFd/logs:/var/log/CTFd
+      - .data/CTFd/uploads:/var/uploads
+      - .:/opt/CTFd:ro
     depends_on:
       permissions:
         condition: service_completed_successfully
@@ -27,13 +28,24 @@ services:
         default:
         internal:
 
+  # TODO: CTFd 4.0 Migrate to named volumes. Users will likely need to manually migrate existing files
   permissions:
     image: alpine:3.23
     user: root
     volumes:
-      - ctfd_logs:/var/log/CTFd
-      - ctfd_uploads:/var/uploads
+      - .data/CTFd/logs:/var/log/CTFd
+      - .data/CTFd/uploads:/var/uploads
     command: chown -R 1001:1001 /var/uploads /var/log/CTFd
+
+  nginx:
+    image: nginx:stable
+    restart: always
+    volumes:
+      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - ctfd
 
   db:
     image: mariadb:10.11
@@ -45,16 +57,17 @@ services:
       - MARIADB_DATABASE=ctfd
       - MARIADB_AUTO_UPGRADE=1
     volumes:
-      - db_data:/var/lib/mysql
+      - .data/mysql:/var/lib/mysql
     networks:
         internal:
+    # This command is required to set important mariadb defaults
     command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
 
   cache:
     image: redis:4
     restart: always
     volumes:
-    - redis_data:/data
+    - .data/redis:/data
     networks:
         internal:
 
@@ -62,9 +75,3 @@ networks:
     default:
     internal:
         internal: true
-
-volumes:
-  db_data:
-  redis_data:
-  ctfd_logs:
-  ctfd_uploads:
