@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.10.3\n"
 
 #: CTFd/challenges.py:38
@@ -345,7 +345,6 @@ msgstr "Tantangan"
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
 msgstr[0] "%(num)d penyelesaian"
-msgstr[1] "%(num)d penyelesaian"
 
 #: CTFd/themes/core-beta/templates/challenge.html:77
 msgid "View Hint"
@@ -354,8 +353,7 @@ msgstr "Lihat Petunjuk"
 #: CTFd/themes/core-beta/templates/challenge.html:120
 msgid "attempt"
 msgid_plural "attempts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "percobaan"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
@@ -709,7 +707,7 @@ msgstr "429 Terlalu Banyak Permintaan"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:12
 msgid "502 Bad Gateway"
-msgstr "502 Gerbang Buruk"
+msgstr "502 Gateway Bermasalah"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
@@ -887,10 +885,8 @@ msgstr "Pengguna"
 msgid "user"
 msgid_plural "users"
 msgstr[0] "pengguna"
-msgstr[1] "pengguna-pengguna"
 
 #: CTFd/utils/modes/__init__.py:37
 msgid "team"
 msgid_plural "teams"
 msgstr[0] "tim"
-msgstr[1] "tim-tim"
