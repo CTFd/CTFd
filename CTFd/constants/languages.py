@@ -3,6 +3,7 @@ from CTFd.constants import RawEnum
 
 class Languages(str, RawEnum):
     ENGLISH = "en"
+    INDONESIAN = "id"
     GERMAN = "de"
     POLISH = "pl"
     SPANISH = "es"
@@ -33,6 +34,7 @@ class Languages(str, RawEnum):
 
 LANGUAGE_NAMES = {
     "en": "English",
+    "id": "Bahasa Indonesia",
     "de": "Deutsch",
     "pl": "Polski",
     "es": "Español",
