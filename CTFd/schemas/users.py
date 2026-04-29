@@ -68,7 +68,7 @@ class UserSchema(ma.ModelSchema):
         existing_user = Users.query.filter_by(name=name).first()
         current_user = get_current_user()
         if is_admin():
-            user_id = data.get("id")
+            user_id = data.get("id") or (self.instance.id if self.instance else None)
             if user_id:
                 if existing_user and existing_user.id != user_id:
                     raise ValidationError(
@@ -76,15 +76,9 @@ class UserSchema(ma.ModelSchema):
                     )
             else:
                 if existing_user:
-                    if current_user:
-                        if current_user.id != existing_user.id:
-                            raise ValidationError(
-                                "User name has already been taken", field_names=["name"]
-                            )
-                    else:
-                        raise ValidationError(
-                            "User name has already been taken", field_names=["name"]
-                        )
+                    raise ValidationError(
+                        "User name has already been taken", field_names=["name"]
+                    )
         else:
             if name == current_user.name:
                 return data
@@ -109,7 +103,7 @@ class UserSchema(ma.ModelSchema):
         existing_user = Users.query.filter_by(email=email).first()
         current_user = get_current_user()
         if is_admin():
-            user_id = data.get("id")
+            user_id = data.get("id") or (self.instance.id if self.instance else None)
             if user_id:
                 if existing_user and existing_user.id != user_id:
                     raise ValidationError(
@@ -117,16 +111,9 @@ class UserSchema(ma.ModelSchema):
                     )
             else:
                 if existing_user:
-                    if current_user:
-                        if current_user.id != existing_user.id:
-                            raise ValidationError(
-                                "Email address has already been used",
-                                field_names=["email"],
-                            )
-                    else:
-                        raise ValidationError(
-                            "Email address has already been used", field_names=["email"]
-                        )
+                    raise ValidationError(
+                        "Email address has already been used", field_names=["email"]
+                    )
         else:
             if email == current_user.email:
                 return data

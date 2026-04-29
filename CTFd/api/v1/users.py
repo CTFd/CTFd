@@ -2,7 +2,6 @@ from typing import List
 
 from flask import abort, request, session
 from flask_restx import Namespace, Resource
-from sqlalchemy.exc import IntegrityError
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -172,20 +171,7 @@ class UserList(Resource):
             return {"success": False, "errors": response.errors}, 400
 
         db.session.add(response.data)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            return (
-                {
-                    "success": False,
-                    "errors": {
-                        "email": ["A user with this name or email already exists"],
-                        "name": ["A user with this name or email already exists"],
-                    },
-                },
-                400,
-            )
+        db.session.commit()
 
         if request.args.get("notify"):
             name = response.data.name
