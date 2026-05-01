@@ -27,6 +27,13 @@
                         <h6 class="text-muted text-center pb-3">
                                 Page {{ users.page }} of {{ users.total }} results
                         </h6>
+                        {% elif status %}
+                        <h5 class="text-muted text-center">
+                                Filtering by status: <strong>{{ status }}</strong>
+                        </h5>
+                        <h6 class="text-muted text-center pb-3">
+                                Page {{ users.page }} of {{ users.total }} results
+                        </h6>
                         {% endif %}
 
                         {% with form = Forms.users.UserSearchForm(field=field, q=q) %}
