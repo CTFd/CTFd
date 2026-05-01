@@ -149,3 +149,37 @@ def test_num_users_limit():
             assert r.status_code == 302
             assert Users.query.count() == 3
     destroy_ctfd(app)
+
+
+def test_affiliation_length_validation():
+    """Users should not be able to set an affiliation longer than 128 characters"""
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, name="admin") as client:
+            # Try creating a user with a very long affiliation
+            r = client.post(
+                "/api/v1/users",
+                json={
+                    "name": "long_affiliation_user",
+                    "email": "longaff@examplectf.com",
+                    "password": "password",
+                    "affiliation": "A" * 129,
+                },
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert resp["success"] == False
+            assert "affiliation" in resp["errors"]
+
+            # Normal affiliation should work fine
+            r = client.post(
+                "/api/v1/users",
+                json={
+                    "name": "normal_user",
+                    "email": "normal@examplectf.com",
+                    "password": "password",
+                    "affiliation": "My University",
+                },
+            )
+            assert r.status_code == 200
+    destroy_ctfd(app)
