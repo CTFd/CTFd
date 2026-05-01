@@ -13,6 +13,7 @@ from CTFd.utils.modes import TEAMS_MODE
 def users_listing():
     q = request.args.get("q")
     field = request.args.get("field")
+    status = request.args.get("status")
     page = abs(request.args.get("page", 1, type=int))
     filters = []
     users = []
@@ -22,10 +23,22 @@ def users_listing():
         if Users.__mapper__.has_property(field):
             filters.append(getattr(Users, field).like("%{}%".format(q)))
 
+    # Apply status filters
+    if status == "active":
+        filters.append(Users.banned == False)
+        filters.append(Users.hidden == False)
+    elif status == "banned":
+        filters.append(Users.banned == True)
+    elif status == "hidden":
+        filters.append(Users.hidden == True)
+    elif status == "unverified":
+        filters.append(Users.verified == False)
+
     if q and field == "ip":
         users = (
             Users.query.join(Tracking, Users.id == Tracking.user_id)
             .filter(Tracking.ip.like("%{}%".format(q)))
+            .filter(*filters)
             .order_by(Users.id.asc())
             .paginate(page=page, per_page=50, error_out=False)
         )
@@ -46,6 +59,7 @@ def users_listing():
         next_page=url_for(request.endpoint, page=users.next_num, **args),
         q=q,
         field=field,
+        status=status,
     )
 
 
