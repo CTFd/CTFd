@@ -164,6 +164,15 @@ class UserList(Resource):
     )
     def post(self):
         req = request.get_json()
+        if req is None:
+            return (
+                {
+                    "success": False,
+                    "errors": {"": ["Request body must be valid JSON"]},
+                },
+                400,
+            )
+
         schema = UserSchema("admin")
         response = schema.load(req)
 
