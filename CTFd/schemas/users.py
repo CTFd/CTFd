@@ -47,11 +47,23 @@ class UserSchema(ma.ModelSchema):
                 schemes={"http", "https"},
             )(website)
             if website
-            else True
+            else True,
+            validate.Length(
+                max=128, error="Website must be less than 128 characters"
+            ),
         ],
     )
     language = field_for(Users, "language", validate=[validate_language])
     country = field_for(Users, "country", validate=[validate_country_code])
+    affiliation = field_for(
+        Users,
+        "affiliation",
+        validate=[
+            validate.Length(
+                max=128, error="Affiliation must be less than 128 characters"
+            ),
+        ],
+    )
     password = field_for(Users, "password", required=True, allow_none=False)
     bracket_id = field_for(Users, "bracket_id")
     fields = Nested(
