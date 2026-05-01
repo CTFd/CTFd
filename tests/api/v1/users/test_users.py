@@ -19,6 +19,41 @@ def test_api_self_ban():
     destroy_ctfd(app)
 
 
+def test_api_create_user_empty_json_body():
+    """POST /api/v1/users should return 400 instead of 500 when request body is missing or not JSON"""
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, name="admin") as client:
+            # Send POST without JSON body (no Content-Type header)
+            r = client.post(
+                "/api/v1/users",
+                data="not json",
+                content_type="text/plain",
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert resp["success"] == False
+
+
+def test_api_create_user_whitespace_name():
+    """POST /api/v1/users should reject a name that is only whitespace"""
+    app = create_ctfd()
+    with app.app_context():
+        with login_as_user(app, name="admin") as client:
+            r = client.post(
+                "/api/v1/users",
+                json={
+                    "name": "   ",
+                    "email": "test@examplectf.com",
+                    "password": "password",
+                },
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert resp["success"] == False
+    destroy_ctfd(app)
+
+
 def test_api_modify_user_type():
     """Can a user patch /api/v1/users/<user_id> to promote a user to admin and demote them to user"""
     app = create_ctfd()
