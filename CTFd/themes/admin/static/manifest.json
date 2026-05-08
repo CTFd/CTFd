@@ -66,7 +66,7 @@
     "isEntry": true
   },
   "assets/js/pages/challenge.js": {
-    "file": "assets/pages/challenge-CwrAVNP3.js",
+    "file": "assets/pages/challenge-bd_a4xnj.js",
     "src": "assets/js/pages/challenge.js",
     "isEntry": true,
     "imports": [
@@ -75,7 +75,7 @@
       "_CommentBox-Ll_d0V3v.js"
     ],
     "css": [
-      "assets/challenge-DY7T5JQl.css"
+      "assets/challenge-Drt7zm1v.css"
     ]
   },
   "assets/js/pages/challenges.js": {
@@ -144,7 +144,7 @@
     ]
   },
   "assets/js/pages/statistics.js": {
-    "file": "assets/pages/statistics-oGCCj5G0.js",
+    "file": "assets/pages/statistics-IfjpOVH0.js",
     "src": "assets/js/pages/statistics.js",
     "isEntry": true,
     "imports": [

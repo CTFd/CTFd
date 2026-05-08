@@ -1,4 +1,62 @@
-# 3.8.2 / 2025-02-05
+# 3.8.4 / 2026-04-20
+
+**Security**
+
+- Fix issue where partially attacker controlled links could be served to other users possibly resulting in arbitrary JavaScript execution if those links are clicked
+- Fix issue where the safe URL redirect validator could be bypassed possibly allowing an attacker the ability to phish other users
+
+**Deployment**
+
+- The `REVERSE_PROXY` config when set to `true` will now default to `1,1,1,1,0` instead of `1,1,1,1,1`
+- Update Pillow version to 12.2.0
+- Update mako version to 1.3.11
+
+# 3.8.3 / 2026-04-10
+
+**General**
+
+- Add Challenge position to improve control over challenge ordering
+  - Positions of 0 go to the end and follow existing challenge sorting behavior. Otherwise position is increasing from 1 to n
+- Use localized datetime formatting (datetimes will show in the user's preferred language format)
+- Add anonymize setting to preview general details of challenges with prerequisites
+
+**Admin Panel**
+
+- Update progression matrix to support filters that are stored in the browser
+- Add challenge category to progression matrix
+- Add seperate frozen and unfrozen scoreboard CSV exports
+  - The unfrozen scoreboard is the `scoreboard-admin` CSV export
+- Add a CSV import & export for users with their team information
+- Fix an issue where Page Preview could sometimes throw an error
+- Fix error thrown in the Admin Panel when theme name is numeric
+
+**API**
+
+- `/api/v1/hints/[hint_id]` will now return 404 if the hint's associated challenge is hidden
+- Add `/api/v1/statistics/progression/matrix` to support the progression matrix
+- Add caching to `/api/v1/users/[user_id]`
+- Add caching to `/api/v1/teams/[team_id]`
+- Fix issue with bracket validation where users could join team brackets and vice-versa
+- Make Content-Type checks more flexible when checking for JSON Content-Types
+- Return description when returning a 401 error
+
+**Themes**
+
+- Fix regression in core theme where anonymous users would not be redirected to login on flag submit
+- When restoring from a backup, set the theme from the backup if it is available, otherwise fall back to the default theme
+
+**Deployment**
+
+- Fix upload permissions error by using a sidecar container to set permissions in mounted folders
+  - In CTFd 4.0 we will likely migrate to named volumes or similar to allow removal of this permissions sidecar container
+- Disable CSRF check for static theme content on the `views.themes_beta` endpoint and when accessed via read-only methods
+
+**Translations**
+
+- Properly update included translations
+- Add Serbian, Czech translations
+
+# 3.8.2 / 2026-02-05
 
 **Security**
 
