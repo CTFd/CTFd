@@ -1,4 +1,4 @@
-black==22.3.0
+black==26.3.1
 isort==5.13.2
 ruff==0.0.260
 dennis==1.1.0
