@@ -68,7 +68,10 @@ class UserSchema(ma.ModelSchema):
         existing_user = Users.query.filter_by(name=name).first()
         current_user = get_current_user()
         if is_admin():
-            user_id = data.get("id") or (self.instance.id if self.instance else None)
+            # Set to the user_id we are targetting or the instance id for self updates
+            user_id = data.get("id")
+            if user_id is None and self.instance:
+                user_id = self.instance.id
             if user_id:
                 if existing_user and existing_user.id != user_id:
                     raise ValidationError(
@@ -103,7 +106,10 @@ class UserSchema(ma.ModelSchema):
         existing_user = Users.query.filter_by(email=email).first()
         current_user = get_current_user()
         if is_admin():
-            user_id = data.get("id") or (self.instance.id if self.instance else None)
+            # Set to the user_id we are targetting or the instance id for self updates
+            user_id = data.get("id")
+            if user_id is None and self.instance:
+                user_id = self.instance.id
             if user_id:
                 if existing_user and existing_user.id != user_id:
                     raise ValidationError(
