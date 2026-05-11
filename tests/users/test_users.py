@@ -149,3 +149,26 @@ def test_num_users_limit():
             assert r.status_code == 302
             assert Users.query.count() == 3
     destroy_ctfd(app)
+
+
+def test_api_users_post_admin_duplicate_admin_name():
+    """Creating a user with a name matching the calling admin's returns 400, not 500"""
+    app = create_ctfd()
+    with app.app_context():
+        admin = Users.query.filter_by(id=1).first()
+        admin_name = admin.name
+        with login_as_user(app, "admin") as client:
+            r = client.post(
+                "/api/v1/users",
+                json={
+                    "name": admin_name,
+                    "email": "admin2@examplectf.com",
+                    "password": "password",
+                },
+            )
+            assert r.status_code == 400
+            resp = r.get_json()
+            assert resp["success"] is False
+            assert resp["errors"]
+            assert Users.query.count() == 1
+    destroy_ctfd(app)
