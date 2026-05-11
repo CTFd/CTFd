@@ -3,7 +3,6 @@ from CTFd.constants import RawEnum
 
 class Languages(str, RawEnum):
     ENGLISH = "en"
-    INDONESIAN = "id"
     GERMAN = "de"
     POLISH = "pl"
     SPANISH = "es"
@@ -30,11 +29,11 @@ class Languages(str, RawEnum):
     NORWEGIAN = "no"
     CROATIAN = "hr"
     CZECH = "cs"
+    INDONESIAN = "id"
 
 
 LANGUAGE_NAMES = {
     "en": "English",
-    "id": "Bahasa Indonesia",
     "de": "Deutsch",
     "pl": "Polski",
     "es": "Español",
@@ -61,6 +60,7 @@ LANGUAGE_NAMES = {
     "no": "Norsk",
     "hr": "Hrvatski",
     "cs": "Čeština",
+    "id": "Bahasa Indonesia",
 }
 
 SELECT_LANGUAGE_LIST = [("", "")] + [
