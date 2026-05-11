@@ -139,7 +139,7 @@ python-dateutil==2.9.0.post0
     # via
     #   botocore
     #   freezegun
-python-dotenv==0.13.0
+python-dotenv==1.2.2
     # via -r requirements.in
 python-geoacumen-city==2023.4.15
     # via -r requirements.in
