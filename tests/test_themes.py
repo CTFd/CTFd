@@ -123,6 +123,40 @@ def test_that_ctfd_can_be_deployed_in_subdir():
     destroy_ctfd(app)
 
 
+def test_that_ctfd_subdir_redirects_work():
+    """Test that subdirectory deployments don't break when a regular path is accessed"""
+
+    class ApplicationRootConfig(TestingConfig):
+        APPLICATION_ROOT = "/ctf"
+
+    app = create_ctfd(config=ApplicationRootConfig, application_root="/ctf")
+    with app.app_context():
+        with app.test_client():
+            remote = {"environ_base": {"REMOTE_ADDR": "127.0.0.1"}}
+            c = Client(app)
+            # Test that we are in a subdir deployment
+            response = c.get("/random", **remote)
+            headers = dict(response.headers)
+            assert response.status == "302 FOUND"
+            assert headers["Location"] == "/ctf/random?"
+
+            # A session cookie should be set on the first request
+            response = c.get("/ctf/login", **remote)
+            headers = dict(response.headers)
+            assert headers["Set-Cookie"]
+
+            # The session cookie should not be regenerated on non subdir requests
+            response = c.get("/random", **remote)
+            headers = dict(response.headers)
+            assert headers.get("Set-Cookie") is None
+
+            # The session cookie should not be regenerated on subdir requests
+            response = c.get("/ctf/login", **remote)
+            headers = dict(response.headers)
+            assert headers.get("Set-Cookie") is None
+    destroy_ctfd(app)
+
+
 def test_that_request_path_hijacking_works_properly():
     """Test that the CTFdRequest subclass correctly mimics the Flask Request when it should"""
     app = create_ctfd(setup=False, application_root="/ctf")
