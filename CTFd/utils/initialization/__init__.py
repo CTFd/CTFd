@@ -332,7 +332,7 @@ def init_request_processors(app):
     def tokens():
         token = request.headers.get("Authorization")
         if token and (
-            request.mimetype == "application/json"
+            request.is_json
             # Specially allow multipart/form-data for file uploads
             or (
                 request.endpoint == "api.files_files_list"
@@ -344,11 +344,11 @@ def init_request_processors(app):
                 token_type, token = token.split(" ", 1)
                 user = lookup_user_token(token)
             except UserNotFoundException:
-                abort(401)
+                abort(401, description="Your access token is invalid")
             except UserTokenExpiredException:
                 abort(401, description="Your access token has expired")
             except Exception:
-                abort(401)
+                abort(401, description="Invalid authorization header")
             else:
                 login_user(user)
 
@@ -381,11 +381,11 @@ def init_request_processors(app):
         if not session.get("nonce"):
             session["nonce"] = generate_nonce()
         if request.method not in safe_methods:
-            if request.content_type == "application/json":
+            if request.is_json:
                 # API requests with JSON body => token in header
                 if session["nonce"] != request.headers.get("CSRF-Token"):
                     abort(403)
-            if request.content_type != "application/json":
+            else:
                 # Form submissions => token in form body
                 if session["nonce"] != request.form.get("nonce"):
                     abort(403)
