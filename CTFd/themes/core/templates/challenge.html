@@ -48,12 +48,45 @@
         <div class="tab-content">
           <div role="tabpanel" class="tab-pane fade show active" id="challenge">
             <h2 class="challenge-name text-center pt-3">
-              {{ challenge.name }}
+              {{ locked_name if locked else challenge.name }}
             </h2>
             <h3 class="challenge-value text-center">
-              {{ challenge.value }}
+              {{ locked_value if locked else challenge.value }}
             </h3>
 
+            {% if locked %}
+              {% block locked %}
+                {% set named_prereqs = prerequisites.named if prerequisites else [] %}
+                {% set anon_prereq_count = prerequisites.anonymous_count if prerequisites else 0 %}
+                <div class="alert alert-warning challenge-locked mt-4" role="alert">
+                  <i class="fa-solid fa-lock me-2"></i>
+                  {% if named_prereqs and anon_prereq_count == 0 %}
+                    {% if named_prereqs | length == 1 %}
+                      {% trans name=named_prereqs[0].name %}Solve <strong>{{ name }}</strong> to unlock this challenge.{% endtrans %}
+                    {% else %}
+                      {% trans %}Solve the following challenges to unlock this one:{% endtrans %}
+                      <ul class="mb-0 mt-2">
+                        {% for p in named_prereqs %}
+                          <li><strong>{{ p.name }}</strong></li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  {% elif named_prereqs and anon_prereq_count > 0 %}
+                    {% trans %}Solve the following to unlock this challenge:{% endtrans %}
+                    <ul class="mb-0 mt-2">
+                      {% for p in named_prereqs %}
+                        <li><strong>{{ p.name }}</strong></li>
+                      {% endfor %}
+                      <li>{{ ngettext("and %(num)d additional challenge", "and %(num)d additional challenges", anon_prereq_count) }}</li>
+                    </ul>
+                  {% elif anon_prereq_count > 0 %}
+                    {{ ngettext("Solve %(num)d additional challenge to unlock this one.", "Solve %(num)d additional challenges to unlock this one.", anon_prereq_count) }}
+                  {% else %}
+                    {% trans %}This challenge is locked.{% endtrans %}
+                  {% endif %}
+                </div>
+              {% endblock %}
+            {% else %}
 
             {% if tags %}
               <div class="challenge-tags text-center pt-2 pb-3">
@@ -86,6 +119,36 @@
             {% endif %}
 
             <span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
+
+            {% block unlocks %}
+              {% if unlocks and (unlocks.named or unlocks.anonymous_count) %}
+                <div class="alert alert-info challenge-unlocks mt-3" role="alert">
+                  <i class="fa-solid fa-lock me-2"></i>
+                  {% if unlocks.named and unlocks.anonymous_count == 0 %}
+                    {% if unlocks.named | length == 1 %}
+                      {% trans name=unlocks.named[0].name %}Solving this challenge unlocks <strong>{{ name }}</strong>.{% endtrans %}
+                    {% else %}
+                      {% trans %}Solving this challenge unlocks:{% endtrans %}
+                      <ul class="mb-0 mt-2">
+                        {% for u in unlocks.named %}
+                          <li><strong>{{ u.name }}</strong></li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  {% elif unlocks.named and unlocks.anonymous_count > 0 %}
+                    {% trans %}Solving this challenge unlocks:{% endtrans %}
+                    <ul class="mb-0 mt-2">
+                      {% for u in unlocks.named %}
+                        <li><strong>{{ u.name }}</strong></li>
+                      {% endfor %}
+                      <li>{{ ngettext("and %(num)d additional challenge", "and %(num)d additional challenges", unlocks.anonymous_count) }}</li>
+                    </ul>
+                  {% else %}
+                    {{ ngettext("Solving this challenge unlocks an additional challenge.", "Solving this challenge unlocks additional challenges.", unlocks.anonymous_count) }}
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endblock %}
 
             {% if challenge.connection_info %}
               <div class="mb-2">
@@ -282,6 +345,7 @@
                 </template>
               </div>
             </div>
+            {% endif %}
           </div>
 
           <div role="tabpanel" class="tab-pane fade" id="submissions">
