@@ -139,7 +139,7 @@ class BaseChallenge(object):
         data = request.form or request.get_json()
         for attr, value in data.items():
             # We need to set these to floats so that the next operations don't operate on strings
-            if attr in ("initial", "minimum", "decay"):
+            if attr in ("initial", "minimum", "decay") and value is not None:
                 try:
                     value = float(value)
                 except (ValueError, TypeError):
