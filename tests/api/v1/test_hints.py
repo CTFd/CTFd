@@ -147,3 +147,28 @@ def test_admin_cannot_unlock_hint_with_prerequisite():
         data = r.get_json()
         assert data["data"]["content"] == "Second hint"
     destroy_ctfd(app)
+
+
+def test_hint_not_accessible_when_challenge_hidden():
+    """Test that hints cannot be accessed by regular users when the challenge is hidden"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db, state="hidden")
+        gen_hint(app.db, challenge_id=1, cost=0)
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 404
+    destroy_ctfd(app)
+
+
+def test_hint_accessible_to_admin_when_challenge_hidden():
+    """Test that admins can still access hints when the challenge is hidden"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db, state="hidden")
+        gen_hint(app.db, challenge_id=1, cost=0)
+        with login_as_user(app, name="admin") as client:
+            r = client.get("/api/v1/hints/1")
+            assert r.status_code == 200
+    destroy_ctfd(app)

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-24 00:30\n"
+"PO-Revision-Date: 2026-04-20 22:10\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -20,22 +20,22 @@ msgstr ""
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr ""
+msgstr "챌린지 공개 범위가 '관리자 전용'으로 설정되었습니다"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr ""
+msgstr "%(ctf_name)s가 아직 시작되지 않았습니다"
 
 #: CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
-msgstr ""
+msgstr "%(ctf_name)s가 일시 중지되었습니다"
 
 #: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
-msgstr ""
+msgstr "%(ctf_name)s가 종료되었습니다"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
 #: CTFd/themes/core-beta/templates/teams/private.html:329
@@ -303,11 +303,11 @@ msgstr "초대 링크"
 
 #: CTFd/forms/users.py:133
 msgid "Bracket"
-msgstr ""
+msgstr "브라켓"
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
-msgstr ""
+msgstr "사용자를 위한 대진표"
 
 #: CTFd/forms/users.py:172
 msgid "Search for matching users"
@@ -338,7 +338,7 @@ msgstr "힌트 확인"
 #: CTFd/themes/core-beta/templates/challenge.html:120
 msgid "attempt"
 msgid_plural "attempts"
-msgstr[0] ""
+msgstr[0] "시도"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
@@ -350,7 +350,7 @@ msgstr "다음 챌린지"
 
 #: CTFd/themes/core-beta/templates/challenge.html:175
 msgid "Share"
-msgstr ""
+msgstr "공유"
 
 #: CTFd/themes/core-beta/templates/challenge.html:207
 #: CTFd/themes/core-beta/templates/setup.html:305
@@ -424,7 +424,7 @@ msgstr "계정에 로그인할 때 사용할 비밀번호"
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr ""
+msgstr "<a href=\"%(privacy_link)s\" target=\"_blank\">개인정보보호정책</a> 과 <a href=\"%(tos_link)s\" target=\"_blank\">서비스 이용 약관</a>에 동의하고 가입을 진행합니다"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
@@ -445,11 +445,11 @@ msgstr "점수"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:24
 msgid "All"
-msgstr ""
+msgstr "전체"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:36
 msgid "Place"
-msgstr ""
+msgstr "장소"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:38
 #: CTFd/themes/core-beta/templates/teams/private.html:330
@@ -459,7 +459,7 @@ msgstr "점수"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:60
 msgid "Scoreboard is empty"
-msgstr ""
+msgstr "스코어보드가 비어 있습니다"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:124
 #: CTFd/themes/core-beta/templates/components/navbar.html:129
@@ -643,16 +643,16 @@ msgstr "로그아웃"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:180
 msgid "Change language"
-msgstr ""
+msgstr "언어변경"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:199
 #: CTFd/themes/core-beta/templates/components/navbar.html:204
 msgid "Toggle theme"
-msgstr ""
+msgstr "테마 전환"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:12
 msgid "403 Forbidden"
-msgstr ""
+msgstr "403 금지됨"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
@@ -660,7 +660,7 @@ msgstr "파일 존재하지 않음"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "404 Not Found"
-msgstr ""
+msgstr "404 찾을 수 없음"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
@@ -672,11 +672,11 @@ msgstr "천천히 시도해주세요!"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:13
 msgid "429 Too Many Requests"
-msgstr ""
+msgstr "429 요청 과다"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:12
 msgid "502 Bad Gateway"
-msgstr ""
+msgstr "502 잘못된 게이트웨이"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
@@ -714,11 +714,11 @@ msgstr "팀 프로필이 업데이트되었습니다."
 
 #: CTFd/themes/core-beta/templates/teams/private.html:104
 msgid "Choose Captain"
-msgstr "선장을 선택하세요"
+msgstr "팀장을 선택하세요"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
-msgstr "귀하의 주장 권한이 이전되었습니다"
+msgstr "당신의 팀장 권한이 이전되었습니다."
 
 #: CTFd/themes/core-beta/templates/teams/private.html:152
 msgid "Invite Users"
@@ -762,7 +762,7 @@ msgstr "장소"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:268
 msgid "points"
-msgstr "포인트들"
+msgstr "포인트"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:325
 #: CTFd/themes/core-beta/templates/teams/public.html:91
@@ -772,7 +772,7 @@ msgstr "회원"
 #: CTFd/themes/core-beta/templates/teams/private.html:345
 #: CTFd/themes/core-beta/templates/teams/public.html:110
 msgid "Captain"
-msgstr "선장"
+msgstr "팀장"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:361
 #: CTFd/themes/core-beta/templates/teams/public.html:125
@@ -832,12 +832,12 @@ msgstr "페이지"
 #: CTFd/themes/core-beta/templates/users/users.html:14
 #, python-format
 msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
-msgstr ""
+msgstr "<strong>%(field)s</strong>가 <strong>%(q)s</strong>와 일치하는 사용자를 검색 중"
 
 #: CTFd/themes/core-beta/templates/users/users.html:17
 #, python-format
 msgid "Page %(page)s of %(total)s results"
-msgstr ""
+msgstr "총 %(total)s건 중 %(page)s페이지"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"

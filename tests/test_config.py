@@ -40,7 +40,7 @@ def test_reverse_proxy_config():
         assert app.wsgi_app.x_proto == 1
         assert app.wsgi_app.x_host == 1
         assert app.wsgi_app.x_port == 1
-        assert app.wsgi_app.x_prefix == 1
+        assert app.wsgi_app.x_prefix == 0
     destroy_ctfd(app)
 
     class ReverseProxyConfig(TestingConfig):
@@ -52,7 +52,7 @@ def test_reverse_proxy_config():
         assert app.wsgi_app.x_proto == 1
         assert app.wsgi_app.x_host == 1
         assert app.wsgi_app.x_port == 1
-        assert app.wsgi_app.x_prefix == 1
+        assert app.wsgi_app.x_prefix == 0
     destroy_ctfd(app)
 
 

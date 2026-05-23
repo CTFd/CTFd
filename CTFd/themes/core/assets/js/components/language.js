@@ -5,6 +5,7 @@ Alpine.data("LanguageForm", () => ({
   async set(event) {
     let language = event.target.getAttribute("value");
     document.cookie = `language=${language};SameSite=Lax`;
+    localStorage.setItem("language", language);
 
     // Set user language preference if logged in
     if (CTFd.user.id) {

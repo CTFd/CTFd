@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -120,6 +120,11 @@ class Hint(Resource):
     )
     def get(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
+        # If the user isn't an admin we should respect the challenge visibility
+        if is_admin() is False:
+            if hint.challenge.state == "hidden":
+                abort(404)
+
         user = get_current_user()
 
         # We allow public accessing of hints if challenges are visible and there is no cost or prerequisites

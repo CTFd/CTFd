@@ -52,7 +52,13 @@ from CTFd.models import (
 )
 from CTFd.utils import config as ctf_config
 from CTFd.utils import get_app_config, get_config, set_config
-from CTFd.utils.csv import dump_csv, load_challenges_csv, load_teams_csv, load_users_csv
+from CTFd.utils.csv import (
+    dump_csv,
+    load_challenges_csv,
+    load_teams_csv,
+    load_users_csv,
+    load_users_teams_csv,
+)
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.exports import background_import_ctf
 from CTFd.utils.exports import export_ctf as export_ctf_util
@@ -148,6 +154,7 @@ def import_csv():
         "challenges": load_challenges_csv,
         "users": load_users_csv,
         "teams": load_teams_csv,
+        "users+teams": load_users_teams_csv,
     }
 
     loader = loaders[csv_type]
