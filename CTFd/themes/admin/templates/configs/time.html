@@ -76,6 +76,14 @@
 						<input class="form-control" id='start' name='start' type='number'
 							{% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
 					</div>
+
+					<div class="form-group col-md-12">
+						<label for="ctf_not_started_message">Not Started Message:</label>
+						<input class="form-control" id="ctf_not_started_message" name="ctf_not_started_message" type="text"
+							value="{{ ctf_not_started_message or '' }}"
+							placeholder="The competition has not started yet">
+						<small class="form-text text-muted">Message shown to users when they visit the challenges page before the competition starts.</small>
+					</div>
 				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="end-date">
@@ -146,6 +154,14 @@
 						<label for="end">UTC Timestamp:</label>
 						<input class="form-control" id='end' name='end' type='number'
 							{% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
+					</div>
+
+					<div class="form-group col-md-12">
+						<label for="ctf_ended_message">Ended Message:</label>
+						<input class="form-control" id="ctf_ended_message" name="ctf_ended_message" type="text"
+							value="{{ ctf_ended_message or '' }}"
+							placeholder="The competition has ended">
+						<small class="form-text text-muted">Message shown to users when they visit the challenges page after the competition ends.</small>
 					</div>
 				</div>
 			</div>
