@@ -230,6 +230,210 @@ def test_api_challenges_challenge_with_requirements_anonymize_true():
     destroy_ctfd(app)
 
 
+def test_api_challenges_locked_detail_includes_prerequisites():
+    """Locked challenge detail responses include prerequisite names so users know what to solve."""
+    app = create_ctfd()
+    with app.app_context():
+        prereq = gen_challenge(app.db)
+        prereq_id = prereq.id
+        prereq_name = prereq.name
+
+        preview_chal = gen_challenge(app.db, name="preview-locked")
+        preview_chal.requirements = {
+            "prerequisites": [prereq_id],
+            "anonymize": "preview",
+        }
+        preview_chal_id = preview_chal.id
+
+        anon_chal = gen_challenge(app.db, name="fully-locked")
+        anon_chal.requirements = {
+            "prerequisites": [prereq_id],
+            "anonymize": True,
+        }
+        anon_chal_id = anon_chal.id
+        app.db.session.commit()
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{preview_chal_id}")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["type"] == "hidden"
+            assert data["requirements"]["prerequisites"] == {
+                "named": [{"id": prereq_id, "name": prereq_name}],
+                "anonymous_count": 0,
+            }
+
+            r = client.get(f"/api/v1/challenges/{anon_chal_id}")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["type"] == "hidden"
+            assert data["name"] == "???"
+            assert data["requirements"]["prerequisites"] == {
+                "named": [{"id": prereq_id, "name": prereq_name}],
+                "anonymous_count": 0,
+            }
+    destroy_ctfd(app)
+
+
+def test_api_challenges_unlocks_field_anonymize_modes():
+    """Unlocked detail responses expose dependents via `unlocks`, respecting anonymize."""
+    app = create_ctfd()
+    with app.app_context():
+        prereq = gen_challenge(app.db, name="prereq")
+        prereq_id = prereq.id
+
+        preview_dep = gen_challenge(app.db, name="preview-dep")
+        preview_dep.requirements = {
+            "prerequisites": [prereq_id],
+            "anonymize": "preview",
+        }
+        preview_dep_id = preview_dep.id
+        anon_dep = gen_challenge(app.db, name="anon-dep")
+        anon_dep.requirements = {
+            "prerequisites": [prereq_id],
+            "anonymize": True,
+        }
+        hidden_dep = gen_challenge(app.db, name="hidden-dep")
+        hidden_dep.requirements = {"prerequisites": [prereq_id]}
+        app.db.session.commit()
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{prereq_id}")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert "unlocks" in data
+            assert data["unlocks"]["named"] == [
+                {"id": preview_dep_id, "name": "preview-dep"}
+            ]
+            assert data["unlocks"]["anonymous_count"] == 2
+    destroy_ctfd(app)
+
+
+def test_api_challenges_unlocks_excludes_already_solved_dependents():
+    """If a user has already solved a dependent challenge, it should not appear in `unlocks`."""
+    app = create_ctfd()
+    with app.app_context():
+        prereq = gen_challenge(app.db, name="prereq")
+        prereq_id = prereq.id
+
+        dep = gen_challenge(app.db, name="dep")
+        dep.requirements = {"prerequisites": [prereq_id], "anonymize": "preview"}
+        dep_id = dep.id
+        app.db.session.commit()
+
+        register_user(app)
+        gen_solve(app.db, user_id=2, challenge_id=dep_id)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{prereq_id}")
+            assert r.status_code == 200
+            assert r.get_json()["data"]["unlocks"] == {
+                "named": [],
+                "anonymous_count": 0,
+            }
+    destroy_ctfd(app)
+
+
+def test_api_challenges_unlocks_admin_view_shows_all_names():
+    """Admins viewing a challenge see all dependent names regardless of anonymize."""
+    app = create_ctfd()
+    with app.app_context():
+        prereq = gen_challenge(app.db, name="prereq")
+        prereq_id = prereq.id
+
+        anon_dep = gen_challenge(app.db, name="anon-dep")
+        anon_dep.requirements = {
+            "prerequisites": [prereq_id],
+            "anonymize": True,
+        }
+        anon_dep_id = anon_dep.id
+        app.db.session.commit()
+
+        with login_as_user(app, name="admin") as admin:
+            r = admin.get(f"/api/v1/challenges/{prereq_id}")
+            assert r.status_code == 200
+            unlocks = r.get_json()["data"]["unlocks"]
+            assert unlocks == {
+                "named": [{"id": anon_dep_id, "name": "anon-dep"}],
+                "anonymous_count": 0,
+            }
+    destroy_ctfd(app)
+
+
+def test_api_challenges_locked_prerequisites_respect_anonymize_of_prereqs():
+    """When listing prereqs of a locked challenge, prereqs that themselves are hidden do not leak their names."""
+    app = create_ctfd()
+    with app.app_context():
+        invisible_gate = gen_challenge(app.db, name="invisible-gate", state="hidden")
+        invisible_gate_id = invisible_gate.id
+
+        anon_prereq = gen_challenge(app.db, name="test-anonymize")
+        anon_prereq.requirements = {
+            "prerequisites": [invisible_gate_id],
+            "anonymize": True,
+        }
+        anon_prereq_id = anon_prereq.id
+
+        false_prereq = gen_challenge(app.db, name="test-hidden")
+        false_prereq.requirements = {
+            "prerequisites": [invisible_gate_id],
+            "anonymize": False,
+        }
+        false_prereq_id = false_prereq.id
+
+        nested = gen_challenge(app.db, name="test-nested")
+        nested.requirements = {
+            "prerequisites": [anon_prereq_id, false_prereq_id],
+            "anonymize": "preview",
+        }
+        nested_id = nested.id
+        app.db.session.commit()
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{nested_id}")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            prereq_payload = data["requirements"]["prerequisites"]
+            assert prereq_payload["named"] == []
+            assert prereq_payload["anonymous_count"] == 2
+            view = data["view"]
+            assert "test-anonymize" not in view
+            assert "test-hidden" not in view
+    destroy_ctfd(app)
+
+
+def test_api_challenges_locked_anonymize_true_view_does_not_leak_name_or_value():
+    """For anonymize=True locked challenges, the rendered `view` HTML do not contain the challenge name or value."""
+    app = create_ctfd()
+    with app.app_context():
+        prereq = gen_challenge(app.db, name="prereq")
+        prereq_id = prereq.id
+
+        secret_name = "super-secret-challenge"
+        secret_value = 4242
+        anon_chal = gen_challenge(app.db, name=secret_name, value=secret_value)
+        anon_chal.requirements = {
+            "prerequisites": [prereq_id],
+            "anonymize": True,
+        }
+        anon_chal_id = anon_chal.id
+        app.db.session.commit()
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{anon_chal_id}")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert data["name"] == "???"
+            assert data["value"] == 0
+            view = data.get("view", "")
+            assert secret_name not in view
+            assert str(secret_value) not in view
+    destroy_ctfd(app)
+
+
 def test_api_challenges_challenge_with_requirements_no_user():
     """Does the challenge list API show gated challenges to the public?"""
     app = create_ctfd()

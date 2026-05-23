@@ -41,10 +41,12 @@ from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.challenges import (
     get_all_challenges,
+    get_dependent_challenges,
     get_rating_average_for_challenge_id,
     get_solve_counts_for_challenges,
     get_solve_ids_for_user_id,
     get_solves_for_challenge_id,
+    get_visible_challenge_requirements,
 )
 from CTFd.utils.config.visibility import (
     accounts_visible,
@@ -379,42 +381,67 @@ class Challenge(Resource):
                 else:
                     if anonymize:
                         # TODO: We should consider doing a whole migration to better structure the requirements schema
+                        prereq_chals = Challenges.query.filter(
+                            Challenges.id.in_(prereqs)
+                        ).all()
+                        prerequisites_payload = get_visible_challenge_requirements(
+                            prereq_chals,
+                            solve_ids,
+                            all_challenge_ids,
+                            admin=is_admin(),
+                        )
+
+                        display_name, display_value = "???", 0
+                        display_category, display_tags = "???", []
                         if anonymize == "preview":
-                            return {
-                                "success": True,
-                                "data": {
-                                    "id": chal.id,
-                                    "type": "hidden",
-                                    "name": chal.name,
-                                    "value": chal.value,
-                                    "logic": None,
-                                    "solves": None,
-                                    "solved_by_me": False,
-                                    "solution_id": None,
-                                    "category": chal.category,
-                                    "tags": tags,
-                                    "template": "",
-                                    "script": "",
+                            display_name, display_value = chal.name, chal.value
+                            display_category, display_tags = chal.category, tags
+
+                        locked_view = render_template(
+                            chal_class.templates["view"].lstrip("/"),
+                            challenge=chal,
+                            locked=True,
+                            locked_name=display_name,
+                            locked_value=display_value,
+                            prerequisites=prerequisites_payload,
+                            tags=display_tags,
+                            files=[],
+                            hints=[],
+                            solves=None,
+                            solved_by_me=False,
+                            rating=None,
+                            ratings=None,
+                            max_attempts=0,
+                            attempts=0,
+                            unlocks={"named": [], "anonymous_count": 0},
+                        )
+                        return {
+                            "success": True,
+                            "data": {
+                                "id": chal.id,
+                                "type": "hidden",
+                                "name": display_name,
+                                "value": display_value,
+                                "category": display_category,
+                                "tags": display_tags,
+                                "logic": None,
+                                "solves": None,
+                                "solved_by_me": False,
+                                "solution_id": None,
+                                "template": chal_class.templates["view"],
+                                "script": chal_class.scripts["view"],
+                                "type_data": {
+                                    "id": chal_class.id,
+                                    "name": chal_class.name,
+                                    "templates": chal_class.templates,
+                                    "scripts": chal_class.scripts,
                                 },
-                            }
-                        else:
-                            return {
-                                "success": True,
-                                "data": {
-                                    "id": chal.id,
-                                    "type": "hidden",
-                                    "name": "???",
-                                    "value": 0,
-                                    "logic": None,
-                                    "solves": None,
-                                    "solved_by_me": False,
-                                    "solution_id": None,
-                                    "category": "???",
-                                    "tags": [],
-                                    "template": "",
-                                    "script": "",
+                                "view": locked_view,
+                                "requirements": {
+                                    "prerequisites": prerequisites_payload,
                                 },
-                            }
+                            },
+                        }
                     abort(403)
             else:
                 abort(403)
@@ -516,12 +543,26 @@ class Challenge(Resource):
             attempts = 0
             rating = None
 
+        admin_view = is_admin()
+        all_challenge_ids = {
+            c.id for c in Challenges.query.with_entities(Challenges.id).all()
+        }
+        dependents = [
+            d
+            for d in get_dependent_challenges(chal.id)
+            if admin_view or d.id not in user_solves
+        ]
+        unlocks = get_visible_challenge_requirements(
+            dependents, user_solves, all_challenge_ids, admin=admin_view
+        )
+
         response["solves"] = solve_count
         response["solved_by_me"] = solved_by_user
         response["attempts"] = attempts
         response["files"] = files
         response["tags"] = tags
         response["hints"] = hints
+        response["unlocks"] = unlocks
 
         # If we didn't disable ratings then we should allow the user to see their own challenge rating
         if get_config("challenge_ratings", default="public") != "disabled":
@@ -570,6 +611,7 @@ class Challenge(Resource):
             max_attempts=chal.max_attempts,
             attempts=attempts,
             challenge=chal,
+            unlocks=unlocks,
         )
 
         if (
