@@ -4,7 +4,7 @@ pytest==9.0.3
 pytest-randomly==4.1.0
 coverage==7.14.0
 psycopg2-binary==2.9.12
-moto==5.2.1
+moto==4.2.14
 bandit==1.9.4
 flask_profiler==1.8.1
 pytest-xdist==3.8.0
