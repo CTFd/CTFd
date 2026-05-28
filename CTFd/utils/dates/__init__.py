@@ -1,5 +1,6 @@
 import time
 from datetime import datetime as DateTime
+from datetime import timezone
 from typing import Union
 
 from CTFd.utils import get_config
@@ -85,3 +86,15 @@ def isoformat(dt: DateTime) -> str:
         print("Invalid datetime object for time filter function.")
         return None
     return dt.isoformat() + "Z"
+
+
+def parse_iso_datetime(value):
+    if value in (None, ""):
+        return None
+    if isinstance(value, DateTime):
+        dt = value
+    else:
+        dt = DateTime.fromisoformat(value)
+    if dt.tzinfo is not None:
+        dt = dt.astimezone(timezone.utc).replace(tzinfo=None)
+    return dt
