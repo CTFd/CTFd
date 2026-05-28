@@ -4,7 +4,7 @@ from typing import List  # noqa: I001
 
 from flask import abort, render_template, request, session, url_for
 from flask_restx import Namespace, Resource
-from sqlalchemy.sql import and_
+from sqlalchemy.sql import and_, or_
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
@@ -339,6 +339,10 @@ class Challenge(Resource):
             chal = Challenges.query.filter(
                 Challenges.id == challenge_id,
                 and_(Challenges.state != "hidden", Challenges.state != "locked"),
+                or_(
+                    Challenges.scheduled_at.is_(None),
+                    Challenges.scheduled_at <= datetime.utcnow(),
+                ),
             ).first_or_404()
 
         try:
@@ -707,6 +711,12 @@ class ChallengeAttempt(Resource):
 
         if challenge.state == "locked":
             abort(403)
+
+        if (
+            challenge.scheduled_at is not None
+            and challenge.scheduled_at > datetime.utcnow()
+        ):
+            abort(404)
 
         if challenge.requirements:
             requirements = challenge.requirements.get("prerequisites", [])
@@ -1198,6 +1208,13 @@ class ChallengeRatings(Resource):
         if challenge.state == "hidden" and not is_admin():
             abort(404)
 
+        if (
+            not is_admin()
+            and challenge.scheduled_at is not None
+            and challenge.scheduled_at > datetime.utcnow()
+        ):
+            abort(404)
+
         # Check if user/team has solved this challenge (only allow rating if solved)
         if not is_admin():
             user_solves = get_solve_ids_for_user_id(user_id=user.id)
@@ -1286,6 +1303,13 @@ class ChallengeSolution(Resource):
 
         # Check if challenge is visible to the user
         if challenge.state == "hidden" and not is_admin():
+            abort(404)
+
+        if (
+            not is_admin()
+            and challenge.scheduled_at is not None
+            and challenge.scheduled_at > datetime.utcnow()
+        ):
             abort(404)
 
         # Get user's current solves
