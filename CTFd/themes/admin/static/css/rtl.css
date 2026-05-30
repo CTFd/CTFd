@@ -1,0 +1,81 @@
+/*
+ * Minimal RTL overrides for the CTFd admin panel.
+ *
+ * Loaded conditionally from admin/templates/base.html only when the active
+ * locale is right-to-left (e.g. Arabic, Hebrew). Keep this file small and
+ * additive: it flips direction/alignment and mirrors the Bootstrap spacing
+ * utilities that assume LTR. It must not change behavior for LTR locales,
+ * which never load this file.
+ */
+
+body {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Tables and form controls read right-to-left */
+table,
+.table,
+.form-control,
+.custom-select,
+.input-group {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Navbar: the brand/menu sit on the right, the right-hand utilities flip left */
+.navbar-nav.mr-auto {
+    margin-right: 0 !important;
+    margin-left: auto !important;
+}
+
+.navbar-nav.navbar-right {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+/* Mirror Bootstrap 4 horizontal spacing helpers used throughout the admin UI */
+.ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+.ml-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+.ml-3 { margin-left: 0 !important; margin-right: 1rem !important; }
+.mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+.mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+.mr-3 { margin-right: 0 !important; margin-left: 1rem !important; }
+
+.pl-1 { padding-left: 0 !important; padding-right: 0.25rem !important; }
+.pl-2 { padding-left: 0 !important; padding-right: 0.5rem !important; }
+.pl-3 { padding-left: 0 !important; padding-right: 1rem !important; }
+.pr-1 { padding-right: 0 !important; padding-left: 0.25rem !important; }
+.pr-2 { padding-right: 0 !important; padding-left: 0.5rem !important; }
+.pr-3 { padding-right: 0 !important; padding-left: 1rem !important; }
+
+/* Float helpers */
+.float-left { float: right !important; }
+.float-right { float: left !important; }
+
+/* Text alignment helpers */
+.text-left { text-align: right !important; }
+.text-right { text-align: left !important; }
+
+/* Dropdown menus align to the right edge */
+.dropdown-menu {
+    right: 0;
+    left: auto;
+    text-align: right;
+}
+
+/* Modal close button moves to the left */
+.modal-header .close {
+    margin: -1rem auto -1rem -1rem;
+}
+
+/* Input groups: keep prepend/append visually correct */
+.input-group-prepend {
+    margin-right: 0;
+    margin-left: -1px;
+}
+
+.input-group-append {
+    margin-left: 0;
+    margin-right: -1px;
+}

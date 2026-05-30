@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from typing import List  # noqa: I001
 
 from flask import abort, render_template, request, session, url_for
+from flask_babel import gettext as _
 from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
 
@@ -687,7 +688,7 @@ class ChallengeAttempt(Resource):
                     "success": True,
                     "data": {
                         "status": "paused",
-                        "message": "{} is paused".format(config.ctf_name()),
+                        "message": _("%(ctf_name)s is paused", ctf_name=config.ctf_name()),
                     },
                 },
                 403,
@@ -1204,7 +1205,9 @@ class ChallengeRatings(Resource):
             if int(challenge_id) not in user_solves:
                 return {
                     "success": False,
-                    "errors": {"": ["You must solve this challenge before rating it"]},
+                    "errors": {
+                        "": [_("You must solve this challenge before rating it")]
+                    },
                 }, 403
 
         data = request.get_json()

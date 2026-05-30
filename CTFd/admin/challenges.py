@@ -1,4 +1,6 @@
 from flask import abort, render_template, request, url_for
+from flask_babel import gettext as _
+from flask_babel import lazy_gettext as _l
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
@@ -7,6 +9,11 @@ from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import get_current_team, get_current_user
+
+# Translation anchors for built-in challenge type names. These are rendered in
+# the admin UI via {{ _(type) }} where `type` is a dynamic plugin identifier,
+# so the literals must be registered here for pybabel to extract them.
+_CHALLENGE_TYPE_LABELS = (_l("standard"), _l("dynamic"))
 
 
 @admin.route("/admin/challenges")
@@ -53,7 +60,11 @@ def challenges_detail(challenge_id):
     except KeyError:
         abort(
             500,
-            f"The underlying challenge type ({challenge.type}) is not installed. This challenge can not be loaded.",
+            _(
+                "The underlying challenge type (%(type)s) is not installed. "
+                "This challenge can not be loaded.",
+                type=challenge.type,
+            ),
         )
 
     update_j2 = render_template(

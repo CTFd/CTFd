@@ -9,8 +9,8 @@
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h3 class="text-center w-100 p-0 m-0">Challenge Preview</h3>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<h3 class="text-center w-100 p-0 m-0">{% trans %}Challenge Preview{% endtrans %}</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -18,7 +18,7 @@
 				</div>
 				<div class="text-center">
 					<h5>
-						Preview may be slightly different from the user-facing interface
+						{% trans %}Preview may be slightly different from the user-facing interface{% endtrans %}
 					</h5>
 				</div>
 			</div>
@@ -29,8 +29,8 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-title text-center w-100">Ratings</h2>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<h2 class="modal-title text-center w-100">{% trans %}Ratings{% endtrans %}</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -50,8 +50,8 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-title text-center w-100">Comments</h2>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<h2 class="modal-title text-center w-100">{% trans %}Comments{% endtrans %}</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="{{ _('Close') }}">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -71,34 +71,34 @@
 		<div class="container">
 			<h1 class="text-center">{{ challenge.name }}</h1>
 			<h2 class="text-center">{{ challenge.category }}</h2>
-			<h2 class="text-center">{{ challenge.type }}</h2>
+			<h2 class="text-center">{{ _(challenge.type) }}</h2>
 			{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
 			<h5>
 				<span class="badge {{ badge_state }} challenge-state">
 					{{ challenge.state }}
 				</span>
 			</h5>
-			<h3 class="text-center">{{ challenge.value }} points</h3>
+			<h3 class="text-center">{% trans points=challenge.value %}{{ points }} points{% endtrans %}</h3>
 			<div class="pt-3">
 				<a class="preview-challenge">
 					<i class="btn-fa fas fa-file-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
-					   title="Preview Challenge"></i>
+					   title="{{ _('Preview Challenge') }}"></i>
 				</a>
 				<a class="no-decoration" href="{{ url_for('admin.submissions_listing', submission_type='correct', field='challenge_id', q=challenge.id) }}">
 					<i class="btn-fa fas fa-tasks fa-2x px-2" data-toggle="tooltip" data-placement="top"
-					   title="Correct Submissions"></i>
+					   title="{{ _('Correct Submissions') }}"></i>
 				</a>
 				<a class="ratings-challenge" id="ratings-viewer-load">
 					<i class="btn-fa fa-regular fa-star fa-2x px-2" data-toggle="tooltip" data-placement="top"
-					   title="Challenge Ratings"></i>
+					   title="{{ _('Challenge Ratings') }}"></i>
 				</a>
 				<a class="comments-challenge">
 					<i class="btn-fa fas fa-comments fa-2x px-2" data-toggle="tooltip" data-placement="top"
-					   title="Comments"></i>
+					   title="{{ _('Comments') }}"></i>
 				</a>
 				<a class="delete-challenge">
 					<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
-					   title="Delete Challenge"></i>
+					   title="{{ _('Delete Challenge') }}"></i>
 				</a>
 			</div>
 		</div>
@@ -108,21 +108,21 @@
 		<div class="row">
 			<div class="col-md-6">
 				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
-					<a class="nav-item nav-link small active" data-toggle="tab" href="#files" role="tab">Files</a>
-					<a class="nav-item nav-link small" data-toggle="tab" href="#flags" role="tab">Flags</a>
-					<a class="nav-item nav-link small" data-toggle="tab" href="#solution" role="tab">Solution</a>
-					<a class="nav-item nav-link small" data-toggle="tab" href="#topics" role="tab">Topics</a>
-					<a class="nav-item nav-link small" data-toggle="tab" href="#tags" role="tab">Tags</a>
-					<a class="nav-item nav-link small" data-toggle="tab" href="#hints" role="tab">Hints</a>
-					<a class="nav-item nav-link small" data-toggle="tab" href="#requirements" role="tab">Requirements</a>
-					<a class="nav-item nav-link small" data-toggle="tab" href="#next" role="tab">Next</a>
+					<a class="nav-item nav-link small active" data-toggle="tab" href="#files" role="tab">{% trans %}Files{% endtrans %}</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#flags" role="tab">{% trans %}Flags{% endtrans %}</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#solution" role="tab">{% trans %}Solution{% endtrans %}</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#topics" role="tab">{% trans %}Topics{% endtrans %}</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#tags" role="tab">{% trans %}Tags{% endtrans %}</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#hints" role="tab">{% trans %}Hints{% endtrans %}</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#requirements" role="tab">{% trans %}Requirements{% endtrans %}</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#next" role="tab">{% trans %}Next{% endtrans %}</a>
 				</nav>
 
 				<div class="tab-content" id="nav-tabContent">
 					<div class="tab-pane fade show active" id="files" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Files</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Files{% endtrans %}</h3>
 								{% include "admin/modals/challenges/files.html" %}
 							</div>
 						</div>
@@ -130,7 +130,7 @@
 					<div class="tab-pane fade" id="flags" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Flags</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Flags{% endtrans %}</h3>
 								{% include "admin/modals/challenges/flags.html" %}
 							</div>
 						</div>
@@ -138,7 +138,7 @@
 					<div class="tab-pane fade" id="solution" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Solution</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Solution{% endtrans %}</h3>
 								{% include "admin/modals/challenges/solution.html" %}
 							</div>
 						</div>
@@ -146,7 +146,7 @@
 					<div class="tab-pane fade" id="topics" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Topics</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Topics{% endtrans %}</h3>
 								{% include "admin/modals/challenges/topics.html" %}
 							</div>
 						</div>
@@ -154,7 +154,7 @@
 					<div class="tab-pane fade" id="tags" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Tags</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Tags{% endtrans %}</h3>
 								{% include "admin/modals/challenges/tags.html" %}
 							</div>
 						</div>
@@ -162,7 +162,7 @@
 					<div class="tab-pane fade" id="hints" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Hints</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Hints{% endtrans %}</h3>
 								{% include "admin/modals/challenges/hints.html" %}
 							</div>
 						</div>
@@ -170,7 +170,7 @@
 					<div class="tab-pane fade" id="requirements" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Requirements</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Requirements{% endtrans %}</h3>
 								{% include "admin/modals/challenges/requirements.html" %}
 							</div>
 						</div>
@@ -178,7 +178,7 @@
 					<div class="tab-pane fade" id="next" role="tabpanel">
 						<div class="row">
 							<div class="col-md-12">
-								<h3 class="text-center py-3 d-block">Next Challenge</h3>
+								<h3 class="text-center py-3 d-block">{% trans %}Next Challenge{% endtrans %}</h3>
 								{% include "admin/modals/challenges/next.html" %}
 							</div>
 						</div>

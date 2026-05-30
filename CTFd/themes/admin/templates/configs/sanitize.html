@@ -3,26 +3,26 @@
 	<form method="POST" autocomplete="off" class="w-100">
 		<div class="form-group">
 			<label for="html_sanitization">
-				HTML Sanitization
+				{% trans %}HTML Sanitization{% endtrans %}
 				<small class="form-text text-muted">
-					Whether CTFd will attempt to sanitize HTML content from content.
+					{% trans %}Whether CTFd will attempt to sanitize HTML content from content.{% endtrans %}
 				</small>
 			</label>
 			<select class="form-control custom-select" name="html_sanitization">
 				{% if force_html_sanitization %}
 				<option>
-					Required (Disable in config.ini)
+					{% trans %}Required (Disable in config.ini){% endtrans %}
 				</option>
 				{% else %}
 				<option value="true" {% if html_sanitization=='true' %}selected{% endif %}>
-					Enabled
+					{% trans %}Enabled{% endtrans %}
 				</option>
 				<option value="false" {% if html_sanitization=='false' %}selected{% endif %}>
-					Disabled
+					{% trans %}Disabled{% endtrans %}
 				</option>
 				{% endif %}
 			</select>
 		</div>
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		<button type="submit" class="btn btn-md btn-primary float-right">{% trans %}Update{% endtrans %}</button>
 	</form>
 </div>

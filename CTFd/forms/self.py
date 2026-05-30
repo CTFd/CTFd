@@ -57,5 +57,5 @@ def SettingsForm(*args, **kwargs):
 
 class TokensForm(BaseForm):
     expiration = DateField(_l("Expiration"))
-    description = TextAreaField("Usage Description")
+    description = TextAreaField(_l("Usage Description"))
     submit = SubmitField(_l("Generate"))

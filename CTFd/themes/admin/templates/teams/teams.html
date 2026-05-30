@@ -6,8 +6,8 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Teams
-			<span class="create-team" role="button" data-toggle="tooltip" title="Create Team">
+		<h1>{% trans %}Teams{% endtrans %}
+			<span class="create-team" role="button" data-toggle="tooltip" title="{{ _('Create Team') }}">
 				<a href="{{ url_for('admin.teams_new') }}" style="color: inherit;">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</a>
@@ -21,10 +21,10 @@
 		<div class="col-md-12">
 			{% if q and field %}
 			<h5 class="text-muted text-center">
-				Searching for teams with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+				{% trans field=field %}Searching for teams with{% endtrans %} <strong>{{ field }}</strong> {% trans q=q %}matching{% endtrans %} <strong>{{ q }}</strong>
 			</h5>
 			<h6 class="text-muted text-center pb-3">
-				Page {{ teams.page }} of {{ teams.total }} results
+				{% trans page=teams.page, total=teams.total %}Page {{ page }} of {{ total }} results{% endtrans %}
 			</h6>
 			{% endif %}
 
@@ -34,7 +34,7 @@
 					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
 				<div class="form-group col-md-8">
-					{{ form.q(class="form-control w-100", placeholder="Search for matching teams") }}
+					{{ form.q(class="form-control w-100", placeholder=_("Search for matching teams")) }}
 				</div>
 				<div class="form-group col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
@@ -52,10 +52,10 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Teams" id="teams-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="{{ _('Edit Teams') }}" id="teams-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Teams" id="teams-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="{{ _('Delete Teams') }}" id="teams-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -73,11 +73,11 @@
 								<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 							</div>
 						</th>
-						<th class="sort-col text-center"><b>ID</b></th>
-						<th class="sort-col text-left"><b>Team</b></th>
-						<th class="sort-col text-center"><b>Country</b></th>
-						<th class="sort-col text-center px-0"><b>Hidden</b></th>
-						<th class="sort-col text-center px-0"><b>Banned</b></th>
+						<th class="sort-col text-center"><b>{% trans %}ID{% endtrans %}</b></th>
+						<th class="sort-col text-left"><b>{% trans %}Team{% endtrans %}</b></th>
+						<th class="sort-col text-center"><b>{% trans %}Country{% endtrans %}</b></th>
+						<th class="sort-col text-center px-0"><b>{% trans %}Hidden{% endtrans %}</b></th>
+						<th class="sort-col text-center px-0"><b>{% trans %}Banned{% endtrans %}</b></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -98,7 +98,7 @@
 							{% endif %}
 							{% if team.oauth_id %}
 								<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-									<span class="badge badge-primary">Official</span>
+									<span class="badge badge-primary">{% trans %}Official{% endtrans %}</span>
 								</a>
 							{% endif %}
 							{% if team.website %}
@@ -126,13 +126,13 @@
 
 						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ team.hidden }}">
 							{% if team.hidden %}
-								<span class="badge badge-danger">hidden</span>
+								<span class="badge badge-danger">{% trans %}hidden{% endtrans %}</span>
 							{% endif %}
 						</td>
 
 						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
 							{% if team.banned %}
-								<span class="badge badge-danger">banned</span>
+								<span class="badge badge-danger">{% trans %}banned{% endtrans %}</span>
 							{% endif %}
 						</td>
 					</tr>
@@ -140,7 +140,7 @@
 				</tbody>
 			</table>
 			{% if teams.pages > 1 %}
-			<div class="text-center">Page
+			<div class="text-center">{% trans %}Page{% endtrans %}
 				<br>
 				{% if teams.page != 1 %}
 				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>

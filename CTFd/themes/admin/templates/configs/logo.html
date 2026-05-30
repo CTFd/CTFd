@@ -2,9 +2,9 @@
 	<form id="logo-upload" class="form-upload" method="POST" enctype="multipart/form-data">
 		<div class="form-group">
 			<label for="ctf_logo">
-				Logo
+				{% trans %}Logo{% endtrans %}
 				<small class="form-text text-muted">
-					Logo to use for the website instead of a CTF name.
+					{% trans %}Logo to use for the website instead of a CTF name.{% endtrans %}
 				</small>
 			</label>
 
@@ -14,19 +14,19 @@
 						 src="{{ url_for('views.files', path=ctf_logo) }}"
 						 height="80">
 					<button type="button" id="remove-logo" class="btn-sm btn-danger">
-						Remove Logo
+						{% trans %}Remove Logo{% endtrans %}
 					</button>
 				</div>
 			{% endif %}
 
 			<div class="row">
 				<div class="col-md-9">
-					<input class="form-control-file" id="ctf_logo_file" name='file' type='file' accept="image/*" placeholder="CTF Logo">
+					<input class="form-control-file" id="ctf_logo_file" name='file' type='file' accept="image/*" placeholder="{{ _('CTF Logo') }}">
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
 						<div class="d-inline-block float-right">
-							<button type="submit" class="btn-sm btn-primary float-right">Upload</button>
+							<button type="submit" class="btn-sm btn-primary float-right">{% trans %}Upload{% endtrans %}</button>
 						</div>
 					</div>
 				</div>
@@ -37,9 +37,9 @@
 	<form id="ctf-small-icon-upload" class="form-upload" method="POST" enctype="multipart/form-data">
 		<div class="form-group">
 			<label for="small_icon">
-				Tab Icon
+				{% trans %}Tab Icon{% endtrans %}
 				<small class="form-text text-muted">
-					Used as the <a href='https://en.wikipedia.org/wiki/Favicon' target='_blank'>favicon</a>. Only PNGs accepted. Must be 32x32px.
+					{% trans %}Used as the{% endtrans %} <a href='https://en.wikipedia.org/wiki/Favicon' target='_blank'>favicon</a>. {% trans %}Only PNGs accepted. Must be 32x32px.{% endtrans %}
 				</small>
 			</label>
 
@@ -49,19 +49,19 @@
 						 src="{{ url_for('views.files', path=ctf_small_icon) }}"
 						 height="32">
 					<button type="button" id="remove-small-icon" class="btn-sm btn-danger">
-						Remove Icon
+						{% trans %}Remove Icon{% endtrans %}
 					</button>
 				</div>
 			{% endif %}
 
 			<div class="row">
 				<div class="col-md-9">
-					<input class="form-control-file" id="ctf_small_icon_file" name='file' type='file' accept=".png" placeholder="Small Icon">
+					<input class="form-control-file" id="ctf_small_icon_file" name='file' type='file' accept=".png" placeholder="{{ _('Small Icon') }}">
 				</div>
 				<div class="col-md-3">
 					<div class="form-group">
 						<div class="d-inline-block float-right">
-							<button type="submit" class="btn-sm btn-primary float-right">Upload</button>
+							<button type="submit" class="btn-sm btn-primary float-right">{% trans %}Upload{% endtrans %}</button>
 						</div>
 					</div>
 				</div>

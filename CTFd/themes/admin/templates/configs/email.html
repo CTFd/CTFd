@@ -48,31 +48,31 @@
 		password_change_alert_body=password_change_alert_body,
 	) %}
 	<form method="POST" autocomplete="off" class="w-100">
-		<h5>Email notifications</h5>
+		<h5>{% trans %}Email notifications{% endtrans %}</h5>
 		<small class="form-text text-muted">
-			Customize the emails that CTFd sends your users with custom content using <a href="https://docs.ctfd.io/docs/settings/emails/#email-content" target="_blank">predefined variables</a>, mail servers, and addresses.
+			{% trans %}Customize the emails that CTFd sends your users with custom content using{% endtrans %} <a href="https://docs.ctfd.io/docs/settings/emails/#email-content" target="_blank">{% trans %}predefined variables{% endtrans %}</a>{% trans %}, mail servers, and addresses.{% endtrans %}
 		</small>
 		<ul class="nav nav-tabs mt-3" role="tablist">
 			<li class="nav-item active">
 				<a class="nav-link active" href="#email-server-tab" role="tab" data-toggle="tab">
-					Mail Server
+					{% trans %}Mail Server{% endtrans %}
 				</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="#registration-email-tab" role="tab" data-toggle="tab">
-					Registration
+					{% trans %}Registration{% endtrans %}
 				</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="#verification-email-tab" role="tab" data-toggle="tab">
-					Verification
+					{% trans %}Verification{% endtrans %}
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#account-details-email-tab" role="tab" data-toggle="tab">Account Details</a>
+				<a class="nav-link" href="#account-details-email-tab" role="tab" data-toggle="tab">{% trans %}Account Details{% endtrans %}</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#password-reset-email-tab" role="tab" data-toggle="tab">Password Reset</a>
+				<a class="nav-link" href="#password-reset-email-tab" role="tab" data-toggle="tab">{% trans %}Password Reset{% endtrans %}</a>
 			</li>
 		</ul>
 
@@ -111,7 +111,7 @@
 						{{ form.mail_username.label() }}
 						{% if mail_username is defined and mail_username != None %}
 							<label>
-								<sup class="form-text text-muted">(A mail server username is currently set)</sup>
+								<sup class="form-text text-muted">{% trans %}(A mail server username is currently set){% endtrans %}</sup>
 							</label>
 						{% endif %}
 						{{ form.mail_username(class="form-control", autocomplete="off") }}
@@ -123,7 +123,7 @@
 						{{ form.mail_password.label() }}
 						{% if mail_password is defined and mail_password != None %}
 							<label>
-								<sup class="form-text text-muted">(A mail server password is currently set)</sup>
+								<sup class="form-text text-muted">{% trans %}(A mail server password is currently set){% endtrans %}</sup>
 							</label>
 						{% endif %}
 						{{ form.mail_password(class="form-control", autocomplete="off") }}
@@ -131,7 +131,7 @@
 							{{ form.mail_password.description }}
 						</small>
 					</div>
-					<sup class="float-right">Uncheck setting and update to remove username and password</sup>
+					<sup class="float-right">{% trans %}Uncheck setting and update to remove username and password{% endtrans %}</sup>
 					<br>
 				</div>
 				<div class="form-check">
@@ -144,7 +144,7 @@
 				</div>
 				<br>
 				<div class="alert alert-warning" role="alert">
-					Mailgun integration is deprecated! Please see your Mailgun account for SMTP credentials.
+					{% trans %}Mailgun integration is deprecated! Please see your Mailgun account for SMTP credentials.{% endtrans %}
 				</div>
 				<div class="form-group">
 					{{ form.mailgun_base_url.label() }}
@@ -164,9 +164,9 @@
 			<div role="tabpanel" class="tab-pane" id="registration-email-tab">
 				<div class="form-group">
 					<label class="pt-3">
-						Account Registration<br>
+						{% trans %}Account Registration{% endtrans %}<br>
 						<small class="form-text text-muted">
-							Email sent to users after they've finished registering
+							{% trans %}Email sent to users after they've finished registering{% endtrans %}
 						</small>
 					</label>
 					<div>
@@ -187,9 +187,9 @@
 			<div role="tabpanel" class="tab-pane" id="verification-email-tab">
 				<div class="form-group">
 					<label class="pt-3">
-						Account Verification<br>
+						{% trans %}Account Verification{% endtrans %}<br>
 						<small class="form-text text-muted">
-							Email sent to users to confirm their account at the address they provided during registration. You can require email verification in the <a href="#accounts">Accounts settings</a>.
+							{% trans %}Email sent to users to confirm their account at the address they provided during registration. You can require email verification in the{% endtrans %} <a href="#accounts">{% trans %}Accounts settings{% endtrans %}</a>{% trans %}.{% endtrans %}
 						</small>
 					</label>
 					<div>
@@ -210,9 +210,9 @@
 			<div role="tabpanel" class="tab-pane" id="account-details-email-tab">
 				<div class="form-group">
 					<label class="pt-3">
-						New Account Details<br>
+						{% trans %}New Account Details{% endtrans %}<br>
 						<small class="form-text text-muted">
-							Email sent to new users <i>(manually created by an admin)</i> with their initial account details
+							{% trans %}Email sent to new users{% endtrans %} <i>{% trans %}(manually created by an admin){% endtrans %}</i> {% trans %}with their initial account details{% endtrans %}
 						</small>
 					</label>
 					<div>
@@ -233,9 +233,9 @@
 			<div role="tabpanel" class="tab-pane" id="password-reset-email-tab">
 				<div class="form-group">
 					<label class="pt-3">
-						Password Reset Request<br>
+						{% trans %}Password Reset Request{% endtrans %}<br>
 						<small class="form-text text-muted">
-							Email sent whent a user requests a password reset
+							{% trans %}Email sent when a user requests a password reset{% endtrans %}
 						</small>
 					</label>
 					<div>
@@ -254,9 +254,9 @@
 
 				<div class="form-group">
 					<label class="pt-3">
-						Password Reset Confirmation<br>
+						{% trans %}Password Reset Confirmation{% endtrans %}<br>
 						<small class="form-text text-muted">
-							Email sent whent a user successfully resets their password
+							{% trans %}Email sent when a user successfully resets their password{% endtrans %}
 						</small>
 					</label>
 					<div>

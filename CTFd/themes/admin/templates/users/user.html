@@ -8,7 +8,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-action text-center w-100">Edit User</h2>
+				<h2 class="modal-action text-center w-100">{% trans %}Edit User{% endtrans %}</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -24,7 +24,7 @@
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-action text-center w-100">User Statistics</h2>
+				<h2 class="modal-action text-center w-100">{% trans %}User Statistics{% endtrans %}</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -40,7 +40,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-action text-center w-100">Award User</h2>
+				<h2 class="modal-action text-center w-100">{% trans %}Award User{% endtrans %}</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -56,7 +56,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-action text-center w-100">Email User</h2>
+				<h2 class="modal-action text-center w-100">{% trans %}Email User{% endtrans %}</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -72,7 +72,7 @@
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h2 class="modal-action text-center w-100">IP Addresses</h2>
+				<h2 class="modal-action text-center w-100">{% trans %}IP Addresses{% endtrans %}</h2>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -89,16 +89,16 @@
 		<h1 id="team-id" class="text-center p-0 m-0">{{ user.name }}</h1>
 		<div class="mb-2">
 			{% if user.type == 'admin' %}
-				<span class="badge badge-primary">admin</span>
+				<span class="badge badge-primary">{% trans %}admin{% endtrans %}</span>
 			{% endif %}
 			{% if user.verified %}
-				<span class="badge badge-success">verified</span>
+				<span class="badge badge-success">{% trans %}verified{% endtrans %}</span>
 			{% endif %}
 			{% if user.hidden %}
-				<span class="badge badge-danger">hidden</span>
+				<span class="badge badge-danger">{% trans %}hidden{% endtrans %}</span>
 			{% endif %}
 			{% if user.banned %}
-				<span class="badge badge-danger">banned</span>
+				<span class="badge badge-danger">{% trans %}banned{% endtrans %}</span>
 			{% endif %}
 		</div>
 
@@ -120,7 +120,7 @@
 		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
 		{% if user.oauth_id %}
 			<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-				<h3><span class="badge badge-primary">Official</span></h3>
+				<h3><span class="badge badge-primary">{% trans %}Official{% endtrans %}</span></h3>
 			</a>
 		{% endif %}
 
@@ -149,36 +149,36 @@
 		<h3 id="team-place" class="text-center">
 			{% if place %}
 				{{ place }}
-				<small>place</small>
+				<small>{% trans %}place{% endtrans %}</small>
 			{% endif %}
 		</h3>
 		<h3 id="team-score" class="text-center">
 			{% if score %}
 				{{ score }}
-				<small>points</small>
+				<small>{% trans %}points{% endtrans %}</small>
 			{% endif %}
 		</h3>
 		<hr class="w-50">
 		<div class="pt-3">
 			<a class="edit-user text-dark">
-				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit User"></i>
+				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-toggle="tooltip" data-placement="top" title="{{ _('Edit User') }}"></i>
 			</a>
 			<a class="statistics-user text-dark">
-				<i class="btn-fa fas fa-chart-pie fa-2x px-2" data-toggle="tooltip" data-placement="top" title="User Statistics"></i>
+				<i class="btn-fa fas fa-chart-pie fa-2x px-2" data-toggle="tooltip" data-placement="top" title="{{ _('User Statistics') }}"></i>
 			</a>
 			<a class="award-user text-dark">
-				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award User"></i>
+				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="{{ _('Award User') }}"></i>
 			</a>
 			<a class="email-user text-dark">
-				<i class="btn-fa fas fa-envelope fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Email User"></i>
+				<i class="btn-fa fas fa-envelope fa-2x px-2" data-toggle="tooltip" data-placement="top" title="{{ _('Email User') }}"></i>
 			</a>
 			<a class="delete-user text-dark">
-				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Delete User"></i>
+				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="{{ _('Delete User') }}"></i>
 			</a>
 		</div>
 		<div class="pt-3">
 			<a class="addresses-user text-dark">
-				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-toggle="tooltip" data-placement="top" title="IP Addresses"></i>
+				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-toggle="tooltip" data-placement="top" title="{{ _('IP Addresses') }}"></i>
 			</a>
 			{% if user.website %}
 			<a href="{{ user.website }}" target="_blank" class="text-decoration-none text-dark" rel="noopener">
@@ -193,21 +193,21 @@
 <div class="container">
 	<nav class="nav nav-tabs nav-fill pt-5" id="myTab" role="tablist">
 		<a class="nav-item nav-link active" id="nav-solves-tab" data-toggle="tab" href="#nav-solves" role="tab"
-		   aria-controls="nav-solves" aria-selected="true">Solves</a>
+		   aria-controls="nav-solves" aria-selected="true">{% trans %}Solves{% endtrans %}</a>
 
 		<a class="nav-item nav-link" id="nav-wrong-tab" data-toggle="tab" href="#nav-wrong" role="tab"
-		   aria-controls="nav-wrong" aria-selected="false">Fails</a>
+		   aria-controls="nav-wrong" aria-selected="false">{% trans %}Fails{% endtrans %}</a>
 
 		<a class="nav-item nav-link" id="nav-awards-tab" data-toggle="tab" href="#nav-awards" role="tab"
-		   aria-controls="nav-awards" aria-selected="false">Awards</a>
+		   aria-controls="nav-awards" aria-selected="false">{% trans %}Awards{% endtrans %}</a>
 
 		<a class="nav-item nav-link" id="nav-missing-tab" data-toggle="tab" href="#nav-missing" role="tab"
-		   aria-controls="nav-missing" aria-selected="false">Missing</a>
+		   aria-controls="nav-missing" aria-selected="false">{% trans %}Missing{% endtrans %}</a>
 	</nav>
 
 	<div class="tab-content min-vh-25 pb-5" id="nav-tabContent">
 		<div class="tab-pane fade show active" id="nav-solves" role="tabpanel" aria-labelledby="nav-solves-tab">
-			<h3 class="text-center pt-5 d-block">Solves</h3>
+			<h3 class="text-center pt-5 d-block">{% trans %}Solves{% endtrans %}</h3>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="float-right pb-3">
@@ -229,11 +229,11 @@
 									<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 								</div>
 							</th>
-							<th class="sort-col text-center"><b>Challenge</b></th>
-							<th class="sort-col text-center"><b>Submitted</b></th>
-							<th class="sort-col text-center"><b>Category</b></th>
-							<th class="sort-col text-center"><b>Value</b></th>
-							<th class="sort-col text-center"><b>Time</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Challenge{% endtrans %}</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Submitted{% endtrans %}</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Category{% endtrans %}</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Value{% endtrans %}</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Time{% endtrans %}</b></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -267,7 +267,7 @@
 		</div>
 
 		<div class="tab-pane fade" id="nav-wrong" role="tabpanel" aria-labelledby="nav-wrong-tab">
-			<h3 class="text-center pt-5 d-block">Fails</h3>
+			<h3 class="text-center pt-5 d-block">{% trans %}Fails{% endtrans %}</h3>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="float-right pb-3">
@@ -292,9 +292,9 @@
 										<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 									</div>
 								</th>
-								<th class="sort-col text-center"><b>Challenge</b></th>
-								<th class="sort-col text-center"><b>Submitted</b></th>
-								<th class="sort-col text-center"><b>Time</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Challenge{% endtrans %}</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Submitted{% endtrans %}</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Time{% endtrans %}</b></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -328,7 +328,7 @@
 		</div>
 
 		<div class="tab-pane fade" id="nav-awards" role="tabpanel" aria-labelledby="nav-awards-tab">
-			<h3 class="text-center pt-5 d-block">Awards</h3>
+			<h3 class="text-center pt-5 d-block">{% trans %}Awards{% endtrans %}</h3>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="float-right pb-3">
@@ -350,12 +350,12 @@
 										<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 									</div>
 								</th>
-								<th class="sort-col text-center"><b>Name</b></th>
-								<th class="sort-col text-center"><b>Description</b></th>
-								<th class="sort-col text-center"><b>Date</b></th>
-								<th class="sort-col text-center"><b>Value</b></th>
-								<th class="sort-col text-center"><b>Category</b></th>
-								<th class="sort-col text-center"><b>Icon</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Name{% endtrans %}</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Description{% endtrans %}</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Date{% endtrans %}</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Value{% endtrans %}</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Category{% endtrans %}</b></th>
+								<th class="sort-col text-center"><b>{% trans %}Icon{% endtrans %}</b></th>
 							</tr>
 						</thead>
 						<tbody id="awards-body">
@@ -383,7 +383,7 @@
 		</div>
 
 		<div class="tab-pane fade" id="nav-missing" role="tabpanel" aria-labelledby="nav-missing-tab">
-			<h3 class="text-center pt-5 d-block">Missing</h3>
+			<h3 class="text-center pt-5 d-block">{% trans %}Missing{% endtrans %}</h3>
 			<div class="row">
 				<div class="col-md-12">
 					<div class="float-right pb-3">
@@ -405,9 +405,9 @@
 									<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 								</div>
 							</th>
-							<th class="sort-col text-center"><b>Challenge</b></th>
-							<th class="sort-col text-center"><b>Category</b></th>
-							<th class="sort-col text-center"><b>Value</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Challenge{% endtrans %}</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Category{% endtrans %}</b></th>
+							<th class="sort-col text-center"><b>{% trans %}Value{% endtrans %}</b></th>
 						</tr>
 					</thead>
 					<tbody>

@@ -1,3 +1,4 @@
+from flask_babel import gettext as _
 from flask_restx import Resource
 from sqlalchemy import func
 
@@ -27,4 +28,4 @@ class UserPropertyCounts(Resource):
             )
             return {"success": True, "data": dict(data)}
         else:
-            return {"success": False, "message": "That could not be found"}, 404
+            return {"success": False, "message": _("That could not be found")}, 404

@@ -5,24 +5,24 @@
 	{% block name %}
 	<div class="form-group">
 		<label>
-			Name:<br>
+			{% trans %}Name:{% endtrans %}<br>
 			<small class="form-text text-muted">
-				The name of your challenge
+				{% trans %}The name of your challenge{% endtrans %}
 			</small>
 		</label>
-		<input type="text" class="form-control" name="name" placeholder="Enter challenge name">
+		<input type="text" class="form-control" name="name" placeholder="{{ _('Enter challenge name') }}">
 	</div>
 	{% endblock %}
 
 	{% block category %}
 	<div class="form-group">
 		<label>
-			Category:<br>
+			{% trans %}Category:{% endtrans %}<br>
 			<small class="form-text text-muted">
-				The category of your challenge
+				{% trans %}The category of your challenge{% endtrans %}
 			</small>
 		</label>
-		<input type="text" class="form-control" name="category" placeholder="Enter challenge category">
+		<input type="text" class="form-control" name="category" placeholder="{{ _('Enter challenge category') }}">
 	</div>
 	{% endblock %}
 
@@ -30,9 +30,9 @@
 	{% block message %}
 	<div class="form-group">
 		<label>
-			Message:<br>
+			{% trans %}Message:{% endtrans %}<br>
 			<small class="form-text text-muted">
-				Use this to give a brief introduction to your challenge.
+				{% trans %}Use this to give a brief introduction to your challenge.{% endtrans %}
 			</small>
 		</label>
 		<textarea id="new-desc-editor" class="form-control markdown" name="description" rows="10"></textarea>
@@ -45,12 +45,12 @@
 	{% block value %}
 	<div class="form-group">
 		<label>
-			Value:<br>
+			{% trans %}Value:{% endtrans %}<br>
 			<small class="form-text text-muted">
-				This is how many points are rewarded for solving this challenge.
+				{% trans %}This is how many points are rewarded for solving this challenge.{% endtrans %}
 			</small>
 		</label>
-		<input type="number" class="form-control" name="value" placeholder="Enter value" required>
+		<input type="number" class="form-control" name="value" placeholder="{{ _('Enter value') }}" required>
 	</div>
 	{% endblock %}
 
@@ -64,7 +64,7 @@
 
 	{% block submit %}
 	<div class="form-group">
-		<button class="btn btn-primary float-right create-challenge-submit" type="submit">Create</button>
+		<button class="btn btn-primary float-right create-challenge-submit" type="submit">{% trans %}Create{% endtrans %}</button>
 	</div>
 	{% endblock %}
 </form>

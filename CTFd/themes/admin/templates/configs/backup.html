@@ -1,53 +1,50 @@
 <div role="tabpanel" class="tab-pane config-section" id="backup">
 	<ul class="nav nav-tabs mb-3" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" href="#export-ctf" aria-controls="export-ctf" role="tab" data-toggle="tab">Export</a>
+			<a class="nav-link active" href="#export-ctf" aria-controls="export-ctf" role="tab" data-toggle="tab">{% trans %}Export{% endtrans %}</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">Import</a>
+			<a class="nav-link" href="#import-ctf" aria-controls="import-ctf" role="tab" data-toggle="tab">{% trans %}Import{% endtrans %}</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="#save-csv" aria-controls="save-csv" role="tab" data-toggle="tab">Download CSV</a>
+			<a class="nav-link" href="#save-csv" aria-controls="save-csv" role="tab" data-toggle="tab">{% trans %}Download CSV{% endtrans %}</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="#import-csv" aria-controls="import-csv" role="tab" data-toggle="tab">Import CSV</a>
+			<a class="nav-link" href="#import-csv" aria-controls="import-csv" role="tab" data-toggle="tab">{% trans %}Import CSV{% endtrans %}</a>
 		</li>
 	</ul>
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane active" id="export-ctf">
 			<div class="form-group">
-				<p>Exports are an archive of your CTF in its current state. They can be re-imported into other CTFd
-					instances or used by scripts and third parties to calculate statistics.</p>
-				<p>To download an export click the button below.</p>
+				<p>{% trans %}Exports are an archive of your CTF in its current state. They can be re-imported into other CTFd instances or used by scripts and third parties to calculate statistics.{% endtrans %}</p>
+				<p>{% trans %}To download an export click the button below.{% endtrans %}</p>
 			</div>
 			<div class="form-group">
-				<a href="{{ url_for('admin.export_ctf') }}" id="export-button" class="btn btn-warning">Export</a>
+				<a href="{{ url_for('admin.export_ctf') }}" id="export-button" class="btn btn-warning">{% trans %}Export{% endtrans %}</a>
 			</div>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="import-ctf">
 			<div class="form-group">
-				<p>You can import saved CTFd exports by uploading them below. This will completely wipe your existing
-					CTFd instance and all your data will be replaced by the imported data.
-					You should only import data that you trust!</p>
+				<p>{% trans %}You can import saved CTFd exports by uploading them below. This will completely wipe your existing CTFd instance and all your data will be replaced by the imported data. You should only import data that you trust!{% endtrans %}</p>
 
 				<div class="alert alert-warning" role="alert">
 					<small class="text-muted text-right">
 						<i class="fas fa-exclamation pr-2"></i>
-						Importing a CTFd export will completely wipe your existing data
+						{% trans %}Importing a CTFd export will completely wipe your existing data{% endtrans %}
 					</small>
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="container-files">Import File</label>
+				<label for="container-files">{% trans %}Import File{% endtrans %}</label>
 				<input class="form-control-file" type="file" name="backup" id="import-file" accept=".zip">
 			</div>
-			<input id="import-button" type="submit" class="btn btn-warning" value="Import">
+			<input id="import-button" type="submit" class="btn btn-warning" value="{{ _('Import') }}">
 		</div>
 		<div role="tabpanel" class="tab-pane" id="save-csv">
 			<div class="alert alert-warning" role="alert">
 				<small class="text-muted text-right">
 					<i class="fas fa-exclamation pr-2"></i>
-					CSVs exported from CTFd are not guaranteed to import back in via the Import CSV functionality. See <a href="https://docs.ctfd.io/docs/imports/csv/" target="_blank">CSV Importing instructions</a> for details.
+					{% trans %}CSVs exported from CTFd are not guaranteed to import back in via the Import CSV functionality.{% endtrans %} <a href="https://docs.ctfd.io/docs/imports/csv/" target="_blank">{% trans %}CSV Importing instructions{% endtrans %}</a> {% trans %}for details.{% endtrans %}
 				</small>
 			</div>
 			{% with form = Forms.config.ExportCSVForm() %}
@@ -56,7 +53,7 @@
 					{{ form.table.label }}
 					{{ form.table(class="form-control custom-select") }}
 				</div>
-				<input type="submit" class="btn btn-warning" value="Download CSV">
+				<input type="submit" class="btn btn-warning" value="{{ _('Download CSV') }}">
 			</form>
 			{% endwith %}
 		</div>
@@ -67,7 +64,7 @@
 					<div class="alert alert-info" role="alert">
 						<small class="text-muted text-right">
 							<a href="https://docs.ctfd.io/docs/imports/csv/" target="_blank">
-								<i class="far fa-question-circle pr-2"></i> Instructions and CSV templates
+								<i class="far fa-question-circle pr-2"></i> {% trans %}Instructions and CSV templates{% endtrans %}
 							</a>
 						</small>
 					</div>
@@ -87,7 +84,7 @@
 					</small>
 				</div>
 				{{ form.nonce() }}
-				<input type="submit" class="btn btn-warning" value="Import CSV">
+				<input type="submit" class="btn btn-warning" value="{{ _('Import CSV') }}">
 			</form>
 			{% endwith %}
 		</div>

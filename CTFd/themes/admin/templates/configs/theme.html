@@ -3,7 +3,7 @@
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Theme Settings</h5>
+					<h5 class="modal-title">{% trans %}Theme Settings{% endtrans %}</h5>
 				</div>
 				<div class="modal-body">
 				{% include (ctf_theme|string) + "/config.html" ignore missing %}
@@ -15,9 +15,9 @@
 	<form method="POST" autocomplete="off" class="w-100">
 		<div class="form-group">
 			<label for="ctf_theme">
-				Theme
+				{% trans %}Theme{% endtrans %}
 				<small class="form-text text-muted">
-					Switch themes to change CTFd's aesthetics
+					{% trans %}Switch themes to change CTFd's aesthetics{% endtrans %}
 				</small>
 			</label>
 			<select class="form-control custom-select" id="ctf_theme" name="ctf_theme">
@@ -31,25 +31,24 @@
 		<div class="form-group">
 			<div style="display: flex; justify-content: space-between; align-items: center;">
 				<label>
-					Primary Color
+					{% trans %}Primary Color{% endtrans %}
 					<small class="form-text text-muted">
-						Base color used for theme features. Requires theme support.
+						{% trans %}Base color used for theme features. Requires theme support.{% endtrans %}
 					</small>
 				</label>
 				<div>
 					<input type="color" id="config-color-picker" class="custom-color-picker">
 					<button type="button" class="btn-sm btn-primary" id="config-color-update">
-						<i class="fas fa-pencil action-icon"></i> Build CSS
+						<i class="fas fa-pencil action-icon"></i> {% trans %}Build CSS{% endtrans %}
 					</button>
 				</div>
 			</div>
 		</div>
 		<div class="form-group">
 			<label>
-				Theme Header
+				{% trans %}Theme Header{% endtrans %}
 				<small class="form-text text-muted">
-					Theme headers are inserted just before the <code>&lt;/head&gt;</code> tag on all public facing pages.
-					Requires theme support.
+					{% trans %}Theme headers are inserted just before the{% endtrans %} <code>&lt;/head&gt;</code> {% trans %}tag on all public facing pages. Requires theme support.{% endtrans %}
 				</small>
 			</label>
 			<!-- TODO: Smaller (expanding) textarea -->
@@ -58,10 +57,9 @@
 
 		<div class="form-group">
 			<label>
-				Theme Footer
+				{% trans %}Theme Footer{% endtrans %}
 				<small class="form-text text-muted">
-					Theme footers are inserted just before the <code>&lt;/body&gt;</code> tag on all public facing pages.
-					Requires theme support.
+					{% trans %}Theme footers are inserted just before the{% endtrans %} <code>&lt;/body&gt;</code> {% trans %}tag on all public facing pages. Requires theme support.{% endtrans %}
 				</small>
 			</label>
 			<!-- TODO: Smaller (expanding) textarea -->
@@ -71,21 +69,21 @@
 		<div class="form-group">
 			<div style="display: flex; justify-content: space-between;">
 				<label for="ctf_theme">
-					Theme Settings
+					{% trans %}Theme Settings{% endtrans %}
 				</label>
 				<div class="d-block pb-2">
 					<button type="button" class="btn-sm btn-primary" id="theme-settings-button">
-						<i class="fas fa-pencil-alt action-icon"></i> Build
+						<i class="fas fa-pencil-alt action-icon"></i> {% trans %}Build{% endtrans %}
 					</button>
 				</div>
 			</div>
 			<!-- TODO: Smaller (expanding) textarea -->
 			<textarea class="form-control" id="theme-settings" name="theme_settings" rows="7">{{ theme_settings or "" }}</textarea>
 			<small class="form-text text-muted">
-				Settings specific to the theme
+				{% trans %}Settings specific to the theme{% endtrans %}
 			</small>
 		</div>
 
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		<button type="submit" class="btn btn-md btn-primary float-right">{% trans %}Update{% endtrans %}</button>
 	</form>
 </div>

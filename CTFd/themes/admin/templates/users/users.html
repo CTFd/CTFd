@@ -6,8 +6,8 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Users
-			<span class="create-team" role="button" data-toggle="tooltip" title="Create User">
+		<h1>{% trans %}Users{% endtrans %}
+			<span class="create-team" role="button" data-toggle="tooltip" title="{{ _('Create User') }}">
 				<a href="{{ url_for('admin.users_new') }}" style="color: inherit;">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</a>
@@ -22,10 +22,10 @@
 		<div class="col-md-12">
 			{% if q and field %}
 			<h5 class="text-muted text-center">
-				Searching for users with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+				{% trans field=field %}Searching for users with{% endtrans %} <strong>{{ field }}</strong> {% trans q=q %}matching{% endtrans %} <strong>{{ q }}</strong>
 			</h5>
 			<h6 class="text-muted text-center pb-3">
-				Page {{ users.page }} of {{ users.total }} results
+				{% trans page=users.page, total=users.total %}Page {{ page }} of {{ total }} results{% endtrans %}
 			</h6>
 			{% endif %}
 
@@ -35,7 +35,7 @@
 					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
 				<div class="form-group col-md-8">
-					{{ form.q(class="form-control w-100", placeholder="Search for matching users") }}
+					{{ form.q(class="form-control w-100", placeholder=_("Search for matching users")) }}
 				</div>
 				<div class="form-group col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
@@ -53,10 +53,10 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Users" id="users-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="{{ _('Edit Users') }}" id="users-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users" id="users-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="{{ _('Delete Users') }}" id="users-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -73,14 +73,14 @@
 								<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 							</div>
 						</th>
-						<th class="sort-col text-center"><b>ID</b></th>
-						<th class="sort-col text-center"><b>User</b></th>
-						<th class="sort-col text-center"><b>Email</b></th>
-						<th class="sort-col text-center"><b>Country</b></th>
-						<th class="sort-col text-center px-0"><b>Admin</b></th>
-						<th class="sort-col text-center px-0"><b>Verified</b></th>
-						<th class="sort-col text-center px-0"><b>Hidden</b></th>
-						<th class="sort-col text-center px-0"><b>Banned</b></th>
+						<th class="sort-col text-center"><b>{% trans %}ID{% endtrans %}</b></th>
+						<th class="sort-col text-center"><b>{% trans %}User{% endtrans %}</b></th>
+						<th class="sort-col text-center"><b>{% trans %}Email{% endtrans %}</b></th>
+						<th class="sort-col text-center"><b>{% trans %}Country{% endtrans %}</b></th>
+						<th class="sort-col text-center px-0"><b>{% trans %}Admin{% endtrans %}</b></th>
+						<th class="sort-col text-center px-0"><b>{% trans %}Verified{% endtrans %}</b></th>
+						<th class="sort-col text-center px-0"><b>{% trans %}Hidden{% endtrans %}</b></th>
+						<th class="sort-col text-center px-0"><b>{% trans %}Banned{% endtrans %}</b></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -101,7 +101,7 @@
 							{% endif %}
 							{% if user.oauth_id %}
 								<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-									<span class="badge badge-primary">Official</span>
+									<span class="badge badge-primary">{% trans %}Official{% endtrans %}</span>
 								</a>
 							{% endif %}
 							{% if user.website %}
@@ -129,22 +129,22 @@
 						</td>
 						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
 							{% if user.type == 'admin' %}
-								<span class="badge badge-primary">admin</span>
+								<span class="badge badge-primary">{% trans %}admin{% endtrans %}</span>
 							{% endif %}
 						</td>
 						<td class="team-verified d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
 							{% if user.verified %}
-								<span class="badge badge-success">verified</span>
+								<span class="badge badge-success">{% trans %}verified{% endtrans %}</span>
 							{% endif %}
 						</td>
 						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ user.hidden }}">
 							{% if user.hidden %}
-								<span class="badge badge-danger">hidden</span>
+								<span class="badge badge-danger">{% trans %}hidden{% endtrans %}</span>
 							{% endif %}
 						</td>
 						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
 							{% if user.banned %}
-								<span class="badge badge-danger">banned</span>
+								<span class="badge badge-danger">{% trans %}banned{% endtrans %}</span>
 							{% endif %}
 						</td>
 					</tr>
@@ -152,7 +152,7 @@
 				</tbody>
 			</table>
 			{% if users.pages > 1 %}
-			<div class="text-center">Page
+			<div class="text-center">{% trans %}Page{% endtrans %}
 				<br>
 				{% if users.page != 1 %}
 				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
