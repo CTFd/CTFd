@@ -18,6 +18,15 @@ def is_safe_url(target):
     """
     is_safe_url and _is_safe_url is mostly ported from Pallets snippets and Django's url_has_allowed_host_and_scheme
     """
+    # Remove any leading and trailing C0 control or space from input.
+    # C0 control is U+0000 NULL to U+001F inclusive
+    # Space is 0x20 so the range covers all of these
+    target = target.strip("".join(chr(i) for i in range(0x21)))
+    # Remove tabs or newlines at any point according to URL spec
+    target = target.translate({ord(c): None for c in "\t\n\r"})
+    # Handle any falsy values after cleaning
+    if not target:
+        return False
     # Chrome treats \ completely as / in paths but it could be part of some
     # basic auth credentials so we need to check both URLs.
     return _is_safe_url(target) and _is_safe_url(target.replace("\\", "/"))
