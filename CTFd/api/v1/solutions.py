@@ -8,9 +8,10 @@ from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.constants import RawEnum
-from CTFd.models import Solutions, SolutionUnlocks, db
+from CTFd.models import Solutions, SolutionFiles, SolutionUnlocks, db
 from CTFd.schemas.solutions import SolutionSchema
 from CTFd.utils.challenges import get_solve_ids_for_user_id
+from CTFd.utils.uploads import delete_file
 from CTFd.utils.decorators import (
     admins_only,
     authed_only,
@@ -238,6 +239,16 @@ class Solution(Resource):
     )
     def delete(self, solution_id):
         solution = Solutions.query.filter_by(id=solution_id).first_or_404()
+
+        # SolutionFiles do not cascade on delete, so they have to be removed
+        # from both storage and the database before deleting the solution to
+        # avoid a foreign key violation.
+        files = SolutionFiles.query.filter_by(solution_id=solution.id).all()
+        for f in files:
+            delete_file(f.id)
+
+        # Remove any unlocks targeting this solution
+        SolutionUnlocks.query.filter_by(target=solution.id).delete()
 
         db.session.delete(solution)
         db.session.commit()
