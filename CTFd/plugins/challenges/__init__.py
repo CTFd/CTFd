@@ -16,6 +16,9 @@ from CTFd.models import (
     Hints,
     Partials,
     Ratelimiteds,
+    SolutionFiles,
+    Solutions,
+    SolutionUnlocks,
     Solves,
     Tags,
     db,
@@ -183,6 +186,15 @@ class BaseChallenge(object):
         ChallengeFiles.query.filter_by(challenge_id=challenge.id).delete()
         Tags.query.filter_by(challenge_id=challenge.id).delete()
         Hints.query.filter_by(challenge_id=challenge.id).delete()
+        solution = Solutions.query.filter_by(challenge_id=challenge.id).first()
+        if solution:
+            solution_files = SolutionFiles.query.filter_by(
+                solution_id=solution.id
+            ).all()
+            for f in solution_files:
+                delete_file(f.id)
+            SolutionUnlocks.query.filter_by(target=solution.id).delete()
+            Solutions.query.filter_by(id=solution.id).delete()
         Challenges.query.filter_by(id=challenge.id).delete()
         cls.challenge_model.query.filter_by(id=challenge.id).delete()
         db.session.commit()
