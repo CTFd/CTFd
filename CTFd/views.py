@@ -30,6 +30,7 @@ from CTFd.models import (
     Notifications,
     Pages,
     Solutions,
+    Solves,
     Teams,
     Users,
     UserTokens,
@@ -470,6 +471,16 @@ def files(path):
             # Admins can see solution files for preview purposes
             if current_user.is_admin() is True:
                 pass
+            elif s.state == "solved" and s.challenge.state == "visible":
+                # Only users who have solved the challenge can access
+                if not authed():
+                    abort(404)
+                user = get_current_user()
+                solve = Solves.query.filter_by(
+                    user_id=user.id, challenge_id=s.challenge_id
+                ).first()
+                if solve is None:
+                    abort(404)
             else:
                 abort(404)
 
