@@ -11,7 +11,7 @@ from CTFd.api.v1.schemas import (
 )
 from CTFd.cache import cache, clear_challenges, clear_standings
 from CTFd.constants import RawEnum
-from CTFd.models import Solves, Submissions, db
+from CTFd.models import Fails, Solves, Submissions, db
 from CTFd.schemas.submissions import SubmissionSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
@@ -220,6 +220,22 @@ class Submission(Resource):
             clear_challenges()
 
             submission = solve
+
+        elif submission_type == "incorrect":
+            submission_id = submission.id
+            existing_solve = Solves.query.filter_by(id=submission_id).first()
+
+            if existing_solve:
+                db.session.delete(existing_solve)
+
+            submission.type = "incorrect"
+            db.session.commit()
+
+            if existing_solve:
+                clear_standings()
+                clear_challenges()
+
+            submission = Fails.query.filter_by(id=submission_id).first()
 
         schema = SubmissionSchema()
         response = schema.dump(submission)

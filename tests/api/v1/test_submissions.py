@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Discards, Fails, Solves
+from CTFd.models import Discards, Fails, Partials, Solves
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -179,6 +179,34 @@ def test_api_submission_patch_correct_scoreboard():
             assert scoreboard[0]["score"] == 200
             assert scoreboard[1]["name"] == "user2"
             assert scoreboard[1]["score"] == 200
+    destroy_ctfd(app)
+
+
+def test_api_submission_patch_incorrect():
+    """Test that patching a partial submission to incorrect marks it as a fail"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        gen_challenge(app.db)
+        import datetime
+
+        partial = Partials(
+            user_id=2,
+            team_id=None,
+            challenge_id=1,
+            ip="127.0.0.1",
+            provided="partialkey",
+        )
+        partial.date = datetime.datetime.utcnow()
+        app.db.session.add(partial)
+        app.db.session.commit()
+        assert Partials.query.count() == 1
+        assert Fails.query.count() == 0
+        with login_as_user(app, "admin") as client:
+            r = client.patch("/api/v1/submissions/1", json={"type": "incorrect"})
+            assert r.status_code == 200
+            assert Partials.query.count() == 0
+            assert Fails.query.count() == 1
     destroy_ctfd(app)
 
 
