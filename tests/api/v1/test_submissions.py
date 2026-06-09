@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from CTFd.models import Discards, Fails, Partials, Solves
+import datetime
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -188,8 +189,6 @@ def test_api_submission_patch_incorrect():
     with app.app_context():
         register_user(app)
         gen_challenge(app.db)
-        import datetime
-
         partial = Partials(
             user_id=2,
             team_id=None,
@@ -206,6 +205,32 @@ def test_api_submission_patch_incorrect():
             r = client.patch("/api/v1/submissions/1", json={"type": "incorrect"})
             assert r.status_code == 200
             assert Partials.query.count() == 0
+            assert Fails.query.count() == 1
+    destroy_ctfd(app)
+
+
+def test_api_submission_patch_incorrect_from_discard():
+    """Test that patching a discarded submission to incorrect marks it as a fail"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+        gen_challenge(app.db)
+        discard = Discards(
+            user_id=2,
+            team_id=None,
+            challenge_id=1,
+            ip="127.0.0.1",
+            provided="discardedkey",
+        )
+        discard.date = datetime.datetime.utcnow()
+        app.db.session.add(discard)
+        app.db.session.commit()
+        assert Discards.query.count() == 1
+        assert Fails.query.count() == 0
+        with login_as_user(app, "admin") as client:
+            r = client.patch("/api/v1/submissions/1", json={"type": "incorrect"})
+            assert r.status_code == 200
+            assert Discards.query.count() == 0
             assert Fails.query.count() == 1
     destroy_ctfd(app)
 
