@@ -14,15 +14,28 @@ class SMTPEmailProvider(EmailProvider):
         mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
         mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
 
+        custom_smtp = bool(get_config("mail_server"))
+        if custom_smtp:
+            host = get_config("mail_server")
+            port = get_config("mail_port")
+            username = get_config("mail_username")
+            password = get_config("mail_password")
+            TLS = get_config("mail_tls")
+            SSL = get_config("mail_ssl")
+            auth = get_config("mail_useauth")
+        else:
+            host = get_app_config("MAIL_SERVER")
+            port = get_app_config("MAIL_PORT")
+            username = get_app_config("MAIL_USERNAME")
+            password = get_app_config("MAIL_PASSWORD")
+            TLS = get_app_config("MAIL_TLS")
+            SSL = get_app_config("MAIL_SSL")
+            auth = get_app_config("MAIL_USEAUTH")
+
         data = {
-            "host": get_config("mail_server") or get_app_config("MAIL_SERVER"),
-            "port": int(get_config("mail_port") or get_app_config("MAIL_PORT")),
+            "host": host,
+            "port": int(port),
         }
-        username = get_config("mail_username") or get_app_config("MAIL_USERNAME")
-        password = get_config("mail_password") or get_app_config("MAIL_PASSWORD")
-        TLS = get_config("mail_tls") or get_app_config("MAIL_TLS")
-        SSL = get_config("mail_ssl") or get_app_config("MAIL_SSL")
-        auth = get_config("mail_useauth") or get_app_config("MAIL_USEAUTH")
 
         if username:
             data["username"] = username
@@ -44,9 +57,6 @@ class SMTPEmailProvider(EmailProvider):
             msg["Subject"] = subject
             msg["From"] = mailfrom_addr
             msg["To"] = addr
-
-            # Check whether we are using an admin-defined SMTP server
-            custom_smtp = bool(get_config("mail_server"))
 
             # We should only consider the MAILSENDER_ADDR value on servers defined in config
             if custom_smtp:
