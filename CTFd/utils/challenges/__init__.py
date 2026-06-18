@@ -169,6 +169,43 @@ def get_solve_counts_for_challenges(challenge_id=None, admin=False):
     return solve_counts
 
 
+def get_dependent_challenges(challenge_id):
+    candidates = Challenges.query.filter(Challenges.requirements.isnot(None)).all()
+    dependents = []
+    for c in candidates:
+        prereqs = (c.requirements or {}).get("prerequisites") or []
+        if challenge_id in prereqs:
+            dependents.append(c)
+
+    return dependents
+
+
+def get_visible_challenge_requirements(
+    challenges, user_solve_ids, all_challenge_ids, *, admin=False
+):
+    named = []
+    anonymous = 0
+    for c in challenges:
+        if admin:
+            named.append({"id": c.id, "name": c.name})
+            continue
+
+        if c.state in ("hidden", "locked"):
+            anonymous += 1
+            continue
+
+        c_reqs = (c.requirements or {}).get("prerequisites") or []
+        c_prereqs_set = set(c_reqs).intersection(all_challenge_ids)
+        c_anon = (c.requirements or {}).get("anonymize")
+
+        if user_solve_ids >= c_prereqs_set or c_anon == "preview":
+            named.append({"id": c.id, "name": c.name})
+        else:
+            anonymous += 1
+
+    return {"named": named, "anonymous_count": anonymous}
+
+
 @cache.memoize(timeout=60)
 def get_rating_average_for_challenge_id(challenge_id):
     ratings = Ratings.query.filter_by(challenge_id=challenge_id).all()
