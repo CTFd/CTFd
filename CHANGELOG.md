@@ -1,3 +1,17 @@
+# 3.8.6 / 2026-06-16
+
+**Security**
+
+- Fix issue where a malicious admin could disclose internal SMTP credentials
+
+**Admin Panel**
+
+- Add UI to mark a correct submission as incorrect
+
+**API**
+
+- Allow `PATCH /api/v1/submissions/[submission_id]` to mark submissions as incorrect
+
 # 3.8.5 / 2026-05-19
 
 **Security**
