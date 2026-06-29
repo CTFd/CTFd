@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
+from CTFd.cache import clear_accessible_module_ids, clear_challenges
 from CTFd.constants import RawEnum
 from CTFd.models import Challenges, ModuleAudienceAccess, Modules, db
 from CTFd.schemas.modules import (
@@ -94,6 +95,8 @@ class Module(Resource):
         module = Modules.query.filter_by(id=module_id).first_or_404()
         db.session.delete(module)
         db.session.commit()
+        clear_accessible_module_ids()
+        clear_challenges()
         db.session.close()
         return {"success": True}
 
@@ -124,6 +127,7 @@ class ModuleChallengeList(Resource):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         challenge.module_id = module_id
         db.session.commit()
+        clear_challenges()
 
         schema = ModuleChallengeSchema()
         response = schema.dump(challenge)
@@ -161,6 +165,7 @@ class ModuleAudienceAccessList(Resource):
 
         db.session.add(response.data)
         db.session.commit()
+        clear_accessible_module_ids()
         response = schema.dump(response.data)
         db.session.close()
         return {"success": True, "data": response.data}
@@ -175,5 +180,6 @@ class ModuleAudienceAccessItem(Resource):
         ).first_or_404()
         db.session.delete(link)
         db.session.commit()
+        clear_accessible_module_ids()
         db.session.close()
         return {"success": True}

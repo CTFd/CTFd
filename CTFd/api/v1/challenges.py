@@ -1046,6 +1046,10 @@ class ChallengeSolves(Resource):
         if challenge.state == "hidden" and is_admin() is False:
             abort(404)
 
+        user = get_current_user()
+        if is_admin() is False and not can_access_challenge(challenge, user):
+            abort(404)
+
         freeze = get_config("freeze")
         if freeze:
             preview = request.args.get("preview")
@@ -1217,6 +1221,9 @@ class ChallengeRatings(Resource):
         if challenge.state == "hidden" and not is_admin():
             abort(404)
 
+        if not is_admin() and not can_access_challenge(challenge, user):
+            abort(404)
+
         # Check if user/team has solved this challenge (only allow rating if solved)
         if not is_admin():
             user_solves = get_solve_ids_for_user_id(user_id=user.id)
@@ -1307,8 +1314,11 @@ class ChallengeSolution(Resource):
         if challenge.state == "hidden" and not is_admin():
             abort(404)
 
+        user = get_current_user()
+        if not is_admin() and not can_access_challenge(challenge, user):
+            abort(404)
+
         # Get user's current solves
-        user = get_current_user_attrs()
         user_solves = get_solve_ids_for_user_id(user_id=user.id)
 
         response = {
