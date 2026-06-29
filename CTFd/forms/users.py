@@ -105,8 +105,8 @@ def attach_registration_code_field(form_cls):
             form_cls,
             "registration_code",
             StringField(
-                "Registration Code",
-                description="Registration code required to create account",
+                _l("Registration Code"),
+                description=_l("Registration code required to create account"),
                 validators=[InputRequired()],
             ),
         )
@@ -140,20 +140,20 @@ def attach_user_bracket_field(form_cls):
 
 class UserSearchForm(BaseForm):
     field = SelectField(
-        "Search Field",
+        _l("Search Field"),
         choices=[
-            ("name", "Name"),
-            ("id", "ID"),
-            ("email", "Email"),
-            ("affiliation", "Affiliation"),
-            ("website", "Website"),
-            ("ip", "IP Address"),
+            ("name", _l("Name")),
+            ("id", _l("ID")),
+            ("email", _l("Email")),
+            ("affiliation", _l("Affiliation")),
+            ("website", _l("Website")),
+            ("ip", _l("IP Address")),
         ],
         default="name",
         validators=[InputRequired()],
     )
-    q = StringField("Parameter", validators=[InputRequired()])
-    submit = SubmitField("Search")
+    q = StringField(_l("Parameter"), validators=[InputRequired()])
+    submit = SubmitField(_l("Search"))
 
 
 class PublicUserSearchForm(BaseForm):
@@ -176,19 +176,21 @@ class PublicUserSearchForm(BaseForm):
 
 
 class UserBaseForm(BaseForm):
-    name = StringField("User Name", validators=[InputRequired()])
-    email = EmailField("Email", validators=[InputRequired()])
+    name = StringField(_l("User Name"), validators=[InputRequired()])
+    email = EmailField(_l("Email"), validators=[InputRequired()])
     language = SelectField(_l("Language"), choices=SELECT_LANGUAGE_LIST)
-    password = PasswordField("Password")
-    website = StringField("Website")
-    affiliation = StringField("Affiliation")
-    country = SelectField("Country", choices=SELECT_COUNTRIES_LIST)
-    type = SelectField("Type", choices=[("user", "User"), ("admin", "Admin")])
-    verified = BooleanField("Verified")
-    hidden = BooleanField("Hidden")
-    banned = BooleanField("Banned")
-    change_password = BooleanField("Require password change on next login")
-    submit = SubmitField("Submit")
+    password = PasswordField(_l("Password"))
+    website = StringField(_l("Website"))
+    affiliation = StringField(_l("Affiliation"))
+    country = SelectField(_l("Country"), choices=SELECT_COUNTRIES_LIST)
+    type = SelectField(
+        _l("Type"), choices=[("user", _l("User")), ("admin", _l("Admin"))]
+    )
+    verified = BooleanField(_l("Verified"))
+    hidden = BooleanField(_l("Hidden"))
+    banned = BooleanField(_l("Banned"))
+    change_password = BooleanField(_l("Require password change on next login"))
+    submit = SubmitField(_l("Submit"))
 
 
 def UserEditForm(*args, **kwargs):
@@ -221,7 +223,7 @@ def UserEditForm(*args, **kwargs):
 
 def UserCreateForm(*args, **kwargs):
     class _UserCreateForm(UserBaseForm):
-        notify = BooleanField("Email account credentials to user", default=True)
+        notify = BooleanField(_l("Email account credentials to user"), default=True)
 
         @property
         def extra(self):

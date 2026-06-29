@@ -2,19 +2,19 @@
 	<form method="POST" autocomplete="off" class="w-100">
 		<div style="display:flex; justify-content:space-between;">
 			<h6>
-				MajorLeagueCyber integration
+				{% trans %}MajorLeagueCyber integration{% endtrans %}
 			</h6>
-			<span data-toggle="tooltip" data-placement="top" title="MLC is a CTF stats tracker that provides event scheduling, team tracking, and SSO." aria-hidden="true">
+			<span data-toggle="tooltip" data-placement="top" title="{{ _('MLC is a CTF stats tracker that provides event scheduling, team tracking, and SSO.') }}" aria-hidden="true">
 				<i class="fas fa-question-circle"></i>
 			</span>
 		</div>
 		<small>
-			Begin by registering your event with <a href="https://www.majorleaguecyber.org/">MajorLeagueCyber</a> to get your OAuth Client ID and Client Secret. Need more help? Check out the <a href="https://docs.ctfd.io/docs/settings/mlc" target="_blank">documentation</a>.
+			{% trans %}Begin by registering your event with{% endtrans %} <a href="https://www.majorleaguecyber.org/">MajorLeagueCyber</a> {% trans %}to get your OAuth Client ID and Client Secret. Need more help? Check out the{% endtrans %} <a href="https://docs.ctfd.io/docs/settings/mlc" target="_blank">{% trans %}documentation{% endtrans %}</a>.
 		</small>
 		<br>
 		<div class="form-group">
 			<label>
-				Client ID
+				{% trans %}Client ID{% endtrans %}
 			</label>
 			<input class="form-control" id='oauth_client_id' name='oauth_client_id' type='text' placeholder=""
 				{% if oauth_client_id is defined and oauth_client_id != None %}value="{{ oauth_client_id }}"{% endif %}>
@@ -22,12 +22,12 @@
 
 		<div class="form-group">
 			<label>
-				Client Secret
+				{% trans %}Client Secret{% endtrans %}
 			</label>
 			<input class="form-control" id='oauth_client_secret' name='oauth_client_secret' type='text' placeholder=""
 				{% if oauth_client_secret is defined and oauth_client_secret != None %}value="{{ oauth_client_secret }}"{% endif %}>
 		</div>
 
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		<button type="submit" class="btn btn-md btn-primary float-right">{% trans %}Update{% endtrans %}</button>
 	</form>
 </div>

@@ -6,9 +6,9 @@
 {% block content %}
 <div class="jumbotron">
 	<div class="container">
-		<h1>Pages
+		<h1>{% trans %}Pages{% endtrans %}
 			<a class="no-decoration" href="{{ url_for('admin.pages_new') }}">
-				<span class="create-page" role="button" data-toggle="tooltip" title="Create Page">
+				<span class="create-page" role="button" data-toggle="tooltip" title="{{ _('Create Page') }}">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</span>
 			</a>
@@ -21,7 +21,7 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Pages" id="pages-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="{{ _('Delete Pages') }}" id="pages-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -38,11 +38,11 @@
 							<input type="checkbox" class="form-check-input" id="pages-bulk-select" autocomplete="off" data-checkbox-all>&nbsp;
 						</div>
 					</th>
-					<th class="sort-col text-center"><b>Title</b></th>
-					<th class="sort-col text-center"><b>Route</b></th>
-					<th class="sort-col text-center"><b>Authentication</b></th>
-					<th class="sort-col text-center"><b>Hidden</b></th>
-					<th class="sort-col text-center"><b>Published</b></th>
+					<th class="sort-col text-center"><b>{% trans %}Title{% endtrans %}</b></th>
+					<th class="sort-col text-center"><b>{% trans %}Route{% endtrans %}</b></th>
+					<th class="sort-col text-center"><b>{% trans %}Authentication{% endtrans %}</b></th>
+					<th class="sort-col text-center"><b>{% trans %}Hidden{% endtrans %}</b></th>
+					<th class="sort-col text-center"><b>{% trans %}Published{% endtrans %}</b></th>
 				</tr>
 				</thead>
 				<tbody>
@@ -63,21 +63,21 @@
 						</td>
 						<td class="text-center">
 							{% if page.auth_required %}
-							Required
+							{% trans %}Required{% endtrans %}
 							{% else %}
 							{% endif %}
 						</td>
 						<td class="text-center">
 							{% if page.hidden %}
-								Hidden
+								{% trans %}Hidden{% endtrans %}
 							{% else %}
 							{% endif %}
 						</td>
 						<td class="text-center">
 							{% if page.draft %}
-								Draft
+								{% trans %}Draft{% endtrans %}
 							{% else %}
-								Published
+								{% trans %}Published{% endtrans %}
 							{% endif %}
 						</td>
 					</tr>

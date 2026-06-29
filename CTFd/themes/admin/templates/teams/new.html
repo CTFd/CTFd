@@ -1,29 +1,29 @@
-{% extends "admin/base.html" %}
-
-{% block stylesheets %}
-{% endblock %}
-
-{% block content %}
-<div class="jumbotron">
-	<div class="container">
-		<h1>
-			Create Team
-		</h1>
-	</div>
-</div>
-
-<div class="container">
-	<div class="row">
-		<div class="col-md-6 offset-md-3">
-			{% include "admin/modals/teams/create.html" %}
-		</div>
-	</div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-{% endblock %}
-
-{% block entrypoint %}
-	{{ Assets.js("assets/js/pages/team.js", theme="admin") }}
-{% endblock %}
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>
+			{% trans %}Create Team{% endtrans %}
+		</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			{% include "admin/modals/teams/create.html" %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block entrypoint %}
+	{{ Assets.js("assets/js/pages/team.js", theme="admin") }}
+{% endblock %}

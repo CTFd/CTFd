@@ -1,22 +1,98 @@
+
 msgid ""
 msgstr ""
-"Project-Id-Version: CTFd\n"
+"Project-Id-Version:  CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-24 00:30\n"
+"POT-Creation-Date: 2026-05-30 08:31+0500\n"
+"PO-Revision-Date: 2025-09-24 00:30+0000\n"
 "Last-Translator: \n"
+"Language: sk_SK\n"
 "Language-Team: Slovak\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
-"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
-"X-Crowdin-Project: CTFd\n"
-"X-Crowdin-Project-ID: 659064\n"
-"X-Crowdin-Language: sk\n"
-"X-Crowdin-File: /master/messages.pot\n"
-"X-Crowdin-File-ID: 188\n"
-"Language: sk_SK\n"
+
+#: CTFd/auth.py:158
+msgid "Please pick a longer password"
+msgstr ""
+
+#: CTFd/auth.py:198 CTFd/auth.py:229
+msgid "If that account exists you will receive an email, please check your inbox"
+msgstr ""
+
+#: CTFd/auth.py:208
+msgid ""
+"The email address associated with this account was registered via an "
+"authentication provider and does not have an associated password. Please "
+"login via your authentication provider."
+msgstr ""
+
+#: CTFd/auth.py:220
+msgid "Too many password reset attempts. Please try again later."
+msgstr ""
+
+#: CTFd/auth.py:285
+msgid "The registration code you entered was incorrect"
+msgstr ""
+
+#: CTFd/auth.py:296
+msgid "Please provide all required fields"
+msgstr ""
+
+#: CTFd/auth.py:334
+#, fuzzy
+msgid "Please enter a valid email address"
+msgstr "Zmeň emailovú adresu"
+
+#: CTFd/auth.py:336 CTFd/auth.py:338
+msgid "Your email address is not from an allowed domain"
+msgstr ""
+
+#: CTFd/auth.py:340
+msgid "That user name is already taken"
+msgstr ""
+
+#: CTFd/auth.py:342
+#, fuzzy
+msgid "Your user name cannot be an email address"
+msgstr "Vaše používateľské meno na stránke"
+
+#: CTFd/auth.py:344
+msgid "That email has already been used"
+msgstr ""
+
+#: CTFd/auth.py:346
+#, fuzzy
+msgid "Pick a longer password"
+msgstr "Heslo správcu"
+
+#: CTFd/auth.py:352
+#, fuzzy
+msgid "Pick a shorter password"
+msgstr "Aktuálne heslo"
+
+#: CTFd/auth.py:354
+msgid "Pick a longer user name"
+msgstr ""
+
+#: CTFd/auth.py:357
+msgid "Websites must be a proper URL starting with http or https"
+msgstr ""
+
+#: CTFd/auth.py:360
+#, fuzzy
+msgid "Invalid country"
+msgstr "Krajina"
+
+#: CTFd/auth.py:362
+msgid "Please provide a shorter affiliation"
+msgstr ""
+
+#: CTFd/auth.py:364
+msgid "Please provide a valid bracket"
+msgstr ""
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
@@ -27,7 +103,7 @@ msgstr ""
 msgid "%(ctf_name)s has not started yet"
 msgstr ""
 
-#: CTFd/challenges.py:44
+#: CTFd/api/v1/challenges.py:691 CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
 msgstr ""
@@ -37,35 +113,924 @@ msgstr ""
 msgid "%(ctf_name)s has ended"
 msgstr ""
 
-#: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
-#: CTFd/themes/core-beta/templates/teams/private.html:329
-#: CTFd/themes/core-beta/templates/teams/public.html:95
+#: CTFd/admin/challenges.py:16
+msgid "standard"
+msgstr ""
+
+#: CTFd/admin/challenges.py:16
+msgid "dynamic"
+msgstr ""
+
+#: CTFd/admin/challenges.py:64
+#, python-format
+msgid ""
+"The underlying challenge type (%(type)s) is not installed. This challenge"
+" can not be loaded."
+msgstr ""
+
+#: CTFd/api/v1/challenges.py:1209
+msgid "You must solve this challenge before rating it"
+msgstr ""
+
+#: CTFd/api/v1/statistics/challenges.py:37 CTFd/api/v1/statistics/users.py:31
+msgid "That could not be found"
+msgstr ""
+
+#: CTFd/forms/auth.py:21 CTFd/themes/core/templates/register.html:60
+msgid "Password used to log into your account"
+msgstr "Heslo používané na prihlásenie do vášho účtu"
+
+#: CTFd/forms/auth.py:29 CTFd/forms/self.py:21 CTFd/forms/users.py:179
+#: CTFd/themes/admin/templates/teams/team.html:268
+#: CTFd/themes/core/templates/teams/private.html:329
+#: CTFd/themes/core/templates/teams/public.html:95
 msgid "User Name"
 msgstr "Používateľské meno"
 
-#: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
-#: CTFd/forms/teams.py:230
+#: CTFd/forms/auth.py:35 CTFd/forms/auth.py:79 CTFd/forms/self.py:22
+#: CTFd/forms/teams.py:230 CTFd/forms/users.py:147 CTFd/forms/users.py:180
+#: CTFd/themes/admin/templates/users/users.html:78
 msgid "Email"
 msgstr "Email"
 
-#: CTFd/forms/auth.py:24 CTFd/forms/auth.py:50 CTFd/forms/auth.py:67
-#: CTFd/forms/self.py:24 CTFd/forms/teams.py:231
+#: CTFd/forms/auth.py:40 CTFd/forms/auth.py:69 CTFd/forms/auth.py:86
+#: CTFd/forms/config.py:330 CTFd/forms/self.py:24 CTFd/forms/teams.py:231
+#: CTFd/forms/users.py:182
 msgid "Password"
 msgstr "Heslo"
 
-#: CTFd/forms/auth.py:25 CTFd/forms/auth.py:51 CTFd/forms/auth.py:62
-#: CTFd/forms/auth.py:69 CTFd/forms/self.py:29 CTFd/forms/teams.py:154
-#: CTFd/forms/teams.py:237 CTFd/themes/core-beta/templates/challenge.html:147
+#: CTFd/forms/auth.py:44 CTFd/forms/auth.py:70 CTFd/forms/auth.py:81
+#: CTFd/forms/auth.py:88 CTFd/forms/notifications.py:31 CTFd/forms/self.py:29
+#: CTFd/forms/teams.py:154 CTFd/forms/teams.py:194 CTFd/forms/teams.py:237
+#: CTFd/forms/users.py:193
+#: CTFd/themes/admin/templates/modals/teams/captain.html:20
+#: CTFd/themes/core/templates/challenge.html:187
+#: CTFd/themes/core/templates/challenge.html:271
 msgid "Submit"
 msgstr "Odoslať"
 
-#: CTFd/forms/auth.py:46
+#: CTFd/forms/auth.py:65
 msgid "User Name or Email"
 msgstr "Používateľské meno alebo email"
 
-#: CTFd/forms/auth.py:55
-msgid "Resend Confirmation Email"
+#: CTFd/forms/auth.py:74
+#, fuzzy
+msgid "Send Confirmation Email"
 msgstr "Znova odoslať potvrdzovací e-mail"
+
+#: CTFd/forms/awards.py:10 CTFd/forms/challenges.py:13 CTFd/forms/teams.py:201
+#: CTFd/forms/teams.py:217 CTFd/forms/users.py:145 CTFd/forms/users.py:163
+#: CTFd/themes/admin/templates/challenges/challenges.html:79
+#: CTFd/themes/admin/templates/challenges/update.html:8
+#: CTFd/themes/admin/templates/modals/challenges/solves.html:4
+#: CTFd/themes/admin/templates/teams/team.html:481
+#: CTFd/themes/admin/templates/users/user.html:353
+#: CTFd/themes/core/templates/challenge.html:323
+msgid "Name"
+msgstr "Názov"
+
+#: CTFd/forms/awards.py:11
+#: CTFd/themes/admin/templates/challenges/challenges.html:81
+#: CTFd/themes/admin/templates/challenges/update.html:64
+#: CTFd/themes/admin/templates/teams/team.html:354
+#: CTFd/themes/admin/templates/teams/team.html:485
+#: CTFd/themes/admin/templates/teams/team.html:544
+#: CTFd/themes/admin/templates/users/user.html:235
+#: CTFd/themes/admin/templates/users/user.html:356
+#: CTFd/themes/admin/templates/users/user.html:410
+#: CTFd/themes/core/templates/teams/private.html:390
+#: CTFd/themes/core/templates/teams/public.html:159
+#: CTFd/themes/core/templates/users/private.html:126
+#: CTFd/themes/core/templates/users/public.html:125
+msgid "Value"
+msgstr "Hodnota"
+
+#: CTFd/forms/awards.py:12 CTFd/forms/challenges.py:15
+#: CTFd/themes/admin/templates/challenges/challenges.html:80
+#: CTFd/themes/admin/templates/challenges/update.html:18
+#: CTFd/themes/admin/templates/teams/team.html:353
+#: CTFd/themes/admin/templates/teams/team.html:486
+#: CTFd/themes/admin/templates/teams/team.html:543
+#: CTFd/themes/admin/templates/users/user.html:234
+#: CTFd/themes/admin/templates/users/user.html:357
+#: CTFd/themes/admin/templates/users/user.html:409
+#: CTFd/themes/core/templates/teams/private.html:389
+#: CTFd/themes/core/templates/teams/public.html:158
+#: CTFd/themes/core/templates/users/private.html:125
+#: CTFd/themes/core/templates/users/public.html:124
+msgid "Category"
+msgstr "Kategória"
+
+#: CTFd/forms/awards.py:13 CTFd/themes/admin/templates/teams/team.html:483
+#: CTFd/themes/admin/templates/users/user.html:354
+#: CTFd/themes/core/templates/settings.html:226
+msgid "Description"
+msgstr "Popis"
+
+#: CTFd/forms/awards.py:14 CTFd/forms/teams.py:111
+#: CTFd/themes/admin/templates/challenges/create.html:67
+msgid "Create"
+msgstr "Vytvorte"
+
+#: CTFd/forms/awards.py:16 CTFd/themes/admin/templates/teams/team.html:487
+#: CTFd/themes/admin/templates/users/user.html:358
+msgid "Icon"
+msgstr ""
+
+#: CTFd/forms/awards.py:18
+#: CTFd/themes/admin/templates/modals/awards/create.html:28
+#, fuzzy
+msgid "None"
+msgstr "Nie"
+
+#: CTFd/forms/awards.py:19
+#: CTFd/themes/admin/templates/modals/awards/create.html:36
+#, fuzzy
+msgid "Shield"
+msgstr "Vyhľadávacie pole"
+
+#: CTFd/forms/awards.py:20
+#: CTFd/themes/admin/templates/modals/awards/create.html:44
+msgid "Bug"
+msgstr ""
+
+#: CTFd/forms/awards.py:21
+#: CTFd/themes/admin/templates/modals/awards/create.html:54
+msgid "Crown"
+msgstr ""
+
+#: CTFd/forms/awards.py:22
+#: CTFd/themes/admin/templates/modals/awards/create.html:62
+msgid "Crosshairs"
+msgstr ""
+
+#: CTFd/forms/awards.py:23
+#: CTFd/themes/admin/templates/modals/awards/create.html:70
+#, fuzzy
+msgid "Ban"
+msgstr "Banner"
+
+#: CTFd/forms/awards.py:24
+#: CTFd/themes/admin/templates/modals/awards/create.html:80
+msgid "Lightning"
+msgstr ""
+
+#: CTFd/forms/awards.py:25
+#: CTFd/themes/admin/templates/modals/awards/create.html:88
+msgid "Skull"
+msgstr ""
+
+#: CTFd/forms/awards.py:26
+#: CTFd/themes/admin/templates/modals/awards/create.html:96
+msgid "Brain"
+msgstr ""
+
+#: CTFd/forms/awards.py:27
+#: CTFd/themes/admin/templates/modals/awards/create.html:106
+#, fuzzy
+msgid "Code"
+msgstr "Režim"
+
+#: CTFd/forms/awards.py:28
+#: CTFd/themes/admin/templates/modals/awards/create.html:114
+msgid "Cowboy"
+msgstr ""
+
+#: CTFd/forms/awards.py:29
+#: CTFd/themes/admin/templates/modals/awards/create.html:122
+#, fuzzy
+msgid "Angry"
+msgstr "Kategória"
+
+#: CTFd/forms/challenges.py:11 CTFd/forms/submissions.py:11
+#: CTFd/forms/teams.py:199 CTFd/forms/teams.py:215 CTFd/forms/users.py:143
+#: CTFd/forms/users.py:161
+msgid "Search Field"
+msgstr "Vyhľadávacie pole"
+
+#: CTFd/forms/challenges.py:14 CTFd/forms/submissions.py:14
+#: CTFd/forms/teams.py:202 CTFd/forms/users.py:146
+#: CTFd/themes/admin/templates/challenges/challenges.html:78
+#: CTFd/themes/admin/templates/submissions.html:83
+#: CTFd/themes/admin/templates/teams/teams.html:76
+#: CTFd/themes/admin/templates/users/users.html:76
+msgid "ID"
+msgstr ""
+
+#: CTFd/forms/challenges.py:16 CTFd/forms/users.py:187
+#: CTFd/themes/admin/templates/challenges/challenges.html:82
+#: CTFd/themes/admin/templates/submissions.html:89
+#: CTFd/themes/core/templates/challenge.html:294
+#, fuzzy
+msgid "Type"
+msgstr "Štýl"
+
+#: CTFd/forms/challenges.py:21 CTFd/forms/submissions.py:22
+#: CTFd/forms/teams.py:209 CTFd/forms/teams.py:224 CTFd/forms/users.py:155
+#: CTFd/forms/users.py:171
+msgid "Parameter"
+msgstr "Parameter"
+
+#: CTFd/forms/challenges.py:22 CTFd/forms/submissions.py:23
+#: CTFd/forms/teams.py:210 CTFd/forms/teams.py:225 CTFd/forms/users.py:156
+#: CTFd/forms/users.py:175
+msgid "Search"
+msgstr "Vyhľadávanie"
+
+#: CTFd/forms/challenges.py:27 CTFd/forms/pages.py:47
+#, fuzzy
+msgid "Upload Files"
+msgstr "Profil"
+
+#: CTFd/forms/challenges.py:28 CTFd/forms/pages.py:48
+msgid "Attach multiple files using Control+Click or Cmd+Click."
+msgstr ""
+
+#: CTFd/forms/challenges.py:31 CTFd/themes/admin/templates/configs/logo.html:29
+#: CTFd/themes/admin/templates/configs/logo.html:64
+msgid "Upload"
+msgstr ""
+
+#: CTFd/forms/config.py:33 CTFd/themes/admin/templates/config.html:62
+#, fuzzy
+msgid "Accounts"
+msgstr "Krajina"
+
+#: CTFd/forms/config.py:35 CTFd/themes/admin/templates/reset.html:45
+msgid "Deletes all user and team accounts and their associated information"
+msgstr ""
+
+#: CTFd/forms/config.py:39 CTFd/themes/admin/templates/base.html:71
+#: CTFd/themes/admin/templates/submissions.html:10
+msgid "Submissions"
+msgstr ""
+
+#: CTFd/forms/config.py:41 CTFd/themes/admin/templates/reset.html:56
+msgid "Deletes all records that accounts gained points or took an action"
+msgstr ""
+
+#: CTFd/forms/config.py:45 CTFd/forms/config.py:148
+#: CTFd/themes/admin/templates/base.html:68
+#: CTFd/themes/admin/templates/challenges/challenges.html:11
+#: CTFd/themes/admin/templates/config.html:82
+#: CTFd/themes/admin/templates/config.html:85
+#: CTFd/themes/core/templates/challenges.html:7
+#: CTFd/themes/core/templates/components/navbar.html:59
+msgid "Challenges"
+msgstr "Úlohy"
+
+#: CTFd/forms/config.py:45 CTFd/themes/admin/templates/reset.html:67
+msgid "Deletes all challenges and associated data"
+msgstr ""
+
+#: CTFd/forms/config.py:48 CTFd/themes/admin/templates/base.html:57
+#: CTFd/themes/admin/templates/config.html:106
+#: CTFd/themes/admin/templates/pages.html:9
+#, fuzzy
+msgid "Pages"
+msgstr "Stránka"
+
+#: CTFd/forms/config.py:48 CTFd/themes/admin/templates/reset.html:78
+msgid "Deletes all pages and their associated files"
+msgstr ""
+
+#: CTFd/forms/config.py:51 CTFd/themes/admin/templates/base.html:54
+#: CTFd/themes/admin/templates/notifications.html:6
+#: CTFd/themes/core/templates/components/navbar.html:85
+#: CTFd/themes/core/templates/components/navbar.html:91
+#: CTFd/themes/core/templates/notifications.html:7
+msgid "Notifications"
+msgstr "Upozornenia"
+
+#: CTFd/forms/config.py:51 CTFd/themes/admin/templates/reset.html:89
+#, fuzzy
+msgid "Deletes all notifications"
+msgstr "Upozornenia"
+
+#: CTFd/forms/config.py:53
+#, fuzzy
+msgid "Reset CTF"
+msgstr "Registrovať"
+
+#: CTFd/forms/config.py:58
+msgid "Email Domain Allowlist"
+msgstr ""
+
+#: CTFd/forms/config.py:60
+msgid ""
+"Comma-seperated list of allowable email domains which users can register "
+"under (e.g. examplectf.com, example.com, *.example.com)"
+msgstr ""
+
+#: CTFd/forms/config.py:64
+msgid "Email Domain Blocklist"
+msgstr ""
+
+#: CTFd/forms/config.py:66
+msgid ""
+"Comma-seperated list of disallowed email domains which users cannot "
+"register under (e.g. examplectf.com, example.com, *.example.com)"
+msgstr ""
+
+#: CTFd/forms/config.py:70
+#, fuzzy
+msgid "Team Creation"
+msgstr "Kapitán tímu"
+
+#: CTFd/forms/config.py:72
+#, fuzzy
+msgid "Control whether users can create their own teams (Teams mode only)"
+msgstr ""
+"Ovláda, či sa používatelia spoja v tímoch, aby hrali (Tímový režim) alebo"
+" za seba (Používateľský režim)"
+
+#: CTFd/forms/config.py:74 CTFd/forms/config.py:105 CTFd/forms/config.py:122
+#: CTFd/forms/config.py:161 CTFd/forms/config.py:200 CTFd/forms/config.py:221
+#: CTFd/themes/admin/templates/configs/sanitize.html:18
+msgid "Enabled"
+msgstr ""
+
+#: CTFd/forms/config.py:74 CTFd/forms/config.py:105 CTFd/forms/config.py:115
+#: CTFd/forms/config.py:122 CTFd/forms/config.py:161 CTFd/forms/config.py:200
+#: CTFd/forms/config.py:221
+#: CTFd/themes/admin/templates/configs/sanitize.html:21
+msgid "Disabled"
+msgstr ""
+
+#: CTFd/forms/config.py:79
+msgid "Maximum number of users per team (Teams mode only)"
+msgstr ""
+
+#: CTFd/forms/config.py:82
+msgid "Maximum Number of Teams"
+msgstr ""
+
+#: CTFd/forms/config.py:85
+msgid ""
+"Maximum number of teams allowed to register with this CTF (Teams mode "
+"only)"
+msgstr ""
+
+#: CTFd/forms/config.py:89
+msgid "Maximum Number of Users"
+msgstr ""
+
+#: CTFd/forms/config.py:92
+msgid "Maximum number of user accounts allowed to register with this CTF"
+msgstr ""
+
+#: CTFd/forms/config.py:96 CTFd/forms/config.py:98
+msgid "Minimum Password Length for Users"
+msgstr ""
+
+#: CTFd/forms/config.py:101 CTFd/forms/setup.py:91
+msgid "Verify Emails"
+msgstr "Overiť e-maily"
+
+#: CTFd/forms/config.py:103
+msgid "Control whether users must confirm their email addresses before playing"
+msgstr ""
+
+#: CTFd/forms/config.py:109
+msgid "Team Disbanding"
+msgstr ""
+
+#: CTFd/forms/config.py:111
+msgid "Control whether team captains are allowed to disband their own teams"
+msgstr ""
+
+#: CTFd/forms/config.py:114
+msgid "Enabled for Inactive Teams"
+msgstr ""
+
+#: CTFd/forms/config.py:120
+#, fuzzy
+msgid "Name Changes"
+msgstr "Ďalšia úloha"
+
+#: CTFd/forms/config.py:121
+msgid "Control whether users and teams can change their names"
+msgstr ""
+
+#: CTFd/forms/config.py:126
+msgid "Incorrect Submissions per Minute"
+msgstr ""
+
+#: CTFd/forms/config.py:129
+msgid ""
+"Number of submissions allowed per minute for flag bruteforce protection "
+"(default: 10)"
+msgstr ""
+
+#: CTFd/forms/config.py:133 CTFd/forms/config.py:169 CTFd/forms/config.py:193
+#: CTFd/forms/config.py:411
+#: CTFd/themes/admin/templates/challenges/update.html:188
+#: CTFd/themes/admin/templates/configs/challenges.html:53
+#: CTFd/themes/admin/templates/configs/general.html:23
+#: CTFd/themes/admin/templates/configs/localization.html:16
+#: CTFd/themes/admin/templates/configs/mlc.html:31
+#: CTFd/themes/admin/templates/configs/pause.html:15
+#: CTFd/themes/admin/templates/configs/registration_code.html:12
+#: CTFd/themes/admin/templates/configs/robots.html:12
+#: CTFd/themes/admin/templates/configs/sanitize.html:26
+#: CTFd/themes/admin/templates/configs/theme.html:87
+#: CTFd/themes/admin/templates/configs/time.html:209
+#: CTFd/themes/admin/templates/configs/usermode.html:69
+#: CTFd/themes/admin/templates/configs/visibility.html:46
+#, fuzzy
+msgid "Update"
+msgstr "Dátum"
+
+#: CTFd/forms/config.py:137
+msgid "Database Table"
+msgstr ""
+
+#: CTFd/forms/config.py:138 CTFd/themes/admin/templates/configs/backup.html:10
+#: CTFd/themes/admin/templates/configs/backup.html:56
+msgid "Download CSV"
+msgstr ""
+
+#: CTFd/forms/config.py:143
+#, fuzzy
+msgid "CSV Type"
+msgstr "Štýl"
+
+#: CTFd/forms/config.py:145 CTFd/themes/admin/templates/base.html:63
+#: CTFd/themes/admin/templates/config.html:59
+#: CTFd/themes/admin/templates/configs/fields.html:12
+#: CTFd/themes/admin/templates/scoreboard.html:33
+#: CTFd/themes/admin/templates/users/users.html:9
+#: CTFd/themes/core/templates/components/navbar.html:36
+#: CTFd/themes/core/templates/users/users.html:6
+msgid "Users"
+msgstr "Používatelia"
+
+#: CTFd/forms/config.py:146 CTFd/themes/admin/templates/base.html:65
+#: CTFd/themes/admin/templates/configs/fields.html:17
+#: CTFd/themes/admin/templates/scoreboard.html:28
+#: CTFd/themes/admin/templates/teams/teams.html:9
+#: CTFd/themes/core/templates/components/navbar.html:43
+#: CTFd/themes/core/templates/teams/teams.html:6
+msgid "Teams"
+msgstr "Tímy"
+
+#: CTFd/forms/config.py:147
+#, fuzzy
+msgid "Users with Teams"
+msgstr "Upraviť tím"
+
+#: CTFd/forms/config.py:150
+msgid "Type of CSV data"
+msgstr ""
+
+#: CTFd/forms/config.py:152
+#, fuzzy
+msgid "CSV File"
+msgstr "Profil"
+
+#: CTFd/forms/config.py:152
+msgid "CSV file contents"
+msgstr ""
+
+#: CTFd/forms/config.py:157 CTFd/forms/setup.py:152
+msgid "Social Shares"
+msgstr ""
+
+#: CTFd/forms/config.py:159
+msgid "Enable or Disable social sharing links for challenge solves"
+msgstr ""
+
+#: CTFd/forms/config.py:165
+msgid "Social Share Solve Template"
+msgstr ""
+
+#: CTFd/forms/config.py:166
+msgid "HTML for Share Template"
+msgstr ""
+
+#: CTFd/forms/config.py:174
+msgid "Terms of Service URL"
+msgstr ""
+
+#: CTFd/forms/config.py:176
+msgid "External URL to a Terms of Service document hosted elsewhere"
+msgstr ""
+
+#: CTFd/forms/config.py:180 CTFd/themes/admin/templates/configs/legal.html:8
+msgid "Terms of Service"
+msgstr ""
+
+#: CTFd/forms/config.py:181
+msgid "Text shown on the Terms of Service page"
+msgstr ""
+
+#: CTFd/forms/config.py:184
+msgid "Privacy Policy URL"
+msgstr ""
+
+#: CTFd/forms/config.py:186
+msgid "External URL to a Privacy Policy document hosted elsewhere"
+msgstr ""
+
+#: CTFd/forms/config.py:190 CTFd/themes/admin/templates/configs/legal.html:13
+msgid "Privacy Policy"
+msgstr ""
+
+#: CTFd/forms/config.py:191
+msgid "Text shown on the Privacy Policy page"
+msgstr ""
+
+#: CTFd/forms/config.py:198
+#, fuzzy
+msgid "View Self Submissions"
+msgstr "Odoslať"
+
+#: CTFd/forms/config.py:199
+msgid "Allow users to view their previous submissions"
+msgstr ""
+
+#: CTFd/forms/config.py:204
+msgid "Max Attempts Behavior"
+msgstr ""
+
+#: CTFd/forms/config.py:205
+msgid "Set Max Attempts behavior to be a lockout or a timeout"
+msgstr ""
+
+#: CTFd/forms/config.py:206
+#, fuzzy
+msgid "lockout"
+msgstr "Odhlásiť sa"
+
+#: CTFd/forms/config.py:206
+#, fuzzy
+msgid "timeout"
+msgstr "čas"
+
+#: CTFd/forms/config.py:210
+msgid "Max Attempts Timeout Duration"
+msgstr ""
+
+#: CTFd/forms/config.py:212
+msgid ""
+"How long the timeout lasts in seconds for max attempts (if set to "
+"timeout). Default is 300 seconds"
+msgstr ""
+
+#: CTFd/forms/config.py:217
+msgid "Hints Free Public Access"
+msgstr ""
+
+#: CTFd/forms/config.py:219
+msgid ""
+"Control whether users must be logged in to see free hints (hints without "
+"cost or requirements)"
+msgstr ""
+
+#: CTFd/forms/config.py:225
+#: CTFd/themes/admin/templates/challenges/challenge.html:93
+#, fuzzy
+msgid "Challenge Ratings"
+msgstr "Úlohy"
+
+#: CTFd/forms/config.py:226
+msgid "Control who can see and submit challenge ratings"
+msgstr ""
+
+#: CTFd/forms/config.py:230
+msgid "Public (users can submit ratings and see aggregated ratings)"
+msgstr ""
+
+#: CTFd/forms/config.py:235
+msgid "Private (users can submit ratings but cannot see aggregated ratings)"
+msgstr ""
+
+#: CTFd/forms/config.py:241
+msgid "Disabled (users cannot submit ratings or see aggregated ratings)"
+msgstr ""
+
+#: CTFd/forms/config.py:251
+#, fuzzy
+msgid "Challenge Visibility"
+msgstr "Úlohy"
+
+#: CTFd/forms/config.py:253
+msgid "Control whether users must be logged in to see challenges"
+msgstr ""
+
+#: CTFd/forms/config.py:256 CTFd/forms/config.py:268 CTFd/forms/config.py:280
+#: CTFd/forms/config.py:293
+msgid "Public"
+msgstr ""
+
+#: CTFd/forms/config.py:257 CTFd/forms/config.py:269 CTFd/forms/config.py:281
+#: CTFd/forms/config.py:294
+#, fuzzy
+msgid "Private"
+msgstr "Webstránka"
+
+#: CTFd/forms/config.py:258 CTFd/forms/config.py:270 CTFd/forms/config.py:283
+#, fuzzy
+msgid "Admins Only"
+msgstr "Panel správcu"
+
+#: CTFd/forms/config.py:263
+#, fuzzy
+msgid "Account Visibility"
+msgstr "Nastavenia viditeľnosti"
+
+#: CTFd/forms/config.py:265
+msgid ""
+"Control whether accounts (users & teams) are shown to everyone, only to "
+"authenticated users, or only to admins"
+msgstr ""
+
+#: CTFd/forms/config.py:275
+#, fuzzy
+msgid "Score Visibility"
+msgstr "Nastavenia viditeľnosti"
+
+#: CTFd/forms/config.py:277
+msgid ""
+"Control whether solves/score are shown to the public, to logged in users,"
+" hidden to all non-admins, or only shown to admins"
+msgstr ""
+
+#: CTFd/forms/config.py:282 CTFd/forms/pages.py:26 CTFd/forms/teams.py:235
+#: CTFd/forms/users.py:190 CTFd/themes/admin/templates/challenges/new.html:63
+#: CTFd/themes/admin/templates/challenges/update.html:180
+#: CTFd/themes/admin/templates/pages.html:44
+#: CTFd/themes/admin/templates/pages.html:72
+#: CTFd/themes/admin/templates/teams/teams.html:79
+#: CTFd/themes/admin/templates/users/users.html:82
+msgid "Hidden"
+msgstr "Skryté"
+
+#: CTFd/forms/config.py:288
+#, fuzzy
+msgid "Registration Visibility"
+msgstr "Expirácia"
+
+#: CTFd/forms/config.py:290
+msgid "Control whether registration is enabled for everyone or disabled"
+msgstr ""
+
+#: CTFd/forms/config.py:295
+msgid "MajorLeagueCyber Only"
+msgstr ""
+
+#: CTFd/forms/config.py:303
+#, fuzzy
+msgid "Default Language"
+msgstr "Jazyk"
+
+#: CTFd/forms/config.py:305
+msgid ""
+"Language to use if a user does not specify a language in their account "
+"settings. By default, CTFd will auto-detect the user's preferred "
+"language."
+msgstr ""
+
+#: CTFd/forms/config.py:314
+#, fuzzy
+msgid "Mail From Address"
+msgstr "Zmeň emailovú adresu"
+
+#: CTFd/forms/config.py:314
+msgid "Email address used to send email"
+msgstr ""
+
+#: CTFd/forms/config.py:317
+#, fuzzy
+msgid "Mail Server Address"
+msgstr "Zmeň emailovú adresu"
+
+#: CTFd/forms/config.py:318
+msgid "Change the email server used by CTFd to send email"
+msgstr ""
+
+#: CTFd/forms/config.py:321 CTFd/forms/config.py:323
+#, fuzzy
+msgid "Mail Server Port"
+msgstr "Email"
+
+#: CTFd/forms/config.py:325
+msgid "Use Mail Server Username and Password"
+msgstr ""
+
+#: CTFd/forms/config.py:327
+#, fuzzy
+msgid "Username"
+msgstr "Používateľské meno"
+
+#: CTFd/forms/config.py:327
+msgid "Mail Server Account Username"
+msgstr ""
+
+#: CTFd/forms/config.py:330
+msgid "Mail Server Account Password"
+msgstr ""
+
+#: CTFd/forms/config.py:332
+msgid "TLS/SSL"
+msgstr ""
+
+#: CTFd/forms/config.py:333
+#, fuzzy
+msgid "STARTTLS"
+msgstr "Doba spustenia"
+
+#: CTFd/forms/config.py:337
+msgid "Mailgun API Base URL"
+msgstr ""
+
+#: CTFd/forms/config.py:340
+msgid "Mailgun API Key"
+msgstr ""
+
+#: CTFd/forms/config.py:345 CTFd/forms/config.py:359 CTFd/forms/config.py:373
+#: CTFd/forms/config.py:387 CTFd/forms/config.py:399
+#, fuzzy
+msgid "Subject"
+msgstr "Odoslať"
+
+#: CTFd/forms/config.py:346
+#, fuzzy
+msgid "Subject line for registration confirmation email"
+msgstr "Znova odoslať potvrdzovací e-mail"
+
+#: CTFd/forms/config.py:350 CTFd/forms/config.py:364 CTFd/forms/config.py:378
+#: CTFd/forms/config.py:392 CTFd/forms/config.py:404
+msgid "Body"
+msgstr ""
+
+#: CTFd/forms/config.py:352
+msgid "Email body sent to users after they've finished registering"
+msgstr ""
+
+#: CTFd/forms/config.py:360
+#, fuzzy
+msgid "Subject line for account verification email"
+msgstr "Upozornenia"
+
+#: CTFd/forms/config.py:366
+msgid ""
+"Email body sent to users to confirm their account at the address they "
+"provided during registration"
+msgstr ""
+
+#: CTFd/forms/config.py:374
+msgid "Subject line for new account details email"
+msgstr ""
+
+#: CTFd/forms/config.py:380
+msgid ""
+"Email body sent to new users (manually created by an admin) with their "
+"initial account details"
+msgstr ""
+
+#: CTFd/forms/config.py:388
+msgid "Subject line for password reset request email"
+msgstr ""
+
+#: CTFd/forms/config.py:393
+msgid "Email body sent when a user requests a password reset"
+msgstr ""
+
+#: CTFd/forms/config.py:400
+#, fuzzy
+msgid "Subject line for password reset confirmation email"
+msgstr "Znova odoslať potvrdzovací e-mail"
+
+#: CTFd/forms/config.py:406
+msgid "Email body sent when a user successfully resets their password"
+msgstr ""
+
+#: CTFd/forms/email.py:10 CTFd/themes/admin/templates/challenges/update.html:28
+msgid "Message"
+msgstr ""
+
+#: CTFd/forms/email.py:11
+#, fuzzy
+msgid "Send"
+msgstr "Vyhľadávacie pole"
+
+#: CTFd/forms/notifications.py:10 CTFd/forms/pages.py:17
+#: CTFd/themes/admin/templates/editor.html:35
+#: CTFd/themes/admin/templates/pages.html:41
+#, fuzzy
+msgid "Title"
+msgstr "čas"
+
+#: CTFd/forms/notifications.py:10
+#, fuzzy
+msgid "Notification title"
+msgstr "Upozornenia"
+
+#: CTFd/forms/notifications.py:12 CTFd/forms/pages.py:28
+#: CTFd/themes/admin/templates/editor.html:81
+msgid "Content"
+msgstr ""
+
+#: CTFd/forms/notifications.py:13
+msgid "Notification contents. Can consist of HTML and/or Markdown."
+msgstr ""
+
+#: CTFd/forms/notifications.py:16
+#, fuzzy
+msgid "Notification Type"
+msgstr "Upozornenia"
+
+#: CTFd/forms/notifications.py:18
+#, fuzzy
+msgid "Toast"
+msgstr "Tímy"
+
+#: CTFd/forms/notifications.py:19
+#, fuzzy
+msgid "Alert"
+msgstr "Hodnota"
+
+#: CTFd/forms/notifications.py:20
+msgid "Background"
+msgstr ""
+
+#: CTFd/forms/notifications.py:23
+msgid "What type of notification users receive"
+msgstr ""
+
+#: CTFd/forms/notifications.py:27
+msgid "Play Sound"
+msgstr ""
+
+#: CTFd/forms/notifications.py:29
+msgid "Play sound for users when they receive the notification"
+msgstr ""
+
+#: CTFd/forms/pages.py:17
+msgid "This is the title shown on the navigation bar"
+msgstr ""
+
+#: CTFd/forms/pages.py:20 CTFd/themes/admin/templates/editor.html:48
+#: CTFd/themes/admin/templates/pages.html:42
+msgid "Route"
+msgstr ""
+
+#: CTFd/forms/pages.py:22
+msgid ""
+"This is the URL route that your page will be at (e.g. /page). You can "
+"also enter links to link to that page."
+msgstr ""
+
+#: CTFd/forms/pages.py:25 CTFd/themes/admin/templates/pages.html:78
+#, fuzzy
+msgid "Draft"
+msgstr "Dátum"
+
+#: CTFd/forms/pages.py:27
+#, fuzzy
+msgid "Authentication Required"
+msgstr "Upozornenia"
+
+#: CTFd/forms/pages.py:30
+msgid "Format"
+msgstr ""
+
+#: CTFd/forms/pages.py:31
+msgid "Markdown"
+msgstr ""
+
+#: CTFd/forms/pages.py:31
+msgid "HTML"
+msgstr ""
+
+#: CTFd/forms/pages.py:34
+msgid "The markup format used to render the page"
+msgstr ""
+
+#: CTFd/forms/pages.py:37 CTFd/themes/admin/templates/editor.html:67
+#, fuzzy
+msgid "Target"
+msgstr "Stránka"
+
+#: CTFd/forms/pages.py:38
+#, fuzzy
+msgid "Current Page"
+msgstr "Vytvoriť tím"
+
+#: CTFd/forms/pages.py:38
+#, fuzzy
+msgid "New Tab"
+msgstr "Stránka"
+
+#: CTFd/forms/pages.py:41
+msgid "Context to open page in"
+msgstr ""
+
+#: CTFd/forms/pages.py:51
+#, fuzzy
+msgid "Page Type"
+msgstr "Úlohy"
 
 #: CTFd/forms/self.py:23 CTFd/forms/users.py:181
 msgid "Language"
@@ -75,115 +1040,144 @@ msgstr "Jazyk"
 msgid "Current Password"
 msgstr "Aktuálne heslo"
 
-#: CTFd/forms/self.py:26 CTFd/forms/teams.py:140 CTFd/forms/teams.py:218
-#: CTFd/forms/teams.py:233 CTFd/forms/users.py:164
-#: CTFd/themes/core-beta/templates/teams/teams.html:51
-#: CTFd/themes/core-beta/templates/users/users.html:48
+#: CTFd/forms/self.py:26 CTFd/forms/teams.py:140 CTFd/forms/teams.py:203
+#: CTFd/forms/teams.py:218 CTFd/forms/teams.py:233 CTFd/forms/users.py:148
+#: CTFd/forms/users.py:164 CTFd/forms/users.py:184
+#: CTFd/themes/core/templates/teams/teams.html:51
+#: CTFd/themes/core/templates/users/users.html:48
 msgid "Affiliation"
 msgstr "Afiliácia"
 
-#: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:219
-#: CTFd/forms/teams.py:232 CTFd/forms/users.py:165
-#: CTFd/themes/core-beta/templates/teams/teams.html:50
-#: CTFd/themes/core-beta/templates/users/users.html:47
+#: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:204
+#: CTFd/forms/teams.py:219 CTFd/forms/teams.py:232 CTFd/forms/users.py:149
+#: CTFd/forms/users.py:165 CTFd/forms/users.py:183
+#: CTFd/themes/core/templates/teams/teams.html:50
+#: CTFd/themes/core/templates/users/users.html:47
 msgid "Website"
 msgstr "Webstránka"
 
 #: CTFd/forms/self.py:28 CTFd/forms/teams.py:150 CTFd/forms/teams.py:234
-#: CTFd/themes/core-beta/templates/teams/teams.html:52
-#: CTFd/themes/core-beta/templates/users/users.html:49
+#: CTFd/forms/users.py:185
+#: CTFd/themes/admin/templates/modals/teams/addresses.html:10
+#: CTFd/themes/admin/templates/modals/users/addresses.html:9
+#: CTFd/themes/admin/templates/teams/teams.html:78
+#: CTFd/themes/admin/templates/users/users.html:79
+#: CTFd/themes/core/templates/teams/teams.html:52
+#: CTFd/themes/core/templates/users/users.html:49
 msgid "Country"
 msgstr "Krajina"
 
-#: CTFd/forms/self.py:59 CTFd/themes/core-beta/templates/settings.html:225
+#: CTFd/forms/self.py:59 CTFd/themes/core/templates/settings.html:225
 msgid "Expiration"
 msgstr "Expirácia"
+
+#: CTFd/forms/self.py:60
+#, fuzzy
+msgid "Usage Description"
+msgstr "Popis"
 
 #: CTFd/forms/self.py:61
 msgid "Generate"
 msgstr "Generovať"
 
-#: CTFd/forms/setup.py:29
+#: CTFd/forms/setup.py:30 CTFd/themes/admin/templates/configs/general.html:5
 msgid "Event Name"
 msgstr "Názov udalosti"
 
-#: CTFd/forms/setup.py:29
+#: CTFd/forms/setup.py:30
 msgid "The name of your CTF event/workshop"
 msgstr "Názov vášho podujatia/workshopu CTF"
 
-#: CTFd/forms/setup.py:32
+#: CTFd/forms/setup.py:33 CTFd/themes/admin/templates/configs/general.html:14
 msgid "Event Description"
 msgstr "Popis udalosti"
 
-#: CTFd/forms/setup.py:32
+#: CTFd/forms/setup.py:33
 msgid "Description for the CTF"
 msgstr "Popis CTF"
 
-#: CTFd/forms/setup.py:35 CTFd/forms/setup.py:36
+#: CTFd/forms/setup.py:36 CTFd/forms/setup.py:37
+#: CTFd/themes/admin/templates/config.html:161
+#: CTFd/themes/admin/templates/configs/usermode.html:5
+#: CTFd/themes/admin/templates/configs/usermode.html:43
 msgid "User Mode"
 msgstr "Používateľský režim"
 
-#: CTFd/forms/setup.py:36
+#: CTFd/forms/setup.py:37 CTFd/themes/admin/templates/configs/usermode.html:19
 msgid "Team Mode"
 msgstr "Tímový režim"
 
-#: CTFd/forms/setup.py:39
-msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
-msgstr "Ovláda, či sa používatelia spoja v tímoch, aby hrali (Tímový režim) alebo za seba (Používateľský režim)"
+#: CTFd/forms/setup.py:40
+msgid ""
+"Controls whether users join together in teams to play (Team Mode) or play"
+" as themselves (User Mode)"
+msgstr ""
+"Ovláda, či sa používatelia spoja v tímoch, aby hrali (Tímový režim) alebo"
+" za seba (Používateľský režim)"
 
-#: CTFd/forms/setup.py:45
+#: CTFd/forms/setup.py:46
 msgid "Admin Username"
 msgstr "Používateľské meno správcu"
 
-#: CTFd/forms/setup.py:46
+#: CTFd/forms/setup.py:47
 msgid "Your username for the administration account"
 msgstr "Vaše používateľské meno pre administrátorský účet"
 
-#: CTFd/forms/setup.py:50
+#: CTFd/forms/setup.py:51
 msgid "Admin Email"
 msgstr "E-mail správcu"
 
-#: CTFd/forms/setup.py:51
+#: CTFd/forms/setup.py:52
 msgid "Your email address for the administration account"
 msgstr "Vaša e-mailová adresa pre administrátorský účet"
 
-#: CTFd/forms/setup.py:55
+#: CTFd/forms/setup.py:56
 msgid "Admin Password"
 msgstr "Heslo správcu"
 
-#: CTFd/forms/setup.py:56
+#: CTFd/forms/setup.py:57
 msgid "Your password for the administration account"
 msgstr "Vaše heslo pre administrátorský účet"
 
-#: CTFd/forms/setup.py:61
+#: CTFd/forms/setup.py:62 CTFd/themes/admin/templates/config.html:27
+#: CTFd/themes/admin/templates/configs/logo.html:5
 msgid "Logo"
 msgstr "Logo"
 
-#: CTFd/forms/setup.py:63
-msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
-msgstr "Logo, ktoré sa má použiť pre webovú stránku namiesto názvu CTF. Používa sa ako tlačidlo domovskej stránky. Voliteľné."
+#: CTFd/forms/setup.py:64
+msgid ""
+"Logo to use for the website instead of a CTF name. Used as the home page "
+"button. Optional."
+msgstr ""
+"Logo, ktoré sa má použiť pre webovú stránku namiesto názvu CTF. Používa "
+"sa ako tlačidlo domovskej stránky. Voliteľné."
 
-#: CTFd/forms/setup.py:67
+#: CTFd/forms/setup.py:68
 msgid "Banner"
 msgstr "Banner"
 
-#: CTFd/forms/setup.py:67
+#: CTFd/forms/setup.py:68
 msgid "Banner to use for the homepage. Optional."
 msgstr "Banner na použitie na domovskej stránke. Voliteľné."
 
-#: CTFd/forms/setup.py:70
+#: CTFd/forms/setup.py:71 CTFd/themes/admin/templates/configs/logo.html:59
 msgid "Small Icon"
 msgstr "Malá ikona"
 
-#: CTFd/forms/setup.py:72
-msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
-msgstr "favicon používaná v prehliadačoch používateľov. Akceptované sú iba súbory PNG. Musí mať veľkosť 32 x 32 pixelov. Voliteľné."
+#: CTFd/forms/setup.py:73
+msgid ""
+"favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. "
+"Optional."
+msgstr ""
+"favicon používaná v prehliadačoch používateľov. Akceptované sú iba súbory"
+" PNG. Musí mať veľkosť 32 x 32 pixelov. Voliteľné."
 
-#: CTFd/forms/setup.py:76
+#: CTFd/forms/setup.py:77 CTFd/themes/admin/templates/config.html:32
+#: CTFd/themes/admin/templates/configs/theme.html:18
 msgid "Theme"
 msgstr "Téma"
 
-#: CTFd/forms/setup.py:77
+#: CTFd/forms/setup.py:78
 msgid "CTFd Theme to use. Can be changed later."
 msgstr "Téma CTFd. Dá sa neskôr zmeniť."
 
@@ -192,14 +1186,14 @@ msgid "Theme Color"
 msgstr "Farba témy"
 
 #: CTFd/forms/setup.py:86
-msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
-msgstr "Farba používaná témou na kontrolu estetiky. Vyžaduje si podporu témy. Voliteľné."
+msgid ""
+"Color used by theme to control aesthetics. Requires theme support. "
+"Optional."
+msgstr ""
+"Farba používaná témou na kontrolu estetiky. Vyžaduje si podporu témy. "
+"Voliteľné."
 
-#: CTFd/forms/setup.py:91
-msgid "Verify Emails"
-msgstr "Overiť e-maily"
-
-#: CTFd/forms/setup.py:143
+#: CTFd/forms/setup.py:143 CTFd/themes/admin/templates/configs/time.html:6
 msgid "Start Time"
 msgstr "Doba spustenia"
 
@@ -207,7 +1201,7 @@ msgstr "Doba spustenia"
 msgid "Time when your CTF is scheduled to start. Optional."
 msgstr "Čas, kedy je naplánovaný začiatok vášho CTF. Voliteľné."
 
-#: CTFd/forms/setup.py:147
+#: CTFd/forms/setup.py:147 CTFd/themes/admin/templates/configs/time.html:11
 msgid "End Time"
 msgstr "Čas ukončenia"
 
@@ -215,9 +1209,40 @@ msgstr "Čas ukončenia"
 msgid "Time when your CTF is scheduled to end. Optional."
 msgstr "Čas, kedy je naplánované ukončenie vášho CTF. Voliteľné."
 
-#: CTFd/forms/setup.py:150
+#: CTFd/forms/setup.py:157 CTFd/themes/admin/templates/challenges/new.html:68
 msgid "Finish"
 msgstr "Skončiť"
+
+#: CTFd/forms/submissions.py:13 CTFd/themes/admin/templates/submissions.html:90
+#, fuzzy
+msgid "Provided"
+msgstr "Profil"
+
+#: CTFd/forms/submissions.py:15
+#, fuzzy
+msgid "Account ID"
+msgstr "Krajina"
+
+#: CTFd/forms/submissions.py:16
+#, fuzzy
+msgid "Challenge ID"
+msgstr "Úloha"
+
+#: CTFd/forms/submissions.py:17
+#: CTFd/themes/admin/templates/challenges/update.html:9
+#, fuzzy
+msgid "Challenge Name"
+msgstr "Úloha"
+
+#: CTFd/forms/teams.py:31 CTFd/forms/users.py:133
+#: CTFd/themes/admin/templates/scoreboard/standings.html:11
+#: CTFd/themes/admin/templates/scoreboard/users.html:11
+msgid "Bracket"
+msgstr ""
+
+#: CTFd/forms/teams.py:32
+msgid "Competition bracket for your team"
+msgstr ""
 
 #: CTFd/forms/teams.py:102 CTFd/forms/teams.py:109 CTFd/forms/teams.py:127
 #: CTFd/forms/teams.py:229
@@ -231,10 +1256,6 @@ msgstr "Heslo tímu"
 #: CTFd/forms/teams.py:104 CTFd/forms/teams.py:289
 msgid "Join"
 msgstr "Pripojte sa"
-
-#: CTFd/forms/teams.py:111
-msgid "Create"
-msgstr "Vytvorte"
 
 #: CTFd/forms/teams.py:128
 msgid "Your team's public name shown to other competitors"
@@ -253,8 +1274,12 @@ msgid "Confirm Current Team Password"
 msgstr "Potvrďte aktuálne heslo tímu"
 
 #: CTFd/forms/teams.py:136
-msgid "Provide your current team password (or your password) to update your team's password"
-msgstr "Ak chcete aktualizovať heslo svojho tímu, zadajte svoje aktuálne heslo tímu (alebo heslo)."
+msgid ""
+"Provide your current team password (or your password) to update your "
+"team's password"
+msgstr ""
+"Ak chcete aktualizovať heslo svojho tímu, zadajte svoje aktuálne heslo "
+"tímu (alebo heslo)."
 
 #: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
@@ -269,31 +1294,13 @@ msgid "Your team's country publicly shown to other competitors"
 msgstr "Krajina vášho tímu verejne zobrazená ostatným súťažiacim"
 
 #: CTFd/forms/teams.py:192
+#: CTFd/themes/admin/templates/modals/teams/captain.html:4
 msgid "Team Captain"
 msgstr "Kapitán tímu"
 
-#: CTFd/forms/teams.py:215 CTFd/forms/users.py:161
-msgid "Search Field"
-msgstr "Vyhľadávacie pole"
-
-#: CTFd/forms/teams.py:217 CTFd/forms/users.py:163
-#: CTFd/themes/core-beta/templates/challenge.html:206
-msgid "Name"
-msgstr "Názov"
-
-#: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
-msgid "Parameter"
-msgstr "Parameter"
-
-#: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
-msgid "Search"
-msgstr "Vyhľadávanie"
-
-#: CTFd/forms/teams.py:235
-msgid "Hidden"
-msgstr "Skryté"
-
-#: CTFd/forms/teams.py:236
+#: CTFd/forms/teams.py:236 CTFd/forms/users.py:191
+#: CTFd/themes/admin/templates/teams/teams.html:80
+#: CTFd/themes/admin/templates/users/users.html:83
 msgid "Banned"
 msgstr "Zakázaný"
 
@@ -301,31 +1308,1801 @@ msgstr "Zakázaný"
 msgid "Invite Link"
 msgstr "Pozvánka"
 
-#: CTFd/forms/users.py:133
-msgid "Bracket"
+#: CTFd/forms/users.py:108 CTFd/themes/admin/templates/config.html:77
+#: CTFd/themes/admin/templates/configs/registration_code.html:5
+#: CTFd/themes/admin/templates/configs/registration_code.html:8
+msgid "Registration Code"
+msgstr ""
+
+#: CTFd/forms/users.py:109
+msgid "Registration code required to create account"
 msgstr ""
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
 msgstr ""
 
-#: CTFd/forms/users.py:172
+#: CTFd/forms/users.py:150
+#: CTFd/themes/admin/templates/modals/teams/addresses.html:7
+#: CTFd/themes/admin/templates/modals/users/addresses.html:6
+#, fuzzy
+msgid "IP Address"
+msgstr "Zmeň emailovú adresu"
+
+#: CTFd/forms/users.py:172 CTFd/themes/admin/templates/users/users.html:38
 msgid "Search for matching users"
 msgstr "Vyhľadajte zodpovedajúcich používateľov"
 
-#: CTFd/themes/core-beta/templates/base.html:53
+#: CTFd/forms/users.py:187
+#: CTFd/themes/admin/templates/modals/teams/addresses.html:6
+#: CTFd/themes/admin/templates/scoreboard/users.html:10
+#: CTFd/themes/admin/templates/submissions.html:85
+#: CTFd/themes/admin/templates/teams/team.html:351
+#: CTFd/themes/admin/templates/teams/team.html:420
+#: CTFd/themes/admin/templates/teams/team.html:482
+#: CTFd/themes/admin/templates/users/users.html:77
+#: CTFd/themes/core/templates/users/users.html:46
+msgid "User"
+msgstr "Používateľ"
+
+#: CTFd/forms/users.py:187 CTFd/themes/admin/templates/users/users.html:80
+#, fuzzy
+msgid "Admin"
+msgstr "Panel správcu"
+
+#: CTFd/forms/users.py:189 CTFd/themes/admin/templates/users/users.html:81
+#, fuzzy
+msgid "Verified"
+msgstr "Vyhľadávacie pole"
+
+#: CTFd/forms/users.py:192
+msgid "Require password change on next login"
+msgstr ""
+
+#: CTFd/forms/users.py:226
+msgid "Email account credentials to user"
+msgstr ""
+
+#: CTFd/themes/admin/templates/base.html:5
+#: CTFd/themes/core/templates/components/navbar.html:72
+#: CTFd/themes/core/templates/components/navbar.html:77
+msgid "Admin Panel"
+msgstr "Panel správcu"
+
+#: CTFd/themes/admin/templates/base.html:53
+#: CTFd/themes/admin/templates/statistics.html:6
+msgid "Statistics"
+msgstr ""
+
+#: CTFd/themes/admin/templates/base.html:59
+#, fuzzy
+msgid "All Pages"
+msgstr "Úlohy"
+
+#: CTFd/themes/admin/templates/base.html:60
+#, fuzzy
+msgid "New Page"
+msgstr "Stránka"
+
+#: CTFd/themes/admin/templates/base.html:67
+#: CTFd/themes/admin/templates/scoreboard.html:6
+#: CTFd/themes/core/templates/components/navbar.html:52
+#: CTFd/themes/core/templates/scoreboard.html:7
+msgid "Scoreboard"
+msgstr "Tabuľka"
+
+#: CTFd/themes/admin/templates/base.html:73
+msgid "All Submissions"
+msgstr ""
+
+#: CTFd/themes/admin/templates/base.html:74
+#: CTFd/themes/admin/templates/challenges/challenge.html:89
+msgid "Correct Submissions"
+msgstr ""
+
+#: CTFd/themes/admin/templates/base.html:75
+msgid "Incorrect Submissions"
+msgstr ""
+
+#: CTFd/themes/admin/templates/base.html:78
+#, fuzzy
+msgid "Config"
+msgstr "Potvrďte"
+
+#: CTFd/themes/admin/templates/base.html:102
+#: CTFd/themes/admin/templates/config.html:139
+#, fuzzy
+msgid "Plugins"
+msgstr "Prihlásiť sa"
+
+#: CTFd/themes/admin/templates/base.html:129
+msgid "A new CTFd version is available!"
+msgstr ""
+
+#: CTFd/themes/admin/templates/base.html:143
+#: CTFd/themes/core/templates/base.html:56
 msgid "Powered by CTFd"
 msgstr "Beží na CTFd"
 
-#: CTFd/themes/core-beta/templates/challenge.html:11
-#: CTFd/themes/core-beta/templates/teams/private.html:388
-#: CTFd/themes/core-beta/templates/teams/public.html:157
-#: CTFd/themes/core-beta/templates/users/private.html:124
-#: CTFd/themes/core-beta/templates/users/public.html:123
+#: CTFd/themes/admin/templates/base.html:147
+msgid "Version"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:10
+#, fuzzy
+msgid "Configuration"
+msgstr "Integrácie"
+
+#: CTFd/themes/admin/templates/config.html:20
+#: CTFd/themes/core/templates/setup.html:44
+msgid "General"
+msgstr "generál"
+
+#: CTFd/themes/admin/templates/config.html:24
+msgid "Appearance"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:37
+#, fuzzy
+msgid "Localization"
+msgstr "Afiliácia"
+
+#: CTFd/themes/admin/templates/config.html:41
+#, fuzzy
+msgid "Access"
+msgstr "Prístupové tokeny"
+
+#: CTFd/themes/admin/templates/config.html:44
+#: CTFd/themes/admin/templates/scoreboard/standings.html:13
+#: CTFd/themes/admin/templates/scoreboard/users.html:13
+#, fuzzy
+msgid "Visibility"
+msgstr "Nastavenia viditeľnosti"
+
+#: CTFd/themes/admin/templates/config.html:49
+#, fuzzy
+msgid "Start and End Time"
+msgstr "Doba spustenia"
+
+#: CTFd/themes/admin/templates/config.html:54
+#, fuzzy
+msgid "Pause"
+msgstr "používateľ"
+
+#: CTFd/themes/admin/templates/config.html:67
+#: CTFd/themes/admin/templates/configs/brackets.html:2
+#, fuzzy
+msgid "Scoreboard Brackets"
+msgstr "Tabuľka"
+
+#: CTFd/themes/admin/templates/config.html:72
+#: CTFd/themes/admin/templates/configs/fields.html:3
+msgid "Custom Fields"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:90
+msgid "Backup"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:93
+msgid "Import &amp; Export"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:98
+msgid "Security"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:101
+msgid "Sanitize"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:109
+#, fuzzy
+msgid "Legal"
+msgstr "Email"
+
+#: CTFd/themes/admin/templates/config.html:114
+#: CTFd/themes/admin/templates/configs/robots.html:5
+msgid "Robots.txt"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:119
+#: CTFd/themes/core/templates/setup.html:62
+msgid "Integrations"
+msgstr "Integrácie"
+
+#: CTFd/themes/admin/templates/config.html:122
+#, fuzzy
+msgid "Email Notifications"
+msgstr "Upozornenia"
+
+#: CTFd/themes/admin/templates/config.html:127
+msgid "Social Sharing"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:132
+msgid "MajorLeagueCyber"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:158
+msgid "Danger zone"
+msgstr ""
+
+#: CTFd/themes/admin/templates/config.html:166
+#: CTFd/themes/admin/templates/reset.html:9
+#, fuzzy
+msgid "Reset"
+msgstr "Registrovať"
+
+#: CTFd/themes/admin/templates/config.html:174
+#: CTFd/themes/core/templates/settings.html:103
+#: CTFd/themes/core/templates/teams/private.html:83
+#: CTFd/themes/core/templates/teams/private.html:198
+msgid "Error:"
+msgstr "Chyba:"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:13
+#: CTFd/themes/admin/templates/challenges/challenge.html:33
+#: CTFd/themes/admin/templates/challenges/challenge.html:54
+#: CTFd/themes/admin/templates/config.html:176
+#: CTFd/themes/admin/templates/notifications.html:72
+msgid "Close"
+msgstr ""
+
+#: CTFd/themes/admin/templates/editor.html:82
+msgid "This is the HTML content of your page"
+msgstr ""
+
+#: CTFd/themes/admin/templates/editor.html:87
+#, fuzzy
+msgid "Write"
+msgstr "Webstránka"
+
+#: CTFd/themes/admin/templates/editor.html:90
+#, fuzzy
+msgid "Preview"
+msgstr "Náhľad UTC"
+
+#: CTFd/themes/admin/templates/editor.html:103
+msgid "Media Library"
+msgstr ""
+
+#: CTFd/themes/admin/templates/editor.html:132
+msgid "CTFd Page variables"
+msgstr ""
+
+#: CTFd/themes/admin/templates/editor.html:143
+#, fuzzy
+msgid "Save"
+msgstr "Riešenia"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:53
+#: CTFd/themes/admin/templates/challenges/challenge.html:97
+#: CTFd/themes/admin/templates/editor.html:162
+msgid "Comments"
+msgstr ""
+
+#: CTFd/themes/admin/templates/import.html:6
+msgid "Import Status"
+msgstr ""
+
+#: CTFd/themes/admin/templates/import.html:13
+#, fuzzy
+msgid "Start Time:"
+msgstr "Doba spustenia"
+
+#: CTFd/themes/admin/templates/import.html:17
+#, fuzzy
+msgid "End Time:"
+msgstr "Čas ukončenia"
+
+#: CTFd/themes/admin/templates/import.html:22
+#, fuzzy
+msgid "Import Error:"
+msgstr "Chyba:"
+
+#: CTFd/themes/admin/templates/import.html:25
+msgid "An error occurred during the import. Please try again."
+msgstr ""
+
+#: CTFd/themes/admin/templates/import.html:29
+#, fuzzy
+msgid "Current Status:"
+msgstr "Aktuálne heslo"
+
+#: CTFd/themes/admin/templates/import.html:32
+msgid "Page will redirect upon completion. Refresh page to get latest status."
+msgstr ""
+
+#: CTFd/themes/admin/templates/import.html:33
+msgid "Page will automatically refresh every 5 seconds."
+msgstr ""
+
+#: CTFd/themes/admin/templates/integrations.html:7
+#, fuzzy
+msgid "Integration enabled!"
+msgstr "Integrácie"
+
+#: CTFd/themes/admin/templates/integrations.html:8
+msgid "You may now close this tab."
+msgstr ""
+
+#: CTFd/themes/admin/templates/pages.html:11
+#, fuzzy
+msgid "Create Page"
+msgstr "Vytvoriť tím"
+
+#: CTFd/themes/admin/templates/pages.html:24
+#, fuzzy
+msgid "Delete Pages"
+msgstr "Odstrániť token"
+
+#: CTFd/themes/admin/templates/pages.html:43
+#, fuzzy
+msgid "Authentication"
+msgstr "Upozornenia"
+
+#: CTFd/themes/admin/templates/pages.html:45
+#: CTFd/themes/admin/templates/pages.html:80
+msgid "Published"
+msgstr ""
+
+#: CTFd/themes/admin/templates/pages.html:66
+msgid "Required"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:19
+msgid ""
+"Resetting your CTFd instance allows you to bulk delete data to prepare it"
+" for other events, other classes, or to otherwise get it to a clean "
+"state."
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:23
+msgid "Resetting your CTFd instance will delete the selected data"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:23
+msgid "PERMANENTLY"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:27
+msgid ""
+"Think carefully before resetting because no automated backups are made "
+"and all selected data will be lost."
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:32
+msgid "Create backups of all data you need by"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:32
+msgid "creating a CTFd Export"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:46
+msgid "(Users, Teams, Submissions, Tracking)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/usermode.html:64
+#: CTFd/themes/admin/templates/reset.html:57
+msgid "(Submissions, Awards, Unlocks, Tracking)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:68
+msgid "(Challenges, Flags, Hints, Tags, Challenge Files)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:79
+msgid "(Pages, Page Files)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/reset.html:90
+#, fuzzy
+msgid "(Notifications)"
+msgstr "Upozornenia"
+
+#: CTFd/themes/admin/templates/scoreboard.html:14
+msgid "Hide/Unhide Accounts"
+msgstr ""
+
+#: CTFd/themes/admin/templates/statistics.html:14
+#, fuzzy
+msgid "users"
+msgstr "Používatelia"
+
+#: CTFd/themes/admin/templates/statistics.html:18
+#, fuzzy
+msgid "teams"
+msgstr "Tímy"
+
+#: CTFd/themes/admin/templates/statistics.html:22
+msgid "IPs"
+msgstr ""
+
+#: CTFd/themes/admin/templates/statistics.html:25
+#: CTFd/themes/admin/templates/teams/team.html:213
+#: CTFd/themes/admin/templates/users/user.html:158
+#: CTFd/themes/core/templates/teams/private.html:268
+msgid "points"
+msgstr "body"
+
+#: CTFd/themes/admin/templates/statistics.html:28
+#, fuzzy
+msgid "challenges"
+msgstr "Úlohy"
+
+#: CTFd/themes/admin/templates/statistics.html:34
+msgid "Most Solved:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/statistics.html:39
+msgid "Least Solved:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/statistics.html:48
+msgid "Player Progression"
+msgstr ""
+
+#: CTFd/themes/admin/templates/statistics.html:48
+msgid "(Top 100)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/statistics.html:106
+msgid "right submissions"
+msgstr ""
+
+#: CTFd/themes/admin/templates/statistics.html:107
+msgid "wrong submissions"
+msgstr ""
+
+#: CTFd/themes/admin/templates/submissions.html:20
+#, python-format
+msgid ""
+"Searching for submissions with <strong>%(field)s</strong> matching "
+"<strong>%(q)s</strong>"
+msgstr ""
+
+#: CTFd/themes/admin/templates/submissions.html:23
+#: CTFd/themes/admin/templates/teams/teams.html:27
+#: CTFd/themes/admin/templates/users/users.html:28
+#: CTFd/themes/core/templates/users/users.html:17
+#, python-format
+msgid "Page %(page)s of %(total)s results"
+msgstr ""
+
+#: CTFd/themes/admin/templates/submissions.html:33
+#, fuzzy
+msgid "Search for matching submission"
+msgstr "Vyhľadajte zodpovedajúcich používateľov"
+
+#: CTFd/themes/admin/templates/submissions.html:52
+msgid "Mark submissions correct"
+msgstr ""
+
+#: CTFd/themes/admin/templates/submissions.html:57
+msgid "Show truncated flags"
+msgstr ""
+
+#: CTFd/themes/admin/templates/submissions.html:61
+msgid "Show full flags"
+msgstr ""
+
+#: CTFd/themes/admin/templates/submissions.html:65
+msgid "Delete selected submissions"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:100
+#: CTFd/themes/admin/templates/submissions.html:88
+#: CTFd/themes/admin/templates/teams/team.html:350
+#: CTFd/themes/admin/templates/teams/team.html:419
+#: CTFd/themes/admin/templates/teams/team.html:542
+#: CTFd/themes/admin/templates/users/user.html:232
+#: CTFd/themes/admin/templates/users/user.html:295
+#: CTFd/themes/admin/templates/users/user.html:408
+#: CTFd/themes/core/templates/challenge.html:11
+#: CTFd/themes/core/templates/teams/private.html:388
+#: CTFd/themes/core/templates/teams/public.html:157
+#: CTFd/themes/core/templates/users/private.html:124
+#: CTFd/themes/core/templates/users/public.html:123
 msgid "Challenge"
 msgstr "Úloha"
 
-#: CTFd/themes/core-beta/templates/challenge.html:19
+#: CTFd/themes/admin/templates/modals/challenges/solves.html:5
+#: CTFd/themes/admin/templates/submissions.html:91
+#: CTFd/themes/admin/templates/teams/team.html:484
+#: CTFd/themes/admin/templates/users/user.html:355
+#: CTFd/themes/core/templates/challenge.html:295
+#: CTFd/themes/core/templates/challenge.html:324
+#: CTFd/themes/core/templates/setup.html:305
+#: CTFd/themes/core/templates/setup.html:326
+msgid "Date"
+msgstr "Dátum"
+
+#: CTFd/themes/admin/templates/submissions.html:148
+#: CTFd/themes/admin/templates/teams/teams.html:143
+#: CTFd/themes/admin/templates/users/users.html:155
+#: CTFd/themes/core/templates/teams/teams.html:128
+#: CTFd/themes/core/templates/users/users.html:118
+msgid "Page"
+msgstr "Stránka"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:12
+#, fuzzy
+msgid "Challenge Preview"
+msgstr "Úloha"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:21
+msgid "Preview may be slightly different from the user-facing interface"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:32
+#, fuzzy
+msgid "Ratings"
+msgstr "Nastavenia"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:81
+#, python-format
+msgid "%(points)s points"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:85
+#, fuzzy
+msgid "Preview Challenge"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:101
+#, fuzzy
+msgid "Delete Challenge"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:111
+#: CTFd/themes/admin/templates/challenges/challenge.html:125
+#, fuzzy
+msgid "Files"
+msgstr "Profil"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:112
+#: CTFd/themes/admin/templates/challenges/challenge.html:133
+#, fuzzy
+msgid "Flags"
+msgstr "Vlajka"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:113
+#: CTFd/themes/admin/templates/challenges/challenge.html:141
+#: CTFd/themes/admin/templates/challenges/challenges.html:84
+#: CTFd/themes/core/templates/challenge.html:30
+msgid "Solution"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:114
+#: CTFd/themes/admin/templates/challenges/challenge.html:149
+msgid "Topics"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:115
+#: CTFd/themes/admin/templates/challenges/challenge.html:157
+#, fuzzy
+msgid "Tags"
+msgstr "Tímy"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:116
+#: CTFd/themes/admin/templates/challenges/challenge.html:165
+#, fuzzy
+msgid "Hints"
+msgstr "body"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:117
+#: CTFd/themes/admin/templates/challenges/challenge.html:173
+msgid "Requirements"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:118
+#: CTFd/themes/core/templates/setup.html:86
+#: CTFd/themes/core/templates/setup.html:138
+#: CTFd/themes/core/templates/setup.html:202
+#: CTFd/themes/core/templates/setup.html:238
+#: CTFd/themes/core/templates/setup.html:296
+#: CTFd/themes/core/templates/setup.html:345
+msgid "Next"
+msgstr "Ďalšie"
+
+#: CTFd/themes/admin/templates/challenges/challenge.html:181
+#: CTFd/themes/admin/templates/challenges/preview.html:39
+#: CTFd/themes/core/templates/challenge.html:209
+msgid "Next Challenge"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:13
+#: CTFd/themes/admin/templates/challenges/new.html:9
+#, fuzzy
+msgid "Create Challenge"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:25
+msgid "Searching for challenges with"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:25
+#: CTFd/themes/admin/templates/teams/teams.html:24
+#: CTFd/themes/admin/templates/users/users.html:25
+msgid "matching"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:28
+#, python-format
+msgid "%(total)s results"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:38
+#, fuzzy
+msgid "Search for matching challenge"
+msgstr "Vyhľadajte zodpovedajúcich používateľov"
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:56
+#, fuzzy
+msgid "Edit Challenges"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:59
+#, fuzzy
+msgid "Delete Challenges"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/challenges.html:83
+#: CTFd/themes/admin/templates/challenges/new.html:58
+#: CTFd/themes/admin/templates/challenges/update.html:174
+#, fuzzy
+msgid "State"
+msgstr "Doba spustenia"
+
+#: CTFd/themes/admin/templates/challenges/create.html:8
+#, fuzzy
+msgid "Name:"
+msgstr "Názov"
+
+#: CTFd/themes/admin/templates/challenges/create.html:10
+#, fuzzy
+msgid "The name of your challenge"
+msgstr "Názov vášho podujatia/workshopu CTF"
+
+#: CTFd/themes/admin/templates/challenges/create.html:13
+#, fuzzy
+msgid "Enter challenge name"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/create.html:20
+#, fuzzy
+msgid "Category:"
+msgstr "Kategória"
+
+#: CTFd/themes/admin/templates/challenges/create.html:22
+msgid "The category of your challenge"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/create.html:25
+#, fuzzy
+msgid "Enter challenge category"
+msgstr "Ďalšia úloha"
+
+#: CTFd/themes/admin/templates/challenges/create.html:33
+msgid "Message:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/create.html:35
+#: CTFd/themes/admin/templates/challenges/update.html:30
+msgid "Use this to give a brief introduction to your challenge."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/create.html:48
+#, fuzzy
+msgid "Value:"
+msgstr "Hodnota"
+
+#: CTFd/themes/admin/templates/challenges/create.html:50
+msgid "This is how many points are rewarded for solving this challenge."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/create.html:53
+#, fuzzy
+msgid "Enter value"
+msgstr "generál"
+
+#: CTFd/themes/admin/templates/challenges/new.html:17
+#, fuzzy
+msgid "Options"
+msgstr "(Voliteľné)"
+
+#: CTFd/themes/admin/templates/challenges/new.html:28
+#, fuzzy
+msgid "Flag:"
+msgstr "Vlajka"
+
+#: CTFd/themes/admin/templates/challenges/new.html:29
+msgid "Static flag for your challenge"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/new.html:39
+msgid "Case Sensitive"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/new.html:40
+msgid "Case Insensitive"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/new.html:49
+#, fuzzy
+msgid "Files:"
+msgstr "Profil"
+
+#: CTFd/themes/admin/templates/challenges/new.html:50
+msgid "Files distributed along with your challenge"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/new.html:53
+msgid "Attach multiple files using Control+Click or Cmd+Click"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/new.html:59
+msgid "Should the challenge be visible to users"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/new.html:62
+#: CTFd/themes/admin/templates/challenges/update.html:179
+msgid "Visible"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/new.html:80
+#, fuzzy
+msgid "Challenge Types"
+msgstr "Úlohy"
+
+#: CTFd/themes/admin/templates/challenges/update.html:19
+#, fuzzy
+msgid "Challenge Category"
+msgstr "Úloha"
+
+#: CTFd/themes/admin/templates/challenges/update.html:40
+msgid "Attribution:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:42
+msgid "Attribution for your challenge"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:42
+msgid "supports markdown"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:52
+msgid "Connection Info"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:54
+msgid ""
+"Use this to specify a link, hostname, or connection instructions for your"
+" challenge."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:66
+msgid "This is how many points teams will receive once they solve this challenge."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:76
+#, fuzzy
+msgid "Position"
+msgstr "Expirácia"
+
+#: CTFd/themes/admin/templates/challenges/update.html:78
+msgid ""
+"This is used to order the challenge. Lower positions are first. Position "
+"0 goes to the end to be sorted by challenge value."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:88
+msgid "Scoring Function"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:90
+msgid "How the challenge value will be calculated based on the Decay value"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:94
+#, fuzzy
+msgid "Static"
+msgstr "Doba spustenia"
+
+#: CTFd/themes/admin/templates/challenges/update.html:95
+msgid "Linear"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:96
+msgid "Logarithmic"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:100
+msgid "Static:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:100
+msgid "is awarded as-is"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:101
+msgid "Linear:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:101
+#: CTFd/themes/admin/templates/challenges/update.html:102
+msgid "Calculated as"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:102
+msgid "Logarithmic:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:110
+msgid "Initial Value"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:112
+msgid "This is how many points the challenge was worth initially."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:121
+msgid "Decay"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:123
+msgid "The decay value is used differently depending on the above Decay Function"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:125
+msgid ""
+"Linear: The amount of points deducted per solve. Equal deduction per "
+"solve."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:126
+msgid ""
+"Logarithmic: The amount of solves before the challenge reaches its "
+"minimum value. Earlier solves will lose less points. Later solves will "
+"lose more points"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:136
+msgid "Minimum Value"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:138
+msgid "This is the lowest that the challenge can be worth"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:148
+#, fuzzy
+msgid "Logic"
+msgstr "Prihlásiť sa"
+
+#: CTFd/themes/admin/templates/challenges/update.html:149
+msgid "Determines how this challenge is solved"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:153
+msgid "Require Any Flag"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:154
+msgid "Require All Flags"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:155
+msgid "Require Any Flags by All Team Members"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:163
+#, fuzzy
+msgid "Max Attempts"
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:164
+msgid "Maximum amount of attempts users receive. Leave at 0 for unlimited."
+msgstr ""
+
+#: CTFd/themes/admin/templates/challenges/update.html:175
+msgid "Changes the state of the challenge (e.g. visible, hidden)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/accounts.html:11
+msgid "User Accounts"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/accounts.html:16
+msgid "Team Accounts"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:4
+#: CTFd/themes/admin/templates/configs/backup.html:23
+#, fuzzy
+msgid "Export"
+msgstr "Expirácia"
+
+#: CTFd/themes/admin/templates/configs/backup.html:7
+#: CTFd/themes/admin/templates/configs/backup.html:41
+msgid "Import"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:13
+#: CTFd/themes/admin/templates/configs/backup.html:87
+msgid "Import CSV"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:19
+msgid ""
+"Exports are an archive of your CTF in its current state. They can be re-"
+"imported into other CTFd instances or used by scripts and third parties "
+"to calculate statistics."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:20
+msgid "To download an export click the button below."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:28
+msgid ""
+"You can import saved CTFd exports by uploading them below. This will "
+"completely wipe your existing CTFd instance and all your data will be "
+"replaced by the imported data. You should only import data that you "
+"trust!"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:33
+msgid "Importing a CTFd export will completely wipe your existing data"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:38
+#, fuzzy
+msgid "Import File"
+msgstr "Profil"
+
+#: CTFd/themes/admin/templates/configs/backup.html:47
+msgid ""
+"CSVs exported from CTFd are not guaranteed to import back in via the "
+"Import CSV functionality."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:47
+msgid "CSV Importing instructions"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:47
+msgid "for details."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/backup.html:67
+msgid "Instructions and CSV templates"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:51
+#, fuzzy
+msgid "Email notifications"
+msgstr "Upozornenia"
+
+#: CTFd/themes/admin/templates/configs/email.html:53
+msgid "Customize the emails that CTFd sends your users with custom content using"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:53
+msgid "predefined variables"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:53
+msgid ", mail servers, and addresses."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:58
+msgid "Mail Server"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:63
+#, fuzzy
+msgid "Registration"
+msgstr "Expirácia"
+
+#: CTFd/themes/admin/templates/configs/email.html:68
+#, fuzzy
+msgid "Verification"
+msgstr "Upozornenia"
+
+#: CTFd/themes/admin/templates/configs/email.html:72
+msgid "Account Details"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:75
+#, fuzzy
+msgid "Password Reset"
+msgstr "Heslo"
+
+#: CTFd/themes/admin/templates/configs/email.html:114
+msgid "(A mail server username is currently set)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:126
+msgid "(A mail server password is currently set)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:134
+msgid "Uncheck setting and update to remove username and password"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:147
+msgid ""
+"Mailgun integration is deprecated! Please see your Mailgun account for "
+"SMTP credentials."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:167
+#, fuzzy
+msgid "Account Registration"
+msgstr "Administrácia"
+
+#: CTFd/themes/admin/templates/configs/email.html:169
+msgid "Email sent to users after they've finished registering"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:190
+#, fuzzy
+msgid "Account Verification"
+msgstr "Upozornenia"
+
+#: CTFd/themes/admin/templates/configs/email.html:192
+msgid ""
+"Email sent to users to confirm their account at the address they provided"
+" during registration. You can require email verification in the"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:192
+#, fuzzy
+msgid "Accounts settings"
+msgstr "Nastavenia"
+
+#: CTFd/themes/admin/templates/configs/email.html:192
+#: CTFd/themes/admin/templates/configs/general.html:17
+msgid "."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:213
+msgid "New Account Details"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:215
+msgid "Email sent to new users"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:215
+msgid "(manually created by an admin)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:215
+msgid "with their initial account details"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:236
+msgid "Password Reset Request"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:238
+msgid "Email sent when a user requests a password reset"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/email.html:257
+#, fuzzy
+msgid "Password Reset Confirmation"
+msgstr "Znova odoslať potvrdzovací e-mail"
+
+#: CTFd/themes/admin/templates/configs/email.html:259
+msgid "Email sent when a user successfully resets their password"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/fields.html:6
+msgid "Add custom fields to get additional data from your participants"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/fields.html:25
+msgid ""
+"Custom user fields are shown during registration. Users can optionally "
+"edit these fields in their profile."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/fields.html:33
+msgid ""
+"Custom team fields are shown during team creation. Team captains can "
+"optionally edit these fields in the team profile."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/general.html:6
+msgid "When no logo is specified, the CTF's name is used instead."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/general.html:8
+#, fuzzy
+msgid "CTF Name"
+msgstr "Meno tímu"
+
+#: CTFd/themes/admin/templates/configs/general.html:17
+msgid ""
+"Description of your CTF. Available for use on your custom pages and "
+"emails as"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/logo.html:7
+#, fuzzy
+msgid "Logo to use for the website instead of a CTF name."
+msgstr ""
+"Logo, ktoré sa má použiť pre webovú stránku namiesto názvu CTF. Používa "
+"sa ako tlačidlo domovskej stránky. Voliteľné."
+
+#: CTFd/themes/admin/templates/configs/logo.html:17
+msgid "Remove Logo"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/logo.html:24
+#, fuzzy
+msgid "CTF Logo"
+msgstr "Logo"
+
+#: CTFd/themes/admin/templates/configs/logo.html:40
+#, fuzzy
+msgid "Tab Icon"
+msgstr "Malá ikona"
+
+#: CTFd/themes/admin/templates/configs/logo.html:42
+#, fuzzy
+msgid "Used as the"
+msgstr "Používateľské meno"
+
+#: CTFd/themes/admin/templates/configs/logo.html:42
+#, fuzzy
+msgid "Only PNGs accepted. Must be 32x32px."
+msgstr ""
+"favicon používaná v prehliadačoch používateľov. Akceptované sú iba súbory"
+" PNG. Musí mať veľkosť 32 x 32 pixelov. Voliteľné."
+
+#: CTFd/themes/admin/templates/configs/logo.html:52
+msgid "Remove Icon"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/mlc.html:5
+msgid "MajorLeagueCyber integration"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/mlc.html:7
+msgid ""
+"MLC is a CTF stats tracker that provides event scheduling, team tracking,"
+" and SSO."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/mlc.html:12
+msgid "Begin by registering your event with"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/mlc.html:12
+msgid ""
+"to get your OAuth Client ID and Client Secret. Need more help? Check out "
+"the"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/mlc.html:12
+#, fuzzy
+msgid "documentation"
+msgstr "Administrácia"
+
+#: CTFd/themes/admin/templates/configs/mlc.html:17
+msgid "Client ID"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/mlc.html:25
+msgid "Client Secret"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/pause.html:7
+msgid "Pause CTF"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/pause.html:11
+msgid ""
+"Prevent users from submitting answers until unpaused. Challenges can "
+"still be viewed."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/registration_code.html:6
+msgid "Registration Code required for account registration (SSO excluded)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/robots.html:7
+#, fuzzy
+msgid "The"
+msgstr "Téma"
+
+#: CTFd/themes/admin/templates/configs/robots.html:7
+msgid ""
+"file contains instructions that suggest to bots which webpages they "
+"should and should not access. Not all bots respect"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/sanitize.html:6
+msgid "HTML Sanitization"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/sanitize.html:8
+msgid "Whether CTFd will attempt to sanitize HTML content from content."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/sanitize.html:14
+msgid "Required (Disable in config.ini)"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:6
+#: CTFd/themes/admin/templates/configs/theme.html:72
+#, fuzzy
+msgid "Theme Settings"
+msgstr "Nastavenia"
+
+#: CTFd/themes/admin/templates/configs/theme.html:20
+msgid "Switch themes to change CTFd's aesthetics"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:34
+msgid "Primary Color"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:36
+#, fuzzy
+msgid "Base color used for theme features. Requires theme support."
+msgstr ""
+"Farba používaná témou na kontrolu estetiky. Vyžaduje si podporu témy. "
+"Voliteľné."
+
+#: CTFd/themes/admin/templates/configs/theme.html:42
+msgid "Build CSS"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:49
+#, fuzzy
+msgid "Theme Header"
+msgstr "Farba témy"
+
+#: CTFd/themes/admin/templates/configs/theme.html:51
+msgid "Theme headers are inserted just before the"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:51
+#: CTFd/themes/admin/templates/configs/theme.html:62
+msgid "tag on all public facing pages. Requires theme support."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:60
+#, fuzzy
+msgid "Theme Footer"
+msgstr "Farba témy"
+
+#: CTFd/themes/admin/templates/configs/theme.html:62
+msgid "Theme footers are inserted just before the"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:76
+msgid "Build"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/theme.html:83
+msgid "Settings specific to the theme"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:16
+#, fuzzy
+msgid "Freeze Time"
+msgstr "Čas ukončenia"
+
+#: CTFd/themes/admin/templates/configs/time.html:25
+msgid ""
+"This is the time when the competition will begin. Challenges will "
+"automatically unlock and users will be able to submit answers."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:26
+#: CTFd/themes/admin/templates/configs/time.html:84
+#: CTFd/themes/admin/templates/configs/time.html:155
+msgid "* All time fields required"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:31
+#: CTFd/themes/admin/templates/configs/time.html:88
+#: CTFd/themes/admin/templates/configs/time.html:159
+msgid "Month:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:36
+#: CTFd/themes/admin/templates/configs/time.html:93
+#: CTFd/themes/admin/templates/configs/time.html:164
+msgid "Day:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:41
+#: CTFd/themes/admin/templates/configs/time.html:98
+#: CTFd/themes/admin/templates/configs/time.html:169
+msgid "Year:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:46
+#: CTFd/themes/admin/templates/configs/time.html:103
+#: CTFd/themes/admin/templates/configs/time.html:174
+msgid "Hour:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:51
+#: CTFd/themes/admin/templates/configs/time.html:108
+#: CTFd/themes/admin/templates/configs/time.html:179
+msgid "Minute:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:57
+#: CTFd/themes/admin/templates/configs/time.html:113
+#, fuzzy
+msgid "Timezone:"
+msgstr "čas"
+
+#: CTFd/themes/admin/templates/configs/time.html:64
+#: CTFd/themes/admin/templates/configs/time.html:134
+#: CTFd/themes/admin/templates/configs/time.html:191
+msgid "Local Time:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:69
+#: CTFd/themes/admin/templates/configs/time.html:139
+#: CTFd/themes/admin/templates/configs/time.html:196
+#, fuzzy
+msgid "Timezone Time:"
+msgstr "Čas ukončenia"
+
+#: CTFd/themes/admin/templates/configs/time.html:74
+#: CTFd/themes/admin/templates/configs/time.html:144
+#: CTFd/themes/admin/templates/configs/time.html:201
+msgid "UTC Timestamp:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:83
+msgid ""
+"This is the time when the competition will end. Challenges will "
+"automatically close and users won't be able to submit answers."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:124
+msgid "View After CTF"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:126
+msgid ""
+"Allows challenges to be viewed after the End Time, however no new "
+"submissions will be recorded."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:127
+msgid ""
+"For participants to be able to submit after End Time but not alter the "
+"scoreboard, configure Freeze Time to be your End Time."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:154
+msgid ""
+"Freeze time specifies the timestamp that the competition will be frozen "
+"to. All solves before the freeze time will be shown, but new solves won't"
+" be shown to users."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/time.html:184
+msgid "CTF Timezone:"
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/usermode.html:6
+msgid ""
+"Controls whether users play as themselves (User Mode) or join together as"
+" teams (Team Mode)."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/usermode.html:22
+#: CTFd/themes/core/templates/setup.html:112
+msgid "Participants register accounts and form teams"
+msgstr "Účastníci sa registrujú a vytvárajú tímy"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:23
+#: CTFd/themes/core/templates/setup.html:113
+msgid "If a team member solves a challenge, the entire team receives credit"
+msgstr "Ak člen tímu vyrieši úlohu, kredit získa celý tím"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:25
+#: CTFd/themes/core/templates/setup.html:115
+msgid "Easier to see which team member solved a challenge"
+msgstr "Ľahšie uvidíte, ktorý člen tímu vyriešil úlohu"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:26
+#: CTFd/themes/core/templates/setup.html:116
+msgid "May be slightly more difficult to administer"
+msgstr "Správa môže byť o niečo náročnejšia"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:46
+#: CTFd/themes/core/templates/setup.html:120
+msgid "Participants only register an individual account"
+msgstr "Účastníci si zaregistrujú iba individuálny účet"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:47
+#: CTFd/themes/core/templates/setup.html:121
+msgid "Players can share accounts to form pseudo-teams"
+msgstr "Hráči môžu zdieľať účty a vytvárať pseudotímy"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:49
+#: CTFd/themes/core/templates/setup.html:123
+msgid "Easier to organize"
+msgstr "Jednoduchšie na organizáciu"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:50
+#: CTFd/themes/core/templates/setup.html:124
+msgid "Difficult to attribute solutions to individual team members"
+msgstr "Je ťažké prisúdiť riešenia jednotlivým členom tímu"
+
+#: CTFd/themes/admin/templates/configs/usermode.html:63
+msgid ""
+"Changing your user mode will also delete all submissions or records that "
+"a user took an action."
+msgstr ""
+
+#: CTFd/themes/admin/templates/configs/visibility.html:34
+msgid ""
+"Score Visibility is a subset of Account Visibility. This means that if "
+"accounts are visible to a user then score visibility will control whether"
+" they can see the score of that user. If accounts are not visibile then "
+"score visibility has no effect."
+msgstr ""
+
+#: CTFd/themes/admin/templates/macros/forms.html:11
+#: CTFd/themes/admin/templates/macros/forms.html:31
+#: CTFd/themes/admin/templates/modals/teams/create.html:18
+#: CTFd/themes/admin/templates/modals/teams/create.html:23
+#: CTFd/themes/admin/templates/modals/teams/create.html:28
+#: CTFd/themes/admin/templates/modals/users/create.html:18
+#: CTFd/themes/admin/templates/modals/users/create.html:23
+#: CTFd/themes/admin/templates/modals/users/create.html:28
+#, fuzzy
+msgid "Optional"
+msgstr "(Voliteľné)"
+
+#: CTFd/themes/admin/templates/macros/forms.html:50
+#: CTFd/themes/core/templates/macros/forms.html:18
+#: CTFd/themes/core/templates/macros/forms.html:47
+#: CTFd/themes/core/templates/macros/forms.html:82
+msgid "(Optional)"
+msgstr "(Voliteľné)"
+
+#: CTFd/themes/admin/templates/modals/teams/addresses.html:8
+#: CTFd/themes/admin/templates/modals/users/addresses.html:7
+msgid "Last Seen"
+msgstr ""
+
+#: CTFd/themes/admin/templates/modals/teams/addresses.html:9
+#: CTFd/themes/admin/templates/modals/users/addresses.html:8
+msgid "City"
+msgstr ""
+
+#: CTFd/themes/admin/templates/modals/teams/addresses.html:46
+#: CTFd/themes/admin/templates/modals/users/addresses.html:40
+msgid "IP Geolocation by DB-IP"
+msgstr ""
+
+#: CTFd/themes/admin/templates/modals/teams/statistics.html:20
+#: CTFd/themes/admin/templates/modals/users/statistics.html:20
+msgid "No data yet"
+msgstr ""
+
+#: CTFd/themes/admin/templates/scoreboard/standings.html:9
+#: CTFd/themes/admin/templates/scoreboard/users.html:9
+#: CTFd/themes/core/templates/scoreboard.html:36
+msgid "Place"
+msgstr ""
+
+#: CTFd/themes/admin/templates/scoreboard/standings.html:12
+#: CTFd/themes/admin/templates/scoreboard/users.html:12
+#: CTFd/themes/admin/templates/teams/team.html:270
+#: CTFd/themes/core/templates/scoreboard.html:38
+#: CTFd/themes/core/templates/teams/private.html:330
+#: CTFd/themes/core/templates/teams/public.html:96
+msgid "Score"
+msgstr "Skóre"
+
+#: CTFd/themes/admin/templates/scoreboard/standings.html:31
+#: CTFd/themes/admin/templates/scoreboard/standings.html:35
+#: CTFd/themes/admin/templates/scoreboard/users.html:31
+#: CTFd/themes/admin/templates/scoreboard/users.html:35
+#: CTFd/themes/admin/templates/teams/team.html:170
+#: CTFd/themes/admin/templates/teams/teams.html:101
+#: CTFd/themes/admin/templates/users/user.html:123
+#: CTFd/themes/admin/templates/users/users.html:104
+#: CTFd/themes/core/templates/teams/private.html:218
+#: CTFd/themes/core/templates/teams/public.html:10
+#: CTFd/themes/core/templates/users/private.html:21
+#: CTFd/themes/core/templates/users/public.html:21
+#: CTFd/themes/core/templates/users/users.html:70
+msgid "Official"
+msgstr "Oficiálny"
+
+#: CTFd/themes/admin/templates/scoreboard/standings.html:47
+#: CTFd/themes/admin/templates/scoreboard/users.html:47
+#: CTFd/themes/admin/templates/teams/team.html:161
+#: CTFd/themes/admin/templates/teams/teams.html:129
+#: CTFd/themes/admin/templates/users/user.html:98
+#: CTFd/themes/admin/templates/users/users.html:142
+#, fuzzy
+msgid "hidden"
+msgstr "Skryté"
+
+#: CTFd/themes/admin/templates/scoreboard/standings.html:49
+#: CTFd/themes/admin/templates/scoreboard/users.html:49
+msgid "visible"
+msgstr ""
+
+#: CTFd/themes/admin/templates/teams/new.html:19
+#: CTFd/themes/admin/templates/teams/teams.html:10
+#: CTFd/themes/core/templates/teams/new_team.html:6
+#: CTFd/themes/core/templates/teams/team_enrollment.html:39
+msgid "Create Team"
+msgstr "Vytvoriť tím"
+
+#: CTFd/themes/admin/templates/teams/team.html:11
+#: CTFd/themes/admin/templates/teams/team.html:220
+#: CTFd/themes/core/templates/teams/private.html:8
+msgid "Edit Team"
+msgstr "Upraviť tím"
+
+#: CTFd/themes/admin/templates/teams/team.html:27
+#: CTFd/themes/admin/templates/teams/team.html:228
+#, fuzzy
+msgid "Add Team Members"
+msgstr "členovia"
+
+#: CTFd/themes/admin/templates/teams/team.html:42
+#, fuzzy
+msgid "Team Invite"
+msgstr "Meno tímu"
+
+#: CTFd/themes/admin/templates/teams/team.html:61
+#, fuzzy
+msgid "Share this link for users to join this team"
+msgstr ""
+"Zdieľajte tento odkaz s členmi svojho tímu, aby sa mohli pripojiť k vášmu"
+" tímu"
+
+#: CTFd/themes/admin/templates/teams/team.html:75
+#: CTFd/themes/admin/templates/teams/team.html:245
+msgid "Team Statistics"
+msgstr ""
+
+#: CTFd/themes/admin/templates/teams/team.html:91
+#: CTFd/themes/admin/templates/teams/team.html:232
+#: CTFd/themes/core/templates/teams/private.html:104
+msgid "Choose Captain"
+msgstr "Zvoľte kapitána"
+
+#: CTFd/themes/admin/templates/teams/team.html:107
+#: CTFd/themes/admin/templates/teams/team.html:235
+msgid "Award Team Member"
+msgstr ""
+
+#: CTFd/themes/admin/templates/teams/team.html:114
+#, fuzzy
+msgid "Member"
+msgstr "členovia"
+
+#: CTFd/themes/admin/templates/teams/team.html:141
+#: CTFd/themes/admin/templates/teams/team.html:248
+#: CTFd/themes/admin/templates/users/user.html:75
+#: CTFd/themes/admin/templates/users/user.html:181
+msgid "IP Addresses"
+msgstr ""
+
+#: CTFd/themes/admin/templates/teams/team.html:158
+#: CTFd/themes/admin/templates/users/user.html:95
+#: CTFd/themes/admin/templates/users/users.html:137
+#, fuzzy
+msgid "verified"
+msgstr "Vyhľadávacie pole"
+
+#: CTFd/themes/admin/templates/teams/team.html:164
+#: CTFd/themes/admin/templates/teams/teams.html:135
+#: CTFd/themes/admin/templates/users/user.html:101
+#: CTFd/themes/admin/templates/users/users.html:147
+#, fuzzy
+msgid "banned"
+msgstr "Zakázaný"
+
+#: CTFd/themes/admin/templates/teams/team.html:203
+#, python-format
+msgid "%(count)s members"
+msgstr ""
+
+#: CTFd/themes/admin/templates/teams/team.html:207
+#: CTFd/themes/admin/templates/users/user.html:152
+#: CTFd/themes/core/templates/teams/private.html:260
+msgid "place"
+msgstr "miesto"
+
+#: CTFd/themes/admin/templates/teams/team.html:224
+#, fuzzy
+msgid "Team Invite Link"
+msgstr "Pozvánka"
+
+#: CTFd/themes/admin/templates/teams/team.html:239
+#, fuzzy
+msgid "Delete Team"
+msgstr "Odstrániť token"
+
+#: CTFd/themes/admin/templates/teams/team.html:264
+#, fuzzy
+msgid "Team Members"
+msgstr "členovia"
+
+#: CTFd/themes/admin/templates/teams/team.html:269
+#, fuzzy
+msgid "E-Mail"
+msgstr "Email"
+
+#: CTFd/themes/admin/templates/teams/team.html:279
+#: CTFd/themes/core/templates/teams/private.html:345
+#: CTFd/themes/core/templates/teams/public.html:110
+msgid "Captain"
+msgstr "Kapitán"
+
+#: CTFd/themes/admin/templates/teams/team.html:301
+#, fuzzy, python-format
+msgid "Remove %(name)s"
+msgstr "Názov udalosti"
+
+#: CTFd/themes/admin/templates/teams/team.html:314
+#: CTFd/themes/admin/templates/teams/team.html:328
+#: CTFd/themes/admin/templates/users/user.html:196
+#: CTFd/themes/admin/templates/users/user.html:210
+#: CTFd/themes/core/templates/teams/private.html:384
+#: CTFd/themes/core/templates/teams/public.html:153
+#: CTFd/themes/core/templates/users/private.html:120
+msgid "Solves"
+msgstr "Riešenia"
+
+#: CTFd/themes/admin/templates/teams/team.html:317
+#: CTFd/themes/admin/templates/teams/team.html:394
+#: CTFd/themes/admin/templates/users/user.html:199
+#: CTFd/themes/admin/templates/users/user.html:270
+#, fuzzy
+msgid "Fails"
+msgstr "Email"
+
+#: CTFd/themes/admin/templates/teams/team.html:320
+#: CTFd/themes/admin/templates/teams/team.html:459
+#: CTFd/themes/admin/templates/users/user.html:202
+#: CTFd/themes/admin/templates/users/user.html:331
+#: CTFd/themes/core/templates/teams/private.html:361
+#: CTFd/themes/core/templates/teams/public.html:125
+#: CTFd/themes/core/templates/users/private.html:98
+#: CTFd/themes/core/templates/users/public.html:98
+msgid "Awards"
+msgstr "Ocenenia"
+
+#: CTFd/themes/admin/templates/teams/team.html:323
+#: CTFd/themes/admin/templates/teams/team.html:520
+#: CTFd/themes/admin/templates/users/user.html:205
+#: CTFd/themes/admin/templates/users/user.html:386
+msgid "Missing"
+msgstr ""
+
+#: CTFd/themes/admin/templates/teams/team.html:352
+#: CTFd/themes/admin/templates/teams/team.html:421
+#: CTFd/themes/admin/templates/users/user.html:233
+#: CTFd/themes/admin/templates/users/user.html:296
+#, fuzzy
+msgid "Submitted"
+msgstr "Odoslať"
+
+#: CTFd/themes/admin/templates/teams/team.html:355
+#: CTFd/themes/admin/templates/teams/team.html:422
+#: CTFd/themes/admin/templates/users/user.html:236
+#: CTFd/themes/admin/templates/users/user.html:297
+#: CTFd/themes/core/templates/setup.html:309
+#: CTFd/themes/core/templates/setup.html:330
+#: CTFd/themes/core/templates/teams/private.html:391
+#: CTFd/themes/core/templates/teams/public.html:160
+#: CTFd/themes/core/templates/users/private.html:127
+#: CTFd/themes/core/templates/users/public.html:126
+msgid "Time"
+msgstr "čas"
+
+#: CTFd/themes/admin/templates/teams/teams.html:24
+msgid "Searching for teams with"
+msgstr ""
+
+#: CTFd/themes/admin/templates/teams/teams.html:37
+#, fuzzy
+msgid "Search for matching teams"
+msgstr "Vyhľadajte zodpovedajúcich používateľov"
+
+#: CTFd/themes/admin/templates/teams/teams.html:55
+#, fuzzy
+msgid "Edit Teams"
+msgstr "Upraviť tím"
+
+#: CTFd/themes/admin/templates/teams/teams.html:58
+#, fuzzy
+msgid "Delete Teams"
+msgstr "Odstrániť token"
+
+#: CTFd/themes/admin/templates/teams/teams.html:77
+#: CTFd/themes/core/templates/components/navbar.html:99
+#: CTFd/themes/core/templates/components/navbar.html:104
+#: CTFd/themes/core/templates/teams/team_enrollment.html:6
+#: CTFd/themes/core/templates/teams/teams.html:49
+msgid "Team"
+msgstr "Tím"
+
+#: CTFd/themes/admin/templates/users/new.html:10
+#: CTFd/themes/admin/templates/users/users.html:10
+#, fuzzy
+msgid "Create User"
+msgstr "Vytvoriť tím"
+
+#: CTFd/themes/admin/templates/users/user.html:11
+#: CTFd/themes/admin/templates/users/user.html:164
+#, fuzzy
+msgid "Edit User"
+msgstr "Pozvať používateľov"
+
+#: CTFd/themes/admin/templates/users/user.html:27
+#: CTFd/themes/admin/templates/users/user.html:167
+msgid "User Statistics"
+msgstr ""
+
+#: CTFd/themes/admin/templates/users/user.html:43
+#: CTFd/themes/admin/templates/users/user.html:170
+#, fuzzy
+msgid "Award User"
+msgstr "Ocenenia"
+
+#: CTFd/themes/admin/templates/users/user.html:59
+#: CTFd/themes/admin/templates/users/user.html:173
+#, fuzzy
+msgid "Email User"
+msgstr "Email"
+
+#: CTFd/themes/admin/templates/users/user.html:92
+#: CTFd/themes/admin/templates/users/users.html:132
+#, fuzzy
+msgid "admin"
+msgstr "Panel správcu"
+
+#: CTFd/themes/admin/templates/users/user.html:176
+#, fuzzy
+msgid "Delete User"
+msgstr "Odstrániť"
+
+#: CTFd/themes/admin/templates/users/users.html:25
+#, fuzzy
+msgid "Searching for users with"
+msgstr "Vyhľadajte zodpovedajúcich používateľov"
+
+#: CTFd/themes/admin/templates/users/users.html:56
+#, fuzzy
+msgid "Edit Users"
+msgstr "Pozvať používateľov"
+
+#: CTFd/themes/admin/templates/users/users.html:59
+#, fuzzy
+msgid "Delete Users"
+msgstr "Pozvať používateľov"
+
+#: CTFd/themes/core/templates/challenge.html:39
 #, python-format
 msgid "%(num)d Solve"
 msgid_plural "%(num)d Solves"
@@ -334,11 +3111,11 @@ msgstr[1] "%(num)d riešitelia"
 msgstr[2] "%(num)d riešiteľov"
 msgstr[3] "%(num)d riešiteľov"
 
-#: CTFd/themes/core-beta/templates/challenge.html:77
+#: CTFd/themes/core/templates/challenge.html:113
 msgid "View Hint"
 msgstr "Zobraziť nápovedu"
 
-#: CTFd/themes/core-beta/templates/challenge.html:120
+#: CTFd/themes/core/templates/challenge.html:160
 msgid "attempt"
 msgid_plural "attempts"
 msgstr[0] ""
@@ -346,508 +3123,343 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-#: CTFd/themes/core-beta/templates/challenge.html:135
+#: CTFd/themes/core/templates/challenge.html:175
 msgid "Flag"
 msgstr "Vlajka"
 
-#: CTFd/themes/core-beta/templates/challenge.html:169
-msgid "Next Challenge"
-msgstr "Ďalšia úloha"
-
-#: CTFd/themes/core-beta/templates/challenge.html:175
+#: CTFd/themes/core/templates/challenge.html:216
 msgid "Share"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/challenge.html:207
-#: CTFd/themes/core-beta/templates/setup.html:305
-#: CTFd/themes/core-beta/templates/setup.html:326
-msgid "Date"
-msgstr "Dátum"
+#: CTFd/themes/core/templates/challenge.html:239
+#, fuzzy
+msgid "Rate this challenge:"
+msgstr "Ďalšia úloha"
 
-#: CTFd/themes/core-beta/templates/challenges.html:7
-#: CTFd/themes/core-beta/templates/components/navbar.html:59
-msgid "Challenges"
-msgstr "Úlohy"
+#: CTFd/themes/core/templates/challenge.html:261
+msgid "Write a review (optional)"
+msgstr ""
 
-#: CTFd/themes/core-beta/templates/confirm.html:7
+#: CTFd/themes/core/templates/challenge.html:275
+msgid "Thank you for your rating!"
+msgstr ""
+
+#: CTFd/themes/core/templates/challenge.html:293
+#, fuzzy
+msgid "Submission"
+msgstr "Odoslať"
+
+#: CTFd/themes/core/templates/confirm.html:7
 msgid "Confirm"
 msgstr "Potvrďte"
 
-#: CTFd/themes/core-beta/templates/confirm.html:18
-msgid "We've sent a confirmation email to your email address."
+#: CTFd/themes/core/templates/confirm.html:19
+#, fuzzy
+msgid ""
+"To send a confirmation email to your email address, please click the "
+"button below."
 msgstr "Na vašu e-mailovú adresu sme poslali potvrdzujúci e-mail."
 
-#: CTFd/themes/core-beta/templates/confirm.html:24
+#: CTFd/themes/core/templates/confirm.html:23
+#: CTFd/themes/core/templates/confirm.html:34
 msgid "Please click the link in that email to confirm your account."
 msgstr "Kliknutím na odkaz v tomto e-maile potvrďte svoj účet."
 
-#: CTFd/themes/core-beta/templates/confirm.html:30
-msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
-msgstr "Ak e-mail neprišiel, skontrolujte priečinok so spamom alebo kontaktujte správcu, aby manuálne overil váš účet."
+#: CTFd/themes/core/templates/confirm.html:26
+#: CTFd/themes/core/templates/confirm.html:37
+msgid ""
+"If the email doesn’t arrive, check your spam folder or contact an "
+"administrator to manually verify your account."
+msgstr ""
+"Ak e-mail neprišiel, skontrolujte priečinok so spamom alebo kontaktujte "
+"správcu, aby manuálne overil váš účet."
 
-#: CTFd/themes/core-beta/templates/confirm.html:43
+#: CTFd/themes/core/templates/confirm.html:30
+msgid "We've sent a confirmation email to your email address."
+msgstr "Na vašu e-mailovú adresu sme poslali potvrdzujúci e-mail."
+
+#: CTFd/themes/core/templates/confirm.html:51
 msgid "Change Email Address"
 msgstr "Zmeň emailovú adresu"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:164
-#: CTFd/themes/core-beta/templates/components/navbar.html:169
-#: CTFd/themes/core-beta/templates/login.html:7
+#: CTFd/themes/core/templates/components/navbar.html:164
+#: CTFd/themes/core/templates/components/navbar.html:169
+#: CTFd/themes/core/templates/login.html:7
 msgid "Login"
 msgstr "Prihlásiť sa"
 
-#: CTFd/themes/core-beta/templates/login.html:40
+#: CTFd/themes/core/templates/login.html:46
 msgid "Forgot your password?"
 msgstr "zabudol si heslo?"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:85
-#: CTFd/themes/core-beta/templates/components/navbar.html:91
-#: CTFd/themes/core-beta/templates/notifications.html:7
-msgid "Notifications"
-msgstr "Upozornenia"
-
-#: CTFd/themes/core-beta/templates/notifications.html:14
+#: CTFd/themes/core/templates/notifications.html:14
 msgid "There are no notifications yet"
 msgstr "Zatiaľ nie sú žiadne upozornenia"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:151
-#: CTFd/themes/core-beta/templates/components/navbar.html:156
-#: CTFd/themes/core-beta/templates/register.html:7
+#: CTFd/themes/core/templates/components/navbar.html:151
+#: CTFd/themes/core/templates/components/navbar.html:156
+#: CTFd/themes/core/templates/register.html:7
 msgid "Register"
 msgstr "Registrovať"
 
-#: CTFd/themes/core-beta/templates/register.html:35
+#: CTFd/themes/core/templates/register.html:38
 msgid "Your username on the site"
 msgstr "Vaše používateľské meno na stránke"
 
-#: CTFd/themes/core-beta/templates/register.html:43
+#: CTFd/themes/core/templates/register.html:49
 msgid "Never shown to the public"
 msgstr "Nikdy nezverejnené"
 
-#: CTFd/themes/core-beta/templates/register.html:51
-msgid "Password used to log into your account"
-msgstr "Heslo používané na prihlásenie do vášho účtu"
-
-#: CTFd/themes/core-beta/templates/register.html:69
+#: CTFd/themes/core/templates/register.html:78
 #, python-format
-msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
+msgid ""
+"By registering, you agree to the <a href=\"%(privacy_link)s\" "
+"target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" "
+"target=\"_blank\">terms of service</a>"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/reset_password.html:7
+#: CTFd/themes/core/templates/reset_password.html:7
 msgid "Reset Password"
 msgstr "Obnoviť heslo"
 
-#: CTFd/themes/core-beta/templates/reset_password.html:21
-msgid "You can now reset the password for your account and log in. Please enter in a new password below."
-msgstr "Teraz môžete obnoviť heslo svojho účtu a prihlásiť sa. Nižšie zadajte nové heslo."
+#: CTFd/themes/core/templates/reset_password.html:21
+msgid ""
+"You can now reset the password for your account and log in. Please enter "
+"in a new password below."
+msgstr ""
+"Teraz môžete obnoviť heslo svojho účtu a prihlásiť sa. Nižšie zadajte "
+"nové heslo."
 
-#: CTFd/themes/core-beta/templates/reset_password.html:44
+#: CTFd/themes/core/templates/reset_password.html:44
 msgid "Please provide the email address associated with your account below."
 msgstr "Nižšie uveďte e-mailovú adresu priradenú k vášmu účtu."
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:52
-#: CTFd/themes/core-beta/templates/scoreboard.html:7
-msgid "Scoreboard"
-msgstr "Tabuľka"
-
-#: CTFd/themes/core-beta/templates/scoreboard.html:24
+#: CTFd/themes/core/templates/scoreboard.html:24
 msgid "All"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/scoreboard.html:36
-msgid "Place"
-msgstr ""
-
-#: CTFd/themes/core-beta/templates/scoreboard.html:38
-#: CTFd/themes/core-beta/templates/teams/private.html:330
-#: CTFd/themes/core-beta/templates/teams/public.html:96
-msgid "Score"
-msgstr "Skóre"
-
-#: CTFd/themes/core-beta/templates/scoreboard.html:60
+#: CTFd/themes/core/templates/scoreboard.html:60
 msgid "Scoreboard is empty"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:124
-#: CTFd/themes/core-beta/templates/components/navbar.html:129
-#: CTFd/themes/core-beta/templates/settings.html:8
-#: CTFd/themes/core-beta/templates/setup.html:50
+#: CTFd/themes/core/templates/components/navbar.html:124
+#: CTFd/themes/core/templates/components/navbar.html:129
+#: CTFd/themes/core/templates/settings.html:8
+#: CTFd/themes/core/templates/setup.html:50
 msgid "Settings"
 msgstr "Nastavenia"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:112
-#: CTFd/themes/core-beta/templates/components/navbar.html:117
-#: CTFd/themes/core-beta/templates/settings.html:21
+#: CTFd/themes/core/templates/components/navbar.html:112
+#: CTFd/themes/core/templates/components/navbar.html:117
+#: CTFd/themes/core/templates/settings.html:21
 msgid "Profile"
 msgstr "Profil"
 
-#: CTFd/themes/core-beta/templates/settings.html:26
+#: CTFd/themes/core/templates/settings.html:26
 msgid "Access Tokens"
 msgstr "Prístupové tokeny"
 
-#: CTFd/themes/core-beta/templates/settings.html:95
+#: CTFd/themes/core/templates/settings.html:95
 msgid "Your profile has been updated"
 msgstr "Váš profil bol aktualizovaný"
 
-#: CTFd/themes/core-beta/templates/settings.html:103
-#: CTFd/themes/core-beta/templates/teams/private.html:83
-#: CTFd/themes/core-beta/templates/teams/private.html:198
-msgid "Error:"
-msgstr "Chyba:"
-
-#: CTFd/themes/core-beta/templates/settings.html:129
+#: CTFd/themes/core/templates/settings.html:129
 msgid "API Key Generated"
 msgstr "Vygenerovaný kľúč API"
 
-#: CTFd/themes/core-beta/templates/settings.html:137
+#: CTFd/themes/core/templates/settings.html:137
 msgid "Please copy your API Key, it won't be shown again!"
 msgstr "Skopírujte si svoj kľúč API, už sa nebude zobrazovať!"
 
-#: CTFd/themes/core-beta/templates/settings.html:183
+#: CTFd/themes/core/templates/settings.html:183
 msgid "Active Tokens"
 msgstr "Aktívne tokeny"
 
-#: CTFd/themes/core-beta/templates/settings.html:195
+#: CTFd/themes/core/templates/settings.html:195
 msgid "Delete Token"
 msgstr "Odstrániť token"
 
-#: CTFd/themes/core-beta/templates/settings.html:204
+#: CTFd/themes/core/templates/settings.html:204
 msgid "Are you sure you want to delete this token?"
 msgstr "Naozaj chcete odstrániť tento token?"
 
-#: CTFd/themes/core-beta/templates/settings.html:224
+#: CTFd/themes/core/templates/settings.html:224
 msgid "Created"
 msgstr "Vytvorené"
 
-#: CTFd/themes/core-beta/templates/settings.html:226
-msgid "Description"
-msgstr "Popis"
-
-#: CTFd/themes/core-beta/templates/settings.html:227
+#: CTFd/themes/core/templates/settings.html:227
 msgid "Delete"
 msgstr "Odstrániť"
 
-#: CTFd/themes/core-beta/templates/setup.html:24
+#: CTFd/themes/core/templates/setup.html:24
 msgid "Setup"
 msgstr "Nastaviť"
 
-#: CTFd/themes/core-beta/templates/setup.html:44
-msgid "General"
-msgstr "generál"
-
-#: CTFd/themes/core-beta/templates/setup.html:47
+#: CTFd/themes/core/templates/setup.html:47
 msgid "Mode"
 msgstr "Režim"
 
-#: CTFd/themes/core-beta/templates/setup.html:53
+#: CTFd/themes/core/templates/setup.html:53
 msgid "Administration"
 msgstr "Administrácia"
 
-#: CTFd/themes/core-beta/templates/setup.html:56
+#: CTFd/themes/core/templates/setup.html:56
 msgid "Style"
 msgstr "Štýl"
 
-#: CTFd/themes/core-beta/templates/setup.html:59
+#: CTFd/themes/core/templates/setup.html:59
 msgid "Date &amp; Time"
 msgstr "Dátum &amp; čas"
 
-#: CTFd/themes/core-beta/templates/setup.html:62
-msgid "Integrations"
-msgstr "Integrácie"
-
-#: CTFd/themes/core-beta/templates/setup.html:86
-#: CTFd/themes/core-beta/templates/setup.html:138
-#: CTFd/themes/core-beta/templates/setup.html:202
-#: CTFd/themes/core-beta/templates/setup.html:238
-#: CTFd/themes/core-beta/templates/setup.html:296
-#: CTFd/themes/core-beta/templates/setup.html:345
-msgid "Next"
-msgstr "Ďalšie"
-
-#: CTFd/themes/core-beta/templates/setup.html:112
-msgid "Participants register accounts and form teams"
-msgstr "Účastníci sa registrujú a vytvárajú tímy"
-
-#: CTFd/themes/core-beta/templates/setup.html:113
-msgid "If a team member solves a challenge, the entire team receives credit"
-msgstr "Ak člen tímu vyrieši úlohu, kredit získa celý tím"
-
-#: CTFd/themes/core-beta/templates/setup.html:115
-msgid "Easier to see which team member solved a challenge"
-msgstr "Ľahšie uvidíte, ktorý člen tímu vyriešil úlohu"
-
-#: CTFd/themes/core-beta/templates/setup.html:116
-msgid "May be slightly more difficult to administer"
-msgstr "Správa môže byť o niečo náročnejšia"
-
-#: CTFd/themes/core-beta/templates/setup.html:120
-msgid "Participants only register an individual account"
-msgstr "Účastníci si zaregistrujú iba individuálny účet"
-
-#: CTFd/themes/core-beta/templates/setup.html:121
-msgid "Players can share accounts to form pseudo-teams"
-msgstr "Hráči môžu zdieľať účty a vytvárať pseudotímy"
-
-#: CTFd/themes/core-beta/templates/setup.html:123
-msgid "Easier to organize"
-msgstr "Jednoduchšie na organizáciu"
-
-#: CTFd/themes/core-beta/templates/setup.html:124
-msgid "Difficult to attribute solutions to individual team members"
-msgstr "Je ťažké prisúdiť riešenia jednotlivým členom tímu"
-
-#: CTFd/themes/core-beta/templates/setup.html:143
+#: CTFd/themes/core/templates/setup.html:143
 msgid "Visibility Settings"
 msgstr "Nastavenia viditeľnosti"
 
-#: CTFd/themes/core-beta/templates/setup.html:146
+#: CTFd/themes/core/templates/setup.html:146
 msgid "Control the visibility of different sections of CTFd"
 msgstr "Ovládajte viditeľnosť rôznych sekcií CTFd"
 
-#: CTFd/themes/core-beta/templates/setup.html:232
+#: CTFd/themes/core/templates/setup.html:232
 msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
 msgstr "Prihláste sa na odber noviniek na e-mailovú adresu CTFd LLC"
 
-#: CTFd/themes/core-beta/templates/setup.html:309
-#: CTFd/themes/core-beta/templates/setup.html:330
-#: CTFd/themes/core-beta/templates/teams/private.html:391
-#: CTFd/themes/core-beta/templates/teams/public.html:160
-#: CTFd/themes/core-beta/templates/users/private.html:127
-#: CTFd/themes/core-beta/templates/users/public.html:126
-msgid "Time"
-msgstr "čas"
-
-#: CTFd/themes/core-beta/templates/setup.html:334
+#: CTFd/themes/core/templates/setup.html:334
 msgid "UTC Preview"
 msgstr "Náhľad UTC"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:36
-#: CTFd/themes/core-beta/templates/users/users.html:6
-msgid "Users"
-msgstr "Používatelia"
-
-#: CTFd/themes/core-beta/templates/components/navbar.html:43
-#: CTFd/themes/core-beta/templates/teams/teams.html:6
-msgid "Teams"
-msgstr "Tímy"
-
-#: CTFd/themes/core-beta/templates/components/navbar.html:72
-#: CTFd/themes/core-beta/templates/components/navbar.html:77
-msgid "Admin Panel"
-msgstr "Panel správcu"
-
-#: CTFd/themes/core-beta/templates/components/navbar.html:99
-#: CTFd/themes/core-beta/templates/components/navbar.html:104
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:6
-#: CTFd/themes/core-beta/templates/teams/teams.html:49
-msgid "Team"
-msgstr "Tím"
-
-#: CTFd/themes/core-beta/templates/components/navbar.html:136
-#: CTFd/themes/core-beta/templates/components/navbar.html:141
+#: CTFd/themes/core/templates/components/navbar.html:136
+#: CTFd/themes/core/templates/components/navbar.html:141
 msgid "Logout"
 msgstr "Odhlásiť sa"
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:180
+#: CTFd/themes/core/templates/components/navbar.html:180
 msgid "Change language"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/components/navbar.html:199
-#: CTFd/themes/core-beta/templates/components/navbar.html:204
+#: CTFd/themes/core/templates/components/navbar.html:199
+#: CTFd/themes/core/templates/components/navbar.html:204
 msgid "Toggle theme"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/errors/403.html:12
+#: CTFd/themes/core/templates/errors/401.html:12
+msgid "401 Unauthorized"
+msgstr ""
+
+#: CTFd/themes/core/templates/errors/403.html:12
 msgid "403 Forbidden"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/errors/404.html:9
+#: CTFd/themes/core/templates/errors/404.html:9
 msgid "File not found"
 msgstr "Súbor nenájdený"
 
-#: CTFd/themes/core-beta/templates/errors/404.html:12
+#: CTFd/themes/core/templates/errors/404.html:12
 msgid "404 Not Found"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/errors/429.html:9
+#: CTFd/themes/core/templates/errors/429.html:9
 msgid "Too many requests"
 msgstr "Príliš veľa žiadostí"
 
-#: CTFd/themes/core-beta/templates/errors/429.html:10
+#: CTFd/themes/core/templates/errors/429.html:10
 msgid "Please slow down!"
 msgstr "Prosím spomaľ!"
 
-#: CTFd/themes/core-beta/templates/errors/429.html:13
+#: CTFd/themes/core/templates/errors/429.html:13
 msgid "429 Too Many Requests"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/errors/502.html:12
+#: CTFd/themes/core/templates/errors/502.html:12
 msgid "502 Bad Gateway"
 msgstr ""
 
-#: CTFd/themes/core-beta/templates/macros/forms.html:13
-#: CTFd/themes/core-beta/templates/macros/forms.html:36
-#: CTFd/themes/core-beta/templates/macros/forms.html:65
-msgid "(Optional)"
-msgstr "(Voliteľné)"
-
-#: CTFd/themes/core-beta/templates/teams/invite.html:6
-#: CTFd/themes/core-beta/templates/teams/join_team.html:6
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:36
+#: CTFd/themes/core/templates/teams/invite.html:6
+#: CTFd/themes/core/templates/teams/join_team.html:6
+#: CTFd/themes/core/templates/teams/team_enrollment.html:36
 msgid "Join Team"
 msgstr "Pripojte sa k tímu"
 
-#: CTFd/themes/core-beta/templates/teams/invite.html:15
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:12
+#: CTFd/themes/core/templates/teams/invite.html:15
+#: CTFd/themes/core/templates/teams/team_enrollment.html:12
 msgid "Welcome to"
 msgstr "Vitajte v"
 
-#: CTFd/themes/core-beta/templates/teams/invite.html:19
+#: CTFd/themes/core/templates/teams/invite.html:19
 msgid "Click the button below to join the team!"
 msgstr "Kliknite na tlačidlo nižšie a pridajte sa k tímu!"
 
-#: CTFd/themes/core-beta/templates/teams/new_team.html:6
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:39
-msgid "Create Team"
-msgstr "Vytvoriť tím"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:8
-msgid "Edit Team"
-msgstr "Upraviť tím"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:76
+#: CTFd/themes/core/templates/teams/private.html:76
 msgid "Your team's profile has been updated"
 msgstr "Profil vášho tímu bol aktualizovaný"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:104
-msgid "Choose Captain"
-msgstr "Zvoľte kapitána"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:127
+#: CTFd/themes/core/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
 msgstr "Vaše kapitánske práva boli prevedené"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:152
+#: CTFd/themes/core/templates/teams/private.html:152
 msgid "Invite Users"
 msgstr "Pozvať používateľov"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:171
+#: CTFd/themes/core/templates/teams/private.html:171
 msgid "Share this link with your team members for them to join your team"
-msgstr "Zdieľajte tento odkaz s členmi svojho tímu, aby sa mohli pripojiť k vášmu tímu"
+msgstr ""
+"Zdieľajte tento odkaz s členmi svojho tímu, aby sa mohli pripojiť k vášmu"
+" tímu"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:174
+#: CTFd/themes/core/templates/teams/private.html:174
 msgid "Invite links can be re-used and expire after 1 day"
 msgstr "Pozvánky možno znova použiť a ich platnosť vyprší po 1 dni"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:188
+#: CTFd/themes/core/templates/teams/private.html:188
 msgid "Disband Team"
 msgstr "Rozpustiť tím"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:193
+#: CTFd/themes/core/templates/teams/private.html:193
 msgid "Are you sure you want to disband your team?"
 msgstr "Ste si istý, že chcete rozpustiť svoj tím?"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:206
+#: CTFd/themes/core/templates/teams/private.html:206
 msgid "No"
 msgstr "Nie"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:207
+#: CTFd/themes/core/templates/teams/private.html:207
 msgid "Yes"
 msgstr "Áno"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:218
-#: CTFd/themes/core-beta/templates/teams/public.html:10
-#: CTFd/themes/core-beta/templates/users/private.html:21
-#: CTFd/themes/core-beta/templates/users/public.html:21
-#: CTFd/themes/core-beta/templates/users/users.html:70
-msgid "Official"
-msgstr "Oficiálny"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:260
-msgid "place"
-msgstr "miesto"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:268
-msgid "points"
-msgstr "body"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:325
-#: CTFd/themes/core-beta/templates/teams/public.html:91
+#: CTFd/themes/core/templates/teams/private.html:325
+#: CTFd/themes/core/templates/teams/public.html:91
 msgid "Members"
 msgstr "členovia"
 
-#: CTFd/themes/core-beta/templates/teams/private.html:345
-#: CTFd/themes/core-beta/templates/teams/public.html:110
-msgid "Captain"
-msgstr "Kapitán"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:361
-#: CTFd/themes/core-beta/templates/teams/public.html:125
-#: CTFd/themes/core-beta/templates/users/private.html:98
-#: CTFd/themes/core-beta/templates/users/public.html:98
-msgid "Awards"
-msgstr "Ocenenia"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:384
-#: CTFd/themes/core-beta/templates/teams/public.html:153
-#: CTFd/themes/core-beta/templates/users/private.html:120
-msgid "Solves"
-msgstr "Riešenia"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:389
-#: CTFd/themes/core-beta/templates/teams/public.html:158
-#: CTFd/themes/core-beta/templates/users/private.html:125
-#: CTFd/themes/core-beta/templates/users/public.html:124
-msgid "Category"
-msgstr "Kategória"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:390
-#: CTFd/themes/core-beta/templates/teams/public.html:159
-#: CTFd/themes/core-beta/templates/users/private.html:126
-#: CTFd/themes/core-beta/templates/users/public.html:125
-msgid "Value"
-msgstr "Hodnota"
-
-#: CTFd/themes/core-beta/templates/teams/private.html:481
-#: CTFd/themes/core-beta/templates/teams/public.html:248
-#: CTFd/themes/core-beta/templates/users/private.html:213
-#: CTFd/themes/core-beta/templates/users/public.html:214
+#: CTFd/themes/core/templates/teams/private.html:481
+#: CTFd/themes/core/templates/teams/public.html:248
+#: CTFd/themes/core/templates/users/private.html:213
+#: CTFd/themes/core/templates/users/public.html:214
 msgid "No solves yet"
 msgstr "Zatiaľ žiadne riešenia"
 
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:14
+#: CTFd/themes/core/templates/teams/team_enrollment.html:14
 msgid "In order to participate you must either join or create a team."
 msgstr "Ak sa chcete zúčastniť, musíte sa pripojiť k tímu alebo vytvoriť nový."
 
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:22
+#: CTFd/themes/core/templates/teams/team_enrollment.html:22
 msgid "Play with Official Team"
 msgstr "Hrajte s oficiálnym tímom"
 
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:27
+#: CTFd/themes/core/templates/teams/team_enrollment.html:27
 msgid "Join Unofficial Team"
 msgstr "Pripojte sa k neoficiálnemu tímu"
 
-#: CTFd/themes/core-beta/templates/teams/team_enrollment.html:30
+#: CTFd/themes/core/templates/teams/team_enrollment.html:30
 msgid "Create Unofficial Team"
 msgstr "Vytvorte neoficiálny tím"
 
-#: CTFd/themes/core-beta/templates/teams/teams.html:128
-#: CTFd/themes/core-beta/templates/users/users.html:118
-msgid "Page"
-msgstr "Stránka"
-
-#: CTFd/themes/core-beta/templates/users/users.html:14
+#: CTFd/themes/core/templates/users/users.html:14
 #, python-format
-msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
+msgid ""
+"Searching for users with <strong>%(field)s</strong> matching "
+"<strong>%(q)s</strong>"
 msgstr ""
-
-#: CTFd/themes/core-beta/templates/users/users.html:17
-#, python-format
-msgid "Page %(page)s of %(total)s results"
-msgstr ""
-
-#: CTFd/themes/core-beta/templates/users/users.html:46
-msgid "User"
-msgstr "Používateľ"
 
 #: CTFd/utils/modes/__init__.py:35
 msgid "user"

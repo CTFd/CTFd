@@ -6,11 +6,11 @@
 					<input type="checkbox" class="form-check-input" id="users-bulk-select" autocomplete="off" data-checkbox-all>&nbsp;
 				</div>
 			</th>
-			<th class="sort-col text-center"><b>Place</b></th>
-			<th class="sort-col"><b>User</b></th>
-			<th class="sort-col"><b>Bracket</b></th>
-			<th class="sort-col"><b>Score</b></th>
-			<th class="sort-col"><b>Visibility</b></th>
+			<th class="sort-col text-center"><b>{% trans %}Place{% endtrans %}</b></th>
+			<th class="sort-col"><b>{% trans %}User{% endtrans %}</b></th>
+			<th class="sort-col"><b>{% trans %}Bracket{% endtrans %}</b></th>
+			<th class="sort-col"><b>{% trans %}Score{% endtrans %}</b></th>
+			<th class="sort-col"><b>{% trans %}Visibility{% endtrans %}</b></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -28,11 +28,11 @@
 					{% if standing.oauth_id %}
 						{% if get_config('user_mode') == 'teams' %}
 							<a href="https://majorleaguecyber.org/t/{{ standing.name }}">
-								<span class="badge badge-primary">Official</span>
+								<span class="badge badge-primary">{% trans %}Official{% endtrans %}</span>
 							</a>
 						{% elif get_config('user_mode') == 'users' %}
 							<a href="https://majorleaguecyber.org/u/{{ standing.name }}">
-								<span class="badge badge-primary">Official</span>
+								<span class="badge badge-primary">{% trans %}Official{% endtrans %}</span>
 							</a>
 						{% endif %}
 					{% endif %}
@@ -44,9 +44,9 @@
 			<td>{{ standing.score }}</td>
 			<td>
 				{% if standing.hidden %}
-					<span class="badge badge-danger">hidden</span>
+					<span class="badge badge-danger">{% trans %}hidden{% endtrans %}</span>
 				{% else %}
-					<span class="badge badge-success">visible</span>
+					<span class="badge badge-success">{% trans %}visible{% endtrans %}</span>
 				{% endif %}
 			</td>
 		</tr>

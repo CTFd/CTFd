@@ -32,7 +32,7 @@
 						<div class="col-md-12">
 							{% set title = page.title if page is defined %}
 							<b>{{ form.title.label }}</b>
-							{{ form.title(class="form-control radius", id="route", placeholder="Title", value=title or "") }}
+							{{ form.title(class="form-control radius", id="route", placeholder=_("Title"), value=title or "") }}
 							<small class="text-muted">
 								{{ form.title.description }}
 							</small>
@@ -45,7 +45,7 @@
 						<div class="col-md-12">
 							{% set route = page.route if page is defined %}
 							<b>{{ form.route.label }}</b>
-							{{ form.route(class="form-control radius", placeholder="Route", value=route) }}
+							{{ form.route(class="form-control radius", placeholder=_("Route"), value=route) }}
 							<small class="text-muted">
 								{{ form.route.description }}
 							</small>
@@ -64,7 +64,7 @@
 						</div>
 						<div class="col-md-6">
 							<b>{{ form.link_target.label }}</b>
-							{{ form.link_target(class="form-control custom-select", placeholder="Target", value=format) }}
+							{{ form.link_target(class="form-control custom-select", placeholder=_("Target"), value=format) }}
 							<small class="text-muted">
 								{{ form.link_target.description }}
 							</small>
@@ -78,16 +78,16 @@
 					<div class="row">
 						<div class="col-md-12">
 
-							<h3>Content</h3>
-							<small class="text-muted">This is the HTML content of your page</small>
+							<h3>{% trans %}Content{% endtrans %}</h3>
+							<small class="text-muted">{% trans %}This is the HTML content of your page{% endtrans %}</small>
 
 							<ul class="nav nav-tabs" role="tablist" id="content-edit">
 								<li class="nav-item" role="presentation" class="active">
 									<a class="nav-link active" href="#content-write" aria-controls="home" role="tab"
-									data-toggle="tab">Write</a>
+									data-toggle="tab">{% trans %}Write{% endtrans %}</a>
 								</li>
 								<li class="nav-item" role="presentation">
-									<a class="nav-link preview-page" href="#">Preview</a>
+									<a class="nav-link preview-page" href="#">{% trans %}Preview{% endtrans %}</a>
 								</li>
 							</ul>
 
@@ -100,7 +100,7 @@
 											<div class="btn-group">
 												<button type="button" class="btn btn-primary" id="media-button">
 													<i class="fas fa-camera-retro"></i>
-													Media Library
+													{% trans %}Media Library{% endtrans %}
 												</button>
 											</div>
 										</div>
@@ -129,7 +129,7 @@
 									<br>
 
 									<small class="form-text text-muted text-right">
-										<a href="https://docs.ctfd.io/docs/pages/variables/" target="_blank">CTFd Page variables</a>
+										<a href="https://docs.ctfd.io/docs/pages/variables/" target="_blank">{% trans %}CTFd Page variables{% endtrans %}</a>
 										<i class="far fa-question-circle pr-2"></i>
 									</small>
 
@@ -140,7 +140,7 @@
 									<div class="form-group float-right pt-3">
 										{{ form.nonce() }}
 										<button class="btn btn-primary" id="save-page">
-											Save
+											{% trans %}Save{% endtrans %}
 										</button>
 									</div>
 								</div>
@@ -159,7 +159,7 @@
 	<div class="row min-vh-25 pt-5">
 		<div class="col-md-10 offset-md-1">
 			<h3 class="text-center py-3 d-block">
-				Comments
+				{% trans %}Comments{% endtrans %}
 			</h3>
 			<div id="comment-box">
 			</div>

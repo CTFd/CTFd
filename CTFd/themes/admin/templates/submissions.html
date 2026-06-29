@@ -7,7 +7,7 @@
 
 <div class="jumbotron">
 	<div class="container">
-		<h1>{% if type %}{{ type|title }} {% endif %}Submissions</h1>
+		<h1>{% if type %}{{ type|title }} {% endif %}{% trans %}Submissions{% endtrans %}</h1>
 	</div>
 </div>
 
@@ -17,10 +17,10 @@
 		<div class="col-md-12">
 			{% if q and field %}
 			<h5 class="text-muted text-center">
-				Searching for submissions with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+				{% trans %}Searching for submissions with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>{% endtrans %}
 			</h5>
 			<h6 class="text-muted text-center pb-3">
-				Page {{ submissions.page }} of {{ submissions.total }} results
+				{% trans page=submissions.page, total=submissions.total %}Page {{ page }} of {{ total }} results{% endtrans %}
 			</h6>
 			{% endif %}
 
@@ -30,7 +30,7 @@
 					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
 				<div class="form-group col-md-8">
-					{{ form.q(class="form-control w-100", placeholder="Search for matching submission") }}
+					{{ form.q(class="form-control w-100", placeholder=_("Search for matching submission")) }}
 				</div>
 				<div class="form-group col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
@@ -49,7 +49,7 @@
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
 					{% if type == "incorrect" %}
-					<button type="button" class="btn btn-outline-success" data-toggle="tooltip" title="Mark submissions correct" id="correct-flags-button">
+					<button type="button" class="btn btn-outline-success" data-toggle="tooltip" title="{{ _('Mark submissions correct') }}" id="correct-flags-button">
 						<i class="btn-fa fas fa-check"></i>
 					</button>
 					{% elif type == "correct" %}
@@ -58,15 +58,15 @@
 					</button>
 					{% endif %}
 					{% if request.args.get("full") %}
-					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show truncated flags" id="show-short-flags-button">
+					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="{{ _('Show truncated flags') }}" id="show-short-flags-button">
 						<i class="btn-fa far fa-flag"></i>
 					</button>
 					{% else %}
-					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show full flags" id="show-full-flags-button">
+					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="{{ _('Show full flags') }}" id="show-full-flags-button">
 						<i class="btn-fa fas fa-flag"></i>
 					</button>
 					{% endif %}
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected submissions" id="submission-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="{{ _('Delete selected submissions') }}" id="submission-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -84,15 +84,15 @@
 								<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
 							</div>
 						</th>
-						<th class="text-center sort-col"><b>ID</b></th>
+						<th class="text-center sort-col"><b>{% trans %}ID{% endtrans %}</b></th>
 						{% if mode == UserModeTypes.TEAMS %}
-						<th class="sort-col"><b>User</b></th>
+						<th class="sort-col"><b>{% trans %}User{% endtrans %}</b></th>
 						{% endif %}
 						<th class="sort-col"><b>{{ get_mode_as_word(capitalize=True) }}</b></th>
-						<th class="sort-col"><b>Challenge</b></th>
-						<th class="sort-col"><b>Type</b></th>
-						<th class="sort-col"><b>Provided</b></th>
-						<th class="text-center sort-col"><b>Date</b></th>
+						<th class="sort-col"><b>{% trans %}Challenge{% endtrans %}</b></th>
+						<th class="sort-col"><b>{% trans %}Type{% endtrans %}</b></th>
+						<th class="sort-col"><b>{% trans %}Provided{% endtrans %}</b></th>
+						<th class="text-center sort-col"><b>{% trans %}Date{% endtrans %}</b></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -149,7 +149,7 @@
 				</tbody>
 			</table>
 			{% if submissions.pages > 1 %}
-			<div class="text-center">Page
+			<div class="text-center">{% trans %}Page{% endtrans %}
 				<br>
 				{% if submissions.page != 1 %}
 					<a href="{{ prev_page }}">&lt;&lt;&lt;</a>

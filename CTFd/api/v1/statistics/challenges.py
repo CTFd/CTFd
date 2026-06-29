@@ -1,4 +1,5 @@
 from flask import request
+from flask_babel import gettext as _
 from flask_restx import Resource
 from sqlalchemy import Integer, func
 from sqlalchemy.sql import and_
@@ -33,7 +34,7 @@ class ChallengePropertyCounts(Resource):
             )
             return {"success": True, "data": dict(data)}
         else:
-            response = {"message": "That could not be found"}, 404
+            response = {"message": _("That could not be found")}, 404
             return response
 
 
