@@ -25,18 +25,22 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 20.19
+          cache: yarn
+          cache-dependency-path: |
+            CTFd/themes/admin/yarn.lock
+            CTFd/themes/core/yarn.lock
 
       - name: Verify admin theme
         run: |
             pwd
-            yarn install --non-interactive
-            yarn verify 
+            yarn install --frozen-lockfile
+            yarn verify
         working-directory: ./CTFd/themes/admin
 
       # TODO: Replace in 4.0 with deprecation of previous core theme
       - name: Verify core theme
         run: |
             pwd
-            yarn install --non-interactive
+            yarn install --frozen-lockfile
             yarn verify
         working-directory: ./CTFd/themes/core
