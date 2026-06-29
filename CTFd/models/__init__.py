@@ -1210,6 +1210,16 @@ class AudienceMembers(db.Model):
     user = db.relationship("Users", foreign_keys=[user_id], lazy="select")
     team = db.relationship("Teams", foreign_keys=[team_id], lazy="select")
 
+    @hybrid_property
+    def account_id(self):
+        from CTFd.utils import get_config
+
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
+            return self.team_id
+        elif user_mode == "users":
+            return self.user_id
+
     __table_args__ = (
         db.UniqueConstraint("audience_id", "user_id", name="uq_audience_user"),
         db.UniqueConstraint("audience_id", "team_id", name="uq_audience_team"),

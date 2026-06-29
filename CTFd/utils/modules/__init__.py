@@ -1,6 +1,6 @@
-from flask import g
 from sqlalchemy.sql import or_
 
+from CTFd.cache import cache
 from CTFd.models import (
     AudienceMembers,
     Audiences,
@@ -8,47 +8,26 @@ from CTFd.models import (
     ModuleAudienceAccess,
     Modules,
 )
-from CTFd.utils import get_config
-from CTFd.utils.modes import TEAMS_MODE
 
 
-def _resolve_account(user):
-    """Return (user_id, team_id) for the access query, depending on user_mode."""
-    if user is None:
-        return None, None
-    if get_config("user_mode") == TEAMS_MODE:
-        return None, getattr(user, "team_id", None)
-    return user.id, None
+@cache.memoize(timeout=60)
+def get_accessible_module_ids_for_account_id(account_id):
+    if account_id is None:
+        return set()
+    q = (
+        Modules.query.with_entities(Modules.id)
+        .join(ModuleAudienceAccess, ModuleAudienceAccess.module_id == Modules.id)
+        .join(Audiences, Audiences.id == ModuleAudienceAccess.audience_id)
+        .join(AudienceMembers, AudienceMembers.audience_id == Audiences.id)
+        .filter(AudienceMembers.account_id == account_id)
+    )
+    return {row.id for row in q.all()}
 
 
 def get_accessible_module_ids(user):
-    """Module IDs accessible to this account, cached per-request on flask.g."""
     if user is None:
         return set()
-
-    cache_key = "_ctfd_accessible_module_ids"
-    cached = getattr(g, cache_key, None)
-    if cached is not None and cached.get("user_id") == user.id:
-        return cached["ids"]
-
-    user_id, team_id = _resolve_account(user)
-    if user_id is None and team_id is None:
-        ids = set()
-    else:
-        q = (
-            Modules.query.with_entities(Modules.id)
-            .join(ModuleAudienceAccess, ModuleAudienceAccess.module_id == Modules.id)
-            .join(Audiences, Audiences.id == ModuleAudienceAccess.audience_id)
-            .join(AudienceMembers, AudienceMembers.audience_id == Audiences.id)
-        )
-        if team_id is not None:
-            q = q.filter(AudienceMembers.team_id == team_id)
-        else:
-            q = q.filter(AudienceMembers.user_id == user_id)
-        ids = {row[0] for row in q.all()}
-
-    setattr(g, cache_key, {"user_id": user.id, "ids": ids})
-    return ids
+    return get_accessible_module_ids_for_account_id(user.account_id)
 
 
 def can_access_challenge(challenge, user):
