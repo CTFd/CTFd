@@ -1,0 +1,142 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div id="audience-edit-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Edit Audience</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				<form id="audience-update-form">
+					<div class="form-group">
+						<label>Name</label>
+						<input class="form-control" name="name" value="{{ audience.name }}" required>
+					</div>
+					<div class="form-group">
+						<label>Description</label>
+						<textarea class="form-control" name="description" rows="3">{{ audience.description or '' }}</textarea>
+					</div>
+					<button type="submit" class="btn btn-primary float-right">Save</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="text-center p-0 m-0">{{ audience.name }}</h1>
+		{% if audience.description %}
+		<p class="lead text-center mt-2">{{ audience.description }}</p>
+		{% endif %}
+		<hr class="w-50">
+		<div class="pt-3">
+			<a class="edit-audience text-dark" style="cursor:pointer">
+				<i class="btn-fa fas fa-pen fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit Audience"></i>
+			</a>
+			<a class="delete-audience text-dark" style="cursor:pointer">
+				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Delete Audience"></i>
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Linked Modules</h3>
+			<p class="text-muted">Members of this audience gain access to challenges in these modules.</p>
+			<ul class="list-group mb-3">
+				{% for m in linked_modules %}
+				<li class="list-group-item d-flex justify-content-between align-items-center">
+					<a href="{{ url_for('admin.modules_detail', module_id=m.id) }}">{{ m.name }}</a>
+					<button class="btn btn-sm btn-outline-danger" data-unlink-module="{{ m.id }}">Unlink</button>
+				</li>
+				{% else %}
+				<li class="list-group-item text-muted">No linked modules.</li>
+				{% endfor %}
+			</ul>
+			<form id="link-module-form">
+				<div class="input-group">
+					<select class="form-control custom-select" name="module_id" required>
+						<option value="" disabled selected>Select a module&hellip;</option>
+						{% for m in all_modules %}
+							{% if m.id not in linked_module_ids %}
+								<option value="{{ m.id }}">{{ m.name }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+					<div class="input-group-append">
+						<button type="submit" class="btn btn-secondary">Link module</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Linked Members</h3>
+			<table class="table table-striped border">
+				<thead>
+				<tr>
+					<th>{{ 'Team' if user_mode == 'teams' else 'User' }}</th>
+					<th class="text-right"></th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for m in members %}
+				<tr>
+					<td>
+						{% if m.user_id %}
+							<a href="{{ url_for('admin.users_detail', user_id=m.user_id) }}">{{ m.user.name if m.user else '#' ~ m.user_id }}</a>
+						{% elif m.team_id %}
+							<a href="{{ url_for('admin.teams_detail', team_id=m.team_id) }}">{{ m.team.name if m.team else '#' ~ m.team_id }}</a>
+						{% endif %}
+					</td>
+					<td class="text-right">
+						<button class="btn btn-sm btn-outline-danger" data-remove-member="{{ m.id }}">Remove</button>
+					</td>
+				</tr>
+				{% else %}
+				<tr><td colspan="2" class="text-muted text-center">No members yet.</td></tr>
+				{% endfor %}
+				</tbody>
+			</table>
+
+			<form id="add-member-form" autocomplete="off">
+				<input type="hidden" name="account_id" id="add-member-account-id">
+				<div class="input-group">
+					<input type="text"
+					       class="form-control"
+					       id="add-member-search"
+					       placeholder="Search {{ 'team' if user_mode == 'teams' else 'user' }} by name&hellip;"
+					       required>
+					<div class="input-group-append">
+						<button type="submit" class="btn btn-secondary" id="add-member-submit" disabled>Add member</button>
+					</div>
+				</div>
+				<small class="form-text text-muted" id="add-member-hint">Start typing to search.</small>
+			</form>
+			<ul class="list-group mt-2" id="add-member-suggestions" style="display: none;"></ul>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	var AUDIENCE_ID = {{ audience.id }};
+	var USER_MODE = {{ user_mode | tojson }};
+</script>
+{% endblock %}
+
+{% block entrypoint %}
+	{{ Assets.js("assets/js/pages/audience.js", theme="admin") }}
+{% endblock %}

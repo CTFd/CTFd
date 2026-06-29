@@ -1,0 +1,143 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div id="module-edit-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100">Edit Module</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix">
+				<form id="module-update-form">
+					<div class="form-group">
+						<label>Name</label>
+						<input class="form-control" name="name" value="{{ module.name }}" required>
+					</div>
+					<div class="form-group">
+						<label>Description</label>
+						<textarea class="form-control" name="description" rows="3">{{ module.description or '' }}</textarea>
+					</div>
+					<button type="submit" class="btn btn-primary float-right">Save</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="text-center p-0 m-0">{{ module.name }}</h1>
+		{% if module.description %}
+		<p class="lead text-center mt-2">{{ module.description }}</p>
+		{% endif %}
+		<hr class="w-50">
+		<div class="pt-3">
+			<a class="edit-module text-dark" style="cursor:pointer">
+				<i class="btn-fa fas fa-pen fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Edit Module"></i>
+			</a>
+			<a class="delete-module text-dark" style="cursor:pointer">
+				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Delete Module"></i>
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Linked Audiences</h3>
+			<p class="text-muted">Members of these audiences can access this module's challenges.</p>
+			<ul class="list-group mb-3">
+				{% for c in linked_audiences %}
+				<li class="list-group-item d-flex justify-content-between">
+					<a href="{{ url_for('admin.audiences_detail', audience_id=c.id) }}">{{ c.name }}</a>
+					<button class="btn btn-sm btn-outline-danger" data-unlink-audience="{{ c.id }}">Unlink</button>
+				</li>
+				{% else %}
+				<li class="list-group-item text-muted">No linked audiences (module is invisible to non-admins).</li>
+				{% endfor %}
+			</ul>
+			<form id="link-audience-form">
+				<div class="input-group">
+					<select class="form-control custom-select" name="audience_id" required>
+						<option value="" disabled selected>Select a audience&hellip;</option>
+						{% for c in all_audiences %}
+							{% if c.id not in linked_audience_ids %}
+								<option value="{{ c.id }}">{{ c.name }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+					<div class="input-group-append">
+						<button type="submit" class="btn btn-secondary">Link audience</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>Linked Challenges</h3>
+			<table class="table table-striped border">
+				<thead>
+				<tr><th>ID</th><th>Name</th><th>Category</th><th>State</th><th class="text-right"></th></tr>
+				</thead>
+				<tbody>
+				{% for c in challenges %}
+				<tr>
+					<td>{{ c.id }}</td>
+					<td><a href="{{ url_for('admin.challenges_detail', challenge_id=c.id) }}">{{ c.name }}</a></td>
+					<td>{{ c.category }}</td>
+					<td>{{ c.state }}</td>
+					<td class="text-right">
+						<button class="btn btn-sm btn-outline-danger" data-remove-challenge="{{ c.id }}">Remove</button>
+					</td>
+				</tr>
+				{% else %}
+				<tr><td colspan="5" class="text-muted text-center">No challenges in this module.</td></tr>
+				{% endfor %}
+				</tbody>
+			</table>
+
+			<h5 class="mt-4">Add challenges</h5>
+			<p class="text-muted">Pick one or more challenges to assign to this module. Challenges already in another module will be reassigned.</p>
+			<form id="add-challenges-form">
+				<div class="form-group">
+					<select class="form-control" id="add-challenges-select" name="challenge_ids" multiple size="10">
+						{% set ns = namespace(prev_cat=None) %}
+						{% for c in addable_challenges %}
+							{% if c.category != ns.prev_cat %}
+								{% if ns.prev_cat is not none %}</optgroup>{% endif %}
+								<optgroup label="{{ c.category or 'Uncategorized' }}">
+								{% set ns.prev_cat = c.category %}
+							{% endif %}
+							<option value="{{ c.id }}">
+								{{ c.name }}
+								{%- if c.module_id %} - currently in module #{{ c.module_id }}{% endif -%}
+							</option>
+						{% endfor %}
+						{% if ns.prev_cat is not none %}</optgroup>{% endif %}
+					</select>
+					<small class="form-text text-muted">Ctrl/Cmd-click to select multiple.</small>
+				</div>
+				<button type="submit" class="btn btn-primary" id="add-challenges-submit" disabled>Add selected to this module</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	var MODULE_ID = {{ module.id }};
+</script>
+{% endblock %}
+
+{% block entrypoint %}
+	{{ Assets.js("assets/js/pages/module.js", theme="admin") }}
+{% endblock %}

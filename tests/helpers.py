@@ -19,6 +19,8 @@ from CTFd.cache import cache, clear_challenges, clear_ratings, clear_standings
 from CTFd.config import TestingConfig
 from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import (
+    AudienceMembers,
+    Audiences,
     Awards,
     Brackets,
     ChallengeComments,
@@ -31,6 +33,8 @@ from CTFd.models import (
     Files,
     Flags,
     Hints,
+    ModuleAudienceAccess,
+    Modules,
     Notifications,
     PageComments,
     PageFiles,
@@ -608,6 +612,34 @@ def gen_bracket(
     )
     db.session.add(bracket)
     db.session.commit()
+
+
+def gen_audience(db, name="audience", description=None):
+    audience = Audiences(name=name, description=description)
+    db.session.add(audience)
+    db.session.commit()
+    return audience
+
+
+def gen_module(db, name="module", description=None):
+    module = Modules(name=name, description=description)
+    db.session.add(module)
+    db.session.commit()
+    return module
+
+
+def gen_audience_member(db, audience_id, user_id=None, team_id=None):
+    m = AudienceMembers(audience_id=audience_id, user_id=user_id, team_id=team_id)
+    db.session.add(m)
+    db.session.commit()
+    return m
+
+
+def gen_module_audience_access(db, module_id, audience_id):
+    link = ModuleAudienceAccess(module_id=module_id, audience_id=audience_id)
+    db.session.add(link)
+    db.session.commit()
+    return link
 
 
 def simulate_user_activity(db, user):

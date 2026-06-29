@@ -58,6 +58,8 @@ export default defineConfig({
         "pages/main": resolve(__dirname, "assets/js/pages/main.js"),
         "pages/challenge": resolve(__dirname, "assets/js/pages/challenge.js"),
         "pages/challenges": resolve(__dirname, "assets/js/pages/challenges.js"),
+        "pages/audience": resolve(__dirname, "assets/js/pages/audience.js"),
+        "pages/module": resolve(__dirname, "assets/js/pages/module.js"),
         "pages/configs": resolve(__dirname, "assets/js/pages/configs.js"),
         "pages/notifications": resolve(
           __dirname,
