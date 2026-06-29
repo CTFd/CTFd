@@ -2,7 +2,7 @@ import datetime
 from collections import namedtuple
 
 from sqlalchemy import func as sa_func
-from sqlalchemy.sql import and_, false, true
+from sqlalchemy.sql import and_, false, or_, true
 
 from CTFd.cache import cache
 from CTFd.models import Challenges, Ratings, Solves, Submissions, Users, db
@@ -40,7 +40,11 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
     # Admins can see hidden and locked challenges in the admin view
     if admin is False:
         chal_q = chal_q.filter(
-            and_(Challenges.state != "hidden", Challenges.state != "locked")
+            and_(Challenges.state != "hidden", Challenges.state != "locked"),
+            or_(
+                Challenges.scheduled_at.is_(None),
+                Challenges.scheduled_at <= datetime.datetime.utcnow(),
+            ),
         )
     chal_q = (
         chal_q.filter_by(**query_args)

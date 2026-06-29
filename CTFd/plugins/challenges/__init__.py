@@ -27,6 +27,7 @@ from CTFd.plugins.challenges.logic import (
     challenge_attempt_any,
     challenge_attempt_team,
 )
+from CTFd.utils.dates import parse_iso_datetime
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip
 
@@ -67,7 +68,14 @@ class BaseChallenge(object):
         :param request:
         :return:
         """
-        data = request.form or request.get_json()
+        data = dict(request.form or request.get_json())
+        if "scheduled_at" in data:
+            try:
+                data["scheduled_at"] = parse_iso_datetime(data["scheduled_at"])
+            except ValueError:
+                raise ChallengeCreateException(
+                    "Invalid 'scheduled_at' — expected ISO 8601 datetime"
+                )
 
         challenge = cls.challenge_model(**data)
 
@@ -116,6 +124,9 @@ class BaseChallenge(object):
             "decay": challenge.decay if challenge.function != "static" else None,
             "minimum": challenge.minimum if challenge.function != "static" else None,
             "function": challenge.function,
+            "scheduled_at": (
+                challenge.scheduled_at.isoformat() if challenge.scheduled_at else None
+            ),
             "type": challenge.type,
             "type_data": {
                 "id": cls.id,
@@ -136,7 +147,13 @@ class BaseChallenge(object):
         :param request:
         :return:
         """
-        data = request.form or request.get_json()
+        data = dict(request.form or request.get_json())
+        if "scheduled_at" in data:
+            try:
+                data["scheduled_at"] = parse_iso_datetime(data["scheduled_at"])
+            except ValueError:
+                raise ChallengeUpdateException("Invalid input for 'scheduled_at'")
+
         for attr, value in data.items():
             # We need to set these to floats so that the next operations don't operate on strings
             if attr in ("initial", "minimum", "decay") and value is not None:

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import datetime
 from unittest.mock import patch
 
 from freezegun import freeze_time
@@ -1521,4 +1522,139 @@ def test_api_challenge_tracking_first_open_only():
             # Multiple opens should still only have one tracking entry
             assert tracking_count == 1
 
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_hidden_from_non_admin_list():
+    """Non-admins do not see visible challenges whose scheduled_at is in the future"""
+
+    app = create_ctfd()
+    with app.app_context():
+        future = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        past = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        gen_challenge(app.db, name="now", scheduled_at=None)
+        gen_challenge(app.db, name="past", scheduled_at=past)
+        gen_challenge(app.db, name="future", scheduled_at=future)
+
+        register_user(app)
+        with login_as_user(app) as client:
+            data = client.get("/api/v1/challenges").get_json()["data"]
+            names = {c["name"] for c in data}
+            assert names == {"now", "past"}
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_visible_to_admin_list():
+    """Admins always see challenges regardless of scheduled_at"""
+
+    app = create_ctfd()
+    with app.app_context():
+        future = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        gen_challenge(app.db, name="future", scheduled_at=future)
+
+        with login_as_user(app, "admin") as admin:
+            data = admin.get("/api/v1/challenges?view=admin").get_json()["data"]
+            assert len(data) == 1
+            assert data[0]["name"] == "future"
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_detail_404_for_non_admin():
+    """Non-admins get 404 on detail endpoint for future-scheduled challenges"""
+
+    app = create_ctfd()
+    with app.app_context():
+        future = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        chal_id = gen_challenge(app.db, scheduled_at=future).id
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{chal_id}")
+            assert r.status_code == 404
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.get(f"/api/v1/challenges/{chal_id}")
+            assert r.status_code == 200
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_attempt_blocked():
+    """Attempts on future-scheduled challenges return 404 for non-admins"""
+
+    app = create_ctfd()
+    with app.app_context():
+        future = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        chal_id = gen_challenge(app.db, scheduled_at=future).id
+        gen_flag(app.db, chal_id)
+
+        register_user(app)
+        with login_as_user(app) as client:
+            r = client.post(
+                "/api/v1/challenges/attempt",
+                json={"challenge_id": chal_id, "submission": "flag"},
+            )
+            assert r.status_code == 404
+            assert Solves.query.count() == 0
+    destroy_ctfd(app)
+
+
+def test_api_challenges_hidden_state_overrides_scheduled_at():
+    """A hidden challenge stays hidden to non-admins even when scheduled_at is in the past"""
+
+    app = create_ctfd()
+    with app.app_context():
+        past = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        chal_id = gen_challenge(
+            app.db, name="hidden_past", state="hidden", scheduled_at=past
+        ).id
+
+        register_user(app)
+        with login_as_user(app) as client:
+            data = client.get("/api/v1/challenges").get_json()["data"]
+            assert data == []
+            r = client.get(f"/api/v1/challenges/{chal_id}")
+            assert r.status_code == 404
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_admin_update_roundtrip():
+    """Admin can set and clear scheduled_at via the update endpoint"""
+    app = create_ctfd()
+    with app.app_context():
+        chal_id = gen_challenge(app.db).id
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.patch(
+                f"/api/v1/challenges/{chal_id}",
+                json={"scheduled_at": "2031-06-15T12:00:00"},
+            )
+            assert r.status_code == 200
+            chal = Challenges.query.filter_by(id=chal_id).first()
+            assert chal.scheduled_at == datetime.datetime(2031, 6, 15, 12, 0, 0)
+
+            r = admin.patch(
+                f"/api/v1/challenges/{chal_id}",
+                json={"scheduled_at": None},
+            )
+            assert r.status_code == 200
+            chal = Challenges.query.filter_by(id=chal_id).first()
+            assert chal.scheduled_at is None
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_tz_aware_normalized_to_utc():
+    """Timezone-aware ISO inputs are normalized to naive UTC for storage"""
+    app = create_ctfd()
+    with app.app_context():
+        chal_id = gen_challenge(app.db).id
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.patch(
+                f"/api/v1/challenges/{chal_id}",
+                json={"scheduled_at": "2031-06-15T14:00:00+02:00"},
+            )
+            assert r.status_code == 200
+            chal = Challenges.query.filter_by(id=chal_id).first()
+            assert chal.scheduled_at == datetime.datetime(2031, 6, 15, 12, 0, 0)
+            assert chal.scheduled_at.tzinfo is None
     destroy_ctfd(app)
