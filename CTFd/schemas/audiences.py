@@ -13,3 +13,4 @@ class AudienceMemberSchema(ma.ModelSchema):
         model = AudienceMembers
         include_fk = True
         dump_only = ("id",)
+        exclude = ("user", "team", "audience")

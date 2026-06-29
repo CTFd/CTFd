@@ -3,8 +3,12 @@ from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.constants import RawEnum
-from CTFd.models import ModuleAudienceAccess, Modules, db
-from CTFd.schemas.modules import ModuleAudienceAccessSchema, ModuleSchema
+from CTFd.models import Challenges, ModuleAudienceAccess, Modules, db
+from CTFd.schemas.modules import (
+    ModuleAudienceAccessSchema,
+    ModuleChallengeSchema,
+    ModuleSchema,
+)
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.helpers.models import build_model_filters
 
@@ -92,6 +96,39 @@ class Module(Resource):
         db.session.commit()
         db.session.close()
         return {"success": True}
+
+
+@modules_namespace.route("/<int:module_id>/challenges")
+class ModuleChallengeList(Resource):
+    @admins_only
+    def get(self, module_id):
+        Modules.query.filter_by(id=module_id).first_or_404()
+        challenges = Challenges.query.filter_by(module_id=module_id).all()
+        schema = ModuleChallengeSchema(many=True)
+        response = schema.dump(challenges)
+        if response.errors:
+            return {"success": False, "errors": response.errors}, 400
+        return {"success": True, "data": response.data}
+
+    @admins_only
+    def post(self, module_id):
+        Modules.query.filter_by(id=module_id).first_or_404()
+        req = request.get_json() or {}
+        challenge_id = req.get("challenge_id")
+        if not challenge_id:
+            return {
+                "success": False,
+                "errors": {"challenge_id": ["challenge_id is required"]},
+            }, 400
+
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+        challenge.module_id = module_id
+        db.session.commit()
+
+        schema = ModuleChallengeSchema()
+        response = schema.dump(challenge)
+        db.session.close()
+        return {"success": True, "data": response.data}
 
 
 @modules_namespace.route("/<int:module_id>/audiences")
