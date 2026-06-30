@@ -1,7 +1,7 @@
 {
-  "_CommentBox-!~{00n}~.js": {
+  "_CommentBox-!~{00p}~.js": {
     "file": "assets/CommentBox-CZ8OEr5k.css",
-    "src": "_CommentBox-!~{00n}~.js"
+    "src": "_CommentBox-!~{00p}~.js"
   },
   "_CommentBox-Ll_d0V3v.js": {
     "file": "assets/CommentBox-Ll_d0V3v.js",
@@ -65,6 +65,14 @@
     "src": "assets/css/main.scss",
     "isEntry": true
   },
+  "assets/js/pages/audience.js": {
+    "file": "assets/pages/audience-DJcsK9l_.js",
+    "src": "assets/js/pages/audience.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js"
+    ]
+  },
   "assets/js/pages/challenge.js": {
     "file": "assets/pages/challenge-bd_a4xnj.js",
     "src": "assets/js/pages/challenge.js",
@@ -110,6 +118,14 @@
     "file": "assets/pages/main-CA4_OjGq.js",
     "src": "assets/js/pages/main.js",
     "isEntry": true
+  },
+  "assets/js/pages/module.js": {
+    "file": "assets/pages/module-c9Kmnhge.js",
+    "src": "assets/js/pages/module.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js"
+    ]
   },
   "assets/js/pages/notifications.js": {
     "file": "assets/pages/notifications-Bj8IYjZ7.js",
