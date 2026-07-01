@@ -181,6 +181,44 @@ def test_api_challenges_get_sort_by_position():
     destroy_ctfd(app)
 
 
+def test_api_challenges_get_filter_by_tag():
+    """Test that challenges can be filtered by tag"""
+    app = create_ctfd()
+    with app.app_context():
+        crypto_chal = gen_challenge(app.db, name="crypto")
+        web_chal = gen_challenge(app.db, name="web")
+        hidden_chal = gen_challenge(app.db, name="hidden", state="hidden")
+        gen_tag(app.db, challenge_id=crypto_chal.id, value="crypto")
+        gen_tag(app.db, challenge_id=web_chal.id, value="web")
+        gen_tag(app.db, challenge_id=hidden_chal.id, value="crypto")
+        crypto_chal_id = crypto_chal.id
+        web_chal_id = web_chal.id
+        hidden_chal_id = hidden_chal.id
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.get("/api/v1/challenges?view=admin&tag=crypto")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert {challenge["id"] for challenge in data} == {
+                crypto_chal_id,
+                hidden_chal_id,
+            }
+
+        register_user(app)
+        with login_as_user(app) as user:
+            r = user.get("/api/v1/challenges?tag=crypto")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert {challenge["id"] for challenge in data} == {crypto_chal_id}
+
+            r = user.get("/api/v1/challenges?tag=web")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert {challenge["id"] for challenge in data} == {web_chal_id}
+
+    destroy_ctfd(app)
+
+
 def test_api_challenges_get_sort_by_position_fallback():
     """Test that challenges with position 0 are sorted by value then ID"""
     app = create_ctfd()
