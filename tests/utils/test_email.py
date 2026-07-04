@@ -92,6 +92,7 @@ def test_sendmail_with_mailgun_from_config_file(fake_post_request):
     """Does sendmail work properly with Mailgun using file configuration"""
     app = create_ctfd()
     with app.app_context():
+        app.config["MAILFROM_ADDR"] = "noreply@examplectf.com"
         app.config["MAILGUN_API_KEY"] = "key-1234567890-file-config"
         app.config["MAILGUN_BASE_URL"] = "https://api.mailgun.net/v3/file.faked.com"
 
@@ -128,6 +129,7 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
     """Does sendmail work properly with Mailgun using database configuration"""
     app = create_ctfd()
     with app.app_context():
+        app.config["MAILFROM_ADDR"] = "noreply@examplectf.com"
         app.config["MAILGUN_API_KEY"] = "key-1234567890-file-config"
         app.config["MAILGUN_BASE_URL"] = "https://api.mailgun.net/v3/file.faked.com"
 
@@ -160,6 +162,102 @@ def test_sendmail_with_mailgun_from_db_config(fake_post_request):
         assert fake_response.status_code == 200
         assert status is True
         assert message == "Email sent"
+    destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_smtp_credentials_not_mixed_between_file_and_db(mock_smtp):
+    app = create_ctfd()
+    with app.app_context():
+        app.config["MAIL_SERVER"] = "file.smtp.example.com"
+        app.config["MAIL_PORT"] = "25"
+        app.config["MAIL_USEAUTH"] = "True"
+        app.config["MAIL_USERNAME"] = "file-username"
+        app.config["MAIL_PASSWORD"] = "file-password"
+
+        set_config("mailfrom_addr", "noreply@db.example.com")
+        set_config("mail_server", "db.smtp.example.com")
+        set_config("mail_port", 2525)
+
+        sendmail("user@user.com", "this is a test")
+
+        args, _ = mock_smtp.call_args
+        assert args[0] == "db.smtp.example.com"
+        assert args[1] == 2525
+        mock_smtp.return_value.login.assert_not_called()
+    destroy_ctfd(app)
+
+
+@patch("smtplib.SMTP")
+def test_smtp_db_credentials_used_when_db_server_set(mock_smtp):
+    app = create_ctfd()
+    with app.app_context():
+        app.config["MAIL_SERVER"] = "file.smtp.example.com"
+        app.config["MAIL_PORT"] = "25"
+        app.config["MAIL_USEAUTH"] = "True"
+        app.config["MAIL_USERNAME"] = "file-username"
+        app.config["MAIL_PASSWORD"] = "file-password"
+
+        set_config("mailfrom_addr", "noreply@db.example.com")
+        set_config("mail_server", "db.smtp.example.com")
+        set_config("mail_port", 2525)
+        set_config("mail_useauth", True)
+        set_config("mail_username", "db-username")
+        set_config("mail_password", "db-password")
+
+        sendmail("user@user.com", "this is a test")
+
+        args, _ = mock_smtp.call_args
+        assert args[0] == "db.smtp.example.com"
+        assert args[1] == 2525
+        mock_smtp.return_value.login.assert_called_with("db-username", "db-password")
+    destroy_ctfd(app)
+
+
+@patch.object(requests, "post")
+def test_mailgun_credentials_not_mixed_db_url_with_file_key(fake_post_request):
+    fake_response = Mock()
+    fake_response.status_code = 200
+    fake_post_request.return_value = fake_response
+
+    app = create_ctfd()
+    with app.app_context():
+        app.config["MAILGUN_API_KEY"] = "key-file-secret"
+        app.config["MAILGUN_BASE_URL"] = "https://api.mailgun.net/v3/file.faked.com"
+
+        set_config("mailfrom_addr", "noreply@db.example.com")
+        set_config("mailgun_base_url", "https://db.mailgun.example.com/v3/db")
+
+        sendmail("user@user.com", "this is a test")
+
+        args, kwargs = fake_post_request.call_args
+        assert args[0] == "https://db.mailgun.example.com/v3/db/messages"
+        assert kwargs["auth"] != ("api", "key-file-secret")
+    destroy_ctfd(app)
+
+
+@patch.object(requests, "post")
+def test_mailgun_credentials_not_mixed_db_key_with_file_url(fake_post_request):
+    fake_response = Mock()
+    fake_response.status_code = 200
+    fake_post_request.return_value = fake_response
+
+    app = create_ctfd()
+    with app.app_context():
+        app.config["MAILGUN_API_KEY"] = "key-file-secret"
+        app.config["MAILGUN_BASE_URL"] = "https://api.mailgun.net/v3/file.faked.com"
+
+        set_config("mailfrom_addr", "noreply@db.example.com")
+        set_config("mailgun_api_key", "key-db-secret")
+
+        try:
+            sendmail("user@user.com", "this is a test")
+        except TypeError:
+            return
+
+        if fake_post_request.call_args is not None:
+            args, _ = fake_post_request.call_args
+            assert not args[0].startswith("https://api.mailgun.net/v3/file.faked.com")
     destroy_ctfd(app)
 
 

@@ -275,3 +275,9 @@ def clear_all_team_sessions():
     cache.delete_memoized(get_team_place)
     cache.delete_memoized(get_team_score)
     cache.delete_memoized(get_team_schema)
+
+
+def clear_accessible_module_ids():
+    from CTFd.utils.modules import get_accessible_module_ids_for_account_id
+
+    cache.delete_memoized(get_accessible_module_ids_for_account_id)

@@ -52,6 +52,10 @@
 					<button type="button" class="btn btn-outline-success" data-toggle="tooltip" title="Mark submissions correct" id="correct-flags-button">
 						<i class="btn-fa fas fa-check"></i>
 					</button>
+					{% elif type == "correct" %}
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Mark submissions incorrect" id="incorrect-flags-button">
+						<i class="btn-fa fas fa-times"></i>
+					</button>
 					{% endif %}
 					{% if request.args.get("full") %}
 					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show truncated flags" id="show-short-flags-button">

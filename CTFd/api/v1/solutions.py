@@ -18,6 +18,7 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.modules import can_access_challenge
 from CTFd.utils.user import get_current_user, is_admin
 
 solutions_namespace = Namespace(
@@ -168,6 +169,8 @@ class Solution(Resource):
             if solution.state == "hidden":
                 abort(404)
             if solution.challenge.state == "hidden":
+                abort(404)
+            if not can_access_challenge(solution.challenge, user):
                 abort(404)
 
             # If the solution state is visible we just let it through
