@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>New Module</h1>
+	</div>
+</div>
+<div class="container">
+	<form id="module-create-form">
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input class="form-control" id="name" name="name" type="text" required>
+		</div>
+		<div class="form-group">
+			<label for="description">Description</label>
+			<textarea class="form-control" id="description" name="description" rows="3"></textarea>
+		</div>
+		<button type="submit" class="btn btn-primary">Create</button>
+	</form>
+</div>
+{% endblock %}
+
+{% block entrypoint %}
+	{{ Assets.js("assets/js/pages/module.js", theme="admin") }}
+{% endblock %}

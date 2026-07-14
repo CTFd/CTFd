@@ -126,9 +126,13 @@ class Challenges(db.Model):
     decay = db.Column(db.Integer, nullable=True)
     position = db.Column(db.Integer, nullable=False, default=0)
     function = db.Column(db.String(32), default="static")
+    module_id = db.Column(
+        db.Integer, db.ForeignKey("modules.id", ondelete="SET NULL"), nullable=True
+    )
 
     requirements = db.Column(db.JSON)
 
+    module = db.relationship("Modules", foreign_keys=[module_id], lazy="select")
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
@@ -1169,6 +1173,88 @@ class Brackets(db.Model):
     name = db.Column(db.String(255))
     description = db.Column(db.Text)
     type = db.Column(db.String(80))
+
+
+class Audiences(db.Model):
+    __tablename__ = "audiences"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.Text)
+    # Discriminator reserved so a future v2 can fold brackets into audiences
+    # (e.g. type="bracket") without a schema migration.
+    type = db.Column(db.String(80), nullable=False, default="standard")
+
+    __mapper_args__ = {"polymorphic_identity": "standard", "polymorphic_on": type}
+
+    def __init__(self, *args, **kwargs):
+        super(Audiences, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<Audience %r>" % self.name
+
+
+class AudienceMembers(db.Model):
+    __tablename__ = "audience_members"
+    id = db.Column(db.Integer, primary_key=True)
+    audience_id = db.Column(
+        db.Integer, db.ForeignKey("audiences.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=True
+    )
+    team_id = db.Column(
+        db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"), nullable=True
+    )
+
+    audience = db.relationship("Audiences", foreign_keys=[audience_id], lazy="select")
+    user = db.relationship("Users", foreign_keys=[user_id], lazy="select")
+    team = db.relationship("Teams", foreign_keys=[team_id], lazy="select")
+
+    @hybrid_property
+    def account_id(self):
+        from CTFd.utils import get_config
+
+        user_mode = get_config("user_mode")
+        if user_mode == "teams":
+            return self.team_id
+        elif user_mode == "users":
+            return self.user_id
+
+    __table_args__ = (
+        db.UniqueConstraint("audience_id", "user_id", name="uq_audience_user"),
+        db.UniqueConstraint("audience_id", "team_id", name="uq_audience_team"),
+    )
+
+
+class Modules(db.Model):
+    __tablename__ = "modules"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.Text)
+
+    def __init__(self, *args, **kwargs):
+        super(Modules, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<Module %r>" % self.name
+
+
+class ModuleAudienceAccess(db.Model):
+    __tablename__ = "module_audience_access"
+    id = db.Column(db.Integer, primary_key=True)
+    module_id = db.Column(
+        db.Integer, db.ForeignKey("modules.id", ondelete="CASCADE"), nullable=False
+    )
+    audience_id = db.Column(
+        db.Integer, db.ForeignKey("audiences.id", ondelete="CASCADE"), nullable=False
+    )
+
+    module = db.relationship("Modules", foreign_keys=[module_id], lazy="select")
+    audience = db.relationship("Audiences", foreign_keys=[audience_id], lazy="select")
+
+    __table_args__ = (
+        db.UniqueConstraint("module_id", "audience_id", name="uq_module_audience"),
+    )
 
 
 class Ratings(db.Model):
