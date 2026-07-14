@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Challenges, Solutions, SolutionUnlocks
+from CTFd.models import Challenges, SolutionFiles, Solutions, SolutionUnlocks
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -332,6 +332,39 @@ def test_api_solutions_delete_admin():
             # Verify solution was deleted from database
             deleted_solution = Solutions.query.get(solution_id)
             assert deleted_solution is None
+    destroy_ctfd(app)
+
+
+def test_api_solutions_delete_admin_with_solution_files():
+    """Can an admin delete a solution that has an associated SolutionFiles"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        solution = gen_solution(app.db, challenge_id=1)
+        solution_id = solution.id
+
+        # Attach a file to the solution
+        solution_file = SolutionFiles(
+            solution_id=solution_id, location="solution/test.txt"
+        )
+        app.db.session.add(solution_file)
+        app.db.session.commit()
+        solution_file_id = solution_file.id
+
+        with login_as_user(app, "admin") as client:
+            r = client.delete(f"/api/v1/solutions/{solution_id}", json="")
+            assert r.status_code == 200
+            data = r.get_json()
+            assert data["success"] is True
+
+            # Solution should be deleted
+            assert Solutions.query.get(solution_id) is None
+
+            # The SolutionFiles row should still exist with solution_id set to NULL
+            # (ondelete="SET NULL")
+            remaining_file = SolutionFiles.query.get(solution_file_id)
+            assert remaining_file is not None
+            assert remaining_file.solution_id is None
     destroy_ctfd(app)
 
 

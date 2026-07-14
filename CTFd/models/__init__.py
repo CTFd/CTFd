@@ -372,7 +372,7 @@ class PageFiles(Files):
 
 class SolutionFiles(Files):
     __mapper_args__ = {"polymorphic_identity": "solution"}
-    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id"))
+    solution_id = db.Column(db.Integer, db.ForeignKey("solutions.id", ondelete="SET NULL"))
 
 
 class Flags(db.Model):
