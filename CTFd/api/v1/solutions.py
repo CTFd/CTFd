@@ -8,10 +8,9 @@ from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.constants import RawEnum
-from CTFd.models import Solutions, SolutionFiles, SolutionUnlocks, db
+from CTFd.models import SolutionFiles, Solutions, SolutionUnlocks, db
 from CTFd.schemas.solutions import SolutionSchema
 from CTFd.utils.challenges import get_solve_ids_for_user_id
-from CTFd.utils.uploads import delete_file
 from CTFd.utils.decorators import (
     admins_only,
     authed_only,
@@ -20,6 +19,7 @@ from CTFd.utils.decorators import (
 )
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modules import can_access_challenge
+from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_current_user, is_admin
 
 solutions_namespace = Namespace(
