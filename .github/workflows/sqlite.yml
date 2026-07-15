@@ -20,7 +20,7 @@ jobs:
 
     name: Python ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup python
         uses: actions/setup-python@v6
         with:
@@ -43,7 +43,7 @@ jobs:
             TESTING_DATABASE_URL: 'sqlite://'
 
       - name: Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: ./coverage.xml
 
