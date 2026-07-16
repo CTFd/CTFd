@@ -1096,3 +1096,25 @@ def test_api_complete_solution_unlock_flow():
             assert "html" in data["data"]
 
     destroy_ctfd(app)
+
+
+def test_api_solutions_scheduled_at_blocked():
+    """A visible solution for a future-scheduled challenge is 404 for non-admins"""
+    import datetime
+
+    app = create_ctfd()
+    with app.app_context():
+        future = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        gen_challenge(app.db, scheduled_at=future)
+        solution_id = gen_solution(app.db, challenge_id=1, state="visible").id
+        register_user(app)
+
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 404
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.get(f"/api/v1/solutions/{solution_id}")
+            assert r.status_code == 200
+
+    destroy_ctfd(app)

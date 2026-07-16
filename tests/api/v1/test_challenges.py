@@ -1667,3 +1667,43 @@ def test_api_challenges_scheduled_at_tz_aware_normalized_to_utc():
             assert chal.scheduled_at == datetime.datetime(2031, 6, 15, 12, 0, 0)
             assert chal.scheduled_at.tzinfo is None
     destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_solves_endpoint_blocked():
+    """Non-admins get 404 on the solves endpoint for future-scheduled challenges"""
+    app = create_ctfd()
+    with app.app_context():
+        future = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        past = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+        future_id = gen_challenge(app.db, name="future", scheduled_at=future).id
+        past_id = gen_challenge(app.db, name="past", scheduled_at=past).id
+
+        register_user(app)
+        with login_as_user(app) as client:
+            assert (
+                client.get(f"/api/v1/challenges/{future_id}/solves").status_code == 404
+            )
+            assert client.get(f"/api/v1/challenges/{past_id}/solves").status_code == 200
+
+        with login_as_user(app, "admin") as admin:
+            assert (
+                admin.get(f"/api/v1/challenges/{future_id}/solves").status_code == 200
+            )
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_hint_blocked():
+    """Non-admins get 404 fetching a hint for a future-scheduled challenge"""
+    app = create_ctfd()
+    with app.app_context():
+        future = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        chal_id = gen_challenge(app.db, scheduled_at=future).id
+        hint_id = gen_hint(app.db, challenge_id=chal_id, content="secret hint").id
+
+        register_user(app)
+        with login_as_user(app) as client:
+            assert client.get(f"/api/v1/hints/{hint_id}").status_code == 404
+
+        with login_as_user(app, "admin") as admin:
+            assert admin.get(f"/api/v1/hints/{hint_id}").status_code == 200
+    destroy_ctfd(app)
