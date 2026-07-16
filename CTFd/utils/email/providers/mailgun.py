@@ -13,12 +13,15 @@ class MailgunEmailProvider(EmailProvider):
         mailfrom_addr = get_config("mailfrom_addr") or get_app_config("MAILFROM_ADDR")
         mailfrom_addr = formataddr((ctf_name, mailfrom_addr))
 
-        mailgun_base_url = get_config("mailgun_base_url") or get_app_config(
-            "MAILGUN_BASE_URL"
+        custom_mailgun = bool(
+            get_config("mailgun_base_url") or get_config("mailgun_api_key")
         )
-        mailgun_api_key = get_config("mailgun_api_key") or get_app_config(
-            "MAILGUN_API_KEY"
-        )
+        if custom_mailgun:
+            mailgun_base_url = get_config("mailgun_base_url")
+            mailgun_api_key = get_config("mailgun_api_key")
+        else:
+            mailgun_base_url = get_app_config("MAILGUN_BASE_URL")
+            mailgun_api_key = get_app_config("MAILGUN_API_KEY")
         try:
             r = requests.post(
                 mailgun_base_url + "/messages",

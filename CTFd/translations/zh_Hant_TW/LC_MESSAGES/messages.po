@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2025-09-24 00:30\n"
+"PO-Revision-Date: 2026-04-20 22:10\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -20,22 +20,22 @@ msgstr ""
 
 #: CTFd/challenges.py:38
 msgid "Challenge Visibility is set to Admins Only"
-msgstr ""
+msgstr "挑戰可見性設定為僅限管理員"
 
 #: CTFd/challenges.py:41 CTFd/utils/decorators/__init__.py:39
 #, python-format
 msgid "%(ctf_name)s has not started yet"
-msgstr ""
+msgstr "%(ctf_name)s 尚未開始"
 
 #: CTFd/challenges.py:44
 #, python-format
 msgid "%(ctf_name)s is paused"
-msgstr ""
+msgstr "%(ctf_name)s 已暫停"
 
 #: CTFd/challenges.py:47 CTFd/utils/decorators/__init__.py:31
 #, python-format
 msgid "%(ctf_name)s has ended"
-msgstr ""
+msgstr "%(ctf_name)s 已结束"
 
 #: CTFd/forms/auth.py:21 CTFd/forms/self.py:21
 #: CTFd/themes/core-beta/templates/teams/private.html:329
@@ -80,7 +80,7 @@ msgstr "目前密碼"
 #: CTFd/themes/core-beta/templates/teams/teams.html:51
 #: CTFd/themes/core-beta/templates/users/users.html:48
 msgid "Affiliation"
-msgstr "關係"
+msgstr "所屬單位"
 
 #: CTFd/forms/self.py:27 CTFd/forms/teams.py:146 CTFd/forms/teams.py:219
 #: CTFd/forms/teams.py:232 CTFd/forms/users.py:165
@@ -209,7 +209,7 @@ msgstr "您的 CTF 計劃開始的時間。可選的。"
 
 #: CTFd/forms/setup.py:147
 msgid "End Time"
-msgstr "時間結束"
+msgstr "結束時間"
 
 #: CTFd/forms/setup.py:148
 msgid "Time when your CTF is scheduled to end. Optional."
@@ -258,7 +258,7 @@ msgstr "提供您目前的團隊密碼（或您的密碼）以更新您團隊的
 
 #: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
-msgstr "您的團隊的隸屬關係向其他競爭對手公開顯示"
+msgstr "您的團隊的所屬單位向其他競爭對手公開顯示"
 
 #: CTFd/forms/teams.py:147
 msgid "Your team's website publicly shown to other competitors"
@@ -279,7 +279,7 @@ msgstr "搜尋欄"
 #: CTFd/forms/teams.py:217 CTFd/forms/users.py:163
 #: CTFd/themes/core-beta/templates/challenge.html:206
 msgid "Name"
-msgstr "姓名"
+msgstr "名稱"
 
 #: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
 msgid "Parameter"
@@ -303,11 +303,11 @@ msgstr "邀請連結"
 
 #: CTFd/forms/users.py:133
 msgid "Bracket"
-msgstr ""
+msgstr "託架"
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
-msgstr ""
+msgstr "用戶比賽分組"
 
 #: CTFd/forms/users.py:172
 msgid "Search for matching users"
@@ -338,7 +338,7 @@ msgstr "查看提示"
 #: CTFd/themes/core-beta/templates/challenge.html:120
 msgid "attempt"
 msgid_plural "attempts"
-msgstr[0] ""
+msgstr[0] "嘗試"
 
 #: CTFd/themes/core-beta/templates/challenge.html:135
 msgid "Flag"
@@ -350,7 +350,7 @@ msgstr "下一個挑戰"
 
 #: CTFd/themes/core-beta/templates/challenge.html:175
 msgid "Share"
-msgstr ""
+msgstr "共"
 
 #: CTFd/themes/core-beta/templates/challenge.html:207
 #: CTFd/themes/core-beta/templates/setup.html:305
@@ -387,7 +387,7 @@ msgstr "更改電子郵件地址"
 #: CTFd/themes/core-beta/templates/components/navbar.html:169
 #: CTFd/themes/core-beta/templates/login.html:7
 msgid "Login"
-msgstr "登錄"
+msgstr "登入"
 
 #: CTFd/themes/core-beta/templates/login.html:40
 msgid "Forgot your password?"
@@ -424,7 +424,7 @@ msgstr "用於登錄您的帳戶的密碼"
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
 msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
-msgstr ""
+msgstr "註冊即表示您同意<a href=\"%(privacy_link)s\" target=\"_blank\">隱私權政策</a>及<a href=\"%(tos_link)s\" target=\"_blank\">服務條款</a>"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
@@ -445,11 +445,11 @@ msgstr "排行榜"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:24
 msgid "All"
-msgstr ""
+msgstr "皆"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:36
 msgid "Place"
-msgstr ""
+msgstr "部位"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:38
 #: CTFd/themes/core-beta/templates/teams/private.html:330
@@ -459,7 +459,7 @@ msgstr "分數"
 
 #: CTFd/themes/core-beta/templates/scoreboard.html:60
 msgid "Scoreboard is empty"
-msgstr ""
+msgstr "記分板空無一物"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:124
 #: CTFd/themes/core-beta/templates/components/navbar.html:129
@@ -643,16 +643,16 @@ msgstr "登出"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:180
 msgid "Change language"
-msgstr ""
+msgstr "變更語言"
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:199
 #: CTFd/themes/core-beta/templates/components/navbar.html:204
 msgid "Toggle theme"
-msgstr ""
+msgstr "切換主題"
 
 #: CTFd/themes/core-beta/templates/errors/403.html:12
 msgid "403 Forbidden"
-msgstr ""
+msgstr "403 禁止訪問"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:9
 msgid "File not found"
@@ -660,7 +660,7 @@ msgstr "找不到文件"
 
 #: CTFd/themes/core-beta/templates/errors/404.html:12
 msgid "404 Not Found"
-msgstr ""
+msgstr "404 未找到"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:9
 msgid "Too many requests"
@@ -672,11 +672,11 @@ msgstr "請慢一點！"
 
 #: CTFd/themes/core-beta/templates/errors/429.html:13
 msgid "429 Too Many Requests"
-msgstr ""
+msgstr "429 請求過多"
 
 #: CTFd/themes/core-beta/templates/errors/502.html:12
 msgid "502 Bad Gateway"
-msgstr ""
+msgstr "502錯誤的網關"
 
 #: CTFd/themes/core-beta/templates/macros/forms.html:13
 #: CTFd/themes/core-beta/templates/macros/forms.html:36
@@ -718,7 +718,7 @@ msgstr "選擇隊長"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:127
 msgid "Your captain rights have been transferred"
-msgstr "你的隊長權利已經轉移"
+msgstr "您的隊長權限已轉移"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:152
 msgid "Invite Users"
@@ -832,12 +832,12 @@ msgstr "頁"
 #: CTFd/themes/core-beta/templates/users/users.html:14
 #, python-format
 msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
-msgstr ""
+msgstr "搜尋包含 <strong>%(field)s</strong> 且與 <strong>%(q)s</strong> 相符的用戶"
 
 #: CTFd/themes/core-beta/templates/users/users.html:17
 #, python-format
 msgid "Page %(page)s of %(total)s results"
-msgstr ""
+msgstr "第 %(page)s 頁，共 %(total)s 條結果"
 
 #: CTFd/themes/core-beta/templates/users/users.html:46
 msgid "User"

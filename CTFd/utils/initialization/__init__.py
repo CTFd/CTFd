@@ -201,6 +201,16 @@ def init_events(app):
 
 
 def init_request_processors(app):
+    application_root = app.config.get("APPLICATION_ROOT")
+    if application_root != "/":
+        # Do application_root check first to prevent issues with cookie paths
+        @app.before_request
+        def force_subdirectory_redirect():
+            if request.path.startswith(application_root) is False:
+                return redirect(
+                    application_root + request.script_root + request.full_path
+                )
+
     @app.url_defaults
     def inject_theme(endpoint, values):
         if "theme" not in values and app.url_map.is_endpoint_expecting(
@@ -397,14 +407,5 @@ def init_request_processors(app):
         )
         return response
 
-    application_root = app.config.get("APPLICATION_ROOT")
     if application_root != "/":
-
-        @app.before_request
-        def force_subdirectory_redirect():
-            if request.path.startswith(application_root) is False:
-                return redirect(
-                    application_root + request.script_root + request.full_path
-                )
-
         app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {application_root: app})

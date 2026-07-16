@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Audiences
+			<a class="no-decoration" href="{{ url_for('admin.audiences_new') }}">
+				<span role="button" data-toggle="tooltip" title="Create Audience">
+					<i class="btn-fa fas fa-plus-circle"></i>
+				</span>
+			</a>
+		</h1>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 table-responsive">
+			<table id="audiences" class="table table-striped border">
+				<thead>
+				<tr>
+					<th class="text-center"><b>ID</b></th>
+					<th><b>Name</b></th>
+					<th><b>Description</b></th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for audience in audiences %}
+					<tr data-href="{{ url_for('admin.audiences_detail', audience_id=audience.id) }}">
+						<td class="text-center">{{ audience.id }}</td>
+						<td><a href="{{ url_for('admin.audiences_detail', audience_id=audience.id) }}">{{ audience.name }}</a></td>
+						<td>{{ audience.description or '' }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

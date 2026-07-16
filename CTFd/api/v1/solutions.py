@@ -8,7 +8,7 @@ from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.constants import RawEnum
-from CTFd.models import Solutions, SolutionUnlocks, db
+from CTFd.models import SolutionFiles, Solutions, SolutionUnlocks, db
 from CTFd.schemas.solutions import SolutionSchema
 from CTFd.utils.challenges import get_solve_ids_for_user_id
 from CTFd.utils.decorators import (
@@ -18,6 +18,8 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.modules import can_access_challenge
+from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_current_user, is_admin
 
 solutions_namespace = Namespace(
@@ -169,6 +171,8 @@ class Solution(Resource):
                 abort(404)
             if solution.challenge.state == "hidden":
                 abort(404)
+            if not can_access_challenge(solution.challenge, user):
+                abort(404)
 
             # If the solution state is visible we just let it through
             if solution.state == "visible":
@@ -238,6 +242,16 @@ class Solution(Resource):
     )
     def delete(self, solution_id):
         solution = Solutions.query.filter_by(id=solution_id).first_or_404()
+
+        # SolutionFiles do not cascade on delete, so they have to be removed
+        # from both storage and the database before deleting the solution to
+        # avoid a foreign key violation.
+        files = SolutionFiles.query.filter_by(solution_id=solution.id).all()
+        for f in files:
+            delete_file(f.id)
+
+        # Remove any unlocks targeting this solution
+        SolutionUnlocks.query.filter_by(target=solution.id).delete()
 
         db.session.delete(solution)
         db.session.commit()

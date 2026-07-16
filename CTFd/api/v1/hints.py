@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -13,6 +13,7 @@ from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only, during_ctf_time_only
 from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers.models import build_model_filters
+from CTFd.utils.modules import can_access_challenge
 from CTFd.utils.user import get_current_user, is_admin
 
 hints_namespace = Namespace("hints", description="Endpoint to retrieve Hints")
@@ -120,7 +121,14 @@ class Hint(Resource):
     )
     def get(self, hint_id):
         hint = Hints.query.filter_by(id=hint_id).first_or_404()
+        # If the user isn't an admin we should respect the challenge visibility
+        if is_admin() is False:
+            if hint.challenge.state == "hidden":
+                abort(404)
+
         user = get_current_user()
+        if is_admin() is False and not can_access_challenge(hint.challenge, user):
+            abort(404)
 
         # We allow public accessing of hints if challenges are visible and there is no cost or prerequisites
         # If there is a cost or a prereq we should block the user from seeing the hint
