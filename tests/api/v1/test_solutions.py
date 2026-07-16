@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Challenges, Solutions, SolutionUnlocks
+from CTFd.models import Challenges, SolutionFiles, Solutions, SolutionUnlocks
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -332,6 +332,60 @@ def test_api_solutions_delete_admin():
             # Verify solution was deleted from database
             deleted_solution = Solutions.query.get(solution_id)
             assert deleted_solution is None
+    destroy_ctfd(app)
+
+
+def test_api_solutions_delete_admin_with_files_and_unlocks():
+    """Can an admin delete a solution that has associated files and unlocks"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        solution = gen_solution(app.db, challenge_id=1)
+        solution_id = solution.id
+        solution_file = SolutionFiles(
+            solution_id=solution_id, location="abc123/solution.png"
+        )
+        app.db.session.add(solution_file)
+        # Associate an unlock targeting the solution (admin is user id 1)
+        unlock = SolutionUnlocks(user_id=1, target=solution_id)
+        app.db.session.add(unlock)
+        app.db.session.commit()
+        solution_file_id = solution_file.id
+
+        with login_as_user(app, "admin") as client:
+            r = client.delete(f"/api/v1/solutions/{solution_id}", json="")
+            assert r.status_code == 200
+            assert r.get_json()["success"] is True
+
+        assert Solutions.query.get(solution_id) is None
+        assert SolutionFiles.query.get(solution_file_id) is None
+        assert SolutionUnlocks.query.filter_by(target=solution_id).count() == 0
+    destroy_ctfd(app)
+
+
+def test_api_challenge_delete_removes_solution_and_files():
+    """Does deleting a challenge clean up its solution and solution files"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        solution = gen_solution(app.db, challenge_id=1)
+        solution_id = solution.id
+
+        solution_file = SolutionFiles(
+            solution_id=solution_id, location="abc123/solution.png"
+        )
+        app.db.session.add(solution_file)
+        app.db.session.commit()
+        solution_file_id = solution_file.id
+
+        with login_as_user(app, "admin") as client:
+            r = client.delete("/api/v1/challenges/1", json="")
+            assert r.status_code == 200
+            assert r.get_json()["success"] is True
+
+        assert Challenges.query.get(1) is None
+        assert Solutions.query.get(solution_id) is None
+        assert SolutionFiles.query.get(solution_file_id) is None
     destroy_ctfd(app)
 
 

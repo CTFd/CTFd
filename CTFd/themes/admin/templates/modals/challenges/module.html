@@ -1,0 +1,53 @@
+<form id="challenge-module-form">
+	<div class="form-group">
+		<label for="challenge-module-select">
+			Module
+			<br>
+			<small class="form-text text-muted">
+				Challenges assigned to modules can only be seen by members of the audiences linked to that module. Leave unassigned to keep the challenge visible to everyone.
+			</small>
+		</label>
+		<select class="form-control custom-select w-100" id="challenge-module-select" name="module_id">
+			<option value="">none - ungrouped, visible to everyone</option>
+		</select>
+	</div>
+	<button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<script>
+window.addEventListener("load", function() {
+	const select = document.getElementById("challenge-module-select");
+	const current = {{ challenge.module_id | tojson }};
+
+	(async function() {
+		try {
+			const r = await CTFd.fetch("/api/v1/modules", {credentials: "same-origin"});
+			const data = await r.json();
+			if (data.success) {
+				for (const m of data.data) {
+					const opt = document.createElement("option");
+					opt.value = m.id;
+					opt.textContent = m.name + " (#" + m.id + ")";
+					if (current === m.id) opt.selected = true;
+					select.appendChild(opt);
+				}
+			}
+		} catch (e) { console.error(e); }
+	})();
+
+	document.getElementById("challenge-module-form").addEventListener("submit", async function(e) {
+		e.preventDefault();
+		const value = select.value === "" ? null : parseInt(select.value, 10);
+		const r = await CTFd.fetch("/api/v1/challenges/" + CHALLENGE_ID, {
+			method: "PATCH", credentials: "same-origin",
+			body: JSON.stringify({module_id: value}),
+		});
+		const data = await r.json();
+		if (data.success) {
+			window.location.reload();
+		} else {
+			alert(JSON.stringify(data.errors));
+		}
+	});
+});
+</script>
