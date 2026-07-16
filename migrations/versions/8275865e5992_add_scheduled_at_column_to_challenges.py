@@ -1,8 +1,8 @@
 """Add scheduled_at column to Challenges
 
-Revision ID: 6315852a7255
-Revises: 48d8250d19bd
-Create Date: 2026-05-27 14:31:55.231535
+Revision ID: 8275865e5992
+Revises: e69a79ebffd3
+Create Date: 2026-07-16 05:06:15.905263
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "6315852a7255"
-down_revision = "48d8250d19bd"
+revision = "8275865e5992"
+down_revision = "e69a79ebffd3"
 branch_labels = None
 depends_on = None
 
