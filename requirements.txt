@@ -81,7 +81,7 @@ greenlet==3.2.4
     #   sqlalchemy
 gunicorn==23.0.0
     # via -r requirements.in
-idna==3.10
+idna==3.15
     # via requests
 importlib-resources==6.5.2
     # via flask-restx
