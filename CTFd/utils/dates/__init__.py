@@ -94,6 +94,8 @@ def parse_iso_datetime(value):
     if isinstance(value, DateTime):
         dt = value
     else:
+        if isinstance(value, str) and value.endswith("Z"):
+            value = value[:-1] + "+00:00"
         dt = DateTime.fromisoformat(value)
     if dt.tzinfo is not None:
         dt = dt.astimezone(timezone.utc).replace(tzinfo=None)

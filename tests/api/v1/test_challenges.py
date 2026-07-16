@@ -1657,4 +1657,13 @@ def test_api_challenges_scheduled_at_tz_aware_normalized_to_utc():
             chal = Challenges.query.filter_by(id=chal_id).first()
             assert chal.scheduled_at == datetime.datetime(2031, 6, 15, 12, 0, 0)
             assert chal.scheduled_at.tzinfo is None
+
+            r = admin.patch(
+                f"/api/v1/challenges/{chal_id}",
+                json={"scheduled_at": "2031-06-15T12:00:00.000Z"},
+            )
+            assert r.status_code == 200
+            chal = Challenges.query.filter_by(id=chal_id).first()
+            assert chal.scheduled_at == datetime.datetime(2031, 6, 15, 12, 0, 0)
+            assert chal.scheduled_at.tzinfo is None
     destroy_ctfd(app)

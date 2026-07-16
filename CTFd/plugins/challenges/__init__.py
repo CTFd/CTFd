@@ -71,7 +71,7 @@ class BaseChallenge(object):
         :param request:
         :return:
         """
-        data = dict(request.form or request.get_json())
+        data = dict(request.form or request.get_json(silent=True) or {})
         if "scheduled_at" in data:
             try:
                 data["scheduled_at"] = parse_iso_datetime(data["scheduled_at"])
@@ -150,7 +150,7 @@ class BaseChallenge(object):
         :param request:
         :return:
         """
-        data = dict(request.form or request.get_json())
+        data = dict(request.form or request.get_json(silent=True) or {})
         if "scheduled_at" in data:
             try:
                 data["scheduled_at"] = parse_iso_datetime(data["scheduled_at"])
