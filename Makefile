@@ -1,17 +1,17 @@
-# Pinned to match the prettier devDependency in CTFd/themes/admin/package.json.
-PRETTIER := npx --yes prettier@3.2.5
+PRETTIER := CTFd/themes/admin/node_modules/.bin/prettier
 
 lint:
 	ruff check CTFd/ migrations/ tests/
 	ruff format --check --diff .
 	yarn --cwd CTFd/themes/admin lint
-	$(PRETTIER) --check 'CTFd/themes/*/assets/**/*'
+	yarn --cwd CTFd/themes/core lint
 	$(PRETTIER) --check '**/*.md'
 
 format:
 	ruff check --select I --fix CTFd/ migrations/ tests/
 	ruff format .
-	$(PRETTIER) --write 'CTFd/themes/**/assets/**/*'
+	yarn --cwd CTFd/themes/admin format
+	yarn --cwd CTFd/themes/core format
 	$(PRETTIER) --write '**/*.md'
 
 # requirements.txt is generated from uv.lock for consumers that install with

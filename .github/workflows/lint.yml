@@ -18,6 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
             sudo yarn --cwd CTFd/themes/admin install --non-interactive
+            sudo yarn --cwd CTFd/themes/core install --non-interactive
 
       - name: Lint
         run: uv run make lint
