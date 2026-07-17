@@ -15,6 +15,14 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: |
+            CTFd/themes/admin/yarn.lock
+            CTFd/themes/core/yarn.lock
       - name: Install dependencies
         run: |
             sudo yarn --cwd CTFd/themes/admin install --non-interactive
