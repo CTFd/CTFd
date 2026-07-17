@@ -5,6 +5,7 @@ Revises: eb68f277ab61
 Create Date: 2025-10-10 02:07:16.055798
 
 """
+
 import sqlalchemy as sa
 
 from CTFd.plugins.migrations import get_columns_for_table

@@ -62,7 +62,6 @@ def test_theme_header():
     """Config should be able to properly set CSS in theme header"""
     app = create_ctfd()
     with app.app_context():
-
         with login_as_user(app, "admin") as admin:
             css_value = """.test{}"""
             css_value2 = """.test2{}"""

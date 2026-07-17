@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 import re
-import subprocess  # nosec B404
+import subprocess
 import sys
 import tempfile
 import zipfile
@@ -396,8 +396,8 @@ def import_ctf(backup, erase=True, ignore_overrides=False):
                             # Catch odd situation where for some reason config keys are reinserted before import completes
                             if member == "db/config.json":
                                 config_id = int(entry["id"])
-                                side_db.query(  # nosec B608
-                                    f"DELETE FROM config WHERE id={config_id}"  # nosec B608
+                                side_db.query(
+                                    f"DELETE FROM config WHERE id={config_id}"  # noqa: S608
                                 )
                                 table.insert(entry)
                             else:
@@ -410,7 +410,7 @@ def import_ctf(backup, erase=True, ignore_overrides=False):
                         # officially supported, no major work will go into this functionality.
                         # https://stackoverflow.com/a/37972960
                         if '"' not in table_name and "'" not in table_name:
-                            query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(  # nosec
+                            query = "SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), coalesce(max(id)+1,1), false) FROM \"{table_name}\"".format(  # noqa: S608
                                 table_name=table_name
                             )
                             side_db.engine.execute(query)
@@ -519,6 +519,6 @@ def background_import_ctf(backup):
 
     python = sys.executable  # Get path of Python interpreter
     manage_py = Path(app.root_path).parent / "manage.py"  # Path to manage.py
-    subprocess.Popen(  # nosec B603
+    subprocess.Popen(  # noqa: S603
         [python, manage_py, "import_ctf", "--delete_import_on_finish", f.name]
     )

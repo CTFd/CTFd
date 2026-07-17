@@ -119,7 +119,7 @@ def calculate_param_hash(params, allowed_params=None):
         )
     else:
         args_as_sorted_tuple = tuple(sorted(pair for pair in params))
-    args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()  # nosec B303 B324
+    args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()  # noqa: S324
     return args_hash
 
 

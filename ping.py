@@ -2,6 +2,7 @@
 Script for checking that a database server is available.
 Essentially a cross-platform, database agnostic mysqladmin.
 """
+
 import time
 
 from sqlalchemy import create_engine

@@ -17,9 +17,8 @@ from CTFd.exceptions.challenges import (
     ChallengeUpdateException,
 )
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
-from CTFd.models import Challenges
-from CTFd.models import ChallengeTopics as ChallengeTopicsModel
 from CTFd.models import (
+    Challenges,
     Fails,
     Flags,
     Hints,
@@ -31,6 +30,7 @@ from CTFd.models import (
     Tracking,
     db,
 )
+from CTFd.models import ChallengeTopics as ChallengeTopicsModel
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
