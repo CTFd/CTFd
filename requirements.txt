@@ -41,7 +41,7 @@ click==8.2.1
     # via flask
 cmarkgfm==2024.11.20
     # via -r requirements.in
-cryptography==45.0.6
+cryptography==46.0.0
     # via pymysql
 dataset==1.6.2
     # via -r requirements.in
@@ -81,7 +81,7 @@ greenlet==3.2.4
     #   sqlalchemy
 gunicorn==23.0.0
     # via -r requirements.in
-idna==3.10
+idna==3.18
     # via requests
 importlib-resources==6.5.2
     # via flask-restx
@@ -153,7 +153,7 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4
+requests==2.34.2
     # via -r requirements.in
 rpds-py==0.27.0
     # via
@@ -182,7 +182,7 @@ typing-extensions==4.14.1
     # via
     #   alembic
     #   referencing
-urllib3==2.6.0
+urllib3==2.7.0
     # via
     #   -r requirements.in
     #   botocore
