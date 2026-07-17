@@ -41,10 +41,10 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 
 ## Install
 
-1. Install dependencies: `pip install -r requirements.txt`
-   1. You can also use the `prepare.sh` script to install system dependencies using apt.
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run `uv sync` to create a virtualenv with the dependencies installed.
+   1. You can also install into an existing environment with `pip install -r requirements.txt`, which is generated from `uv.lock`.
 2. Modify [CTFd/config.ini](https://github.com/CTFd/CTFd/blob/master/CTFd/config.ini) to your liking.
-3. Use `python serve.py` or `flask run` in a terminal to drop into debug mode.
+3. Use `uv run serve.py` or `uv run flask run` in a terminal to drop into debug mode.
 
 You can use the auto-generated Docker images with the following command:
 
