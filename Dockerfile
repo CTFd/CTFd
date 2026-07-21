@@ -1,5 +1,4 @@
 FROM python:3.11-slim-bookworm AS build
-COPY --from=ghcr.io/astral-sh/uv:0.11.26 /uv /usr/local/bin/uv
 
 WORKDIR /opt/CTFd
 
@@ -11,23 +10,17 @@ RUN apt-get update \
         libssl-dev \
         git \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-ENV UV_PROJECT_ENVIRONMENT=/opt/venv \
-    UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy \
-    UV_NO_CACHE=1
-
-COPY pyproject.toml uv.lock /opt/CTFd/
-RUN uv sync --frozen --no-dev
+    && rm -rf /var/lib/apt/lists/* \
+    && python -m venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . /opt/CTFd
 
-RUN for d in CTFd/plugins/*; do \
+RUN pip install --no-cache-dir -r requirements.txt \
+    && for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
-            uv pip install --python /opt/venv/bin/python -r "$d/requirements.txt";\
+            pip install --no-cache-dir -r "$d/requirements.txt";\
         fi; \
     done;
 
