@@ -41,20 +41,28 @@ CTFd is a Capture The Flag framework focusing on ease of use and customizability
 
 ## Install
 
-1. Install dependencies: `pip install -r requirements.txt`
-   1. You can also use the `prepare.sh` script to install system dependencies using apt.
-2. Modify [CTFd/config.ini](https://github.com/CTFd/CTFd/blob/master/CTFd/config.ini) to your liking.
-3. Use `python serve.py` or `flask run` in a terminal to drop into debug mode.
+The easiest way to get started is to use a [Hosted CTFd instance](https://ctfd.io/pricing/).
 
-You can use the auto-generated Docker images with the following command:
+For self-hosted installations, check out the [CTFd docs](https://docs.ctfd.io/) for [deployment options](https://docs.ctfd.io/docs/deployment/installation) and the [Getting Started](https://docs.ctfd.io/tutorials/getting-started/) guide.
 
-`docker run -p 8000:8000 -it ctfd/ctfd`
+Below is a summary of a few options for self-hosting CTFd:
 
-Or you can use Docker Compose with the following command from the source repository:
+### Docker
+
+You can use Docker Compose with the following command from the source repository:
 
 `docker compose up`
 
-Check out the [CTFd docs](https://docs.ctfd.io/) for [deployment options](https://docs.ctfd.io/docs/deployment/installation) and the [Getting Started](https://docs.ctfd.io/tutorials/getting-started/) guide
+To use the auto-generated Docker images directly:
+
+`docker run -p 8000:8000 -it ctfd/ctfd`
+
+### Development
+
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run `uv sync` to create a virtualenv with the dependencies installed.
+   - You can also install into an existing environment with `pip install -r requirements.txt`, which is generated from `uv.lock`.
+2. Modify [CTFd/config.ini](https://github.com/CTFd/CTFd/blob/master/CTFd/config.ini) to your liking.
+3. Use `uv run serve.py` or `uv run flask run` in a terminal to drop into debug mode.
 
 ## Live Demo
 

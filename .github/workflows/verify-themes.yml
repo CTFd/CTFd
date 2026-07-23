@@ -24,7 +24,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 20.19
+          node-version-file: .node-version
           cache: yarn
           cache-dependency-path: |
             CTFd/themes/admin/yarn.lock

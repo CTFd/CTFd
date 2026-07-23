@@ -8,13 +8,13 @@
     "build": "vite build",
     "format": "prettier --write assets/",
     "lint": "eslint assets/ && prettier --check assets/",
-    "verify": "vite build; git diff --quiet --exit-code"
+    "verify": "vite build && git add -N -- static && git diff --exit-code -- static"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/compiler-sfc": "^3.3.13",
     "eslint": "^8.56.0",
-    "prettier": "3.2.5",
+    "prettier": "^3.2.5",
     "rollup-plugin-copy": "^3.5.0",
     "sass": "^1.70.0",
     "vite": "^5.1.2"

@@ -40,6 +40,7 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+.pytest_cache/
 nosetests.xml
 coverage.xml
 
@@ -47,36 +48,48 @@ coverage.xml
 # TODO: CTFd 4.0 We should consider generating .mo files in a Docker image instead of saving them in git
 # *.mo
 
-# Django stuff:
-*.log
-
 # Sphinx documentation
 docs/_build/
 
 # PyBuilder
 target/
 
-.DS_Store
-
-*.db
-*.log
-*.log.*
-.idea/
-.vscode/
-CTFd/static/uploads
-CTFd/uploads
-.data/
-.ctfd_secret_key
-.*.swp
-
-# Vagrant
-.vagrant
-
-# CTFd Exports
-*.zip
-
 # JS
 node_modules/
 
 # Flask Profiler files
 flask_profiler.sql
+
+# Editors / OS
+.idea/
+.vscode/
+.*.swp
+.DS_Store
+
+# Ruff
+.ruff_cache/
+
+# CTFd-specific
+CTFd/static/uploads
+CTFd/uploads
+.data/
+.ctfd_secret_key
+*.db
+*.log
+*.log.*
+
+# CTFd exports
+*.zip
+
+# non-default plugins
+CTFd/plugins/*
+!CTFd/plugins/challenges/
+!CTFd/plugins/dynamic_challenges/
+!CTFd/plugins/flags/
+!CTFd/plugins/*.py
+
+# non-default themes
+CTFd/themes/*
+!CTFd/themes/admin/
+!CTFd/themes/core/
+!CTFd/themes/core-deprecated/

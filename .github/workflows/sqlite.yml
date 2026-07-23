@@ -21,22 +21,19 @@ jobs:
     name: Python ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v5
-      - name: Setup python
-        uses: actions/setup-python@v6
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
         with:
+          enable-cache: true
           python-version: ${{ matrix.python-version }}
-          architecture: x64
       - name: Install dependencies
         run: |
-            python -m pip install --upgrade pip
-            python -m pip install -r development.txt
             sudo yarn install --non-interactive
-            sudo yarn global add prettier@1.17.0
 
       - name: Test
         run: |
             sudo rm -f /etc/boto.cfg
-            make test
+            uv run make test
         env:
             AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
             AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY

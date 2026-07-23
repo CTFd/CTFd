@@ -14,9 +14,7 @@
 
 @include Raleway.faces(
   $subsets: all,
-  $weights: (
-    500,
-  ),
+  $weights: (500),
   $styles: all,
   $directory: "../webfonts"
 );

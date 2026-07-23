@@ -1,16 +1,23 @@
+PRETTIER := CTFd/themes/admin/node_modules/.bin/prettier
+
 lint:
-	ruff check --select E,F,W,B,C4,I --ignore E402,E501,E712,B904,B905,I001 --exclude=CTFd/uploads CTFd/ migrations/ tests/
-	isort --profile=black --check-only --skip=CTFd/uploads --skip-glob **/node_modules CTFd/ tests/
+	ruff check CTFd/ migrations/ tests/
+	ruff format --check --diff .
 	yarn --cwd CTFd/themes/admin lint
-	black --check --diff --exclude=CTFd/uploads --exclude=node_modules .
-	prettier --check 'CTFd/themes/*/assets/**/*'
-	prettier --check '**/*.md'
+	yarn --cwd CTFd/themes/core lint
+	$(PRETTIER) --check '**/*.md'
 
 format:
-	isort --profile=black --skip=CTFd/uploads --skip-glob **/node_modules CTFd/ tests/
-	black --exclude=CTFd/uploads --exclude=node_modules .
-	prettier --write 'CTFd/themes/**/assets/**/*'
-	prettier --write '**/*.md'
+	ruff check --select I --fix CTFd/ migrations/ tests/
+	ruff format .
+	yarn --cwd CTFd/themes/admin format
+	yarn --cwd CTFd/themes/core format
+	$(PRETTIER) --write '**/*.md'
+
+# requirements.txt is generated from uv.lock for consumers that install with
+# pip. uv.lock is the source of truth - edit pyproject.toml and re-run this.
+requirements:
+	uv export --frozen --no-dev --no-hashes --no-emit-project --output-file requirements.txt
 
 test:
 	pytest -rf --cov=CTFd --cov-context=test --cov-report=xml \
@@ -19,8 +26,6 @@ test:
 		-W ignore::sqlalchemy.exc.SADeprecationWarning \
 		-W ignore::sqlalchemy.exc.SAWarning \
 		-n auto
-	bandit -r CTFd -x CTFd/uploads --skip B105,B322
-	pipdeptree
 
 coverage:
 	coverage html --show-contexts

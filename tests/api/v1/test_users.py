@@ -907,7 +907,6 @@ def test_api_user_send_email():
     """Can an admin post /api/v1/users/<user_id>/email"""
     app = create_ctfd()
     with app.app_context():
-
         register_user(app)
 
         with login_as_user(app) as client:

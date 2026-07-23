@@ -29,7 +29,6 @@ def test_session_invalidation_on_admin_password_change():
     with app.app_context():
         register_user(app)
         with login_as_user(app, name="admin") as admin, login_as_user(app) as user:
-
             r = user.get("/settings")
             assert r.status_code == 200
 
@@ -49,7 +48,6 @@ def test_session_invalidation_on_user_password_change():
     with app.app_context():
         register_user(app)
         with login_as_user(app) as user:
-
             r = user.get("/settings")
             assert r.status_code == 200
 

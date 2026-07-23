@@ -1,7 +1,6 @@
 import requests
-from flask import Blueprint, abort
+from flask import Blueprint, abort, redirect, render_template, request, session, url_for
 from flask import current_app as app
-from flask import redirect, render_template, request, session, url_for
 from flask_babel import lazy_gettext as _l
 
 from CTFd.cache import cache, clear_team_session, clear_user_session
@@ -10,9 +9,8 @@ from CTFd.exceptions.email import (
     UserResetPasswordTokenInvalidException,
 )
 from CTFd.models import Brackets, Teams, UserFieldEntries, UserFields, Users, db
-from CTFd.utils import config, email, get_app_config, get_config
+from CTFd.utils import config, email, get_app_config, get_config, validators
 from CTFd.utils import user as current_user
-from CTFd.utils import validators
 from CTFd.utils.config import can_send_mail, is_teams_mode
 from CTFd.utils.config.integrations import mlc_registration
 from CTFd.utils.config.visibility import registration_visible
@@ -54,7 +52,7 @@ def confirm(data=None):
     if data and request.method == "GET":
         try:
             user_email = verify_email_confirm_token(data)
-        except (UserConfirmTokenInvalidException):
+        except UserConfirmTokenInvalidException:
             return render_template(
                 "confirm.html",
                 errors=["Your confirmation link is invalid, please generate a new one"],
@@ -133,7 +131,7 @@ def reset_password(data=None):
     if data is not None:
         try:
             email_address = verify_reset_password_token(data)
-        except (UserResetPasswordTokenInvalidException):
+        except UserResetPasswordTokenInvalidException:
             return render_template(
                 "reset_password.html",
                 errors=["Your reset link is invalid, please generate a new one"],

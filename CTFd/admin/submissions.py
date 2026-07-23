@@ -51,13 +51,13 @@ def submissions_listing(submission_type):
             request.endpoint,
             submission_type=submission_type,
             page=submissions.prev_num,
-            **args
+            **args,
         ),
         next_page=url_for(
             request.endpoint,
             submission_type=submission_type,
             page=submissions.next_num,
-            **args
+            **args,
         ),
         type=submission_type,
         q=q,
