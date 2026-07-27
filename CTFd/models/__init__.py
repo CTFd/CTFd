@@ -126,6 +126,7 @@ class Challenges(db.Model):
     decay = db.Column(db.Integer, nullable=True)
     position = db.Column(db.Integer, nullable=False, default=0)
     function = db.Column(db.String(32), default="static")
+    scheduled_at = db.Column(db.DateTime, nullable=True)
     module_id = db.Column(
         db.Integer, db.ForeignKey("modules.id", ondelete="SET NULL"), nullable=True
     )

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.sql import or_
 
 from CTFd.cache import cache
@@ -31,7 +33,16 @@ def get_accessible_module_ids(user):
 
 
 def can_access_challenge(challenge, user):
-    """True if the challenge has no module OR is in a module the user can access."""
+    """True if the user can access the challenge.
+
+    A challenge is accessible when its scheduled release time (if any) has
+    passed AND it either has no module or is in a module the user can access.
+    This does not account for admin status; callers are expected to bypass
+    this check for admins where appropriate.
+    """
+    scheduled_at = getattr(challenge, "scheduled_at", None)
+    if scheduled_at is not None and scheduled_at > datetime.utcnow():
+        return False
     module_id = getattr(challenge, "module_id", None)
     if module_id is None:
         return True

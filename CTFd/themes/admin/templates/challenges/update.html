@@ -168,6 +168,17 @@
 	</div>
 	{% endblock %}
 
+	{% block scheduled_at %}
+	<div class="form-group">
+		<label>
+			Scheduled At<br>
+			<small class="form-text text-muted">Optional datetime (in local timezone) when this challenge becomes visible to users. Leave blank to make immediately available if visible.</small>
+		</label>
+
+		<input type="datetime-local" step="1" class="form-control chal-scheduled-at" name="scheduled_at" data-scheduled-at-utc="{{ challenge.scheduled_at.strftime('%Y-%m-%dT%H:%M:%SZ') if challenge.scheduled_at else '' }}">
+	</div>
+	{% endblock %}
+
 	{% block state %}
 	<div class="form-group">
 		<label>

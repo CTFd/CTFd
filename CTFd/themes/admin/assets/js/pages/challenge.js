@@ -1,5 +1,6 @@
 import "./main";
 import $ from "jquery";
+import dayjs from "dayjs";
 import "../compat/json";
 import "bootstrap/js/dist/tab";
 import CTFd from "../compat/CTFd";
@@ -178,9 +179,22 @@ $(() => {
     });
   });
 
+  $(".chal-scheduled-at").each(function () {
+    const $input = $(this);
+    const utc = $input.data("scheduled-at-utc");
+    if (utc) {
+      $input.val(dayjs(utc).format("YYYY-MM-DDTHH:mm:ss"));
+    }
+  });
+
   $("#challenge-update-container > form").submit(function (e) {
     e.preventDefault();
     var params = $(e.target).serializeJSON(true);
+
+    if ("scheduled_at" in params) {
+      const raw = params.scheduled_at;
+      params.scheduled_at = raw ? dayjs(raw).toISOString() : null;
+    }
 
     CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID + "/flags", {
       method: "GET",
