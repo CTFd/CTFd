@@ -17,6 +17,7 @@ services:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
       - .:/opt/CTFd:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       permissions:
         condition: service_completed_successfully
@@ -27,6 +28,7 @@ services:
     networks:
         default:
         internal:
+        frp_containers:
 
   # TODO: CTFd 4.0 Migrate to named volumes. Users will likely need to manually migrate existing files
   permissions:
@@ -70,8 +72,31 @@ services:
     - .data/redis:/data
     networks:
         internal:
-
+  frps:
+    image: snowdreamtech/frps:latest
+    restart: always
+    volumes:
+      - ./conf/frp/frps.ini:/etc/frp/frps.ini
+    ports:
+      - "10000-10100:10000-10100" # port range for frp
+      - "8080:8080"
+    networks:
+      default:
+      frp_containers:
+  frpc:
+    image: snowdreamtech/frpc:latest
+    restart: always
+    volumes:
+      - ./conf/frp/frpc.ini:/etc/frp/frpc.ini
+    depends_on:
+      - frps
+    networks:
+      default:
+      frp_containers:
 networks:
     default:
     internal:
         internal: true
+    frp_containers:
+      name: ctfd_frp-containers
+      external: true
