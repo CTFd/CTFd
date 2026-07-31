@@ -161,10 +161,11 @@ def require_team(f):
 
 def ratelimit(
     method: str = "POST",
-    limit=-1,
-    interval=-1,
+    limit: int = -1,
+    interval: int = -1,
+    key_prefix: str = "rl",
+    *,
     rl_key: str = "RL_DEFAULT",
-    key_prefix="rl",
 ):
     # still accept these keyword args if requested by decorator arguments
     limit_old, interval_old = limit, interval
@@ -177,14 +178,17 @@ def ratelimit(
                 return f(*args, **kwargs)
 
             # figure out limit and interval values
-            if limit_old != -1 and interval_old != -1:
-                # use provided values if requested by decorator args
+            # use provided values if requested by decorator args
+            fallback = current_app.config.get("RL_DEFAULT") or (50, 300)
+            value = current_app.config.get(rl_key) or fallback
+            if limit_old != -1:
                 limit = limit_old
+            else:
+                limit = value[0]
+            if interval_old != -1:
                 interval = interval_old
             else:
-                fallback = current_app.config.get("RL_DEFAULT") or (50, 300)
-                value = current_app.config.get(rl_key) or fallback
-                limit, interval = value[0], value[1]  # value is a tuple (lim,interval)
+                interval = value[1]
 
             # IMO the following code is not doing what the timeout response claims it does...
 
