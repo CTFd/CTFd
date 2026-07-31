@@ -1,6 +1,6 @@
 import functools
 
-from flask import abort, jsonify, redirect, request, url_for
+from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask_babel import gettext
 
 from CTFd.cache import cache
@@ -8,6 +8,7 @@ from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.dates import ctf_ended, ctf_started, ctftime, view_after_ctf
+from CTFd.utils.logging import log
 from CTFd.utils.user import authed, get_current_team, get_current_user, is_admin
 
 
@@ -159,12 +160,23 @@ def require_team(f):
     return require_team_wrapper
 
 
-def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
+def ratelimit(method: str = "POST", rl_key: str = "RL_DEFAULT"):
     def ratelimit_decorator(f):
         @functools.wraps(f)
         def ratelimit_function(*args, **kwargs):
+            # config option to skip RL entirely
+            if current_app.config.get("RL_DISABLE_COMPLETELY", False):
+                return f(*args, **kwargs)
+
+            # figure out limit and interval values
+            fallback = current_app.config.get("RL_DEFAULT") or (10, 60)
+            value = current_app.config.get(rl_key) or fallback
+            limit, interval = value[0], value[1]  # value is a tuple (lim,interval)
+
+            # IMO the following code is not doing what the timeout response claims it does...
+
             ip_address = current_user.get_ip()
-            key = "{}:{}:{}".format(key_prefix, ip_address, request.endpoint)
+            key = f"ratelimit:{ip_address}:{request.endpoint}"
             current = cache.get(key)
 
             if request.method == method:

@@ -66,6 +66,21 @@ def empty_str_cast(value, default=None):
     return value
 
 
+def int_tuple_cast(value: str, num_ints: int = 2):
+    values: list[str] = value.split(",")
+    ints: list[int] = []
+    try:
+        for i in range(len(values)):
+            ints.append(int(values[i].strip()))
+    except ValueError:
+        return None
+
+    if len(ints) != num_ints:
+        return None
+
+    return ints
+
+
 def gen_secret_key():
     # Attempt to read the secret from the secret file
     # This will fail if the secret has not been written
@@ -184,6 +199,19 @@ class ServerConfig(object):
         r"^172\.(1[6-9]|2[0-9]|3[0-1])\.",
         r"^192\.168\.",
     ]
+
+    # === RATELIMIT ===
+    RL_DISABLE_COMPLETELY = process_boolean_str(config_ini["ratelimits"].get("RL_DISABLE_COMPLETELY", "")) if config_ini.has_section("ratelimits") else False
+    RL_DEFAULT = int_tuple_cast(config_ini["ratelimits"].get("RL_DEFAULT", "")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_CONFIRM = int_tuple_cast(config_ini["ratelimits"].get("RL_CONFIRM", "")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_RESET_PASSWORD = int_tuple_cast(config_ini["ratelimits"].get("RL_RESET_PASSWORD", "")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_REGISTER = int_tuple_cast(config_ini["ratelimits"].get("RL_REGISTER", "")) if config_ini.has_section("ratelimits") else (10,5)
+    RL_LOGIN = int_tuple_cast(config_ini["ratelimits"].get("RL_LOGIN", "")) if config_ini.has_section("ratelimits") else (10,5)
+    RL_OAUTH_REDIRECT = int_tuple_cast(config_ini["ratelimits"].get("RL_OAUTH_REDIRECT", "")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_JOIN_TEAM = int_tuple_cast(config_ini["ratelimits"].get("RL_JOIN_TEAM", "")) if config_ini.has_section("ratelimits") else (10,5)
+    RL_EXPORT = int_tuple_cast(config_ini["ratelimits"].get("RL_EXPORT", "")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_EMAIL_USER = int_tuple_cast(config_ini["ratelimits"].get("RL_EMAIL_USER", "")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_EVENTS = int_tuple_cast(config_ini["ratelimits"].get("RL_EVENTS", "")) if config_ini.has_section("ratelimits") else (150,60)
 
     # === EMAIL ===
     MAILFROM_ADDR: str = config_ini["email"]["MAILFROM_ADDR"] \
