@@ -202,7 +202,7 @@ class ServerConfig(object):
 
     # === RATELIMIT ===
     RL_DISABLE_COMPLETELY = process_boolean_str(config_ini["ratelimits"].get("RL_DISABLE_COMPLETELY", "")) if config_ini.has_section("ratelimits") else False
-    RL_DEFAULT = int_tuple_cast(config_ini["ratelimits"].get("RL_DEFAULT", "")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_DEFAULT = int_tuple_cast(config_ini["ratelimits"].get("RL_DEFAULT", "")) if config_ini.has_section("ratelimits") else (50,300)
     RL_CONFIRM = int_tuple_cast(config_ini["ratelimits"].get("RL_CONFIRM", "")) if config_ini.has_section("ratelimits") else (10,60)
     RL_RESET_PASSWORD = int_tuple_cast(config_ini["ratelimits"].get("RL_RESET_PASSWORD", "")) if config_ini.has_section("ratelimits") else (10,60)
     RL_REGISTER = int_tuple_cast(config_ini["ratelimits"].get("RL_REGISTER", "")) if config_ini.has_section("ratelimits") else (10,5)

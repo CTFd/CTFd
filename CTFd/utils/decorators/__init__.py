@@ -169,7 +169,7 @@ def ratelimit(method: str = "POST", rl_key: str = "RL_DEFAULT"):
                 return f(*args, **kwargs)
 
             # figure out limit and interval values
-            fallback = current_app.config.get("RL_DEFAULT") or (10, 60)
+            fallback = current_app.config.get("RL_DEFAULT") or (50, 300)
             value = current_app.config.get(rl_key) or fallback
             limit, interval = value[0], value[1]  # value is a tuple (lim,interval)
 
