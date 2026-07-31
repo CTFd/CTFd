@@ -201,17 +201,17 @@ class ServerConfig(object):
     ]
 
     # === RATELIMIT ===
-    RL_DISABLE_COMPLETELY = process_boolean_str(config_ini["ratelimits"].get("RL_DISABLE_COMPLETELY", "")) if config_ini.has_section("ratelimits") else False
-    RL_DEFAULT = int_tuple_cast(config_ini["ratelimits"].get("RL_DEFAULT", "")) if config_ini.has_section("ratelimits") else (50,300)
-    RL_CONFIRM = int_tuple_cast(config_ini["ratelimits"].get("RL_CONFIRM", "")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_RESET_PASSWORD = int_tuple_cast(config_ini["ratelimits"].get("RL_RESET_PASSWORD", "")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_REGISTER = int_tuple_cast(config_ini["ratelimits"].get("RL_REGISTER", "")) if config_ini.has_section("ratelimits") else (10,5)
-    RL_LOGIN = int_tuple_cast(config_ini["ratelimits"].get("RL_LOGIN", "")) if config_ini.has_section("ratelimits") else (10,5)
-    RL_OAUTH_REDIRECT = int_tuple_cast(config_ini["ratelimits"].get("RL_OAUTH_REDIRECT", "")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_JOIN_TEAM = int_tuple_cast(config_ini["ratelimits"].get("RL_JOIN_TEAM", "")) if config_ini.has_section("ratelimits") else (10,5)
-    RL_EXPORT = int_tuple_cast(config_ini["ratelimits"].get("RL_EXPORT", "")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_EMAIL_USER = int_tuple_cast(config_ini["ratelimits"].get("RL_EMAIL_USER", "")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_EVENTS = int_tuple_cast(config_ini["ratelimits"].get("RL_EVENTS", "")) if config_ini.has_section("ratelimits") else (150,60)
+    RL_DISABLE_COMPLETELY = process_boolean_str(config_ini["ratelimits"].get("RL_DISABLE_COMPLETELY", "false")) if config_ini.has_section("ratelimits") else False
+    RL_DEFAULT = int_tuple_cast(config_ini["ratelimits"].get("RL_DEFAULT", "50,300")) if config_ini.has_section("ratelimits") else (50,300)
+    RL_CONFIRM = int_tuple_cast(config_ini["ratelimits"].get("RL_CONFIRM", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_RESET_PASSWORD = int_tuple_cast(config_ini["ratelimits"].get("RL_RESET_PASSWORD", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_REGISTER = int_tuple_cast(config_ini["ratelimits"].get("RL_REGISTER", "10,5")) if config_ini.has_section("ratelimits") else (10,5)
+    RL_LOGIN = int_tuple_cast(config_ini["ratelimits"].get("RL_LOGIN", "10,5")) if config_ini.has_section("ratelimits") else (10,5)
+    RL_OAUTH_REDIRECT = int_tuple_cast(config_ini["ratelimits"].get("RL_OAUTH_REDIRECT", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_JOIN_TEAM = int_tuple_cast(config_ini["ratelimits"].get("RL_JOIN_TEAM", "10,5")) if config_ini.has_section("ratelimits") else (10,5)
+    RL_EXPORT = int_tuple_cast(config_ini["ratelimits"].get("RL_EXPORT", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_EMAIL_USER = int_tuple_cast(config_ini["ratelimits"].get("RL_EMAIL_USER", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
+    RL_EVENTS = int_tuple_cast(config_ini["ratelimits"].get("RL_EVENTS", "150,60")) if config_ini.has_section("ratelimits") else (150,60)
 
     # === EMAIL ===
     MAILFROM_ADDR: str = config_ini["email"]["MAILFROM_ADDR"] \
