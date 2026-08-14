@@ -1,9 +1,0 @@
-serverAddr = "frps"
-serverPort = 7000
-
-auth.method = "token"
-auth.token = "{{ .Envs.FRP_TOKEN }}"
-
-[webServer]
-addr = "0.0.0.0"
-port = 7400
