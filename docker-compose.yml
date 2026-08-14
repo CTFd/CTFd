@@ -1,6 +1,7 @@
 services:
   ctfd:
     build: .
+    user: root
     restart: always
     ports:
       - "8000:8000"
@@ -8,6 +9,7 @@ services:
       - UPLOAD_FOLDER=/var/uploads
       - DATABASE_URL=mysql+pymysql://ctfd:ctfd@db/ctfd
       - REDIS_URL=redis://cache:6379
+      - DOCKER_API_VERSION=auto
       - WORKERS=1
       - LOG_FOLDER=/var/log/CTFd
       - ACCESS_LOG=-
@@ -17,7 +19,7 @@ services:
       - .data/CTFd/logs:/var/log/CTFd
       - .data/CTFd/uploads:/var/uploads
       - .:/opt/CTFd:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       permissions:
         condition: service_completed_successfully
@@ -28,7 +30,7 @@ services:
     networks:
         default:
         internal:
-        frp_containers:
+
 
   # TODO: CTFd 4.0 Migrate to named volumes. Users will likely need to manually migrate existing files
   permissions:
@@ -76,7 +78,7 @@ services:
     image: snowdreamtech/frps:latest
     restart: always
     volumes:
-      - ./conf/frp/frps.ini:/etc/frp/frps.ini
+      - ./conf/frp/frps.toml:/etc/frp/frps.toml
     ports:
       - "10000-10100:10000-10100" # port range for frp
       - "8080:8080"
@@ -87,7 +89,7 @@ services:
     image: snowdreamtech/frpc:latest
     restart: always
     volumes:
-      - ./conf/frp/frpc.ini:/etc/frp/frpc.ini
+      - ./conf/frp/frpc.toml:/etc/frp/frpc.toml
     depends_on:
       - frps
     networks:

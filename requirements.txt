@@ -152,7 +152,7 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4
+requests==2.31.0
     # via ctfd
 rpds-py==0.27.0
     # via
@@ -185,7 +185,7 @@ typing-extensions==4.14.1
     # via
     #   alembic
     #   referencing
-urllib3==2.6.0
+urllib3==1.26.18
     # via
     #   botocore
     #   ctfd
