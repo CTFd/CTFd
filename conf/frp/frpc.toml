@@ -1,13 +1,9 @@
 serverAddr = "frps"
 serverPort = 7000
-auth.token = "dlrjfdhoahffk!"
+
+auth.method = "token"
+auth.token = "{{ .Envs.FRP_TOKEN }}"
 
 [webServer]
 addr = "0.0.0.0"
 port = 7400
-[direct_2_961cab07-c15d-4011-8fbf-fae625d0fd3b]
-type = tcp
-local_ip = 2-961cab07-c15d-4011-8fbf-fae625d0fd3b
-local_port = 9999
-use_compression = true
-remote_port = 10100

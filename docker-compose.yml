@@ -77,6 +77,8 @@ services:
   frps:
     image: snowdreamtech/frps:latest
     restart: always
+    environment:
+      FRP_TOKEN: ${FRP_TOKEN:?Set FRP_TOKEN in .env}
     volumes:
       - ./conf/frp/frps.toml:/etc/frp/frps.toml
     ports:
@@ -88,6 +90,8 @@ services:
   frpc:
     image: snowdreamtech/frpc:latest
     restart: always
+    environment:
+      FRP_TOKEN: ${FRP_TOKEN:?Set FRP_TOKEN in .env}
     volumes:
       - ./conf/frp/frpc.toml:/etc/frp/frpc.toml
     depends_on:

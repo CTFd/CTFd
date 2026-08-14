@@ -1,3 +1,9 @@
 bindPort = 7000
 vhostHTTPPort = 8080
-auth.token = "dlrjfdhoahffk!"
+
+auth.method = "token"
+auth.token = "{{ .Envs.FRP_TOKEN }}"
+
+allowPorts = [
+  { start = 10000, end = 10100 }
+]

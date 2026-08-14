@@ -5,6 +5,14 @@ __pycache__/
 # C extensions
 *.so
 
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# FRP runtime-generated configuration
+conf/frp/frpc.toml
+
 # Distribution / packaging
 .Python
 env/
