@@ -4,6 +4,7 @@
 ![Linting](https://github.com/CTFd/CTFd/workflows/Linting/badge.svg?branch=master)
 [![MajorLeagueCyber Discourse](https://img.shields.io/discourse/status?server=https%3A%2F%2Fcommunity.majorleaguecyber.org%2F)](https://community.majorleaguecyber.org/)
 [![Documentation Status](https://api.netlify.com/api/v1/badges/6d10883a-77bb-45c1-a003-22ce1284190e/deploy-status)](https://docs.ctfd.io)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/CTFd/CTFd/badge)](https://securityscorecards.dev/viewer/?uri=github.com/CTFd/CTFd)
 
 ## What is CTFd?
 
