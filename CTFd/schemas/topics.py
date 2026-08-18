@@ -15,6 +15,10 @@ class TopicSchema(ma.ModelSchema):
             if isinstance(view, string_types):
                 kwargs["only"] = self.views[view]
             elif isinstance(view, list):
+                # TODO: CTFd 4.0 Passing a list of fields to TopicSchema as the view will be removed
+                print(
+                    "Passing a list of fields to TopicSchema will be removed in CTFd 4.0. Please pass a view name instead."
+                )
                 kwargs["only"] = view
 
         super(TopicSchema, self).__init__(*args, **kwargs)
@@ -33,6 +37,10 @@ class ChallengeTopicSchema(ma.ModelSchema):
             if isinstance(view, string_types):
                 kwargs["only"] = self.views[view]
             elif isinstance(view, list):
+                # TODO: CTFd 4.0 Passing a list of fields to ChallengeTopicSchema as the view will be removed
+                print(
+                    "Passing a list of fields to ChallengeTopicSchema will be removed in CTFd 4.0. Please pass a view name instead."
+                )
                 kwargs["only"] = view
 
         super(ChallengeTopicSchema, self).__init__(*args, **kwargs)

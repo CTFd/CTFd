@@ -1,4 +1,3 @@
-import copy
 from typing import List
 
 from flask import abort, request, session
@@ -125,9 +124,8 @@ class TeamList(Resource):
             )
 
         user_type = get_current_user_type(fallback="user")
-        view = copy.deepcopy(TeamSchema.views.get(user_type))
-        view.remove("members")
-        response = TeamSchema(view=view, many=True).dump(teams.items)
+        schema = TeamSchema(view=user_type, many=True, exclude=["members"])
+        response = schema.dump(teams.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
@@ -161,8 +159,7 @@ class TeamList(Resource):
     def post(self):
         req = request.get_json()
         user_type = get_current_user_type()
-        view = TeamSchema.views.get(user_type)
-        schema = TeamSchema(view=view)
+        schema = TeamSchema(view=user_type)
         response = schema.load(req)
 
         if response.errors:
