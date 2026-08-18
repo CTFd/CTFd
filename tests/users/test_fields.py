@@ -317,3 +317,44 @@ def test_user_needs_all_required_fields():
                 "errors": {"fields": ["Field 'CustomField4' cannot be editted"]},
             }
     destroy_ctfd(app)
+
+
+def test_user_fields_non_public_on_user_list():
+    """Test that non public user fields are not shown on /api/v1/users"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+
+        gen_field(app.db, name="CustomField1", public=True)
+        gen_field(app.db, name="CustomField2", required=False, public=False)
+
+        for field_id in (1, 2):
+            app.db.session.add(
+                UserFieldEntries(
+                    field_id=field_id, value=f"CustomFieldEntry{field_id}", user_id=2
+                )
+            )
+        app.db.session.commit()
+
+        # Anonymous users should only see the public field
+        with app.test_client() as client:
+            r = client.get("/api/v1/users")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
+
+        # Logged in users should only see the public field
+        with login_as_user(app) as client:
+            r = client.get("/api/v1/users")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
+
+        # The user list is always dumped with the user view, so even admins
+        # only see public fields here
+        with login_as_user(app, name="admin") as client:
+            r = client.get("/api/v1/users?view=admin")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
+    destroy_ctfd(app)
