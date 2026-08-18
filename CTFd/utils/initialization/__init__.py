@@ -4,7 +4,7 @@ import os
 import sys
 
 from flask import abort, redirect, render_template, request, session, url_for
-from sqlalchemy.exc import IntegrityError, InvalidRequestError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError, OperationalError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from CTFd.cache import clear_user_recent_ips
@@ -278,6 +278,12 @@ def init_request_processors(app):
                     db.session.rollback()
                     db.session.close()
                     logout_user()
+                except OperationalError:
+                    # Concurrent requests within the same session can race to
+                    # update the same Tracking row (e.g. MySQL error 1020 or a
+                    # deadlock). Visit tracking is best-effort, so roll back and
+                    # continue serving the request instead of returning a 500.
+                    db.session.rollback()
                 else:
                     clear_user_recent_ips(user_id=session["id"])
 
