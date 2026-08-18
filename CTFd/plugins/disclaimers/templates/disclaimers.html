@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3 slide-up">
+            <i class="fas fa-exclamation-triangle text-primary me-3"></i>
+            Disclaimers
+        </h1>
+        <p class="lead mb-4 slide-up" style="animation-delay: 0.1s;">
+            Important notices and terms for using this platform.
+        </p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8 mt-4">
+            {% for disclaimer in disclaimers %}
+            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start mb-3" role="alert">
+                <i class="fas fa-exclamation-circle me-3 mt-1"></i>
+                <span style="font-size: 1.05rem;">{{ disclaimer.content }}</span>
+            </div>
+            {% else %}
+            <div class="text-center text-muted py-4">
+                <h4>No disclaimers.</h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

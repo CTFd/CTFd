@@ -1,0 +1,58 @@
+th.chalname {
+  height: 80px;
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  vertical-align: bottom;
+  padding: 0;
+  font-size: 12px;
+  line-height: 0.8;
+}
+
+.chalname > div {
+  position: relative;
+  top: 0px;
+  left: 30px;
+  height: 100%;
+  overflow: hidden;
+  -webkit-transform: skew(-45deg, 0deg);
+  transform: skew(-45deg, 0deg);
+}
+
+.chalname span {
+  display: inline-block;
+  position: absolute;
+  bottom: 30px;
+  left: -30px;
+  text-align: left;
+  width: 85px;
+  -webkit-transform: skew(45deg, 0deg) rotate(315deg);
+  transform: skew(45deg, 0deg) rotate(315deg);
+}
+
+.table img {
+  display: block;
+  width: 2.15rem;
+  height: auto;
+}
+
+.chalmark {
+  font-size: 20px;
+}
+
+.matrix {
+  overflow-x: scroll;
+  cursor: grab;
+  cursor: -o-grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.container {
+  max-width: 90%;
+}
+
+.table-category-header {
+  border-left: 2px solid #485157;
+  border-right: 2px solid #485157;
+}

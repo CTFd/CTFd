@@ -1,0 +1,639 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    
+    body.landing-mode {
+      padding-top: 0 !important;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    body.landing-mode .navbar.sidebar-nav {
+      position: fixed;
+      z-index: 1205;
+      pointer-events: auto;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    body.landing-mode .navbar.sidebar-nav .dropdown-menu {
+      z-index: 1210 !important;
+      pointer-events: auto;
+    }
+
+    body.landing-mode.terminal-open .navbar.sidebar-nav {
+      opacity: 0 !important;
+      transform: translateY(-20px) !important;
+      pointer-events: none !important;
+    }
+
+    
+    #landing-page {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow-y: auto;
+      background: var(--dark-bg, #000);
+    }
+
+    
+    #landing-page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(32, 201, 151, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 201, 151, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .landing-content {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    
+    .hero-section {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 2rem 3rem;
+    }
+
+    .hero-inner {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(32, 201, 151, 0.08);
+      border: 1px solid rgba(32, 201, 151, 0.2);
+      border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #20c997;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .hero-badge.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-badge .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #20c997;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(32, 201, 151, 0); }
+    }
+
+    
+    .hero-title {
+      --hero-title-line-height: 1.02em;
+      --hero-title-gap: 0.08em;
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.02;
+      color: #fff;
+      margin-bottom: 1.2rem;
+      letter-spacing: -1px;
+      min-height: calc((2 * var(--hero-title-line-height)) + var(--hero-title-gap));
+      position: relative;
+      display: block;
+    }
+
+    .hero-title .text-accent {
+      color: #20c997;
+    }
+
+    .hero-title-line {
+      display: flex;
+      align-items: flex-start;
+      line-height: 1.02;
+      height: var(--hero-title-line-height);
+      min-height: var(--hero-title-line-height);
+      white-space: nowrap;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+    }
+
+    .hero-title-line-accent {
+      display: inline-flex;
+      align-items: baseline;
+      line-height: 1.02;
+      height: var(--hero-title-line-height);
+      min-height: var(--hero-title-line-height);
+      white-space: nowrap;
+      top: calc(var(--hero-title-line-height) + var(--hero-title-gap));
+    }
+
+    
+    .typing-cursor {
+      color: #20c997;
+      animation: blink-cursor 1s infinite;
+      font-weight: normal;
+      margin-left: 2px;
+      display: inline-block;
+      width: 0.65ch;
+      flex: 0 0 0.65ch;
+      line-height: 1;
+      vertical-align: top;
+    }
+
+    @keyframes blink-cursor {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .typing-cursor.hidden {
+      display: none;
+    }
+
+    
+    .hero-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.15rem;
+      color: #8b949e;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      min-height: 1.7em;
+    }
+
+    
+    .fade-in-element {
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-in-element.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    
+    .countdown-container {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .countdown-unit {
+      text-align: center;
+      min-width: 72px;
+    }
+
+    .countdown-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #20c997;
+      line-height: 1;
+      display: block;
+      padding: 12px 0;
+      background: rgba(32, 201, 151, 0.05);
+      border: 1px solid rgba(32, 201, 151, 0.15);
+      border-radius: 8px;
+    }
+
+    .countdown-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .status-live {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #28c840;
+      animation: glow-live 2s ease-in-out infinite;
+      margin-bottom: 2rem;
+    }
+
+    @keyframes glow-live {
+      0%, 100% { text-shadow: 0 0 10px rgba(40, 200, 64, 0.3); }
+      50% { text-shadow: 0 0 20px rgba(40, 200, 64, 0.6); }
+    }
+
+    .status-ended {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: #ff5f57;
+      margin-bottom: 2rem;
+    }
+
+    
+    .cta-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: #20c997;
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .cta-primary:hover {
+      background: #3dd9ad;
+      color: #000;
+      box-shadow: 0 0 24px rgba(32, 201, 151, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: transparent;
+      color: #c9d1d9;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .cta-secondary:hover {
+      border-color: #20c997;
+      color: #20c997;
+      background: rgba(32, 201, 151, 0.05);
+    }
+
+    
+    [data-bs-theme="light"] #landing-page {
+      background: var(--light-bg, #fff);
+    }
+
+    [data-bs-theme="light"] #landing-page::before {
+      background:
+        linear-gradient(rgba(32, 201, 151, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(32, 201, 151, 0.06) 1px, transparent 1px);
+    }
+
+    [data-bs-theme="light"] .hero-title {
+      color: var(--light-text, #000);
+    }
+
+    [data-bs-theme="light"] .hero-title .text-accent {
+      color: #18a07a;
+    }
+
+    [data-bs-theme="light"] .typing-cursor {
+      color: #18a07a;
+    }
+
+    [data-bs-theme="light"] .hero-subtitle {
+      color: var(--light-muted, #6d6d70);
+    }
+
+    [data-bs-theme="light"] .hero-badge {
+      background: rgba(32, 201, 151, 0.06);
+      border-color: rgba(32, 201, 151, 0.15);
+      color: #18a07a;
+    }
+
+    [data-bs-theme="light"] .hero-badge .pulse-dot {
+      background: #18a07a;
+    }
+
+    [data-bs-theme="light"] .countdown-value {
+      color: #18a07a;
+      background: rgba(32, 201, 151, 0.04);
+      border-color: rgba(32, 201, 151, 0.12);
+    }
+
+    [data-bs-theme="light"] .countdown-label {
+      color: #999;
+    }
+
+    [data-bs-theme="light"] .status-live {
+      color: #1a9a36;
+    }
+
+    [data-bs-theme="light"] .status-ended {
+      color: #d93025;
+    }
+
+    [data-bs-theme="light"] .cta-primary {
+      background: #20c997;
+      color: #000;
+    }
+
+    [data-bs-theme="light"] .cta-primary:hover {
+      background: #1aae83;
+      box-shadow: 0 4px 16px rgba(32, 201, 151, 0.3);
+    }
+
+    [data-bs-theme="light"] .cta-secondary {
+      color: var(--light-text, #000);
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+
+    [data-bs-theme="light"] .cta-secondary:hover {
+      border-color: #18a07a;
+      color: #18a07a;
+      background: rgba(32, 201, 151, 0.04);
+    }
+
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        --hero-title-line-height: 1em;
+        --hero-title-gap: 0.06em;
+        font-size: clamp(2.1rem, 9vw, 2.9rem);
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+      .hero-title-line,
+      .hero-title-line-accent {
+        line-height: 1;
+      }
+      .hero-subtitle { font-size: 1rem; }
+      .hero-section { padding: 80px 1.2rem 2rem; }
+      .countdown-value { font-size: 1.6rem; }
+      .countdown-unit { min-width: 58px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: clamp(1.8rem, 10vw, 2.2rem);
+        --hero-title-gap: 0.04em;
+      }
+      .countdown-container { gap: 8px; }
+      .countdown-value { font-size: 1.3rem; padding: 8px 0; }
+      .countdown-unit { min-width: 50px; }
+      .cta-primary, .cta-secondary {
+        padding: 12px 20px;
+        font-size: 0.8rem;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Landing Page Content -->
+<div id="landing-page">
+  <div class="landing-content">
+    <div class="hero-section">
+      <div class="hero-inner">
+        <div class="hero-badge" id="hero-badge">
+          <span class="pulse-dot"></span>
+          <span id="status-badge-text">Initializing</span>
+        </div>
+
+        <h1 class="hero-title" id="hero-title">
+          <span class="hero-title-line" id="type-welcome"></span>
+          <span class="hero-title-line hero-title-line-accent">
+            <span class="text-accent" id="type-ctfname"></span><span class="typing-cursor hidden" id="typing-cursor">_</span>
+          </span>
+        </h1>
+
+        <p class="hero-subtitle" id="hero-subtitle"></p>
+
+        <!-- Timer / Status -->
+        <div id="countdown-area" class="fade-in-element"></div>
+
+        <!-- CTA Buttons -->
+        <div class="cta-group fade-in-element" id="cta-buttons">
+          {% if authed() %}
+            <a href="{{ url_for('challenges.listing') }}" class="cta-primary">
+              <i class="fas fa-flag"></i> Enter Challenges
+            </a>
+            <a href="{{ url_for('scoreboard.listing') }}" class="cta-secondary">
+              <i class="fas fa-trophy"></i> Scoreboard
+            </a>
+          {% else %}
+            {% if registration_visible() %}
+              <a href="{{ url_for('auth.register') }}" class="cta-primary">
+                <i class="fas fa-user-plus"></i> Register Now
+              </a>
+            {% endif %}
+            <a href="{{ url_for('auth.login') }}" class="cta-secondary">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/page.js") }}
+
+  <script>
+  (function() {
+    var CTF_START = {{ Configs.start | tojson }};
+    var CTF_END = {{ Configs.end | tojson }};
+    var CTF_NAME = {{ Configs.ctf_name | tojson }};
+    var SUBTITLE_TEXT = {{ (content if content else "") | tojson }};
+
+    var TYPED_KEY = 'ctf_landing_typed';
+    var hasTypedBefore = localStorage.getItem(TYPED_KEY) === '1';
+    var isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    document.body.classList.add('landing-mode');
+
+    var badge = document.getElementById('hero-badge');
+    var typeWelcome = document.getElementById('type-welcome');
+    var typeCtfName = document.getElementById('type-ctfname');
+    var cursor = document.getElementById('typing-cursor');
+    var subtitleEl = document.getElementById('hero-subtitle');
+    var countdownArea = document.getElementById('countdown-area');
+    var ctaButtons = document.getElementById('cta-buttons');
+
+    function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+    function moveCursorTo(el) {
+      el.parentNode.insertBefore(cursor, el.nextSibling);
+    }
+
+    async function typeText(el, text, speed) {
+      speed = speed || 55;
+      for (var i = 0; i < text.length; i++) {
+        el.textContent += text[i];
+        await sleep(speed + (isMobile ? 0 : Math.random() * 18));
+      }
+    }
+
+    function showElement(el) {
+      el.classList.add('visible');
+    }
+
+    async function runTypingAnimation() {
+      await sleep(300);
+      showElement(badge);
+      await sleep(600);
+
+      cursor.classList.remove('hidden');
+      moveCursorTo(typeWelcome);
+      await typeText(typeWelcome, 'Welcome to', isMobile ? 42 : 60);
+      await sleep(isMobile ? 120 : 200);
+
+      moveCursorTo(typeCtfName);
+      await typeText(typeCtfName, CTF_NAME, isMobile ? 52 : 70);
+      await sleep(isMobile ? 220 : 400);
+
+      subtitleEl.appendChild(cursor);
+
+      if (SUBTITLE_TEXT && SUBTITLE_TEXT.trim() !== "") {
+        subtitleEl.style.display = ''; 
+        subtitleEl.appendChild(cursor);
+        if (isMobile) {
+          subtitleEl.textContent = SUBTITLE_TEXT;
+          await sleep(120);
+        } else {
+          await typeText(subtitleEl, SUBTITLE_TEXT, 20);
+          await sleep(300);
+        }
+      } else {
+        subtitleEl.style.display = 'none';
+        moveCursorTo(typeCtfName);
+        await sleep(100);
+      }
+
+      cursor.classList.add('hidden');
+
+      showElement(countdownArea);
+      await sleep(200);
+      showElement(ctaButtons);
+
+      localStorage.setItem(TYPED_KEY, '1');
+    }
+
+    function showInstant() {
+      showElement(badge);
+      typeWelcome.textContent = 'Welcome to';
+      typeCtfName.textContent = CTF_NAME;
+
+      if (SUBTITLE_TEXT && SUBTITLE_TEXT.trim() !== "") {
+        subtitleEl.textContent = SUBTITLE_TEXT;
+        subtitleEl.style.display = '';
+      } else {
+        subtitleEl.textContent = '';
+        subtitleEl.style.display = 'none'; // ẩn
+      }
+
+      cursor.classList.add('hidden');
+      showElement(countdownArea);
+      showElement(ctaButtons);
+    }
+
+    if (hasTypedBefore) {
+      showInstant();
+    } else {
+      runTypingAnimation();
+    }
+      
+    function updateCountdown() {
+      var area = document.getElementById('countdown-area');
+      var badgeText = document.getElementById('status-badge-text');
+      if (!area) return;
+
+      var now = Date.now() / 1000;
+
+      if (!CTF_START && !CTF_END) {
+        area.innerHTML = '<div class="status-live">\u25cf Competition Open</div>';
+        if (badgeText) badgeText.textContent = 'Open';
+        return;
+      }
+
+      if (CTF_START && now < CTF_START) {
+        var diff = CTF_START - now;
+        var d = Math.floor(diff / 86400);
+        var h = Math.floor((diff % 86400) / 3600);
+        var m = Math.floor((diff % 3600) / 60);
+        var s = Math.floor(diff % 60);
+
+        area.innerHTML =
+          '<div class="countdown-container">' +
+            '<div class="countdown-unit"><span class="countdown-value">' + String(d).padStart(2,'0') + '</span><span class="countdown-label">Days</span></div>' +
+            '<div class="countdown-unit"><span class="countdown-value">' + String(h).padStart(2,'0') + '</span><span class="countdown-label">Hours</span></div>' +
+            '<div class="countdown-unit"><span class="countdown-value">' + String(m).padStart(2,'0') + '</span><span class="countdown-label">Min</span></div>' +
+            '<div class="countdown-unit"><span class="countdown-value">' + String(s).padStart(2,'0') + '</span><span class="countdown-label">Sec</span></div>' +
+          '</div>';
+        if (badgeText) badgeText.textContent = 'Starting Soon';
+      } else if (CTF_END && now > CTF_END) {
+        area.innerHTML = '<div class="status-ended">Competition has ended</div>';
+        if (badgeText) badgeText.textContent = 'Ended';
+      } else {
+        var timerHtml = '<div class="status-live">\u25cf Competition is LIVE</div>';
+        if (CTF_END) {
+          var diff2 = CTF_END - now;
+          var d2 = Math.floor(diff2 / 86400);
+          var h2 = Math.floor((diff2 % 86400) / 3600);
+          var m2 = Math.floor((diff2 % 3600) / 60);
+          var s2 = Math.floor(diff2 % 60);
+          timerHtml +=
+            '<div class="countdown-container" style="margin-top: 0.5rem;">' +
+              '<div class="countdown-unit"><span class="countdown-value">' + String(d2).padStart(2,'0') + '</span><span class="countdown-label">Days</span></div>' +
+              '<div class="countdown-unit"><span class="countdown-value">' + String(h2).padStart(2,'0') + '</span><span class="countdown-label">Hours</span></div>' +
+              '<div class="countdown-unit"><span class="countdown-value">' + String(m2).padStart(2,'0') + '</span><span class="countdown-label">Min</span></div>' +
+              '<div class="countdown-unit"><span class="countdown-value">' + String(s2).padStart(2,'0') + '</span><span class="countdown-label">Sec</span></div>' +
+            '</div>';
+        }
+        area.innerHTML = timerHtml;
+        if (badgeText) badgeText.textContent = 'Live';
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  })();
+  </script>
+{% endblock %}

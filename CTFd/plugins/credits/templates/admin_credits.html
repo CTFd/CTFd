@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container text-center">
+        <h1>Manage Credits</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            
+            <div class="card mb-5">
+                <div class="card-header">Add a New Credit</div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                        <input type="hidden" name="action" value="add">
+                        <div class="form-group">
+                            <label>Credit Text</label>
+                            <input type="text" class="form-control" name="content" placeholder='e.g., user "lg" found unintended solution for "reverse_game_of_chicken"' required>
+                        </div>
+                        <button type="submit" class="btn btn-primary float-right">Add Credit</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-5">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold">Current Credits</span>
+                    
+                    {% if credits %}
+                    <form method="POST" class="m-0">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                        <input type="hidden" name="action" value="delete_all">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you absolutely sure you want to delete ALL credits? This cannot be undone.');">
+                            Remove All Credits
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Credit Description</th>
+                                <th class="text-right" style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for credit in credits %}
+                            <tr>
+                                <td class="align-middle">{{ credit.content }}</td>
+                                <td class="text-right align-middle">
+                                    <form method="POST" style="display:inline;">
+                                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="credit_id" value="{{ credit.id }}">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this credit?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted py-4">No credits currently in the database.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

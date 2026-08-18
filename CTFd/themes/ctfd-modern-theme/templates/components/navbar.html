@@ -1,0 +1,451 @@
+<style>
+  /* Home flyout menu (FAQs / Disclaimers) */
+  .nav-flyout-item {
+    position: relative;
+  }
+
+  .nav-flyout {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.15rem;
+  }
+
+  .nav-flyout-header {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    opacity: 0.55;
+    padding: 0.35rem 0.75rem 0.15rem;
+  }
+
+  .nav-flyout-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-flyout-link i {
+    width: 18px;
+    text-align: center;
+  }
+
+  .nav-flyout-link:hover,
+  .nav-flyout-link:focus {
+    background: rgba(32, 201, 151, 0.12);
+    color: #18a07a;
+  }
+
+  [data-bs-theme="dark"] .nav-flyout-link:hover,
+  [data-bs-theme="dark"] .nav-flyout-link:focus {
+    background: rgba(32, 201, 151, 0.15);
+    color: var(--wmctf-primary);
+  }
+
+  /* Desktop: sidebar collapses labels, so pop the menu out to the right on hover */
+  @media (min-width: 768px) {
+    .navbar.sidebar-nav .nav-flyout {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      margin: 0 0 0 22px;
+      min-width: 210px;
+      padding: 0.4rem;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid var(--light-border);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-6px);
+      transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+      z-index: 1100;
+    }
+
+    /* Invisible bridge so moving the cursor into the flyout doesn't drop the hover */
+    .navbar.sidebar-nav .nav-flyout::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -24px;
+      width: 24px;
+      height: 100%;
+    }
+
+    .navbar.sidebar-nav .nav-flyout-item:hover .nav-flyout,
+    .navbar.sidebar-nav .nav-flyout-item:focus-within .nav-flyout {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    [data-bs-theme="dark"] .navbar.sidebar-nav .nav-flyout {
+      background: var(--dark-card);
+      border-color: var(--dark-border);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+</style>
+
+<nav class="navbar navbar-expand-md fixed-top glass-effect sidebar-nav">
+  <div class="container">
+    <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand d-flex align-items-center">
+      {% if Configs.ctf_logo %}
+        <img
+            class="img-responsive ctf_logo me-2"
+            src="/files/{{ Configs.ctf_logo }}"
+            style="height: 32px; max-height: 32px; width: auto; max-width: 120px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));"
+        >
+      {% endif %}
+      <span class="fw-bold text-gradient nav-label">{{ Configs.ctf_name }}</span>
+    </a>
+
+    <button
+        class="navbar-toggler border-0 p-2" type="button" data-bs-toggle="collapse" data-bs-target="#base-navbars"
+        aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation"
+        style="box-shadow: none;"
+    >
+      <i class="fas fa-bars text-primary"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="base-navbars">
+      <ul class="navbar-nav me-auto">
+        {% set page_icons = {
+          '/bloods': 'fa-tint',
+          '/writeups': 'fa-file-signature',
+          '/faqs': 'fa-question-circle',
+          '/credits': 'fa-award',
+          '/disclaimers': 'fa-exclamation-triangle',
+          '/tos': 'fa-file-contract'
+        } %}
+        {% set info_routes = ['/faqs', '/disclaimers', '/credits'] %}
+        {% set info_pages = [] %}
+        {% set nav_ns = namespace(bloods_page=None) %}
+        {% for page in Plugins.user_menu_pages %}
+          {% if page.route in info_routes %}{% set _ = info_pages.append(page) %}{% endif %}
+          {% if page.route == '/bloods' %}{% set nav_ns.bloods_page = page %}{% endif %}
+        {% endfor %}
+
+        <li class="nav-item nav-flyout-item">
+          <a
+            class="nav-link px-3 py-2 rounded-pill fw-500"
+            href="/"
+            aria-label="{% trans %}Home{% endtrans %}"
+          >
+            <i class="fas fa-home me-1 nav-icon"></i>
+            <span class="nav-label">{% trans %}Home{% endtrans %}</span>
+          </a>
+
+          {% set tos_available = Configs.tos_url or Configs.tos_text %}
+          {% if info_pages or tos_available %}
+          <div class="nav-flyout" role="menu" aria-label="{% trans %}Information{% endtrans %}">
+            <div class="nav-flyout-header">{% trans %}Information{% endtrans %}</div>
+            {% for page in info_pages %}
+              <a
+                class="nav-flyout-link"
+                href="{{ page.route }}"
+                {% if page.link_target %}target="{{ page.link_target }}"{% endif %}
+                role="menuitem"
+              >
+                <i class="fas {{ page_icons.get(page.route, 'fa-link') }}"></i>
+                <span>{{ page.title }}</span>
+              </a>
+            {% endfor %}
+            {% if tos_available %}
+              <a
+                class="nav-flyout-link"
+                href="{{ Configs.tos_link }}"
+                role="menuitem"
+              >
+                <i class="fas {{ page_icons.get('/tos', 'fa-file-contract') }}"></i>
+                <span>{% trans %}Terms of Service{% endtrans %}</span>
+              </a>
+            {% endif %}
+          </div>
+          {% endif %}
+        </li>
+
+        <li class="nav-item nav-divider-item" role="presentation" aria-hidden="true">
+          <span class="nav-divider"></span>
+        </li>
+
+        {% for page in Plugins.user_menu_pages %}
+          {% if page.route not in info_routes and page.route != '/bloods' and (page.route != '/writeups' or authed()) %}
+          <li class="nav-item">
+            <a
+              class="nav-link px-3 py-2 rounded-pill fw-500"
+              href="{{ page.route }}"
+              {% if page.link_target %}target="{{ page.link_target }}"{% endif %}
+              title="{{ page.title }}"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-custom-class="sidebar-tooltip"
+            >
+              <i class="fas {{ page_icons.get(page.route, 'fa-link') }} me-1 nav-icon"></i>
+              <span class="nav-label">{{ page.title }}</span>
+            </a>
+          </li>
+          {% endif %}
+        {% endfor %}
+
+        <li class="nav-item">
+          <a
+            class="nav-link px-3 py-2 rounded-pill fw-500"
+            href="{{ url_for('challenges.listing') }}"
+            title="{% trans %}Challenges{% endtrans %}"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            data-bs-custom-class="sidebar-tooltip"
+          >
+            <i class="fas fa-flag me-1 nav-icon"></i>
+            <span class="nav-label">{% trans %}Challenges{% endtrans %}</span>
+          </a>
+        </li>
+
+        {% if nav_ns.bloods_page %}
+          <li class="nav-item">
+            <a
+              class="nav-link px-3 py-2 rounded-pill fw-500"
+              href="{{ nav_ns.bloods_page.route }}"
+              {% if nav_ns.bloods_page.link_target %}target="{{ nav_ns.bloods_page.link_target }}"{% endif %}
+              title="{{ nav_ns.bloods_page.title }}"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-custom-class="sidebar-tooltip"
+            >
+              <i class="fas {{ page_icons.get(nav_ns.bloods_page.route, 'fa-link') }} me-1 nav-icon"></i>
+              <span class="nav-label">{{ nav_ns.bloods_page.title }}</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% if Configs.account_visibility != 'admins' and Configs.score_visibility != 'admins' %}
+          <li class="nav-item">
+            <a
+              class="nav-link px-3 py-2 rounded-pill fw-500"
+              href="{{ url_for('scoreboard.listing') }}"
+              title="{% trans %}Scoreboard{% endtrans %}"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-custom-class="sidebar-tooltip"
+            >
+              <i class="fas fa-trophy me-1 nav-icon"></i>
+              <span class="nav-label">{% trans %}Scoreboard{% endtrans %}</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% if Configs.account_visibility != 'admins' %}
+          <li class="nav-item">
+            <a
+              class="nav-link px-3 py-2 rounded-pill fw-500"
+              href="{{ url_for('users.listing') }}"
+              title="{% trans %}Users{% endtrans %}"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-custom-class="sidebar-tooltip"
+            >
+              <i class="fas fa-user-friends me-1 nav-icon"></i>
+              <span class="nav-label">{% trans %}Users{% endtrans %}</span>
+            </a>
+          </li>
+
+          {% if Configs.user_mode == 'teams' %}
+            <li class="nav-item">
+              <a
+                class="nav-link px-3 py-2 rounded-pill fw-500"
+                href="{{ url_for('teams.listing') }}"
+                title="{% trans %}Teams{% endtrans %}"
+                data-bs-toggle="tooltip"
+                data-bs-placement="right"
+                data-bs-custom-class="sidebar-tooltip"
+              >
+                <i class="fas fa-users me-1 nav-icon"></i>
+                <span class="nav-label">{% trans %}Teams{% endtrans %}</span>
+              </a>
+            </li>
+          {% endif %}
+        {% endif %}
+      </ul>
+
+      <div class="nav-divider-wrap" role="presentation" aria-hidden="true">
+        <span class="nav-divider"></span>
+      </div>
+
+      <ul class="navbar-nav ms-auto">
+        {% if authed() %}
+          
+          <li class="nav-item">
+            <a class="nav-link px-3 py-2 rounded-pill fw-500 position-relative" href="{{ url_for('views.notifications') }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Notifications{% endtrans %}">
+              <i class="fas fa-bell nav-icon"></i>
+              <span x-data x-show="$store.unread_count > 0" x-text="$store.unread_count" class="badge rounded-pill bg-danger badge-notification position-absolute top-0 start-100 translate-middle"></span>
+            </a>
+          </li>
+
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle px-3 py-2 rounded-pill fw-500 d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle me-1 nav-icon"></i>
+              <span class="nav-label">{{ User.name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 dropdown-menu-scroll" aria-labelledby="userDropdown">
+              <li>
+                <a class="dropdown-item d-flex align-items-center py-2" href="{{ url_for('users.private') }}">
+                  <i class="fas fa-user me-2 text-primary"></i>
+                  {% trans %}Profile{% endtrans %}
+                </a>
+              </li>
+              
+              {% if Configs.user_mode == "teams" %}
+                <li>
+                  <a class="dropdown-item d-flex align-items-center py-2" href="{{ url_for('teams.private') }}">
+                    <i class="fas fa-users me-2 text-primary"></i>
+                    {% trans %}Team{% endtrans %}
+                  </a>
+                </li>
+              {% endif %}
+              
+              <li>
+                <a class="dropdown-item d-flex align-items-center py-2" href="{{ url_for('views.settings') }}">
+                  <i class="fas fa-cogs me-2 text-primary"></i>
+                  {% trans %}Settings{% endtrans %}
+                </a>
+              </li>
+              
+              {% if is_admin() %}
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item d-flex align-items-center py-2" href="{{ url_for('admin.view') }}">
+                    <i class="fas fa-wrench me-2 text-warning"></i>
+                    {% trans %}Admin Panel{% endtrans %}
+                  </a>
+                </li>
+              {% endif %}
+              
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item d-flex align-items-center py-2 text-danger" href="{{ url_for('auth.logout') }}">
+                  <i class="fas fa-sign-out-alt me-2"></i>
+                  {% trans %}Logout{% endtrans %}
+                </a>
+              </li>
+            </ul>
+          </li>
+
+        {% else %}
+          
+          {% if registration_visible() %}
+            <li class="nav-item">
+              <a class="nav-link px-3 py-2 rounded-pill fw-500" href="{{ url_for('auth.register') }}" title="{% trans %}Register{% endtrans %}">
+                <i class="fas fa-user-plus me-1 nav-icon"></i>
+                <span class="nav-label">{% trans %}Register{% endtrans %}</span>
+              </a>
+            </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a class="btn btn-primary px-4 py-2 rounded-pill fw-500" href="{{ url_for('auth.login') }}" title="{% trans %}Login{% endtrans %}">
+              <i class="fas fa-sign-in-alt me-1 nav-icon"></i>
+              <span class="nav-label">{% trans %}Login{% endtrans %}</span>
+            </a>
+          </li>
+        {% endif %}
+
+
+        <li class="nav-item">
+          <button class="nav-link px-3 py-2 rounded-pill fw-500 border-0 bg-transparent theme-switch" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Toggle theme{% endtrans %}">
+            <i class="fas fa-moon nav-icon" id="theme-icon"></i>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script>
+(function() {
+  const navbarCollapse = document.getElementById("base-navbars");
+  const userDropdown = document.getElementById("userDropdown");
+
+  function positionDropdown(event) {
+    const dropdownToggle = event.target.closest(".dropdown-toggle");
+    if (!dropdownToggle) return;
+
+    const dropdownMenu = dropdownToggle.parentElement.querySelector(".dropdown-menu");
+    if (!dropdownMenu || !dropdownMenu.classList.contains("dropdown-menu")) return;
+
+    if (window.innerWidth < 768) return;
+
+    const toggleRect = dropdownToggle.getBoundingClientRect();
+    const bottomPosition = window.innerHeight - toggleRect.bottom;
+
+    dropdownMenu.style.top = "auto";
+    dropdownMenu.style.bottom = bottomPosition + "px";
+    dropdownMenu.style.transform = "none";
+  }
+
+  function resetDropdownOnMobile() {
+    if (window.innerWidth < 768) {
+      document.querySelectorAll(".navbar.sidebar-nav .dropdown-menu").forEach(function(menu) {
+        menu.style.top = "";
+        menu.style.bottom = "";
+        menu.style.transform = "";
+        menu.style.position = "";
+        menu.style.left = "";
+      });
+    }
+  }
+
+  document.querySelectorAll(".navbar.sidebar-nav .dropdown-toggle").forEach(function(toggle) {
+    toggle.addEventListener("click", function(event) {
+      setTimeout(function() {
+        positionDropdown(event);
+      }, 10);
+    });
+  });
+
+  document.querySelectorAll("#base-navbars .nav-link:not(.dropdown-toggle)").forEach(function(link) {
+    link.addEventListener("click", function() {
+      if (window.innerWidth < 768 && navbarCollapse.classList.contains("show")) {
+        var bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+        if (bsCollapse) bsCollapse.hide();
+      }
+    });
+  });
+
+  window.addEventListener("resize", function() {
+    resetDropdownOnMobile();
+  });
+
+  if (window.bootstrap) {
+    if (userDropdown) {
+      const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(userDropdown);
+
+      userDropdown.addEventListener("click", function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        dropdownInstance.toggle();
+      });
+    }
+
+    var tooltipTriggerList = [].slice.call(
+      document.querySelectorAll(".navbar.sidebar-nav [data-bs-toggle='tooltip']")
+    );
+    tooltipTriggerList.map(function(tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl, {
+        trigger: "hover focus",
+        placement: "right",
+      });
+    });
+  }
+})();
+</script>
+

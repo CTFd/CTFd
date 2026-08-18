@@ -1,0 +1,1200 @@
+<div :class="getStyles()" role="document" x-data="Challenge" x-init="id = {{ challenge.id }}">
+  <div class="modal-content challenge-modal" 
+       data-category="{{ challenge.category }}"
+       :class="{ 
+         'submit-pending': isSubmitting,
+         'submit-correct': submitResult === 'correct',
+         'submit-already': submitResult === 'already',
+         'submit-incorrect': submitResult === 'incorrect'
+       }">
+    
+    
+    <div class="challenge-modal-header">
+      <div class="challenge-header-content">
+        
+        <div class="challenge-category-badge">
+          <span class="category-icon">
+            {% set cat = challenge.category | lower %}
+            {% if 'pwn' in cat %}
+              <i class="fas fa-bug"></i>
+            {% elif 'web' in cat %}
+              <i class="fas fa-globe"></i>
+            {% elif 'crypto' in cat %}
+              <i class="fas fa-key"></i>
+            {% elif 'reverse' in cat or 're' == cat %}
+              <i class="fas fa-microchip"></i>
+            {% elif 'forensic' in cat %}
+              <i class="fas fa-search"></i>
+            {% elif 'misc' in cat %}
+              <i class="fas fa-puzzle-piece"></i>
+            {% elif 'osint' in cat %}
+              <i class="fas fa-binoculars"></i>
+            {% elif 'stego' in cat %}
+              <i class="fas fa-image"></i>
+            {% elif 'hardware' in cat %}
+              <i class="fas fa-memory"></i>
+            {% elif 'mobile' in cat %}
+              <i class="fas fa-mobile-alt"></i>
+            {% elif 'blockchain' in cat %}
+              <i class="fab fa-bitcoin"></i>
+            {% else %}
+              <i class="fas fa-flag"></i>
+            {% endif %}
+          </span>
+        </div>
+        
+        
+        <div class="challenge-points-display">
+          <span class="points-value">{{ challenge.value }}</span>
+          <span class="points-label">pts</span>
+        </div>
+      </div>
+      
+      
+      <button type="button" class="challenge-close-btn" data-bs-dismiss="modal" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    
+    <div class="challenge-accent-line"></div>
+
+    
+    <div class="challenge-modal-body">
+      
+      <h2 class="challenge-title">{{ challenge.name }}</h2>
+      
+      
+      {% if tags %}
+      <div class="challenge-tags-row">
+        {% for tag in tags %}
+          <span class="challenge-tag-minimal">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      
+      <div class="challenge-description">
+        {% block description %}{{ challenge.html }}{% endblock %}
+      </div>
+      
+      
+      {% if challenge.connection_info %}
+      <div class="challenge-connection">
+        <div class="connection-label">
+          <i class="fas fa-terminal"></i>
+          <span>Connection</span>
+        </div>
+        <div class="connection-value">
+          {% block connection_info %}
+            {% set conn = challenge.connection_info %}
+            {% if not conn %}
+            {% elif conn.startswith("http") %}
+              <a href="{{ conn }}" target="_blank" rel="noopener noreferrer">{{ conn }}</a>
+            {% else %}
+              <code>{{ conn }}</code>
+            {% endif %}
+          {% endblock %}
+        </div>
+      </div>
+      {% endif %}
+      
+      
+      {% if files %}
+      <div class="challenge-files-section">
+        <div class="files-label">
+          <i class="fas fa-file-download"></i>
+          <span>Files</span>
+        </div>
+        <div class="files-list">
+          {% for file in files %}
+            {% set segments = file.split('/') %}
+            {% set token = file.split('?') | last %}
+            {% if token %}
+              {% set filename = segments | last | replace("?" + token, "") %}
+            {% else %}
+              {% set filename = segments | last %}
+            {% endif %}
+            <a class="file-download-btn" href="{{ file }}" title="{{ filename }}">
+              <i class="fas fa-download"></i>
+              <span>{{ filename }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      
+      
+      {% if hints %}
+      <div class="challenge-hints-section">
+        <div class="hints-label">
+          <i class="fas fa-lightbulb"></i>
+          <span>Hints</span>
+        </div>
+        {% for hint in hints | sort(attribute="cost") %}
+          <div x-data="Hint" x-init="id = {{ hint.id }}" class="hint-item">
+            {% if hint.content %}
+            <details class="hint-details">
+              <summary class="hint-summary">
+                <i class="fas fa-eye"></i>
+                {% trans %}View Hint{% endtrans %}
+              </summary>
+              <div class="hint-content">{{ hint.html | safe }}</div>
+            </details>
+            {% else %}
+            <details @toggle="showHint(event)" class="hint-details locked">
+              <summary class="hint-summary">
+                <i class="fas fa-lock"></i>
+                Unlock for {{ hint.cost }} point{{ hint.cost|pluralize }}
+              </summary>
+              <div class="hint-content" x-html="html"></div>
+            </details>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      
+      {% if max_attempts > 0 %}
+      <div class="challenge-attempts">
+        <span class="attempts-count">{{ attempts }}/{{ max_attempts }}</span>
+        <span class="attempts-label">attempts</span>
+      </div>
+      {% endif %}
+    </div>
+    
+    
+    <div class="challenge-submit-section">
+      {% block input %}
+        <input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
+        <div class="submit-input-wrapper" :class="{ 'has-value': submission.length > 0 }">
+          <input
+            id="challenge-input"
+            class="challenge-input-minimal"
+            type="text"
+            name="submission"
+            @keyup.enter="submitChallengeWithEffect()"
+            placeholder="{% if solved %}{% trans %}This challenge has been solved{% endtrans %}{% else %}{% trans %}Enter flag here...{% endtrans %}{% endif %}"
+            x-model="submission"
+            :disabled="isSubmitting"
+          >
+          <div class="input-border-effect"></div>
+        </div>
+      {% endblock %}
+      
+      {% block submit %}
+        <button
+          id="challenge-submit"
+          class="challenge-submit-btn"
+          type="submit"
+          @click.debounce.500ms="submitChallengeWithEffect()"
+          :disabled="isSubmitting || submission.length === 0"
+        >
+          <span x-show="!isSubmitting">{% trans %}Submit Flag{% endtrans %}</span>
+          <span x-show="isSubmitting" class="submit-spinner">
+            <i class="fas fa-circle-notch fa-spin"></i>
+          </span>
+        </button>
+      {% endblock %}
+    </div>
+    
+    
+    <div class="challenge-response-section">
+      <template x-if="response">
+        <div class="response-message"
+             :class="{
+               'response-correct': response.data.status == 'correct',
+               'response-already': response.data.status == 'already_solved',
+               'response-incorrect': response.data.status == 'incorrect',
+             }">
+          <div class="response-icon">
+            <i x-show="response.data.status == 'correct'" class="fas fa-check-circle"></i>
+            <i x-show="response.data.status == 'already_solved'" class="fas fa-info-circle"></i>
+            <i x-show="response.data.status == 'incorrect'" class="fas fa-times-circle"></i>
+          </div>
+          <span class="response-text" x-text="response.data.message"></span>
+          
+          <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')" class="response-actions">
+            <button x-show="getNextId()" @click="nextChallenge()" class="next-challenge-btn">
+              <i class="fas fa-arrow-right"></i>
+              {% trans %}Next Challenge{% endtrans %}
+            </button>
+          </div>
+        </div>
+      </template>
+    </div>
+    
+    
+    <div class="challenge-solves-section" x-show="showSolvesTab" x-cloak>
+      <div class="solves-header">
+        <h4>
+          <i class="fas fa-users"></i>
+          {% block solves %}
+            {% if solves != None %}
+              {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
+            {% endif %}
+          {% endblock %}
+        </h4>
+        <button @click="showSolvesTab = false" class="solves-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="solves-list">
+        <template x-for="solve in solves">
+          <div class="solve-item">
+            <a :href="solve.account_url" x-text="solve.name" class="solve-name"></a>
+            <span x-text="solve.date" class="solve-date"></span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+
+    <div class="challenge-solution-section" x-show="showSolutionTab" x-cloak>
+      <div class="solution-header">
+        <h4>
+          <i class="fas fa-book-open"></i>
+          {% trans %}Solution{% endtrans %}
+        </h4>
+        <button @click="showSolutionTab = false" class="solution-close-btn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="solution-body">
+        <div x-show="solutionLoading" class="solution-loading">
+          <i class="fas fa-circle-notch fa-spin"></i>
+          <span>{% trans %}Loading solution...{% endtrans %}</span>
+        </div>
+        <template x-if="!solutionLoading && solution">
+          <div class="solution-content" x-html="solution"></div>
+        </template>
+        <template x-if="!solutionLoading && !solution">
+          <div class="solution-empty">
+            {% trans %}The solution could not be loaded.{% endtrans %}
+          </div>
+        </template>
+      </div>
+    </div>
+    
+    
+    <div class="challenge-modal-footer">
+      <button class="solves-toggle-btn" @click="toggleSolves()">
+        <i class="fas fa-trophy"></i>
+        <span>{% if solves != None %}{{ solves }} {% trans %}Solves{% endtrans %}{% endif %}</span>
+      </button>
+
+      <button class="solution-toggle-btn" x-show="getSolutionId()" x-cloak @click="toggleSolution()">
+        <i class="fas fa-book-open"></i>
+        <span>{% trans %}Solution{% endtrans %}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+
+
+
+.challenge-modal {
+  --modal-accent: #20c997;
+  --modal-accent-rgb: 32, 201, 151;
+}
+
+.challenge-modal[data-category*="pwn" i],
+.challenge-modal[data-category*="Pwn" i] {
+  --modal-accent: #ef4444;
+  --modal-accent-rgb: 239, 68, 68;
+}
+
+.challenge-modal[data-category*="web" i],
+.challenge-modal[data-category*="Web" i] {
+  --modal-accent: #f59e0b;
+  --modal-accent-rgb: 245, 158, 11;
+}
+
+.challenge-modal[data-category*="crypto" i],
+.challenge-modal[data-category*="Crypto" i] {
+  --modal-accent: #8b5cf6;
+  --modal-accent-rgb: 139, 92, 246;
+}
+
+.challenge-modal[data-category*="reverse" i],
+.challenge-modal[data-category*="Reverse" i],
+.challenge-modal[data-category*="re" i] {
+  --modal-accent: #0ea5e9;
+  --modal-accent-rgb: 14, 165, 233;
+}
+
+.challenge-modal[data-category*="forensic" i],
+.challenge-modal[data-category*="Forensic" i] {
+  --modal-accent: #06b6d4;
+  --modal-accent-rgb: 6, 182, 212;
+}
+
+.challenge-modal[data-category*="misc" i],
+.challenge-modal[data-category*="Misc" i] {
+  --modal-accent: #14b8a6;
+  --modal-accent-rgb: 20, 184, 166;
+}
+
+.challenge-modal[data-category*="osint" i],
+.challenge-modal[data-category*="OSINT" i] {
+  --modal-accent: #84cc16;
+  --modal-accent-rgb: 132, 204, 22;
+}
+
+
+.challenge-modal {
+  background: #0d0d12;
+  border: 1px solid rgba(var(--modal-accent-rgb), 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+
+.challenge-modal.submit-pending {
+  animation: borderPulse 1.5s ease-in-out infinite;
+}
+
+.challenge-modal.submit-correct {
+  border-color: #20c997;
+  box-shadow: 0 0 30px rgba(32, 201, 151, 0.3), inset 0 0 60px rgba(32, 201, 151, 0.05);
+  animation: correctFlash 0.6s ease-out;
+}
+
+.challenge-modal.submit-already {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 30px rgba(14, 165, 233, 0.3), inset 0 0 60px rgba(14, 165, 233, 0.05);
+  animation: correctFlash 0.6s ease-out;
+}
+
+.challenge-modal.submit-incorrect {
+  border-color: #ef4444;
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.3), inset 0 0 60px rgba(239, 68, 68, 0.05);
+  animation: incorrectShake 0.5s ease-out;
+}
+
+@keyframes borderPulse {
+  0%, 100% { 
+    border-color: rgba(var(--modal-accent-rgb), 0.3);
+    box-shadow: 0 0 20px rgba(var(--modal-accent-rgb), 0.1);
+  }
+  50% { 
+    border-color: rgba(var(--modal-accent-rgb), 0.8);
+    box-shadow: 0 0 40px rgba(var(--modal-accent-rgb), 0.3);
+  }
+}
+
+@keyframes correctFlash {
+  0% { transform: scale(1.02); }
+  50% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes incorrectShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+
+.challenge-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(180deg, rgba(var(--modal-accent-rgb), 0.08) 0%, transparent 100%);
+}
+
+.challenge-header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.challenge-category-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.category-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(var(--modal-accent-rgb), 0.15);
+  border: 1px solid rgba(var(--modal-accent-rgb), 0.3);
+  border-radius: 6px;
+  color: var(--modal-accent);
+  font-size: 0.9rem;
+}
+
+.challenge-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.challenge-points-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.points-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--modal-accent);
+}
+
+.points-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: rgba(var(--modal-accent-rgb), 0.6);
+}
+
+.challenge-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.challenge-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+
+.challenge-accent-line {
+  height: 2px;
+  background: linear-gradient(90deg, var(--modal-accent) 0%, rgba(var(--modal-accent-rgb), 0.2) 50%, transparent 100%);
+  margin: 0 24px;
+}
+
+
+.challenge-modal-body {
+  padding: 24px;
+}
+
+.challenge-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e8e8e8;
+  margin: 0 0 16px 0;
+}
+
+.challenge-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.challenge-tag-minimal {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  background: rgba(var(--modal-accent-rgb), 0.15);
+  border: 1px solid rgba(var(--modal-accent-rgb), 0.3);
+  border-radius: 4px;
+  color: var(--modal-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.challenge-description {
+  color: #aaa;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.challenge-description code {
+  background: rgba(var(--modal-accent-rgb), 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--modal-accent);
+}
+
+.challenge-description pre {
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+
+.challenge-connection {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.connection-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.connection-value code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--modal-accent);
+  background: rgba(var(--modal-accent-rgb), 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+
+.challenge-files-section {
+  margin-bottom: 16px;
+}
+
+.files-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.files-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.file-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(var(--modal-accent-rgb), 0.1);
+  border: 1px solid rgba(var(--modal-accent-rgb), 0.3);
+  border-radius: 6px;
+  color: var(--modal-accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.file-download-btn:hover {
+  background: rgba(var(--modal-accent-rgb), 0.2);
+  color: var(--modal-accent);
+}
+
+
+.challenge-hints-section {
+  margin-bottom: 16px;
+}
+
+.hints-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.hint-details {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.hint-summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #888;
+  transition: all 0.2s ease;
+}
+
+.hint-summary:hover {
+  color: var(--modal-accent);
+}
+
+.hint-content {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+
+.challenge-attempts {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.attempts-count {
+  color: var(--modal-accent);
+}
+
+
+.challenge-submit-section {
+  padding: 0 24px 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.submit-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.challenge-input-minimal {
+  width: 100%;
+  padding: 14px 16px;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: #e8e8e8;
+  transition: all 0.3s ease;
+}
+
+.challenge-input-minimal:focus {
+  outline: none;
+  border-color: var(--modal-accent);
+  box-shadow: 0 0 0 3px rgba(var(--modal-accent-rgb), 0.15);
+}
+
+.challenge-input-minimal::placeholder {
+  color: #555;
+}
+
+.challenge-submit-btn {
+  padding: 14px 24px;
+  background: var(--modal-accent);
+  border: none;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.challenge-submit-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.challenge-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit-spinner {
+  display: inline-flex;
+  align-items: center;
+}
+
+
+.challenge-response-section {
+  padding: 0 24px;
+}
+
+.response-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.response-correct {
+  background: rgba(32, 201, 151, 0.1);
+  border: 1px solid rgba(32, 201, 151, 0.3);
+  color: #20c997;
+}
+
+.response-already {
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  color: #0ea5e9;
+}
+
+.response-incorrect {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.response-icon {
+  font-size: 1.2rem;
+}
+
+.response-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.response-actions {
+  margin-left: auto;
+}
+
+.next-challenge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.next-challenge-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+
+.challenge-solves-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0d0d12;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+.solves-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.solves-header h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  color: var(--modal-accent);
+  margin: 0;
+}
+
+.solves-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.solves-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.solves-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+}
+
+.solve-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.solve-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--modal-accent);
+  text-decoration: none;
+}
+
+.solve-name:hover {
+  text-decoration: underline;
+}
+
+.solve-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+
+.challenge-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.solves-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.solves-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--modal-accent);
+  border-color: rgba(var(--modal-accent-rgb), 0.3);
+}
+
+
+.solution-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(var(--modal-accent-rgb), 0.1);
+  border: 1px solid rgba(var(--modal-accent-rgb), 0.3);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--modal-accent);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.solution-toggle-btn:hover {
+  background: rgba(var(--modal-accent-rgb), 0.2);
+  color: var(--modal-accent);
+}
+
+
+.challenge-solution-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0d0d12;
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+}
+
+.solution-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.solution-header h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  color: var(--modal-accent);
+  margin: 0;
+}
+
+.solution-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.solution-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.solution-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+
+.solution-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.solution-content {
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.solution-content code {
+  background: rgba(var(--modal-accent-rgb), 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--modal-accent);
+}
+
+.solution-content pre {
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.solution-content a {
+  color: var(--modal-accent);
+}
+
+.solution-content img {
+  max-width: 100%;
+}
+
+.solution-empty {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+
+.challenge-modal .modal-body,
+.challenge-modal .modal-header,
+.challenge-modal .modal-footer {
+  display: none !important;
+}
+
+
+@media (max-width: 576px) {
+  .challenge-submit-section {
+    flex-direction: column;
+  }
+  
+  .challenge-submit-btn {
+    width: 100%;
+  }
+  
+  .response-message {
+    flex-wrap: wrap;
+  }
+  
+  .response-actions {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 12px;
+  }
+}
+
+
+[data-bs-theme="light"] .challenge-modal {
+  background: #ffffff;
+  border-color: rgba(var(--modal-accent-rgb), 0.25);
+}
+
+[data-bs-theme="light"] .challenge-modal-header {
+  background: linear-gradient(180deg, rgba(var(--modal-accent-rgb), 0.06) 0%, transparent 100%);
+}
+
+[data-bs-theme="light"] .challenge-title {
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .challenge-number {
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .challenge-description {
+  color: #555;
+}
+
+[data-bs-theme="light"] .challenge-description pre {
+  background: #f6f8fa;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .challenge-connection {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .hint-details {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .hint-content {
+  border-top-color: rgba(0, 0, 0, 0.08);
+  color: #555;
+}
+
+[data-bs-theme="light"] .challenge-input-minimal {
+  background: #f6f8fa;
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .challenge-input-minimal::placeholder {
+  color: #999;
+}
+
+[data-bs-theme="light"] .challenge-close-btn {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.03);
+  color: #666;
+}
+
+[data-bs-theme="light"] .challenge-close-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+[data-bs-theme="light"] .challenge-modal-footer {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .solves-toggle-btn {
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #666;
+}
+
+[data-bs-theme="light"] .solves-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-bs-theme="light"] .challenge-solves-section {
+  background: #ffffff;
+}
+
+[data-bs-theme="light"] .solves-header {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .solves-close-btn {
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #666;
+}
+
+[data-bs-theme="light"] .solves-close-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #333;
+}
+
+[data-bs-theme="light"] .solve-item {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-bs-theme="light"] .solve-date {
+  color: #999;
+}
+
+[data-bs-theme="light"] .next-challenge-btn {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #333;
+}
+
+[data-bs-theme="light"] .next-challenge-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .challenge-solution-section {
+  background: #ffffff;
+}
+
+[data-bs-theme="light"] .solution-header {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .solution-close-btn {
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #666;
+}
+
+[data-bs-theme="light"] .solution-close-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #333;
+}
+
+[data-bs-theme="light"] .solution-content {
+  color: #444;
+}
+
+[data-bs-theme="light"] .solution-content pre {
+  background: #f6f8fa;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+</style>

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="users-page">
+  
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12 text-center">
+          <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-users text-primary me-2"></i>
+            {% trans %}Users{% endtrans %}
+          </h1>
+          <p class="lead mb-0 text-muted">
+            {% trans %}Browse all registered participants{% endtrans %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <div class="search-section">
+      {% if q and field %}
+        <div class="search-results-info">
+          <i class="fas fa-search"></i>
+          <span>{% trans %}Searching for users with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>{% endtrans %}</span>
+          <span class="results-count">{% trans page=users.page, total=users.total %}Page {{ page }} of {{ total }} results{% endtrans %}</span>
+        </div>
+      {% endif %}
+
+      {% with form = Forms.users.PublicUserSearchForm(field=field, q=q) %}
+        <form method="GET" class="search-form">
+          <div class="search-wrapper">
+            <select name="field" class="search-select">
+              {% for choice in form.field.choices %}
+                <option value="{{ choice[0] }}" {% if choice[0] == field %}selected{% endif %}>{{ choice[1] }}</option>
+              {% endfor %}
+            </select>
+            <div class="search-input-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              {{ form.q(class="search-input", placeholder=form.q.description) }}
+            </div>
+            <button type="submit" class="search-btn">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      {% endwith %}
+    </div>
+
+    
+    <div class="users-grid">
+      {% for user in users.items %}
+        {% set has_user_meta = user.affiliation or user.country %}
+        <div class="user-card" x-data="{ hasError: false }">
+          <div class="user-avatar">
+            <img 
+              src="https://api.dicebear.com/9.x/identicon/svg?seed={{ ((user.email or user.name)) | urlencode }}&size=100"
+              alt="{{ user.name }}"
+              @error="hasError = true"
+              x-show="!hasError"
+              class="avatar-img"
+            >
+            <i class="fas fa-user" x-show="hasError" x-cloak></i>
+          </div>
+          <div class="user-info{% if not has_user_meta %} compact-info{% endif %}">
+            <div class="user-name-row">
+              {% if scores_visible() %}
+                <a href="{{ url_for('users.public', user_id=user.id) }}" class="user-name">
+                  {{ user.name | truncate(30) }}
+                </a>
+              {% else %}
+                <span class="user-name">{{ user.name | truncate(30) }}</span>
+              {% endif %}
+              
+              {% if user.oauth_id %}
+                <span class="badge-official">
+                  <i class="fas fa-check-circle"></i>
+                  {% trans %}Official{% endtrans %}
+                </span>
+              {% endif %}
+            </div>
+            
+            {% if has_user_meta %}
+              <div class="user-meta">
+                {% if user.affiliation %}
+                  <span class="meta-item" title="{{ user.affiliation }}">
+                    <i class="fas fa-building"></i>
+                    {{ user.affiliation | truncate(25) }}
+                  </span>
+                {% endif %}
+                
+                {% if user.country %}
+                  <span class="meta-item">
+                    <i class="flag-{{ user.country.lower() }}"></i>
+                    {{ lookup_country_code(user.country) }}
+                  </span>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <div class="card-footnote">
+              <span class="card-pill">{{ "Team competitor" if user.team_id else "Solo competitor" }}</span>
+              <span class="card-caption">Public profile</span>
+            </div>
+          </div>
+          
+          <div class="user-actions">
+            {% if user.website and (user.website.startswith('http://') or user.website.startswith('https://')) %}
+              <a href="{{ user.website }}" target="_blank" rel="noopener noreferrer" class="action-link" title="{{ user.website }}">
+                <i class="fas fa-globe"></i>
+              </a>
+            {% endif %}
+            {% if scores_visible() %}
+              <a href="{{ url_for('users.public', user_id=user.id) }}" class="action-link action-primary">
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    
+    {% if not users.items %}
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-user-slash"></i>
+        </div>
+        <h3>{% trans %}No users found{% endtrans %}</h3>
+        <p>{% trans %}Try adjusting your search criteria{% endtrans %}</p>
+        <div class="empty-state-inline-tip">{% trans %}Try searching by username instead of a broader field.{% endtrans %}</div>
+      </div>
+    {% endif %}
+
+    
+    {% if users.pages > 1 %}
+      <div class="pagination-section">
+        <div class="pagination">
+          {% if users.page != 1 %}
+            <a href="{{ prev_page }}" class="page-btn page-prev">
+              <i class="fas fa-chevron-left"></i>
+              {% trans %}Previous{% endtrans %}
+            </a>
+          {% endif %}
+          
+          <div class="page-selector">
+            <span class="page-label">{% trans %}Page{% endtrans %}</span>
+            <select class="page-select">
+              {% for page in range(1, users.pages + 1) %}
+                <option {% if users.page == page %}selected{% endif %}>{{ page }}</option>
+              {% endfor %}
+            </select>
+            <span class="page-total">{% trans %}of{% endtrans %} {{ users.pages }}</span>
+          </div>
+          
+          {% if users.next_num %}
+            <a href="{{ next_page }}" class="page-btn page-next">
+              {% trans %}Next{% endtrans %}
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/users/list.js") }}
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container text-center">
+      <h1>Chal Difficulty</h1>
+    </div>
+  </div>
+
+  <div class="container">
+    {% if success %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> Challenge difficulties and configuration saved successfully.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+    {% endif %}
+
+    <form method="POST">
+      <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card mb-4">
+            <div class="card-header">Global Settings</div>
+            <div class="card-body">
+              <div class="form-group mb-0">
+                <label><strong>Number of difficulties</strong></label>
+                <input type="number" class="form-control" name="no_difficulties" value="{{ no_difficulties }}" min="1" required />
+                <small class="form-text text-muted">The total number of blocks shown on a challenge. Colors automatically split into thirds (First 1/3 Green, Middle 1/3 Yellow, Last 1/3 Red).</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card mb-5">
+            <div class="card-header">Assign Active Bars</div>
+            <div class="card-body p-0">
+              <table class="table table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Challenge Name</th>
+                    <th style="width: 250px;">Active Bars (0 to {{ no_difficulties }})</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for chal in challenges %}
+                    <tr>
+                      <td class="align-middle">
+                        <code>{{ chal.category }}</code>
+                      </td>
+                      <td class="align-middle">
+                        <strong>{{ chal.name }}</strong>
+                      </td>
+                      <td>
+                        <input type="number" class="form-control" name="chal_{{ chal.id }}" value="{{ chal.difficulty }}" min="0" max="{{ no_difficulties }}" />
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <div class="p-3 bg-light text-right border-top">
+                <button type="submit" class="btn btn-primary px-4">Save All Changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </form>
+  </div>
+{% endblock %}

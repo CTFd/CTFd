@@ -1,0 +1,619 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-3 slide-up">
+            <i class="fas fa-trophy text-warning me-3"></i>
+            {% trans %}Scoreboard{% endtrans %}
+          </h1>
+          <p class="lead mb-4 slide-up" style="animation-delay: 0.1s;">
+            {% trans %}See how you rank against other competitors and track your progress in real-time.{% endtrans %}
+          </p>
+        </div>
+        <div class="col-lg-4 text-center d-none d-lg-block">
+          <div class="hero-stats slide-up" style="animation-delay: 0.2s;" x-data="TopRankings" x-init="loadTopRankings()">
+            <div class="d-flex justify-content-center gap-3">
+              <div class="stat-item text-center">
+                <div class="stat-number text-primary fw-bold" style="font-size: 2rem;">🥇</div>
+                <div class="stat-label text-muted small">{% trans %}1st Place{% endtrans %}</div>
+                <div class="stat-name fw-bold small text-primary" x-text="topThree[0]?.name || '-'" style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">-</div>
+                <div class="stat-score small text-muted" x-text="topThree[0]?.score ? topThree[0].score + ' pts' : ''"></div>
+              </div>
+              <div class="stat-item text-center">
+                <div class="stat-number text-secondary fw-bold" style="font-size: 2rem;">🥈</div>
+                <div class="stat-label text-muted small">{% trans %}2nd Place{% endtrans %}</div>
+                <div class="stat-name fw-bold small text-secondary" x-text="topThree[1]?.name || '-'" style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">-</div>
+                <div class="stat-score small text-muted" x-text="topThree[1]?.score ? topThree[1].score + ' pts' : ''"></div>
+              </div>
+              <div class="stat-item text-center">
+                <div class="stat-number text-warning fw-bold" style="font-size: 2rem;">🥉</div>
+                <div class="stat-label text-muted small">{% trans %}3rd Place{% endtrans %}</div>
+                <div class="stat-name fw-bold small text-warning" x-text="topThree[2]?.name || '-'" style="max-width: 80px; overflow: hidden; text-overflow: ellipsis;">-</div>
+                <div class="stat-score small text-muted" x-text="topThree[2]?.score ? topThree[2].score + ' pts' : ''"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    {% include "components/errors.html" %}
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden slide-up">
+          <div class="card-header bg-light border-0 py-3">
+            <h5 class="card-title mb-0 fw-bold">
+              <i class="fas fa-chart-line text-primary me-2"></i>
+              {% trans %}Score Progression{% endtrans %}
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <div id="score-graph" class="align-items-center min-vh-25" :class="{'d-flex': show, 'd-none': !show}" x-data="ScoreboardDetail" x-ref="scoregraph" @bracket-change.window="activeBracket=$event.detail; update();">
+              <div class="col-12 text-center py-5">
+                <div class="spinner-container">
+                  <div class="spinner-circle"></div>
+                  <div class="spinner-circle"></div>
+                  <div class="spinner-circle"></div>
+                </div>
+                <p class="mt-3 text-muted">{% trans %}Loading score graph...{% endtrans %}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div id="scoreboard" x-data="ScoreboardList" class="slide-up" style="animation-delay: 0.3s;">
+      
+      <template x-if="brackets.length && standings.length">
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-3">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                  <h6 class="mb-0 fw-bold text-muted">
+                    <i class="fas fa-filter me-2"></i>
+                    {% trans %}Filter by Category{% endtrans %}
+                  </h6>
+                  <nav class="nav nav-pills">
+                    <button 
+                      :class="{'nav-link': true, 'active': !activeBracket, 'rounded-pill': true, 'px-3': true, 'py-2': true, 'fw-500': true}" 
+                      @click="activeBracket=null"
+                    >
+                      {% trans %}All{% endtrans %}
+                    </button>
+                    <template x-for="bracket in brackets">
+                      <button 
+                        :class="{'nav-link': true, 'active': activeBracket == bracket.id, 'rounded-pill': true, 'px-3': true, 'py-2': true, 'fw-500': true}" 
+                        x-text="bracket.name" 
+                        @click="activeBracket=bracket.id"
+                      ></button>
+                    </template>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      
+      <div class="row mb-4" x-show="standings.length" x-data="ChallengeMatrix" x-init="loadChallengeData()">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+            <div class="card-header border-0 py-3" style="background: var(--dark-card);">
+              <div class="d-flex justify-content-between align-items-center">
+                
+                <h5 class="mb-0 fw-bold" style="color: var(--dark-text);">
+                  <i class="fas fa-table me-2 text-primary"></i>
+                  {% trans %}Score Matrix{% endtrans %}
+                </h5>
+                
+                <div class="team-search-wrapper">
+                  <div class="team-search-container">
+                    <i class="fas fa-search team-search-icon"></i>
+                    <input 
+                      type="text" 
+                      class="team-search-input" 
+                      placeholder="{% trans %}Search team...{% endtrans %}"
+                      x-model="searchQuery"
+                      @input="filterStandings()"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0 challenge-matrix">
+                  <thead>
+                    
+                    <tr class="category-row">
+                      <th class="sticky-left col-total header-cell-empty"></th>
+                      <th class="sticky-left col-rank header-cell-empty"></th>
+                      <th class="sticky-left col-team header-cell-empty"></th>
+                      <th class="col-solved header-cell-empty"></th>
+                      <th class="col-score header-cell-empty"></th>
+                      
+                      <template x-for="category in Object.keys(challengesByCategory).sort()" :key="category">
+                        <th class="text-center category-header" 
+                            :colspan="challengesByCategory[category].length" 
+                            :style="getCategoryHeaderStyle(category)">
+                          <i :class="getCategoryIcon(category)" class="me-1"></i>
+                          <span x-text="category"></span>
+                        </th>
+                      </template>
+                    </tr>
+                    
+                    <tr class="challenge-name-row">
+                      <th class="sticky-left col-total header-cell-empty"></th>
+                      <th class="sticky-left col-rank header-cell-empty"></th>
+                      <th class="sticky-left col-team header-cell-empty"></th>
+                      <th class="col-solved header-cell-empty"></th>
+                      <th class="col-score header-cell-empty"></th>
+                      <template x-for="challenge in sortedChallenges" :key="'name-' + challenge.id">
+                        <th class="text-center challenge-name-header col-challenge">
+                          <div class="challenge-name" x-text="challenge.name" :title="challenge.name"></div>
+                        </th>
+                      </template>
+                    </tr>
+                    
+                    <tr class="challenge-row">
+                      <th class="sticky-left col-total text-center header-cell">
+                        {% trans %}Total{% endtrans %}
+                      </th>
+                      <th class="sticky-left col-rank text-center header-cell">
+                        {% trans %}Rank{% endtrans %}
+                      </th>
+                      <th class="sticky-left col-team text-start header-cell">
+                        {% if Configs.user_mode == 'teams' %}
+                          {% trans %}Team{% endtrans %}
+                        {% else %}
+                          {% trans %}User{% endtrans %}
+                        {% endif %}
+                      </th>
+                      <th class="text-center col-solved header-cell">
+                        {% trans %}Solved{% endtrans %}
+                      </th>
+                      <th class="text-center col-score header-cell">
+                        {% trans %}Points{% endtrans %}
+                      </th>
+                      <template x-for="challenge in sortedChallenges" :key="'points-' + challenge.id">
+                        <th class="text-center challenge-points-header col-challenge">
+                          <div class="challenge-points" :style="'color: ' + getCategoryColor(challenge.category)" x-text="challenge.value"></div>
+                        </th>
+                      </template>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="(standing, index) in getFilteredStandings()" :key="standing.account_id">
+                      <tr class="scoreboard-row">
+                        
+                        <td class="sticky-left col-total text-center">
+                          <span class="fw-bold" x-text="index + 1"></span>
+                        </td>
+
+                        
+                        <td class="sticky-left col-rank text-center">
+                          <span class="fw-bold" x-text="standing.pos || index + 1"></span>
+                        </td>
+
+                        
+                        <td class="sticky-left col-team">
+                          <a :href="standing.account_url" class="team-name text-decoration-none" x-text="standing.name"></a>
+                        </td>
+
+                        
+                        <td class="text-center col-solved">
+                          <span x-text="getSolveCount(standing)"></span>
+                        </td>
+
+                        
+                        <td class="text-center col-score">
+                          <span class="fw-bold" x-text="standing.score"></span>
+                        </td>
+
+                        
+                        <template x-for="challenge in sortedChallenges" :key="challenge.id">
+                          <td class="text-center challenge-cell" 
+                              :class="{ 'solved-cell': getSolveStatus(standing, challenge) !== 'unsolved' }"
+                              x-data="SolveTooltip()"
+                              @mouseenter="showTooltip = getSolveStatus(standing, challenge) !== 'unsolved'"
+                              @mouseleave="showTooltip = false"
+                              style="position: relative;">
+                            <template x-if="getSolveStatus(standing, challenge) === 'first'">
+                              <span class="blood-icon first"></span>
+                            </template>
+                            <template x-if="getSolveStatus(standing, challenge) === 'second'">
+                              <span class="blood-icon second"></span>
+                            </template>
+                            <template x-if="getSolveStatus(standing, challenge) === 'third'">
+                              <span class="blood-icon third"></span>
+                            </template>
+                            <template x-if="getSolveStatus(standing, challenge) === 'solved'">
+                              <span class="solve-check"><i class="fas fa-check"></i></span>
+                            </template>
+                            
+                            <div class="solve-tooltip" x-show="showTooltip" x-cloak>
+                              <div class="solve-tooltip-content" :style="'border-left: 3px solid ' + getCategoryColor(challenge.category)">
+                                <div class="solve-tooltip-name" x-text="challenge.name"></div>
+                                <div class="solve-tooltip-points" :style="'color: ' + getCategoryColor(challenge.category)">
+                                  + <span x-text="challenge.value"></span> pts
+                                </div>
+                                <div class="solve-tooltip-date" x-text="getSolveDate(standing, challenge)"></div>
+                              </div>
+                            </div>
+                          </td>
+                        </template>
+                      </tr>
+                    </template>
+                    
+                    <template x-for="i in Math.max(0, pageSize - getFilteredStandings().length)" :key="'empty-' + i">
+                      <tr class="scoreboard-row empty-row">
+                        <td class="sticky-left col-total text-center">&nbsp;</td>
+                        <td class="sticky-left col-rank text-center">&nbsp;</td>
+                        <td class="sticky-left col-team">&nbsp;</td>
+                        <td class="text-center col-solved">&nbsp;</td>
+                        <td class="text-center col-score">&nbsp;</td>
+                        <template x-for="challenge in sortedChallenges" :key="'empty-cell-' + challenge.id + '-' + i">
+                          <td class="text-center challenge-cell">&nbsp;</td>
+                        </template>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pagination-footer-cell" style="border-top: 1px solid var(--dark-border);">
+                <div class="pagination-controls d-flex justify-content-end align-items-center gap-2" style="padding: 12px 16px;">
+                  <button 
+                    class="pagination-btn" 
+                    @click="prevPage()" 
+                    :disabled="currentPage === 1"
+                    :class="{'disabled': currentPage === 1}"
+                  >
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  
+                  <template x-for="page in getTotalPages()" :key="page">
+                    <button 
+                      class="pagination-btn" 
+                      :class="{'active': currentPage === page}"
+                      @click="goToPage(page)"
+                      x-text="page"
+                    ></button>
+                  </template>
+                  
+                  <button 
+                    class="pagination-btn" 
+                    @click="nextPage()" 
+                    :disabled="currentPage === getTotalPages()"
+                    :class="{'disabled': currentPage === getTotalPages()}"
+                  >
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-12" x-show="!standings.length">
+        <div class="card border-0 shadow-sm rounded-3 scoreboard-empty-card">
+          <div class="card-body text-center py-5">
+            <div class="empty-icon">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <h4 class="text-muted mb-2">{% trans %}No scores yet{% endtrans %}</h4>
+            <p class="text-muted mb-0">
+              {% trans %}Be the first to solve a challenge and claim the top spot!{% endtrans %}
+            </p>
+            <div class="scoreboard-empty-highlights">
+              <div class="empty-highlight-item">
+                <span class="empty-highlight-label">Status</span>
+                <span class="empty-highlight-value">Awaiting first solve</span>
+              </div>
+              <div class="empty-highlight-item">
+                <span class="empty-highlight-label">Goal</span>
+                <span class="empty-highlight-value">Take the opening lead</span>
+              </div>
+            </div>
+            <a href="{{ url_for('challenges.listing') }}" class="btn btn-primary mt-3 rounded-pill px-4">
+              <i class="fas fa-flag me-2"></i>
+              {% trans %}Start Challenges{% endtrans %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('TopRankings', () => ({
+        topThree: [null, null, null],
+
+        async loadTopRankings() {
+          try {
+            const response = await CTFd.fetch('/api/v1/scoreboard');
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.data.length > 0) {
+                this.topThree = [
+                  data.data[0] || null,
+                  data.data[1] || null,
+                  data.data[2] || null,
+                ];
+              }
+            }
+          } catch (error) {
+            this.topThree = [null, null, null];
+          }
+        },
+
+        init() {
+          setInterval(() => {
+            this.loadTopRankings();
+          }, 60000);
+        },
+      }));
+
+      Alpine.data('SolveTooltip', () => ({
+        showTooltip: false,
+      }));
+
+      Alpine.data('ChallengeMatrix', () => ({
+        challenges: [],
+        challengesByCategory: {},
+        sortedChallenges: [],
+        solveData: {},
+        searchQuery: '',
+        currentPage: 1,
+        pageSize: 10,
+
+        getAllFilteredStandings() {
+          const scoreboardEl = this.$el.closest('#scoreboard');
+          if (!scoreboardEl || !scoreboardEl._x_dataStack) {
+            return [];
+          }
+
+          const parentData = scoreboardEl._x_dataStack[0];
+          let allStandings = parentData.standings || [];
+
+          if (parentData.activeBracket) {
+            allStandings = allStandings.filter(i => i.bracket_id == parentData.activeBracket);
+          }
+
+          allStandings = allStandings.map((standing, idx) => ({
+            ...standing,
+            pos: standing.pos || idx + 1,
+          }));
+
+          if (this.searchQuery && this.searchQuery.trim() !== '') {
+            const query = this.searchQuery.toLowerCase().trim();
+            allStandings = allStandings.filter(standing =>
+              standing.name.toLowerCase().includes(query)
+            );
+          }
+
+          return allStandings;
+        },
+
+        getFilteredStandings() {
+          const filtered = this.getAllFilteredStandings();
+          const start = (this.currentPage - 1) * this.pageSize;
+          const end = start + this.pageSize;
+          return filtered.slice(start, end);
+        },
+
+        getTotalPages() {
+          const filtered = this.getAllFilteredStandings();
+          return Math.max(1, Math.ceil(filtered.length / this.pageSize));
+        },
+
+        prevPage() {
+          if (this.currentPage > 1) {
+            this.currentPage--;
+          }
+        },
+
+        nextPage() {
+          if (this.currentPage < this.getTotalPages()) {
+            this.currentPage++;
+          }
+        },
+
+        goToPage(page) {
+          if (page >= 1 && page <= this.getTotalPages()) {
+            this.currentPage = page;
+          }
+        },
+
+        filterStandings() {
+          this.currentPage = 1;
+        },
+
+        async loadChallengeData() {
+          try {
+            const challengesResponse = await CTFd.fetch('/api/v1/challenges');
+            if (challengesResponse.ok) {
+              const challengesData = await challengesResponse.json();
+              if (challengesData.success) {
+                this.challenges = challengesData.data;
+                this.organizeChallengesByCategory();
+                this.createSortedChallenges();
+              }
+            }
+
+            await this.loadSolveData();
+          } catch (error) {
+          }
+        },
+
+        organizeChallengesByCategory() {
+          const categories = {};
+          this.challenges.forEach(challenge => {
+            if (!categories[challenge.category]) {
+              categories[challenge.category] = [];
+            }
+            categories[challenge.category].push(challenge);
+          });
+          Object.keys(categories).forEach(category => {
+            categories[category].sort((a, b) => a.value - b.value);
+          });
+          this.challengesByCategory = categories;
+        },
+
+        createSortedChallenges() {
+          const sortedCategories = Object.keys(this.challengesByCategory).sort();
+          this.sortedChallenges = [];
+
+          sortedCategories.forEach(category => {
+            this.challengesByCategory[category].forEach(challenge => {
+              this.sortedChallenges.push(challenge);
+            });
+          });
+        },
+
+        async loadSolveData() {
+          for (const challenge of this.challenges) {
+            try {
+              const response = await CTFd.fetch(`/api/v1/challenges/${challenge.id}/solves`);
+              if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                  this.solveData[challenge.id] = data.data;
+                }
+              }
+            } catch (error) {
+              console.log(`Error loading solves for challenge ${challenge.id}:`, error);
+            }
+          }
+        },
+
+        getCategoryHeaderStyle(category) {
+          const colors = {
+            misc: { text: '#20c897', bg: 'rgba(32, 200, 151, 0.25)' },
+            crypto: { text: '#845ef7', bg: 'rgba(132, 94, 247, 0.25)' },
+            pwn: { text: '#ff6b6b', bg: 'rgba(255, 107, 107, 0.25)' },
+            web: { text: '#329af1', bg: 'rgba(50, 154, 241, 0.25)' },
+            reverse: { text: '#fdc419', bg: 'rgba(253, 196, 25, 0.25)' },
+            blockchain: { text: '#50cf66', bg: 'rgba(80, 207, 102, 0.25)' },
+            forensics: { text: '#5473e1', bg: 'rgba(84, 115, 225, 0.25)' },
+            hardware: { text: '#d1d0d1', bg: 'rgba(209, 208, 209, 0.25)' },
+            mobile: { text: '#f16594', bg: 'rgba(241, 101, 148, 0.25)' },
+            ai: { text: '#94d82c', bg: 'rgba(148, 216, 44, 0.25)' },
+            redteam: { text: '#cd5de8', bg: 'rgba(205, 93, 232, 0.25)' },
+            pentest: { text: '#cd5de8', bg: 'rgba(205, 93, 232, 0.25)' },
+            osint: { text: '#ff922b', bg: 'rgba(255, 146, 43, 0.25)' },
+            ppc: { text: '#9C27B0', bg: 'rgba(156, 39, 176, 0.25)' },
+          };
+          const style = colors[category.toLowerCase()] || {
+            text: '#329af1',
+            bg: 'rgba(50, 154, 241, 0.25)',
+          };
+          return `color: ${style.text} !important; background: ${style.bg} !important; border: 1px solid ${style.text}20 !important;`;
+        },
+
+        getCategoryIcon(category) {
+          const icons = {
+            web: 'fas fa-globe',
+            crypto: 'fas fa-lock',
+            pwn: 'fas fa-bug',
+            reverse: 'fas fa-cogs',
+            forensics: 'fas fa-search',
+            misc: 'fas fa-puzzle-piece',
+            blockchain: 'fas fa-link',
+            hardware: 'fas fa-microchip',
+            mobile: 'fas fa-mobile-alt',
+            ppc: 'fas fa-code',
+            ai: 'fas fa-robot',
+            pentest: 'fas fa-user-secret',
+            redteam: 'fas fa-user-secret',
+            osint: 'fas fa-eye',
+          };
+          return icons[category.toLowerCase()] || 'fas fa-flag';
+        },
+
+        getSolveCount(standing) {
+          let count = 0;
+          for (const challenge of this.challenges) {
+            const solves = this.solveData[challenge.id];
+            if (solves && solves.length > 0) {
+              const solved = solves.find(s => s.account_id === standing.account_id);
+              if (solved) {
+                count++;
+              }
+            }
+          }
+          return count;
+        },
+
+        getCategoryColor(category) {
+          const colors = {
+            misc: '#20c897',
+            crypto: '#845ef7',
+            pwn: '#ff6b6b',
+            web: '#329af1',
+            reverse: '#fdc419',
+            blockchain: '#50cf66',
+            forensics: '#5473e1',
+            hardware: '#d1d0d1',
+            mobile: '#f16594',
+            ai: '#94d82c',
+            redteam: '#cd5de8',
+            pentest: '#cd5de8',
+            osint: '#ff922b',
+            ppc: '#9C27B0',
+          };
+          return colors[category.toLowerCase()] || '#329af1';
+        },
+
+        getSolveDate(standing, challenge) {
+          const solves = this.solveData[challenge.id];
+          if (!solves || solves.length === 0) return '';
+
+          const solve = solves.find(s => s.account_id === standing.account_id);
+          if (!solve) return '';
+
+          const date = new Date(solve.date);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          const seconds = String(date.getSeconds()).padStart(2, '0');
+
+          return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        },
+
+        getSolveStatus(standing, challenge) {
+          const solves = this.solveData[challenge.id];
+          if (!solves || solves.length === 0) return 'unsolved';
+
+          const solve = solves.find(s => s.account_id === standing.account_id);
+          if (!solve) return 'unsolved';
+
+          const solveIndex = solves.findIndex(s => s.account_id === standing.account_id);
+          if (solveIndex === 0) return 'first';
+          if (solveIndex === 1) return 'second';
+          if (solveIndex === 2) return 'third';
+          return 'solved';
+        },
+      }));
+    });
+  </script>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/scoreboard.js") }}
+{% endblock %}

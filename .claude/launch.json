@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ctfd",
+      "runtimeExecutable": "/Users/jonathan/Documents/researchlabsv3/CTFd/.venv/bin/python",
+      "runtimeArgs": ["serve.py", "--disable-gevent"],
+      "port": 4000
+    }
+  ]
+}

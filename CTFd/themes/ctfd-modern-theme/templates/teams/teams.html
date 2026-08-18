@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="teams-page">
+  
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12 text-center">
+          <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-users text-primary me-2"></i>
+            {% trans %}Teams{% endtrans %}
+          </h1>
+          <p class="lead mb-0 text-muted">
+            {% trans %}Browse all registered teams{% endtrans %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <div class="search-section">
+      {% if q and field %}
+        <div class="search-results-info">
+          <i class="fas fa-search"></i>
+          <span>{% trans %}Searching for teams with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>{% endtrans %}</span>
+          <span class="results-count">{% trans page=teams.page, total=teams.total %}Page {{ page }} of {{ total }} results{% endtrans %}</span>
+        </div>
+      {% endif %}
+
+      {% with form = Forms.teams.PublicTeamSearchForm(field=field, q=q) %}
+        <form method="GET" class="search-form">
+          <div class="search-wrapper">
+            <select name="field" class="search-select">
+              {% for choice in form.field.choices %}
+                <option value="{{ choice[0] }}" {% if choice[0] == field %}selected{% endif %}>{{ choice[1] }}</option>
+              {% endfor %}
+            </select>
+            <div class="search-input-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              {{ form.q(class="search-input", placeholder="Search for matching teams") }}
+            </div>
+            <button type="submit" class="search-btn">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </form>
+      {% endwith %}
+    </div>
+
+    
+    <div class="teams-grid">
+      {% for team in teams.items %}
+        <div class="team-card" x-data="{ hasError: false }">
+          <div class="team-avatar">
+            <img 
+              src="https://api.dicebear.com/9.x/identicon/svg?seed={{ (team.captain.email) | urlencode }}&size=100"
+              alt="{{ team.name }}"
+              @error="hasError = true"
+              x-show="!hasError"
+              class="avatar-img"
+            >
+            <i class="fas fa-users" x-show="hasError" x-cloak></i>
+          </div>
+          <div class="team-info">
+            <div class="team-name-row">
+              {% if scores_visible() %}
+                <a href="{{ url_for('teams.public', team_id=team.id) }}" class="team-name">
+                  {{ team.name | truncate(30) }}
+                </a>
+              {% else %}
+                <span class="team-name">{{ team.name | truncate(30) }}</span>
+              {% endif %}
+              
+              {% if team.oauth_id %}
+                <span class="badge-official">
+                  <i class="fas fa-check-circle"></i>
+                  {% trans %}Official{% endtrans %}
+                </span>
+              {% endif %}
+            </div>
+            
+            <div class="team-meta">
+              {% if team.affiliation %}
+                <span class="meta-item" title="{{ team.affiliation }}">
+                  <i class="fas fa-building"></i>
+                  {{ team.affiliation | truncate(25) }}
+                </span>
+              {% endif %}
+              
+              {% if team.country %}
+                <span class="meta-item">
+                  <i class="flag-{{ team.country.lower() }}"></i>
+                  {{ lookup_country_code(team.country) }}
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="card-footnote">
+              <span class="card-pill">Registered team</span>
+              <span class="card-caption">Public roster</span>
+            </div>
+          </div>
+          
+          <div class="team-actions">
+            {% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
+              <a href="{{ team.website }}" target="_blank" rel="noopener noreferrer" class="action-link" title="{{ team.website }}">
+                <i class="fas fa-globe"></i>
+              </a>
+            {% endif %}
+            {% if scores_visible() %}
+              <a href="{{ url_for('teams.public', team_id=team.id) }}" class="action-link action-primary">
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    
+    {% if not teams.items %}
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-users-slash"></i>
+        </div>
+        <h3>{% trans %}No teams found{% endtrans %}</h3>
+        <p>{% trans %}Try adjusting your search criteria{% endtrans %}</p>
+        <div class="empty-state-inline-tip">{% trans %}Try searching by team name first for the cleanest results.{% endtrans %}</div>
+      </div>
+    {% endif %}
+
+    
+    {% if teams.pages > 1 %}
+      <div class="pagination-section">
+        <div class="pagination">
+          {% if teams.page != 1 %}
+            <a href="{{ prev_page }}" class="page-btn page-prev">
+              <i class="fas fa-chevron-left"></i>
+              {% trans %}Previous{% endtrans %}
+            </a>
+          {% endif %}
+          
+          <div class="page-selector">
+            <span class="page-label">{% trans %}Page{% endtrans %}</span>
+            <select class="page-select">
+              {% for page in range(1, teams.pages + 1) %}
+                <option {% if teams.page == page %}selected{% endif %}>{{ page }}</option>
+              {% endfor %}
+            </select>
+            <span class="page-total">{% trans %}of{% endtrans %} {{ teams.pages }}</span>
+          </div>
+          
+          {% if teams.next_num %}
+            <a href="{{ next_page }}" class="page-btn page-next">
+              {% trans %}Next{% endtrans %}
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+  
+  {{ Assets.js("assets/js/teams/list.js") }}
+{% endblock %}
