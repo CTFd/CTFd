@@ -2,6 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_babel import lazy_gettext as _l
 
 from CTFd.constants.config import ChallengeVisibilityTypes, Configs
+from CTFd.utils import get_config
 from CTFd.utils.config import is_teams_mode
 from CTFd.utils.dates import ctf_ended, ctf_paused, ctf_started
 from CTFd.utils.decorators import (
@@ -38,12 +39,18 @@ def listing():
         infos.append(_l("Challenge Visibility is set to Admins Only"))
 
     if ctf_started() is False:
-        errors.append(_l("%(ctf_name)s has not started yet", ctf_name=Configs.ctf_name))
+        errors.append(
+            get_config("ctf_not_started_message")
+            or _l("%(ctf_name)s has not started yet", ctf_name=Configs.ctf_name)
+        )
 
     if ctf_paused() is True:
         infos.append(_l("%(ctf_name)s is paused", ctf_name=Configs.ctf_name))
 
     if ctf_ended() is True:
-        infos.append(_l("%(ctf_name)s has ended", ctf_name=Configs.ctf_name))
+        infos.append(
+            get_config("ctf_ended_message")
+            or _l("%(ctf_name)s has ended", ctf_name=Configs.ctf_name)
+        )
 
     return render_template("challenges.html", infos=infos, errors=errors)
