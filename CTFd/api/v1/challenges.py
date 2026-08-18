@@ -761,273 +761,311 @@ class ChallengeAttempt(Resource):
                 (datetime.utcnow() - recent_fails[0].date).total_seconds()
             )
 
-        # Serialize attempt counting through redis to get a more accurate attempt count
-        # kpm_limit and max_attempts_timeout are included in the cache key as they are admin-editable and can affect limits
-        acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}_{kpm_limit}_{max_attempts_timeout}"
-
-        # Get serialized recent_attempt_count
-        recent_attempt_count = int(cache.get(acc_kpm_key) or 0)
-
         # Hit max attempts
         max_tries = challenge.max_attempts
+        max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
+        # Track the submission lock if we acquire one below so it can be
+        # released explicitly in the finally at the end of processing
+        submission_lock_key = None
         # We default fails to 0 as it's not needed unless we are working with max attempts
         fails = 0
         if max_tries and max_tries > 0:
-            max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
-            if max_attempts_behavior == "timeout":  # Use timeout behavior
-                timeout_delta = timedelta(seconds=-max_attempts_timeout)
-                max_attempts_recent_fails = (
-                    current_user.get_wrong_submissions_per_delta(
-                        user.account_id, challenge_id=challenge_id, delta=timeout_delta
-                    )
-                )
-                fails = len(max_attempts_recent_fails)
-            else:  # Use lockout behavior
-                fails = Fails.query.filter_by(
-                    account_id=user.account_id, challenge_id=challenge_id
-                ).count()
-
-            if fails >= max_tries or recent_attempt_count >= max_tries:
-                if max_attempts_behavior == "timeout":
-                    # We specifically override the outer time_delay because max_attempts timeout can be different than the minute
-                    time_delay = max_attempts_timeout
-                    if max_attempts_recent_fails:
-                        time_delay -= int(
-                            (
-                                datetime.utcnow() - max_attempts_recent_fails[0].date
-                            ).total_seconds()
-                        )
-                    # Calculate actual time remaining based on oldest fail
-                    response = f"Not accepted. Try again in {time_delay} seconds"
-                    response_code = 429
-                    if ctftime():
-                        chal_class.ratelimited(
-                            user=user, team=team, challenge=challenge, request=request
-                        )
-                else:  # Use lockout behavior
-                    response = "Not accepted. You have 0 tries remaining"
-                    response_code = 403
-                # Expire the cache key directly since we will not hit the normal expire flow
-                cache.expire(acc_kpm_key, time_delay)
+            # TODO CTFd 4.0 We should implement this with Redlock instead of SETNX
+            # Lock every attempt so only one submission is processed at a time
+            # cache.add is SETNX, it only succeeds when the key is absent
+            # So exactly one submission holds the lock
+            # The lock can be released by timeout or by the finally block
+            lock_key = f"submission_lock_{user.account_id}_{challenge.id}_{max_attempts_behavior}"
+            if cache.add(lock_key, 1, timeout=30):
+                # We hold the lock; remember it so the finally releases it
+                submission_lock_key = lock_key
+            else:
                 return (
                     {
                         "success": True,
                         "data": {
                             "status": "ratelimited",
-                            "message": response,
+                            "message": "Another submission is already being processed. Try again shortly.",
                         },
                     },
-                    response_code,
+                    403,
                 )
+        try:
+            # Serialize attempt counting through redis to get a more accurate attempt count
+            # kpm_limit and max_attempts_timeout are included in the cache key as they are admin-editable and can affect limits
+            acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}_{kpm_limit}_{max_attempts_timeout}"
+            # Atomically reserve this attempt; INCR returns the post-increment count
+            recent_attempt_count = int(cache.inc(acc_kpm_key))
+            # Decrement so the limit checks reflect the attempts stored before this one
+            recent_attempt_count_check = recent_attempt_count - 1
 
-        if kpm >= kpm_limit or recent_attempt_count >= kpm_limit:
-            if ctftime():
-                chal_class.ratelimited(
-                    user=user, team=team, challenge=challenge, request=request
-                )
-            log(
-                "submissions",
-                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
-                name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
-                challenge_id=challenge_id,
-                kpm=kpm,
-            )
-            # Expire the cache key directly since we will not hit the normal expire flow
-            cache.expire(acc_kpm_key, time_delay)
-            # Submitting too fast
-            return (
-                {
-                    "success": True,
-                    "data": {
-                        "status": "ratelimited",
-                        "message": f"You're submitting flags too fast. Try again in {time_delay} seconds.",
-                    },
-                },
-                429,
-            )
-
-        # Set the main expiration key as we will now process the submission
-        cache.inc(acc_kpm_key)
-        cache.expire(acc_kpm_key, time_delay)
-
-        solves = Solves.query.filter_by(
-            account_id=user.account_id, challenge_id=challenge_id
-        ).first()
-
-        # Challenge not solved yet
-        if not solves:
-            response = chal_class.attempt(challenge, request)
-            # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
-            if isinstance(response, tuple):
-                status = response[0]
-                message = response[1]
-            else:
-                status = response.status
-                message = response.message
-
-            if status == "correct" or status is True:
-                # The challenge plugin says the input is right
-                if ctftime() or current_user.is_admin():
-                    try:
-                        chal_class.solve(
-                            user=user,
-                            team=team,
-                            challenge=challenge,
-                            request=request,
-                        )
-
-                    # ChallengeSoleException is raised on duplicate solve - so treat it as already_solved
-                    except ChallengeSolveException:
-                        log(
-                            "submissions",
-                            "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
-                            name=user.name,
-                            submission=request_data.get("submission", "").encode(
-                                "utf-8"
-                            ),
+            if max_tries and max_tries > 0:
+                if max_attempts_behavior == "timeout":  # Use timeout behavior
+                    timeout_delta = timedelta(seconds=-max_attempts_timeout)
+                    max_attempts_recent_fails = (
+                        current_user.get_wrong_submissions_per_delta(
+                            user.account_id,
                             challenge_id=challenge_id,
-                            kpm=kpm,
+                            delta=timeout_delta,
                         )
+                    )
+                    fails = len(max_attempts_recent_fails)
+                else:  # Use lockout behavior
+                    fails = Fails.query.filter_by(
+                        account_id=user.account_id, challenge_id=challenge_id
+                    ).count()
 
+                if fails >= max_tries or recent_attempt_count_check >= max_tries:
+                    if max_attempts_behavior == "timeout":
+                        # We specifically override the outer time_delay because max_attempts timeout can be different than the minute
+                        time_delay = max_attempts_timeout
+                        if max_attempts_recent_fails:
+                            time_delay -= int(
+                                (
+                                    datetime.utcnow()
+                                    - max_attempts_recent_fails[0].date
+                                ).total_seconds()
+                            )
+                        # Calculate actual time remaining based on oldest fail
+                        response = f"Not accepted. Try again in {time_delay} seconds"
+                        response_code = 429
+                        if ctftime():
+                            chal_class.ratelimited(
+                                user=user,
+                                team=team,
+                                challenge=challenge,
+                                request=request,
+                            )
+                    else:  # Use lockout behavior
+                        response = "Not accepted. You have 0 tries remaining"
+                        response_code = 403
+                    # Expire the cache key directly since we will not hit the normal expire flow
+                    cache.expire(acc_kpm_key, time_delay)
+                    return (
+                        {
+                            "success": True,
+                            "data": {
+                                "status": "ratelimited",
+                                "message": response,
+                            },
+                        },
+                        response_code,
+                    )
+
+            if kpm >= kpm_limit or recent_attempt_count_check >= kpm_limit:
+                if ctftime():
+                    chal_class.ratelimited(
+                        user=user, team=team, challenge=challenge, request=request
+                    )
+                log(
+                    "submissions",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
+                    name=user.name,
+                    submission=request_data.get("submission", "").encode("utf-8"),
+                    challenge_id=challenge_id,
+                    kpm=kpm,
+                )
+                # Expire the cache key directly since we will not hit the normal expire flow
+                cache.expire(acc_kpm_key, time_delay)
+                # Submitting too fast
+                return (
+                    {
+                        "success": True,
+                        "data": {
+                            "status": "ratelimited",
+                            "message": f"You're submitting flags too fast. Try again in {time_delay} seconds.",
+                        },
+                    },
+                    429,
+                )
+
+            # Attempt already reserved above; set the expiration as we will process it
+            cache.expire(acc_kpm_key, time_delay)
+
+            solves = Solves.query.filter_by(
+                account_id=user.account_id, challenge_id=challenge_id
+            ).first()
+
+            # Challenge not solved yet
+            if not solves:
+                response = chal_class.attempt(challenge, request)
+                # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+                if isinstance(response, tuple):
+                    status = response[0]
+                    message = response[1]
+                else:
+                    status = response.status
+                    message = response.message
+
+                if status == "correct" or status is True:
+                    # The challenge plugin says the input is right
+                    if ctftime() or current_user.is_admin():
+                        try:
+                            chal_class.solve(
+                                user=user,
+                                team=team,
+                                challenge=challenge,
+                                request=request,
+                            )
+
+                        # ChallengeSoleException is raised on duplicate solve - so treat it as already_solved
+                        except ChallengeSolveException:
+                            log(
+                                "submissions",
+                                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                                name=user.name,
+                                submission=request_data.get("submission", "").encode(
+                                    "utf-8"
+                                ),
+                                challenge_id=challenge_id,
+                                kpm=kpm,
+                            )
+
+                            return {
+                                "success": True,
+                                "data": {
+                                    "status": "already_solved",
+                                    "message": f"{message} but you already solved this",
+                                },
+                            }
+
+                        clear_standings()
+                        clear_challenges()
+
+                    log(
+                        "submissions",
+                        "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
+                    return {
+                        "success": True,
+                        "data": {"status": "correct", "message": message},
+                    }
+                elif status == "partial":
+                    # The challenge plugin says that the input is a partial solve
+                    if ctftime() or current_user.is_admin():
+                        chal_class.partial(
+                            user=user, team=team, challenge=challenge, request=request
+                        )
+                        clear_standings()
+                        clear_challenges()
+
+                    log(
+                        "submissions",
+                        "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [PARTIAL]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
+                    return {
+                        "success": True,
+                        "data": {"status": "partial", "message": message},
+                    }
+                elif status == "incorrect" or status is False:
+                    # The challenge plugin says the input is wrong
+                    if ctftime() or current_user.is_admin():
+                        chal_class.fail(
+                            user=user, team=team, challenge=challenge, request=request
+                        )
+                        clear_standings()
+                        clear_challenges()
+
+                    log(
+                        "submissions",
+                        "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
+
+                    if max_tries:
+                        # Off by one since fails has changed since it was gotten
+                        attempts_left = max_tries - fails - 1
+                        tries_str = pluralize(
+                            attempts_left, singular="try", plural="tries"
+                        )
+                        # Add a punctuation mark if there isn't one
+                        if message[-1] not in "!().;?[]{}":
+                            message = message + "."
+                        message = "{} You have {} {} remaining.".format(
+                            message, attempts_left, tries_str
+                        )
+                        if attempts_left == 0:
+                            max_attempts_behavior = get_config(
+                                "max_attempts_behavior", "lockout"
+                            )
+                            if max_attempts_behavior == "timeout":
+                                # Calculate actual time remaining based on the most recent fail
+                                timeout_delta = datetime.utcnow() - timedelta(
+                                    seconds=max_attempts_timeout
+                                )
+                                most_recent_fail = (
+                                    Fails.query.filter_by(
+                                        account_id=user.account_id,
+                                        challenge_id=challenge_id,
+                                    )
+                                    .filter(Fails.date >= timeout_delta)
+                                    .order_by(Fails.id.asc())
+                                    .first()
+                                )
+                                if most_recent_fail:
+                                    time_since_fail = (
+                                        datetime.utcnow() - most_recent_fail.date
+                                    ).total_seconds()
+                                    remaining_seconds = (
+                                        max_attempts_timeout - time_since_fail
+                                    )
+                                    message += f" Try again in {math.ceil(remaining_seconds)} seconds"
+                                else:
+                                    message += f" Try again in {math.ceil(max_attempts_timeout)} seconds"
                         return {
                             "success": True,
                             "data": {
-                                "status": "already_solved",
-                                "message": f"{message} but you already solved this",
+                                "status": "incorrect",
+                                "message": message,
                             },
                         }
+                    else:
+                        return {
+                            "success": True,
+                            "data": {"status": "incorrect", "message": message},
+                        }
 
-                    clear_standings()
-                    clear_challenges()
-
-                log(
-                    "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
-                    kpm=kpm,
-                )
-                return {
-                    "success": True,
-                    "data": {"status": "correct", "message": message},
-                }
-            elif status == "partial":
-                # The challenge plugin says that the input is a partial solve
-                if ctftime() or current_user.is_admin():
-                    chal_class.partial(
-                        user=user, team=team, challenge=challenge, request=request
-                    )
-                    clear_standings()
-                    clear_challenges()
-
-                log(
-                    "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [PARTIAL]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
-                    kpm=kpm,
-                )
-                return {
-                    "success": True,
-                    "data": {"status": "partial", "message": message},
-                }
-            elif status == "incorrect" or status is False:
-                # The challenge plugin says the input is wrong
-                if ctftime() or current_user.is_admin():
-                    chal_class.fail(
-                        user=user, team=team, challenge=challenge, request=request
-                    )
-                    clear_standings()
-                    clear_challenges()
-
-                log(
-                    "submissions",
-                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
-                    kpm=kpm,
-                )
-
-                if max_tries:
-                    # Off by one since fails has changed since it was gotten
-                    attempts_left = max_tries - fails - 1
-                    tries_str = pluralize(attempts_left, singular="try", plural="tries")
-                    # Add a punctuation mark if there isn't one
-                    if message[-1] not in "!().;?[]{}":
-                        message = message + "."
-                    message = "{} You have {} {} remaining.".format(
-                        message, attempts_left, tries_str
-                    )
-                    if attempts_left == 0:
-                        max_attempts_behavior = get_config(
-                            "max_attempts_behavior", "lockout"
-                        )
-                        if max_attempts_behavior == "timeout":
-                            # Calculate actual time remaining based on the most recent fail
-                            timeout_delta = datetime.utcnow() - timedelta(
-                                seconds=max_attempts_timeout
-                            )
-                            most_recent_fail = (
-                                Fails.query.filter_by(
-                                    account_id=user.account_id,
-                                    challenge_id=challenge_id,
-                                )
-                                .filter(Fails.date >= timeout_delta)
-                                .order_by(Fails.id.asc())
-                                .first()
-                            )
-                            if most_recent_fail:
-                                time_since_fail = (
-                                    datetime.utcnow() - most_recent_fail.date
-                                ).total_seconds()
-                                remaining_seconds = (
-                                    max_attempts_timeout - time_since_fail
-                                )
-                                message += f" Try again in {math.ceil(remaining_seconds)} seconds"
-                            else:
-                                message += f" Try again in {math.ceil(max_attempts_timeout)} seconds"
-                    return {
-                        "success": True,
-                        "data": {
-                            "status": "incorrect",
-                            "message": message,
-                        },
-                    }
-                else:
-                    return {
-                        "success": True,
-                        "data": {"status": "incorrect", "message": message},
-                    }
-
-        # Challenge already solved
-        else:
-            log(
-                "submissions",
-                "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
-                name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
-                challenge_id=challenge_id,
-                kpm=kpm,
-            )
-            response = chal_class.attempt(challenge, request)
-            # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
-            if isinstance(response, tuple):
-                status = response[0]
-                message = response[1]
+            # Challenge already solved
             else:
-                status = response.status
-                message = response.message
-            return {
-                "success": True,
-                "data": {
-                    "status": "already_solved",
-                    "message": f"{message} but you already solved this",
-                },
-            }
+                log(
+                    "submissions",
+                    "[{date}] {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                    name=user.name,
+                    submission=request_data.get("submission", "").encode("utf-8"),
+                    challenge_id=challenge_id,
+                    kpm=kpm,
+                )
+                response = chal_class.attempt(challenge, request)
+                # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+                if isinstance(response, tuple):
+                    status = response[0]
+                    message = response[1]
+                else:
+                    status = response.status
+                    message = response.message
+                return {
+                    "success": True,
+                    "data": {
+                        "status": "already_solved",
+                        "message": f"{message} but you already solved this",
+                    },
+                }
+        finally:
+            # Release the submission lock if we acquired one so the next
+            # submission can proceed without waiting for the TTL to lapse
+            if submission_lock_key:
+                cache.delete(submission_lock_key)
 
 
 @challenges_namespace.route("/<challenge_id>/solves")
