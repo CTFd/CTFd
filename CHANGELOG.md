@@ -1,3 +1,14 @@
+# 3.8.7 / 2026-08-19
+
+**Security**
+
+- Fix issue where the REST API could return the values of Custom Fields despite the field not being set to public
+- Fix issue where a race condition could allow a user to submit more attempts than allowed by a challenge's max attempts setting
+
+**API**
+
+- Deprecate passing a list of fields as the `view` argument to schemas
+
 # 3.8.6 / 2026-06-16
 
 **Security**
