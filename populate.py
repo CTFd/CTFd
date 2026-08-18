@@ -474,9 +474,9 @@ if __name__ == "__main__":
                             user_id=solve.user_id,
                             challenge_id=solve.challenge_id,
                             value=gen_rating(),
-                            review=gen_sentence()
-                            if random.random() < 0.7
-                            else None,  # 70% chance of review
+                            review=(
+                                gen_sentence() if random.random() < 0.7 else None
+                            ),  # 70% chance of review
                             date=solve.date
                             + datetime.timedelta(
                                 minutes=random.randint(

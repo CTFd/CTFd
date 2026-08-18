@@ -1,0 +1,268 @@
+<div role="tabpanel" class="tab-pane config-section" id="repository">
+	<h4>Challenge Repository</h4>
+	<p class="text-muted">
+		Connect a GitHub or GitLab repository containing your challenges as a
+		<a href="https://github.com/CTFd/ctfcli" target="_blank" rel="noopener noreferrer">ctfcli</a> project.
+		Pushes to the repository's default branch sync challenges to this instance.
+		Reconnecting rotates the sync token stored in the repository CI.
+	</p>
+
+	<div class="mb-3">
+		{% if Git.provider %}
+			<div class="alert alert-secondary mb-2">
+				Connected to <b>{{ Git.provider }}</b> repository <b>{{ Git.repository }}</b>
+			</div>
+			<button class="btn btn-sm btn-primary" id="repo-connect-btn" type="button">Change / Reconnect</button>
+			<button class="btn btn-sm btn-danger" id="repo-disconnect-btn" type="button">Disconnect</button>
+		{% else %}
+			<div class="alert alert-secondary mb-2">
+				No challenge repository is connected.
+			</div>
+			<button class="btn btn-sm btn-primary" id="repo-connect-btn" type="button">Connect</button>
+		{% endif %}
+	</div>
+
+	<div id="repo-error" class="alert alert-danger d-none"></div>
+
+	<div id="repo-flow" class="d-none">
+		<div id="repo-providers">
+			<button class="btn btn-dark" type="button" data-provider="github">
+				<i class="fab fa-github"></i> Connect GitHub
+			</button>
+			<button class="btn btn-warning" type="button" data-provider="gitlab">
+				<i class="fab fa-gitlab"></i> Connect GitLab
+			</button>
+		</div>
+
+		<div id="repo-auth" class="d-none mt-3">
+			<div class="mb-2">
+				<button class="btn btn-primary d-none" id="repo-device-btn" type="button"></button>
+			</div>
+			<div class="input-group" style="max-width: 480px;">
+				<input type="password" class="form-control" id="repo-pat" placeholder="Personal access token" autocomplete="off">
+				<div class="input-group-append">
+					<button class="btn btn-primary" id="repo-pat-btn" type="button">Connect</button>
+				</div>
+			</div>
+			<small class="form-text text-muted">
+				GitHub tokens need the <code>repo</code> and <code>workflow</code> scopes; GitLab tokens need the <code>api</code> scope.
+			</small>
+		</div>
+
+		<div id="repo-device" class="d-none mt-3 border rounded p-3" style="max-width: 480px;">
+			<p class="mb-1">
+				Visit <a id="repo-device-link" href="#" target="_blank" rel="noopener noreferrer"></a> and enter the code:
+			</p>
+			<p class="h4 text-monospace" id="repo-device-code"></p>
+			<span class="text-muted">
+				<i class="fas fa-circle-notch fa-spin"></i> Waiting for authorization…
+			</span>
+		</div>
+
+		<div id="repo-pick" class="d-none mt-3">
+			<p class="mb-2">Connected as <b id="repo-user"></b></p>
+			<div class="input-group mb-1" style="max-width: 480px;">
+				<select class="form-control" id="repo-select"></select>
+				<div class="input-group-append">
+					<button class="btn btn-primary" id="repo-link-btn" type="button">Link</button>
+				</div>
+			</div>
+			<small class="form-text text-muted mb-3">
+				The repository must be a valid ctfcli project (contain a <code>.ctf/config</code> file).
+				A challenge sync pipeline and credentials are configured on link. Or create a new repository:
+			</small>
+			<div class="input-group mb-1" style="max-width: 480px;">
+				<input type="text" class="form-control" id="repo-new-name" placeholder="Repository name">
+				<div class="input-group-append">
+					<button class="btn btn-primary" id="repo-create-btn" type="button">Create</button>
+				</div>
+			</div>
+			<div class="form-check">
+				<input type="checkbox" class="form-check-input" id="repo-new-private" checked>
+				<label class="form-check-label" for="repo-new-private">Private repository</label>
+			</div>
+		</div>
+
+		<button class="btn btn-link btn-sm px-0 mt-2" id="repo-cancel-btn" type="button">Cancel</button>
+	</div>
+
+	<script>
+	(function () {
+		var base = "{{ url_for('views.git.repository') }}";
+		var state = { provider: null, providers: {}, repos: [], pollTimer: null };
+
+		function $(id) { return document.getElementById(id); }
+		function show(id) { $(id).classList.remove("d-none"); }
+		function hide(id) { $(id).classList.add("d-none"); }
+
+		function setError(message) {
+			if (message) {
+				$("repo-error").textContent = message;
+				show("repo-error");
+			} else {
+				hide("repo-error");
+			}
+		}
+
+		function api(method, url, body) {
+			return fetch(url, {
+				method: method,
+				credentials: "same-origin",
+				headers: {
+					"Accept": "application/json",
+					"Content-Type": "application/json",
+					"CSRF-Token": window.init.csrfNonce,
+				},
+				body: body === undefined ? undefined : JSON.stringify(body),
+			}).then(function (response) {
+				return response.json().catch(function () { return {}; }).then(function (data) {
+					if (!response.ok || data.success === false) {
+						throw new Error((data.errors && data.errors[0]) || "Request failed, please try again");
+					}
+					return data.data;
+				});
+			});
+		}
+
+		function onConnected(user) {
+			hide("repo-auth");
+			hide("repo-device");
+			hide("repo-providers");
+			$("repo-user").textContent = user.username;
+			show("repo-pick");
+			api("GET", base + "/" + state.provider + "/repositories").then(function (repos) {
+				state.repos = repos;
+				var select = $("repo-select");
+				select.innerHTML = "";
+				var placeholder = document.createElement("option");
+				placeholder.value = "";
+				placeholder.textContent = "Choose a repository…";
+				select.appendChild(placeholder);
+				repos.forEach(function (repo) {
+					var option = document.createElement("option");
+					option.value = String(repo.id);
+					option.textContent = repo.name;
+					select.appendChild(option);
+				});
+			}).catch(function (e) { setError(e.message); });
+		}
+
+		function pollDevice(interval) {
+			state.pollTimer = setTimeout(function () {
+				api("POST", base + "/" + state.provider + "/device/token").then(function (data) {
+					if (data.status === "ok") {
+						hide("repo-device");
+						onConnected(data.user);
+					} else {
+						pollDevice(interval);
+					}
+				}).catch(function (e) {
+					hide("repo-device");
+					setError(e.message);
+				});
+			}, interval);
+		}
+
+		$("repo-connect-btn").addEventListener("click", function () {
+			setError(null);
+			show("repo-flow");
+			this.disabled = true;
+			api("GET", base).then(function (data) {
+				state.providers = data.providers || {};
+			}).catch(function (e) { setError(e.message); });
+		});
+
+		var disconnectBtn = $("repo-disconnect-btn");
+		if (disconnectBtn) {
+			disconnectBtn.addEventListener("click", function () {
+				if (!confirm("Disconnect the challenge repository and revoke its sync token?")) {
+					return;
+				}
+				api("DELETE", base).then(function () {
+					window.location.reload();
+				}).catch(function (e) { setError(e.message); });
+			});
+		}
+
+		document.querySelectorAll("#repo-providers [data-provider]").forEach(function (button) {
+			button.addEventListener("click", function () {
+				state.provider = this.dataset.provider;
+				setError(null);
+				show("repo-auth");
+				var settings = state.providers[state.provider] || {};
+				var deviceBtn = $("repo-device-btn");
+				if (settings.device) {
+					deviceBtn.textContent = "Log in with " + (settings.name || state.provider);
+					deviceBtn.classList.remove("d-none");
+				} else {
+					deviceBtn.classList.add("d-none");
+				}
+			});
+		});
+
+		$("repo-device-btn").addEventListener("click", function () {
+			setError(null);
+			api("POST", base + "/" + state.provider + "/device").then(function (data) {
+				$("repo-device-link").textContent = data.verification_uri;
+				$("repo-device-link").href = data.verification_uri;
+				$("repo-device-code").textContent = data.user_code;
+				show("repo-device");
+				pollDevice((data.interval || 5) * 1000);
+			}).catch(function (e) { setError(e.message); });
+		});
+
+		$("repo-pat-btn").addEventListener("click", function () {
+			setError(null);
+			api("POST", base + "/" + state.provider + "/token", { token: $("repo-pat").value }).then(function (data) {
+				$("repo-pat").value = "";
+				onConnected(data.user);
+			}).catch(function (e) { setError(e.message); });
+		});
+
+		$("repo-link-btn").addEventListener("click", function () {
+			var selected = $("repo-select").value;
+			var repo = state.repos.filter(function (r) { return String(r.id) === selected; })[0];
+			if (!repo) {
+				setError("Please select a repository");
+				return;
+			}
+			setError(null);
+			this.disabled = true;
+			var button = this;
+			api("POST", base + "/" + state.provider + "/repositories", { action: "select", repository: repo }).then(function () {
+				window.location.reload();
+			}).catch(function (e) {
+				button.disabled = false;
+				setError(e.message);
+			});
+		});
+
+		$("repo-create-btn").addEventListener("click", function () {
+			setError(null);
+			this.disabled = true;
+			var button = this;
+			api("POST", base + "/" + state.provider + "/repositories", {
+				action: "create",
+				name: $("repo-new-name").value,
+				private: $("repo-new-private").checked,
+			}).then(function () {
+				window.location.reload();
+			}).catch(function (e) {
+				button.disabled = false;
+				setError(e.message);
+			});
+		});
+
+		$("repo-cancel-btn").addEventListener("click", function () {
+			clearTimeout(state.pollTimer);
+			hide("repo-flow");
+			hide("repo-auth");
+			hide("repo-device");
+			hide("repo-pick");
+			show("repo-providers");
+			setError(null);
+			$("repo-connect-btn").disabled = false;
+		});
+	})();
+	</script>
+</div>

@@ -1,6 +1,9 @@
 import os  # noqa: I001
 
-from flask import Blueprint, abort
+from flask import (
+    Blueprint,
+    abort,
+)
 from flask import current_app as app
 from flask import (
     make_response,
@@ -24,6 +27,7 @@ from CTFd.constants.config import (
     ScoreVisibilityTypes,
 )
 from CTFd.constants.themes import DEFAULT_THEME
+from CTFd.git import git, provision_ctfcli_integration
 from CTFd.models import (
     Admins,
     Files,
@@ -43,8 +47,10 @@ from CTFd.utils.config.pages import build_markdown, get_page
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.dates import ctf_ended, ctftime, view_after_ctf
 from CTFd.utils.decorators import authed_only
+from CTFd.utils.git import get_provider
 from CTFd.utils.health import check_config, check_database
 from CTFd.utils.helpers import get_errors, get_infos, markup
+from CTFd.utils.logging import log
 from CTFd.utils.modes import USERS_MODE
 from CTFd.utils.modules import can_access_challenge
 from CTFd.utils.security.auth import login_user
@@ -57,9 +63,16 @@ from CTFd.utils.security.signing import (
     unserialize,
 )
 from CTFd.utils.uploads import get_uploader, upload_file
-from CTFd.utils.user import authed, get_current_team, get_current_user, get_ip, is_admin
+from CTFd.utils.user import (
+    authed,
+    get_current_team,
+    get_current_user,
+    get_ip,
+    is_admin,
+)
 
 views = Blueprint("views", __name__)
+views.register_blueprint(git)
 
 
 @views.route("/setup", methods=["GET", "POST"])
@@ -254,6 +267,27 @@ def setup():
                 db.session.rollback()
 
             login_user(admin)
+
+            # Provision the ctfcli repository integration if one was linked
+            # during setup: mint an access token for the admin account and
+            # store it in the repository's CI so pushes to the default branch
+            # can sync challenges back to this instance. The CI file is
+            # committed only after the credentials are in place, because its
+            # commit triggers the first pipeline run.
+            integration = session.pop("setup_git", None)
+            if integration and integration.get("repo"):
+                try:
+                    provision_ctfcli_integration(
+                        get_provider(integration["provider"]),
+                        integration["token"],
+                        integration["repo"],
+                        user=admin,
+                    )
+                except Exception:
+                    log(
+                        "registrations",
+                        "[{date}] {ip} - Failed to provision ctfcli repository integration",
+                    )
 
             db.session.close()
             with app.app_context():

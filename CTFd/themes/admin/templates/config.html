@@ -85,6 +85,11 @@
 						<i class="fa fa-users action-icon"></i>Challenges
 					</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link rounded-0 py-1" href="#repository" role="tab" data-toggle="tab">
+						<i class="fa fa-code-branch action-icon"></i>Challenge Repository
+					</a>
+				</li>
 
 				<!-- Backup -->
 				<small class="section-title">Backup</small>
@@ -132,7 +137,7 @@
 						<i class="fa fa-network-wired action-icon"></i>MajorLeagueCyber
 					</a>
 				</li>
-				
+
 				<!-- Plugins -->
 				{% set plugins = get_configurable_plugins() %}
 				{% if plugins %}
@@ -213,6 +218,8 @@
 				<!-- Challeges -->
 
 				{% include "admin/configs/challenges.html" %}
+
+				{% include "admin/configs/repository.html" %}
 
 				<!-- Security -->
 

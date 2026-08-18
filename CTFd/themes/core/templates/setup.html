@@ -355,16 +355,143 @@
 							</small>
 						</div>
 						<div class="mb-3">
-							<b>MajorLeagueCyber Integration</b>
-							<p>MajorLeagueCyber (MLC) is a cyber security event tracker written and maintained by the developers of CTFd.</p>
-							<button type="button" id="integration-mlc" class="btn btn-primary btn-block" @click="mlcSetup()">
-								Setup
-							</button>
+							<b>{% trans %}Challenge Repository{% endtrans %}</b>
+							<p class="mb-2">
+								{% trans %}Optionally connect a GitHub or GitLab repository containing your challenges as a
+								<a href="https://github.com/CTFd/ctfcli" target="_blank" rel="noopener noreferrer">ctfcli</a> project.
+								Pushes to the repository's default branch will automatically sync challenges to this CTFd instance.{% endtrans %}
+							</p>
+
+							<div class="border rounded p-3">
+								<div class="alert alert-danger" x-show="git.error" x-text="git.error" x-cloak></div>
+
+								{# Step 1: pick a provider #}
+								<div x-show="!git.provider && !git.selecting && !git.device">
+									<button type="button" class="btn btn-outline-secondary me-2" @click="selectGitProvider('github')">
+										<i class="fab fa-github" aria-hidden="true"></i>
+										{% trans %}Connect GitHub{% endtrans %}
+									</button>
+									<button type="button" class="btn btn-outline-secondary" @click="selectGitProvider('gitlab')">
+										<i class="fab fa-gitlab" aria-hidden="true"></i>
+										{% trans %}Connect GitLab{% endtrans %}
+									</button>
+								</div>
+
+								{# Step 2: authenticate #}
+								<div x-show="git.selecting && !git.device" x-cloak>
+									<template x-if="git.providers[git.selecting] && git.providers[git.selecting].device">
+										<div class="mb-3">
+											<button type="button" class="btn btn-primary" @click="startDeviceLogin(git.selecting)" :disabled="git.busy">
+												<i class="fab" :class="git.selecting === 'github' ? 'fa-github' : 'fa-gitlab'" aria-hidden="true"></i>
+												{% trans %}Log in with{% endtrans %} <span x-text="git.providers[git.selecting].name"></span>
+											</button>
+											<div class="text-muted small mt-2">{% trans %}or connect with a personal access token:{% endtrans %}</div>
+										</div>
+									</template>
+									<div class="input-group">
+										<input type="password" class="form-control" placeholder="{% trans %}Personal access token{% endtrans %}"
+										       x-model="git.pat" autocomplete="off">
+										<button type="button" class="btn btn-primary" @click="tokenLogin(git.selecting)" :disabled="git.busy || !git.pat">
+											{% trans %}Connect{% endtrans %}
+										</button>
+									</div>
+									<small class="form-text text-muted">
+										<span x-show="git.selecting === 'github'">{% trans %}The token needs the <code>repo</code> and <code>workflow</code> scopes.{% endtrans %}</span>
+										<span x-show="git.selecting === 'gitlab'">{% trans %}The token needs the <code>api</code> scope.{% endtrans %}</span>
+									</small>
+									<div class="mt-2">
+										<button type="button" class="btn btn-sm btn-outline-secondary" @click="cancelGitConnect()">{% trans %}Cancel{% endtrans %}</button>
+									</div>
+								</div>
+
+								{# Step 2b: device flow pending #}
+								<div x-show="git.device" x-cloak class="text-center py-2">
+									<p class="mb-1">
+										{% trans %}Visit{% endtrans %}
+										<a :href="git.device && git.device.verification_uri" target="_blank" rel="noopener noreferrer"
+										   x-text="git.device && git.device.verification_uri"></a>
+										{% trans %}and enter the code:{% endtrans %}
+									</p>
+									<p class="h3 font-monospace my-2" x-text="git.device && git.device.user_code"></p>
+									<p class="text-muted mb-2">
+										<i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+										{% trans %}Waiting for authorization…{% endtrans %}
+									</p>
+									<button type="button" class="btn btn-sm btn-outline-secondary" @click="cancelGitConnect()">{% trans %}Cancel{% endtrans %}</button>
+								</div>
+
+								{# Step 3: pick or create a repository #}
+								<div x-show="git.provider && !git.repo" x-cloak>
+									<div class="d-flex align-items-center justify-content-between mb-3">
+										<span>
+											{% trans %}Connected to{% endtrans %}
+											<b x-text="git.providers[git.provider] && git.providers[git.provider].name"></b>
+											{% trans %}as{% endtrans %} <b x-text="git.user && git.user.username"></b>
+										</span>
+										<button type="button" class="btn btn-sm btn-outline-secondary" @click="disconnectGit()">{% trans %}Disconnect{% endtrans %}</button>
+									</div>
+									<div class="mb-2">
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" id="git-mode-select" value="select" x-model="git.mode">
+											<label class="form-check-label" for="git-mode-select">{% trans %}Use an existing repository{% endtrans %}</label>
+										</div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" id="git-mode-create" value="create" x-model="git.mode">
+											<label class="form-check-label" for="git-mode-create">{% trans %}Create a new repository{% endtrans %}</label>
+										</div>
+									</div>
+
+									<div x-show="git.mode === 'select'">
+										<div class="input-group">
+											<select class="form-control custom-select" x-model="git.selectedRepo">
+												<option value="">{% trans %}Choose a repository…{% endtrans %}</option>
+												<template x-for="repo in git.repos" :key="repo.id">
+													<option :value="String(repo.id)" x-text="repo.name"></option>
+												</template>
+											</select>
+											<button type="button" class="btn btn-primary" @click="linkRepository()" :disabled="git.busy || !git.selectedRepo">
+												{% trans %}Link{% endtrans %}
+											</button>
+										</div>
+										<small class="form-text text-muted mb-0">
+											{% trans %}The repository must be a valid ctfcli project (contain a <code>.ctf/config</code> file). A challenge sync pipeline is added if it is missing.{% endtrans %}
+										</small>
+									</div>
+
+									<div x-show="git.mode === 'create'">
+										<div class="input-group">
+											<input type="text" class="form-control" placeholder="{% trans %}Repository name{% endtrans %}" x-model="git.newRepoName">
+											<div class="input-group-text">
+												<input class="form-check-input me-1" type="checkbox" id="git-repo-private" x-model="git.newRepoPrivate">
+												<label class="form-check-label" for="git-repo-private">{% trans %}Private{% endtrans %}</label>
+											</div>
+											<button type="button" class="btn btn-primary" @click="createRepository()" :disabled="git.busy || !git.newRepoName">
+												{% trans %}Create{% endtrans %}
+											</button>
+										</div>
+										<small class="form-text text-muted mb-0">
+											{% trans %}The repository will be scaffolded as a ctfcli project with a challenge sync pipeline.{% endtrans %}
+										</small>
+									</div>
+								</div>
+
+								{# Step 4: linked #}
+								<div x-show="git.repo" x-cloak>
+									<div class="d-flex align-items-center justify-content-between">
+										<span class="text-success">
+											<i class="fas fa-check" aria-hidden="true"></i>
+											{% trans %}Linked repository{% endtrans %} <b x-text="git.repo && git.repo.name"></b>
+										</span>
+										<button type="button" class="btn btn-sm btn-outline-secondary" @click="unlinkRepository()">{% trans %}Change{% endtrans %}</button>
+									</div>
+									<small class="form-text text-muted mb-0">
+										{% trans %}The challenge sync pipeline and its access credentials will be configured when setup completes.{% endtrans %}
+									</small>
+								</div>
+							</div>
 						</div>
 
-						<br>
 						<hr>
-						<br>
 
 						<div class="submit-row text-right float-end">
 							{{ form.submit(class="btn btn-md btn-primary btn-outlined") }}
@@ -381,8 +508,12 @@
 {% endblock %}
 
 {% block scripts %}
+<style>
+	[x-cloak] { display: none !important; }
+</style>
 <script>
 	var STATE = {{ state | tojson }};
+	var GIT_PROVIDERS = {{ Git.providers | tojson }};
 </script>
 {{ Assets.js("assets/js/setup.js") }}
 {% endblock %}
