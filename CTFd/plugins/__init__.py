@@ -38,6 +38,9 @@ def register_plugin_assets_directory(app, base_path, admins_only=False, endpoint
     def assets_handler(path):
         return send_from_directory(base_path, path)
 
+    if admins_only:
+        assets_handler = admins_only_wrapper(assets_handler)
+
     rule = "/" + base_path + "/<path:path>"
     app.add_url_rule(rule=rule, endpoint=endpoint, view_func=assets_handler)
 
