@@ -55,6 +55,26 @@ def test_register_plugin_assets_directory():
     destroy_ctfd(app)
 
 
+def test_register_admin_only_plugin_assets_directory():
+    """Test that admin-only plugin directories are not publicly accessible"""
+    app = create_ctfd(setup=False)
+    register_plugin_assets_directory(
+        app, base_path="/plugins/", admins_only=True, endpoint="admin_plugins"
+    )
+    app = setup_ctfd(app)
+    with app.app_context():
+        with app.test_client() as client:
+            r = client.get("/plugins/__init__.py")
+            assert r.status_code == 302
+            assert r.location.startswith("/login")
+
+        with login_as_user(app, name="admin") as client:
+            r = client.get("/plugins/__init__.py")
+            assert r.status_code == 200
+            assert len(r.get_data(as_text=True)) > 0
+    destroy_ctfd(app)
+
+
 def test_override_template():
     """Does override_template work properly for regular themes when used from a plugin"""
     app = create_ctfd()
