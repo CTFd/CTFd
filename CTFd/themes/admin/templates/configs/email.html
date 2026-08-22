@@ -1,4 +1,52 @@
 <div role="tabpanel" class="tab-pane config-section" id="email">
+	{% set mailfrom_addr = mailfrom_addr if mailfrom_addr is defined and mailfrom_addr != None else "" %}
+	{% set mail_server = mail_server if mail_server is defined and mail_server != None else "" %}
+	{% set mail_port = mail_port if mail_port is defined and mail_port != None else "" %}
+
+	{% set mail_useauth = true if mail_useauth is defined and mail_useauth == True else false %}
+	{% set mail_ssl = true if mail_ssl is defined and mail_ssl == True else false %}
+	{% set mail_tls = true if mail_tls is defined and mail_tls == True else false %}
+
+	{% set mailgun_base_url = mailgun_base_url if mailgun_base_url is defined and mailgun_base_url != None else "" %}
+	{% set mailgun_api_key = mailgun_api_key if mailgun_api_key is defined and mailgun_api_key != None else "" %}
+
+	{% set formcls = Forms.config.EmailSettingsForm %}
+
+	{% set successful_registration_email_subject = successful_registration_email_subject if successful_registration_email_subject is defined and successful_registration_email_subject != None else formcls.successful_registration_email_subject.kwargs['default'] %}
+	{% set successful_registration_email_body = successful_registration_email_body if successful_registration_email_body is defined and successful_registration_email_body != None else formcls.successful_registration_email_body.kwargs['default'] %}
+	
+	{% set verification_email_subject = verification_email_subject if verification_email_subject is defined and verification_email_subject != None else formcls.verification_email_subject.kwargs['default'] %}
+	{% set verification_email_body = verification_email_body if verification_email_body is defined and verification_email_body != None else formcls.verification_email_body.kwargs['default'] %}
+
+	{% set user_creation_email_subject = user_creation_email_subject if user_creation_email_subject is defined and user_creation_email_subject != None else formcls.user_creation_email_subject.kwargs['default'] %}
+	{% set user_creation_email_body = user_creation_email_body if user_creation_email_body is defined and user_creation_email_body != None else formcls.user_creation_email_body.kwargs['default'] %}
+
+	{% set password_reset_subject = password_reset_subject if password_reset_subject is defined and password_reset_subject != None else formcls.password_reset_subject.kwargs['default'] %}
+	{% set password_reset_body = password_reset_body if password_reset_body is defined and password_reset_body != None else formcls.password_reset_body.kwargs['default'] %}
+
+	{% set password_change_alert_subject = password_change_alert_subject if password_change_alert_subject is defined and password_change_alert_subject != None else formcls.password_change_alert_subject.kwargs['default'] %}
+	{% set password_change_alert_body = password_change_alert_body if password_change_alert_body is defined and password_change_alert_body != None else formcls.password_change_alert_body.kwargs['default'] %}
+
+	{% with form = Forms.config.EmailSettingsForm(
+		mailfrom_addr=mailfrom_addr, 
+		mail_server=mail_server, 
+		mail_port=mail_port, 
+		mail_useauth=mail_useauth,
+		mail_ssl=mail_ssl,
+		mail_tls=mail_tls,
+		mailgun_base_url=mailgun_base_url,
+		mailgun_api_key=mailgun_api_key,
+		successful_registration_email_subject=successful_registration_email_subject,
+		successful_registration_email_body=successful_registration_email_body,
+		verification_email_subject=verification_email_subject,
+		verification_email_body=verification_email_body,
+		user_creation_email_subject=user_creation_email_subject,
+		user_creation_email_body=user_creation_email_body,
+		password_reset_subject=password_reset_subject,
+		password_reset_body=password_reset_body,
+		password_change_alert_subject=password_change_alert_subject,
+		password_change_alert_body=password_change_alert_body,
+	) %}
 	<form method="POST" autocomplete="off" class="w-100">
 		<h5>Email notifications</h5>
 		<small class="form-text text-muted">
@@ -31,112 +79,86 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="email-server-tab">
 				<div class="form-group">
-					<label class="pt-3">
-						Mail From Address<br>
-						<small class="form-text text-muted">
-							Email address used to send email
-						</small>
-					</label>
-					<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text' {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
+					{{ form.mailfrom_addr.label(class="pt-3") }}
+					{{ form.mailfrom_addr(class="form-control") }}
+					<small class="form-text text-muted">
+						{{ form.mailfrom_addr.description }}
+					</small>
 				</div>
 				<div class="form-group">
-					<label>
-						Mail Server Address
-						<br>
-						<small class="form-text text-muted">
-							Change the email server used by CTFd to send email
-						</small>
-					</label>
+					{{ form.mail_server.label() }}
 					<a class="float-right" href="https://docs.ctfd.io/docs/settings/emails#email-server" target="_blank">
 						<i class="far fa-question-circle pr-2"></i>
 					</a>
-					<input class="form-control" id='mail_server' name='mail_server' type='text'
-						{% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
+					{{ form.mail_server(class="form-control") }}
+					<small class="form-text text-muted">
+						{{ form.mail_server.description }}
+					</small>
 				</div>
 				<div class="form-group">
-					<label>
-						Mail Server Port<br>
-						<small class="form-text text-muted">
-							Mail Server Port
-						</small>
-					</label>
-					<input class="form-control" id='mail_port' name='mail_port' type='text'
-						{% if mail_port is defined and mail_port != None %}value="{{ mail_port }}"{% endif %}>
+					{{ form.mail_port.label() }}
+					{{ form.mail_port(class="form-control") }}
+					<small class="form-text text-muted">
+						{{ form.mail_port.description }}
+					</small>
 				</div>
 				<div class="form-check">
-					<label>
-						<input id="mail_useauth" name="mail_useauth" type="checkbox"
-							{% if mail_useauth %}checked{% endif %}>
-						Use Mail Server Username and Password
-					</label>
+					{{ form.mail_useauth() }}
+					{{ form.mail_useauth.label() }}
 				</div>
 				<div id="mail_username_password">
 					<div class="form-group">
-						<label>
-							Username<br>
-							<small class="form-text text-muted">
-								Mail Server Account Username
-							</small>
-						</label>
+						{{ form.mail_username.label() }}
 						{% if mail_username is defined and mail_username != None %}
 							<label>
-								<sup class="form-text text-muted">A mail server username is currently set</sup>
+								<sup class="form-text text-muted">(A mail server username is currently set)</sup>
 							</label>
 						{% endif %}
-						<input class="form-control" id='mail_username' name='mail_username' autocomplete='off' type='text'>
+						{{ form.mail_username(class="form-control", autocomplete="off") }}
+						<small class="form-text text-muted">
+							{{ form.mail_username.description }}
+						</small>
 					</div>
 					<div class="form-group">
-						<label for="mail_password">
-							Password<br>
-							<small class="form-text text-muted">
-								Mail Server Account Password
-							</small>
-						</label>
+						{{ form.mail_password.label() }}
 						{% if mail_password is defined and mail_password != None %}
 							<label>
-								<sup class="form-text text-muted">A mail server password is currently set</sup>
+								<sup class="form-text text-muted">(A mail server password is currently set)</sup>
 							</label>
 						{% endif %}
-						<input class="form-control" id='mail_password' name='mail_password' autocomplete='off' type='password'>
+						{{ form.mail_password(class="form-control", autocomplete="off") }}
+						<small class="form-text text-muted">
+							{{ form.mail_password.description }}
+						</small>
 					</div>
-					<sup>Uncheck setting and update to remove username and password</sup>
+					<sup class="float-right">Uncheck setting and update to remove username and password</sup>
 					<br>
 				</div>
 				<div class="form-check">
-					<label>
-						<input id="mail_ssl" name="mail_ssl" type="checkbox" {% if mail_ssl %}checked{% endif %}>
-						TLS/SSL
-					</label>
+					{{ form.mail_ssl() }}
+					{{ form.mail_ssl.label() }}
 				</div>
 				<div class="form-check">
-					<label>
-						<input id="mail_tls" name="mail_tls" type="checkbox" {% if mail_tls %}checked{% endif %}>
-						STARTTLS
-					</label>
+					{{ form.mail_tls() }}
+					{{ form.mail_tls.label() }}
 				</div>
 				<br>
 				<div class="alert alert-warning" role="alert">
 					Mailgun integration is deprecated! Please see your Mailgun account for SMTP credentials.
 				</div>
 				<div class="form-group">
-					<label>
-						Mailgun API Base URL<br>
-						<small class="form-text text-muted">
-							Mailgun API Base URL
-						</small>
-					</label>
-					<input class="form-control" id='mailgun_base_url' name='mailgun_base_url' type='text'
-						{% if mailgun_base_url is defined and mailgun_base_url != None %}value="{{ mailgun_base_url }}"{% endif %}>
+					{{ form.mailgun_base_url.label() }}
+					{{ form.mailgun_base_url(class="form-control") }}
+					<small class="form-text text-muted">
+						{{ form.mailgun_base_url.description }}
+					</small>
 				</div>
 				<div class="form-group">
-					<label>
-						Mailgun API Key<br>
-						<small class="form-text text-muted">
-							Mailgun API Key
-						</small>
-					</label>
-					<input class="form-control" id='mailgun_api_key' name='mailgun_api_key' type='text'
-						{% if mailgun_api_key is defined and mailgun_api_key != None %}value="{{ mailgun_api_key }}"{% endif %}>
+					{{ form.mailgun_api_key.label() }}
+					{{ form.mailgun_api_key(class="form-control") }}
+					<small class="form-text text-muted">
+						{{ form.mailgun_api_key.description }}
+					</small>
 				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="registration-email-tab">
@@ -148,16 +170,16 @@
 						</small>
 					</label>
 					<div>
-						<label>
-							Subject
-						</label>
-						<input class="form-control" id='successful_registration_email_subject' name='successful_registration_email_subject' type='text'
-							value="{{ successful_registration_email_subject or ''}}">
-						<label>
-							Body
-						</label>
-						<textarea class="form-control" type="text" id="successful_registration_email_body" name="successful_registration_email_body"
-							rows="5">{{ successful_registration_email_body or '' }}</textarea>
+						{{ form.successful_registration_email_subject.label() }}
+						{{ form.successful_registration_email_subject(class="form-control") }}
+						<small class="form-text text-muted">
+							{{ form.successful_registration_email_subject.description }}
+						</small>
+						{{ form.successful_registration_email_body.label() }}
+						{{ form.successful_registration_email_body(class="form-control", rows="5") }}
+						<small class="form-text text-muted">
+							{{ form.successful_registration_email_body.description }}
+						</small>
 					</div>
 				</div>
 			</div>
@@ -171,15 +193,16 @@
 						</small>
 					</label>
 					<div>
-						<label>
-							Subject
-						</label>
-						<input class="form-control" id='verification_email_subject' name='verification_email_subject' type='text' value="{{ verification_email_subject or ''}}">
-						<label>
-							Body
-						</label>
-						<textarea class="form-control" type="text" id="verification_email_body" name="verification_email_body"
-							rows="5">{{ verification_email_body or '' }}</textarea>
+						{{ form.verification_email_subject.label() }}
+						{{ form.verification_email_subject(class="form-control") }}
+						<small class="form-text text-muted">
+							{{ form.verification_email_subject.description }}
+						</small>
+						{{ form.verification_email_body.label() }}
+						{{ form.verification_email_body(class="form-control", rows="5") }}
+						<small class="form-text text-muted">
+							{{ form.verification_email_body.description }}
+						</small>
 					</div>
 				</div>
 			</div>
@@ -193,16 +216,16 @@
 						</small>
 					</label>
 					<div>
-						<label>
-							Subject
-						</label>
-						<input class="form-control" id='user_creation_email_subject' name='user_creation_email_subject' type='text'
-							value="{{ user_creation_email_subject or ''}}">
-						<label>
-							Body
-						</label>
-						<textarea class="form-control" type="text" id="user_creation_email_body" name="user_creation_email_body"
-							rows="5">{{ user_creation_email_body or '' }}</textarea>
+						{{ form.user_creation_email_subject.label() }}
+						{{ form.user_creation_email_subject(class="form-control") }}
+						<small class="form-text text-muted">
+							{{ form.user_creation_email_subject.description }}
+						</small>
+						{{ form.user_creation_email_body.label() }}
+						{{ form.user_creation_email_body(class="form-control", rows="5") }}
+						<small class="form-text text-muted">
+							{{ form.user_creation_email_body.description }}
+						</small>
 					</div>
 				</div>
 			</div>
@@ -216,16 +239,16 @@
 						</small>
 					</label>
 					<div>
-						<label>
-							Subject
-						</label>
-						<input class="form-control" id='password_reset_subject' name='password_reset_subject' type='text'
-							value="{{ password_reset_subject or ''}}">
-						<label>
-							Body
-						</label>
-						<textarea class="form-control" type="text" id="password_reset_body" name="password_reset_body"
-							rows="5">{{ password_reset_body or '' }}</textarea>
+						{{ form.password_reset_subject.label() }}
+						{{ form.password_reset_subject(class="form-control") }}
+						<small class="form-text text-muted">
+							{{ form.password_reset_subject.description }}
+						</small>
+						{{ form.password_reset_body.label() }}
+						{{ form.password_reset_body(class="form-control", rows="5") }}
+						<small class="form-text text-muted">
+							{{ form.password_reset_body.description }}
+						</small>
 					</div>
 				</div>
 
@@ -237,22 +260,22 @@
 						</small>
 					</label>
 					<div>
-						<label>
-							Subject
-						</label>
-						<input class="form-control" id='password_change_alert_subject' name='password_change_alert_subject' type='text'
-							value="{{ password_change_alert_subject or ''}}">
-						<label>
-							Body
-						</label>
-						<textarea class="form-control" type="text" id="password_change_alert_body" name="password_change_alert_body"
-							rows="5">{{ password_change_alert_body or '' }}</textarea>
+						{{ form.password_change_alert_subject.label() }}
+						{{ form.password_change_alert_subject(class="form-control") }}
+						<small class="form-text text-muted">
+							{{ form.password_change_alert_subject.description }}
+						</small>
+						{{ form.password_change_alert_body.label() }}
+						{{ form.password_change_alert_body(class="form-control", rows="5") }}
+						<small class="form-text text-muted">
+							{{ form.password_change_alert_body.description }}
+						</small>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		{{ form.submit(class="btn btn-md btn-primary float-right") }}
 	</form>
+	{% endwith %}
 </div>

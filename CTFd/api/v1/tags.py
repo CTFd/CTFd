@@ -6,6 +6,7 @@ from flask_restx import Namespace, Resource
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
+from CTFd.cache import clear_challenges
 from CTFd.constants import RawEnum
 from CTFd.models import Tags, db
 from CTFd.schemas.tags import TagSchema
@@ -98,6 +99,8 @@ class TagList(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
+        clear_challenges()
+
         return {"success": True, "data": response.data}
 
 
@@ -150,6 +153,8 @@ class Tag(Resource):
         response = schema.dump(response.data)
         db.session.close()
 
+        clear_challenges()
+
         return {"success": True, "data": response.data}
 
     @admins_only
@@ -162,5 +167,7 @@ class Tag(Resource):
         db.session.delete(tag)
         db.session.commit()
         db.session.close()
+
+        clear_challenges()
 
         return {"success": True}

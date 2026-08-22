@@ -8,7 +8,7 @@ def markup(text):
     """
     Mark text as safe to inject as HTML into templates
     """
-    return Markup(text)
+    return Markup(text)  # nosec B704
 
 
 def info_for(endpoint, message):

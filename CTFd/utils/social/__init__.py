@@ -13,8 +13,7 @@ from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.security.signing import hmac
 from CTFd.utils.uploads import get_uploader
 
-BASE_TEMPLATE = """
-<div class="container">
+BASE_TEMPLATE = """<div class="container">
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <h3 class="text-center">{ctf_name}</h3>
@@ -30,8 +29,7 @@ BASE_TEMPLATE = """
             </h6>
         </div>
     </div>
-</div>
-"""
+</div>"""
 
 
 def get_logo():

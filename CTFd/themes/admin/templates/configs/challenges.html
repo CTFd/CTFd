@@ -1,0 +1,56 @@
+<div role="tabpanel" class="tab-pane config-section" id="challenges">
+	{% set view_self_submissions = "true" if view_self_submissions == True else "false" %}
+    {% set hints_free_public_access = "true" if hints_free_public_access == True else "false" %}
+	{% set max_attempts_behavior = "timeout" if max_attempts_behavior == "timeout" else "lockout" %}
+	{% set max_attempts_timeout = 300 if max_attempts_timeout is not defined else max_attempts_timeout %}
+	{% set challenge_ratings = public if challenge_ratings is not defined else challenge_ratings %}
+	{% 
+		with form = Forms.config.ChallengeSettingsForm(
+			view_self_submissions=view_self_submissions,
+			hints_free_public_access=hints_free_public_access, 
+			max_attempts_behavior=max_attempts_behavior,
+			max_attempts_timeout=max_attempts_timeout,
+			challenge_ratings=challenge_ratings,
+		) 
+	%}
+	<form method="POST" autocomplete="off" class="w-100">
+		<div class="form-group">
+			{{ form.view_self_submissions.label }}
+			{{ form.view_self_submissions(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.view_self_submissions.description }}
+			</small>
+		</div>
+		<div class="form-group">
+			{{ form.max_attempts_behavior.label }}
+			{{ form.max_attempts_behavior(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.max_attempts_behavior.description }}
+			</small>
+		</div>
+		<div class="form-group">
+			{{ form.max_attempts_timeout.label }}
+			{{ form.max_attempts_timeout(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.max_attempts_timeout.description }}
+			</small>
+		</div>
+		<div class="form-group">
+			{{ form.hints_free_public_access.label }}
+			{{ form.hints_free_public_access(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.hints_free_public_access.description }}
+			</small>
+		</div>
+		<div class="form-group">
+			{{ form.challenge_ratings.label }}
+			{{ form.challenge_ratings(class="form-control custom-select") }}
+			<small class="form-text text-muted">
+				{{ form.challenge_ratings.description }}
+			</small>
+		</div>
+
+		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+	</form>
+	{% endwith %}
+</div>

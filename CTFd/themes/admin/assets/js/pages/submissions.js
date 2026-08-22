@@ -82,6 +82,36 @@ function correctSubmissions(_event) {
   });
 }
 
+function incorrectSubmissions(_event) {
+  let submissionIDs = $("input[data-submission-id]:checked").map(function () {
+    return $(this).data("submission-id");
+  });
+  let target = submissionIDs.length === 1 ? "submission" : "submissions";
+
+  ezQuery({
+    title: "Incorrect Submissions",
+    body: `Are you sure you want to mark ${submissionIDs.length} ${target} incorrect?`,
+    success: function () {
+      const reqs = [];
+      for (var subId of submissionIDs) {
+        let req = CTFd.fetch(`/api/v1/submissions/${subId}`, {
+          method: "PATCH",
+          credentials: "same-origin",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ type: "incorrect" }),
+        });
+        reqs.push(req);
+      }
+      Promise.all(reqs).then((_responses) => {
+        window.location.reload();
+      });
+    },
+  });
+}
+
 function showFlagsToggle(_event) {
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("full")) {
@@ -132,6 +162,7 @@ $(() => {
   $(".show-flag").click(showFlag);
   $(".copy-flag").click(copyFlag);
   $("#correct-flags-button").click(correctSubmissions);
+  $("#incorrect-flags-button").click(incorrectSubmissions);
   $(".delete-correct-submission").click(deleteCorrectSubmission);
   $("#submission-delete-button").click(deleteSelectedSubmissions);
 });

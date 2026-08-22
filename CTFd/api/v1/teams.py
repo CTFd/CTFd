@@ -1,4 +1,3 @@
-import copy
 from typing import List
 
 from flask import abort, request, session
@@ -29,7 +28,13 @@ from CTFd.utils.decorators.visibility import (
     check_score_visibility,
 )
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.user import get_current_team, get_current_user_type, is_admin
+from CTFd.utils.user import (
+    get_current_team,
+    get_current_user_type,
+    get_team_attrs,
+    get_team_public_api,
+    is_admin,
+)
 
 teams_namespace = Namespace("teams", description="Endpoint to retrieve Teams")
 
@@ -119,9 +124,8 @@ class TeamList(Resource):
             )
 
         user_type = get_current_user_type(fallback="user")
-        view = copy.deepcopy(TeamSchema.views.get(user_type))
-        view.remove("members")
-        response = TeamSchema(view=view, many=True).dump(teams.items)
+        schema = TeamSchema(view=user_type, many=True, exclude=["members"])
+        response = schema.dump(teams.items)
 
         if response.errors:
             return {"success": False, "errors": response.errors}, 400
@@ -155,8 +159,7 @@ class TeamList(Resource):
     def post(self):
         req = request.get_json()
         user_type = get_current_user_type()
-        view = TeamSchema.views.get(user_type)
-        schema = TeamSchema(view=view)
+        schema = TeamSchema(view=user_type)
         response = schema.load(req)
 
         if response.errors:
@@ -191,22 +194,21 @@ class TeamPublic(Resource):
         },
     )
     def get(self, team_id):
-        team = Teams.query.filter_by(id=team_id).first_or_404()
+        team = get_team_attrs(team_id=team_id)
+        if team is None:
+            abort(404)
 
         if (team.banned or team.hidden) and is_admin() is False:
             abort(404)
 
         user_type = get_current_user_type(fallback="user")
-        view = TeamSchema.views.get(user_type)
-        schema = TeamSchema(view=view)
-        response = schema.dump(team)
-
-        if response.errors:
-            return {"success": False, "errors": response.errors}, 400
-
-        response.data["place"] = team.place
-        response.data["score"] = team.score
-        return {"success": True, "data": response.data}
+        success, data, status_code = get_team_public_api(
+            team_id=team_id, user_type=user_type
+        )
+        if success:
+            return {"success": success, "data": data}, status_code
+        else:
+            return {"success": success, "errors": data}, status_code
 
     @admins_only
     @teams_namespace.doc(

@@ -259,7 +259,7 @@ def test_user_needs_all_required_fields():
 
             r = client.get("/challenges")
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/settings")
+            assert r.location.startswith("/settings")
 
             # Populate the non-required fields
             r = client.patch(
@@ -277,7 +277,7 @@ def test_user_needs_all_required_fields():
             # I should still be restricted from seeing challenges
             r = client.get("/challenges")
             assert r.status_code == 302
-            assert r.location.startswith("http://localhost/settings")
+            assert r.location.startswith("/settings")
 
             # I should still see all fields b/c I don't have a complete profile
             r = client.get("/settings")
@@ -316,4 +316,45 @@ def test_user_needs_all_required_fields():
                 "success": False,
                 "errors": {"fields": ["Field 'CustomField4' cannot be editted"]},
             }
+    destroy_ctfd(app)
+
+
+def test_user_fields_non_public_on_user_list():
+    """Test that non public user fields are not shown on /api/v1/users"""
+    app = create_ctfd()
+    with app.app_context():
+        register_user(app)
+
+        gen_field(app.db, name="CustomField1", public=True)
+        gen_field(app.db, name="CustomField2", required=False, public=False)
+
+        for field_id in (1, 2):
+            app.db.session.add(
+                UserFieldEntries(
+                    field_id=field_id, value=f"CustomFieldEntry{field_id}", user_id=2
+                )
+            )
+        app.db.session.commit()
+
+        # Anonymous users should only see the public field
+        with app.test_client() as client:
+            r = client.get("/api/v1/users")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
+
+        # Logged in users should only see the public field
+        with login_as_user(app) as client:
+            r = client.get("/api/v1/users")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
+
+        # The user list is always dumped with the user view, so even admins
+        # only see public fields here
+        with login_as_user(app, name="admin") as client:
+            r = client.get("/api/v1/users?view=admin")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
     destroy_ctfd(app)

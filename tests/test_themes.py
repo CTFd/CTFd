@@ -90,7 +90,7 @@ def test_that_ctfd_can_be_deployed_in_subdir():
         with app.test_client() as client:
             r = client.get("/")
             assert r.status_code == 302
-            assert r.location == "http://localhost/ctf/setup"
+            assert r.location == "/ctf/setup"
 
             r = client.get("/setup")
             with client.session_transaction() as sess:
@@ -105,13 +105,13 @@ def test_that_ctfd_can_be_deployed_in_subdir():
                 }
             r = client.post("/setup", data=data)
             assert r.status_code == 302
-            assert r.location == "http://localhost/ctf/"
+            assert r.location == "/ctf/"
 
             c = Client(app)
             response = c.get("/")
             headers = dict(response.headers)
             assert response.status == "302 FOUND"
-            assert headers["Location"] == "http://localhost/ctf/"
+            assert headers["Location"] == "/ctf/?"
 
             r = client.get("/challenges")
             assert r.status_code == 200
@@ -120,6 +120,40 @@ def test_that_ctfd_can_be_deployed_in_subdir():
             r = client.get("/scoreboard")
             assert r.status_code == 200
             assert "Scoreboard" in r.get_data(as_text=True)
+    destroy_ctfd(app)
+
+
+def test_that_ctfd_subdir_redirects_work():
+    """Test that subdirectory deployments don't break when a regular path is accessed"""
+
+    class ApplicationRootConfig(TestingConfig):
+        APPLICATION_ROOT = "/ctf"
+
+    app = create_ctfd(config=ApplicationRootConfig, application_root="/ctf")
+    with app.app_context():
+        with app.test_client():
+            remote = {"environ_base": {"REMOTE_ADDR": "127.0.0.1"}}
+            c = Client(app)
+            # Test that we are in a subdir deployment
+            response = c.get("/random", **remote)
+            headers = dict(response.headers)
+            assert response.status == "302 FOUND"
+            assert headers["Location"] == "/ctf/random?"
+
+            # A session cookie should be set on the first request
+            response = c.get("/ctf/login", **remote)
+            headers = dict(response.headers)
+            assert headers["Set-Cookie"]
+
+            # The session cookie should not be regenerated on non subdir requests
+            response = c.get("/random", **remote)
+            headers = dict(response.headers)
+            assert headers.get("Set-Cookie") is None
+
+            # The session cookie should not be regenerated on subdir requests
+            response = c.get("/ctf/login", **remote)
+            headers = dict(response.headers)
+            assert headers.get("Set-Cookie") is None
     destroy_ctfd(app)
 
 
@@ -174,7 +208,7 @@ def test_theme_fallback_config():
             except TemplateNotFound:
                 pass
             try:
-                r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
+                r = client.get("/themes/foo_fallback/static/manifest.json")
             except TemplateNotFound:
                 pass
     destroy_ctfd(app)
@@ -186,7 +220,7 @@ def test_theme_fallback_config():
         with app.test_client() as client:
             r = client.get("/")
             assert r.status_code == 200
-            r = client.get("/themes/foo_fallback/static/js/pages/main.dev.js")
+            r = client.get("/themes/foo_fallback/static/manifest.json")
             assert r.status_code == 200
     destroy_ctfd(app)
 

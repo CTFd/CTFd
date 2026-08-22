@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "Apache-2.0",
   "scripts": {
-    "dev": "vite build --watch",
+    "dev": "vite build --watch --mode=development",
     "build": "vite build",
     "format": "prettier --write assets/",
     "lint": "eslint assets/ && prettier --check assets/",

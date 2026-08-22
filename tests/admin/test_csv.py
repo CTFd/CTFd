@@ -1,8 +1,17 @@
+import csv
 import io
 
 from CTFd.models import Challenges, Flags, Hints, Teams, Users
+from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
-from tests.helpers import create_ctfd, destroy_ctfd, gen_challenge, login_as_user
+from tests.helpers import (
+    create_ctfd,
+    destroy_ctfd,
+    gen_challenge,
+    gen_solve,
+    gen_user,
+    login_as_user,
+)
 
 
 def test_export_csv_works():
@@ -139,5 +148,76 @@ challenge1,category1,description1,100,"[{""type"": ""static"", ""content"": ""fl
         assert f.type == "static"
         assert f.content == "flag3"
         assert f.data is None
+
+    destroy_ctfd(app)
+
+
+def test_export_scoreboard_frozen_csv():
+    app = create_ctfd()
+    with app.app_context():
+        user = gen_user(app.db)
+        chal = gen_challenge(app.db)
+        gen_solve(app.db, user_id=user.id, challenge_id=chal.id)
+
+        # freeze before the solve was created
+        set_config("freeze", "1507262400")
+
+        client = login_as_user(app, name="admin", password="password")
+        csv_data = client.get("/admin/export/csv?table=scoreboard").get_data(
+            as_text=True
+        )
+
+        reader = csv.reader(io.StringIO(csv_data))
+        rows = list(reader)
+
+        # header only, no data rows since solve is after freeze
+        assert len(rows) == 1
+
+    destroy_ctfd(app)
+
+
+def test_export_scoreboard_unfrozen_csv():
+    app = create_ctfd()
+    with app.app_context():
+        user = gen_user(app.db)
+        chal = gen_challenge(app.db, value=100)
+        gen_solve(app.db, user_id=user.id, challenge_id=chal.id)
+
+        # freeze before the solve was created
+        set_config("freeze", "1507262400")
+
+        client = login_as_user(app, name="admin", password="password")
+        csv_data = client.get("/admin/export/csv?table=scoreboard-admin").get_data(
+            as_text=True
+        )
+
+        reader = csv.reader(io.StringIO(csv_data))
+        rows = list(reader)
+
+        # header + 1 data row with the user's score
+        assert len(rows) == 2
+        assert rows[1][4] == "100"  # score column in users mode
+
+    destroy_ctfd(app)
+
+
+def test_export_scoreboard_frozen_csv_without_freeze():
+    app = create_ctfd()
+    with app.app_context():
+        user = gen_user(app.db)
+        chal = gen_challenge(app.db, value=100)
+        gen_solve(app.db, user_id=user.id, challenge_id=chal.id)
+
+        client = login_as_user(app, name="admin", password="password")
+        csv_data = client.get("/admin/export/csv?table=scoreboard").get_data(
+            as_text=True
+        )
+
+        reader = csv.reader(io.StringIO(csv_data))
+        rows = list(reader)
+
+        # header + 1 data row
+        assert len(rows) == 2
+        assert rows[1][4] == "100"  # score column in users mode
 
     destroy_ctfd(app)

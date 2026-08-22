@@ -39,7 +39,7 @@ def test_session_invalidation_on_admin_password_change():
             r = user.get("/settings")
             # User's password was changed
             # They should be logged out
-            assert r.location.startswith("http://localhost/login")
+            assert r.location.startswith("/login")
             assert r.status_code == 302
     destroy_ctfd(app)
 

@@ -394,3 +394,48 @@ def test_team_needs_all_required_fields():
             assert "CustomField3" not in resp
             assert "CustomField4" not in resp
     destroy_ctfd(app)
+
+
+def test_team_fields_non_public_on_team_list():
+    """Test that non public team fields are not shown on /api/v1/teams"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        register_user(app)
+        gen_team(app.db, member_count=1)
+
+        gen_field(app.db, name="CustomField1", type="team", public=True)
+        gen_field(
+            app.db, name="CustomField2", type="team", required=False, public=False
+        )
+
+        for field_id in (1, 2):
+            app.db.session.add(
+                TeamFieldEntries(
+                    field_id=field_id, value=f"CustomFieldEntry{field_id}", team_id=1
+                )
+            )
+        app.db.session.commit()
+
+        # Anonymous users should only see the public field
+        with app.test_client() as client:
+            r = client.get("/api/v1/teams")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
+            # members is not dumped on the team list
+            assert "members" not in r.get_json()["data"][0]
+
+        # Logged in users should only see the public field
+        with login_as_user(app) as client:
+            r = client.get("/api/v1/teams")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" not in resp
+
+        # Admins should see every field
+        with login_as_user(app, name="admin") as client:
+            r = client.get("/api/v1/teams?view=admin")
+            resp = r.get_data(as_text=True)
+            assert "CustomFieldEntry1" in resp
+            assert "CustomFieldEntry2" in resp
+    destroy_ctfd(app)
