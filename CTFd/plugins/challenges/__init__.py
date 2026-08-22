@@ -47,6 +47,25 @@ class ChallengeResponse:
         yield self.message
 
 
+class ChallengeRenderData(object):
+    """
+    Template-facing representation of a challenge that prefers values returned
+    by a challenge type's read() method (e.g. per-user overrides such as
+    connection strings) while falling back to the underlying Challenges model
+    for everything else (e.g. computed properties like html and byline).
+    """
+
+    def __init__(self, challenge, data):
+        self._challenge = challenge
+        self._data = data or {}
+
+    def __getattr__(self, name):
+        try:
+            return self._data[name]
+        except (KeyError, IndexError, TypeError):
+            return getattr(self._challenge, name)
+
+
 def calculate_value(challenge):
     f = DECAY_FUNCTIONS.get(challenge.function, logarithmic)
     value = f(challenge)

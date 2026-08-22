@@ -31,7 +31,11 @@ from CTFd.models import (
     db,
 )
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
-from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
+from CTFd.plugins.challenges import (
+    CHALLENGE_CLASSES,
+    ChallengeRenderData,
+    get_chal_class,
+)
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.hints import HintSchema
@@ -585,7 +589,7 @@ class Challenge(Resource):
             ratings=rating_info,
             max_attempts=chal.max_attempts,
             attempts=attempts,
-            challenge=chal,
+            challenge=ChallengeRenderData(challenge=chal, data=response),
         )
 
         if (
