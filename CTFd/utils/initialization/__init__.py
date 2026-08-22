@@ -187,7 +187,7 @@ def init_logs(app):
         logins_formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
-        registrations_formatter = formatter = logging.Formatter(
+        registrations_formatter = logging.Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
         email_formatter = logging.Formatter(
