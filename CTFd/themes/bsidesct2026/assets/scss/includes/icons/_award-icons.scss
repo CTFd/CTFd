@@ -1,0 +1,42 @@
+.award-icon {
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+.award-shield:before {
+  content: "\f3ed";
+}
+.award-bug:before {
+  content: "\f188";
+}
+.award-crown:before {
+  content: "\f521";
+}
+.award-crosshairs:before {
+  content: "\f05b";
+}
+.award-ban:before {
+  content: "\f05e";
+}
+.award-brain:before {
+  content: "\f5dc";
+}
+.award-lightning:before {
+  content: "\f0e7";
+}
+.award-code:before {
+  content: "\f121";
+}
+.award-cowboy:before {
+  content: "\f8c0";
+}
+.award-angry:before {
+  content: "\f556";
+}

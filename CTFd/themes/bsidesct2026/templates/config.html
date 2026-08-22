@@ -1,0 +1,47 @@
+<form>
+  <div class="form-group">
+    <label>Challenge Window Size</label>
+    <select class="form-control custom-select" name="challenge_window_size">
+        <option value="sm">Small</option>
+        <option value="norm">Normal</option>
+        <option value="lg">Large</option>
+        <option value="xl">Extra Large</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>
+      Challenge Category Order Custom Function<br>
+      <small class="form-text text-muted">
+        Define a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#description" target="_blank">custom compareFn function for Array.sort()</a> 
+        used to sort the challenge categories
+      </small>
+    </label>
+    <textarea class="form-control text-monospace" name="challenge_category_order" rows="5"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>
+      Challenge Order Custom Function<br>
+      <small class="form-text text-muted">
+        Define a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#description" target="_blank">custom compareFn function for Array.sort()</a> 
+        used to sort the challenges within categories
+      </small>
+    </label>
+    <textarea class="form-control text-monospace" name="challenge_order" rows="5"></textarea>
+  </div>
+
+  <div>
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="use_builtin_code_highlighter" name="use_builtin_code_highlighter" checked>
+      <label class="form-check-label" for="use_builtin_code_highlighter">
+        Use Built-In Syntax Highlighter
+      </label>
+    </div>
+    <small class="form-text text-muted">
+      The built-in syntax highlighter is lightweight and fast but may not always correctly highlight all languages. You can disable the built-in highlighter in order to use your own.
+    </small>
+  </div>
+
+  <button type="submit" class="btn btn-primary float-right mt-4">Update</button>
+</form>

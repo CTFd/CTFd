@@ -80,3 +80,6 @@ node_modules/
 
 # Flask Profiler files
 flask_profiler.sql
+
+# Security audit (local only)
+SECURITY_AUDIT.md
