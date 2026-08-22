@@ -9,7 +9,7 @@ events = Blueprint("events", __name__)
 
 @events.route("/events")
 @authed_only
-@ratelimit(method="GET", limit=150, interval=60)
+@ratelimit(method="GET", rl_key="RL_EVENTS")
 def subscribe():
     @stream_with_context
     def gen():
