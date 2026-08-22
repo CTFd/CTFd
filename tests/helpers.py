@@ -19,6 +19,8 @@ from CTFd.cache import cache, clear_challenges, clear_ratings, clear_standings
 from CTFd.config import TestingConfig
 from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.models import (
+    AudienceMembers,
+    Audiences,
     Awards,
     Brackets,
     ChallengeComments,
@@ -31,6 +33,8 @@ from CTFd.models import (
     Files,
     Flags,
     Hints,
+    ModuleAudienceAccess,
+    Modules,
     Notifications,
     PageComments,
     PageFiles,
@@ -268,9 +272,11 @@ def login_with_mlc(
     team_oauth_id=1234,
     raise_for_error=True,
 ):
-    with app.test_client() as client, patch.object(
-        requests, "get"
-    ) as fake_get_request, patch.object(requests, "post") as fake_post_request:
+    with (
+        app.test_client() as client,
+        patch.object(requests, "get") as fake_get_request,
+        patch.object(requests, "post") as fake_post_request,
+    ):
         client.get("/login")
         with client.session_transaction() as sess:
             nonce = sess["nonce"]
@@ -339,7 +345,7 @@ def gen_challenge(
     category="chal_category",
     type="standard",
     state="visible",
-    **kwargs
+    **kwargs,
 ):
     chal = Challenges(
         name=name,
@@ -348,7 +354,7 @@ def gen_challenge(
         category=category,
         type=type,
         state=state,
-        **kwargs
+        **kwargs,
     )
     db.session.add(chal)
     db.session.commit()
@@ -419,7 +425,7 @@ def gen_team(
     email="team@examplectf.com",
     password="password",
     member_count=4,
-    **kwargs
+    **kwargs,
 ):
     team = Teams(name=name, email=email, password=password, **kwargs)
     for i in range(member_count):
@@ -458,7 +464,7 @@ def gen_solve(
     challenge_id=None,
     ip="127.0.0.1",
     provided="rightkey",
-    **kwargs
+    **kwargs,
 ):
     solve = Solves(
         user_id=user_id,
@@ -466,7 +472,7 @@ def gen_solve(
         challenge_id=challenge_id,
         ip=ip,
         provided=provided,
-        **kwargs
+        **kwargs,
     )
     solve.date = datetime.datetime.utcnow()
     db.session.add(solve)
@@ -493,7 +499,7 @@ def gen_fail(
     challenge_id=None,
     ip="127.0.0.1",
     provided="wrongkey",
-    **kwargs
+    **kwargs,
 ):
     fail = Fails(
         user_id=user_id,
@@ -501,7 +507,7 @@ def gen_fail(
         challenge_id=challenge_id,
         ip=ip,
         provided=provided,
-        **kwargs
+        **kwargs,
     )
     fail.date = datetime.datetime.utcnow()
     db.session.add(fail)
@@ -523,7 +529,7 @@ def gen_page(db, title, route, content, draft=False, auth_required=False, **kwar
         content=content,
         draft=draft,
         auth_required=auth_required,
-        **kwargs
+        **kwargs,
     )
     db.session.add(page)
     db.session.commit()
@@ -608,6 +614,34 @@ def gen_bracket(
     )
     db.session.add(bracket)
     db.session.commit()
+
+
+def gen_audience(db, name="audience", description=None):
+    audience = Audiences(name=name, description=description)
+    db.session.add(audience)
+    db.session.commit()
+    return audience
+
+
+def gen_module(db, name="module", description=None):
+    module = Modules(name=name, description=description)
+    db.session.add(module)
+    db.session.commit()
+    return module
+
+
+def gen_audience_member(db, audience_id, user_id=None, team_id=None):
+    m = AudienceMembers(audience_id=audience_id, user_id=user_id, team_id=team_id)
+    db.session.add(m)
+    db.session.commit()
+    return m
+
+
+def gen_module_audience_access(db, module_id, audience_id):
+    link = ModuleAudienceAccess(module_id=module_id, audience_id=audience_id)
+    db.session.add(link)
+    db.session.commit()
+    return link
 
 
 def simulate_user_activity(db, user):

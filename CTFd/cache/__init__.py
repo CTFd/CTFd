@@ -119,7 +119,7 @@ def calculate_param_hash(params, allowed_params=None):
         )
     else:
         args_as_sorted_tuple = tuple(sorted(pair for pair in params))
-    args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()  # nosec B303 B324
+    args_hash = md5(str(args_as_sorted_tuple).encode()).hexdigest()  # noqa: S324
     return args_hash
 
 
@@ -275,3 +275,9 @@ def clear_all_team_sessions():
     cache.delete_memoized(get_team_place)
     cache.delete_memoized(get_team_score)
     cache.delete_memoized(get_team_schema)
+
+
+def clear_accessible_module_ids():
+    from CTFd.utils.modules import get_accessible_module_ids_for_account_id
+
+    cache.delete_memoized(get_accessible_module_ids_for_account_id)

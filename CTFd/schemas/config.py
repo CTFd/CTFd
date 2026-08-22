@@ -17,7 +17,7 @@ class ConfigValueField(fields.Field):
             # You may be able to exceed this in other databases
             # but MySQL is our database of record
             if len(value) > 65535:
-                raise ValidationError(f'{data["key"]} config is too long')
+                raise ValidationError(f"{data['key']} config is too long")
             return value
         else:
             return value

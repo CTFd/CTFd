@@ -19,9 +19,10 @@ def test_adding_challenge_clears_cache():
     with app.app_context():
         register_user(app)
 
-        with login_as_user(app) as client, login_as_user(
-            app, name="admin", password="password"
-        ) as admin:
+        with (
+            login_as_user(app) as client,
+            login_as_user(app, name="admin", password="password") as admin,
+        ):
             req = client.get("/api/v1/challenges")
             data = req.get_json()
             assert data["data"] == []
@@ -53,9 +54,10 @@ def test_deleting_challenge_clears_cache_solves():
         register_user(app)
         user = Users.query.filter_by(id=2).first()
         simulate_user_activity(app.db, user)
-        with login_as_user(app) as client, login_as_user(
-            app, name="admin", password="password"
-        ) as admin:
+        with (
+            login_as_user(app) as client,
+            login_as_user(app, name="admin", password="password") as admin,
+        ):
             req = client.get("/api/v1/challenges")
             data = req.get_json()["data"]
             challenge = data[0]
@@ -93,9 +95,10 @@ def test_deleting_solve_clears_cache():
         register_user(app)
         user = Users.query.filter_by(id=2).first()
         simulate_user_activity(app.db, user)
-        with login_as_user(app) as client, login_as_user(
-            app, name="admin", password="password"
-        ) as admin:
+        with (
+            login_as_user(app) as client,
+            login_as_user(app, name="admin", password="password") as admin,
+        ):
             req = client.get("/api/v1/challenges")
             data = req.get_json()["data"]
             challenge = data[0]

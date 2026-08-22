@@ -82,9 +82,9 @@ def test_sanitize_html_links():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_images():
@@ -110,9 +110,9 @@ def test_sanitize_html_images():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_dangerous_content():
@@ -132,9 +132,9 @@ def test_sanitize_html_dangerous_content():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_forms():
@@ -164,9 +164,9 @@ def test_sanitize_html_forms():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_media():
@@ -193,9 +193,9 @@ def test_sanitize_html_media():
     for case in cases:
         result = sanitize_html(case.input)
         print(result)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_tables():
@@ -213,9 +213,9 @@ def test_sanitize_html_tables():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_attributes():
@@ -241,9 +241,9 @@ def test_sanitize_html_attributes():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_comments():
@@ -265,9 +265,9 @@ def test_sanitize_html_comments():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_href_sanitization():
@@ -285,9 +285,9 @@ def test_sanitize_html_href_sanitization():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_malformed():
@@ -305,9 +305,9 @@ def test_sanitize_html_malformed():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_whitespace():
@@ -321,9 +321,9 @@ def test_sanitize_html_whitespace():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )
 
 
 def test_sanitize_html_complex_content():
@@ -359,6 +359,6 @@ def test_sanitize_html_complex_content():
 
     for case in cases:
         result = sanitize_html(case.input)
-        assert (
-            result == case.expected
-        ), f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        assert result == case.expected, (
+            f"Input: {case.input}, Expected: {case.expected}, Got: {result}"
+        )

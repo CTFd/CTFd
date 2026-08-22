@@ -1,0 +1,6 @@
+# Revisions listed here are skipped by `git blame`. Configure it locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# Only add commits that are pure reformats.
+
+# format with ruff + prettier
+de504cc6b042900c780d1bcbaa686455f1752281

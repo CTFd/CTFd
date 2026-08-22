@@ -170,7 +170,7 @@ def confirm_upgrade():
         print("/*\\ CTFd has updated and must update the database! /*\\")
         print("/*\\ Please backup your database before proceeding! /*\\")
         print("/*\\ CTFd maintainers are not responsible for any data loss! /*\\")
-        if input("Run database migrations (Y/N)").lower().strip() == "y":  # nosec B322
+        if input("Run database migrations (Y/N)").lower().strip() == "y":
             return True
         else:
             print("/*\\ Ignored database migrations... /*\\")

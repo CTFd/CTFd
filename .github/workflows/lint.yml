@@ -8,32 +8,33 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: ['3.11']
-
     name: Linting
     steps:
       - uses: actions/checkout@v5
-      - name: Setup python
-        uses: actions/setup-python@v6
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: ${{ matrix.python-version }}
-          architecture: x64
+          enable-cache: true
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: yarn
+          cache-dependency-path: |
+            CTFd/themes/admin/yarn.lock
+            CTFd/themes/core/yarn.lock
       - name: Install dependencies
         run: |
-            python -m pip install --upgrade pip
-            python -m pip install -r linting.txt
             sudo yarn --cwd CTFd/themes/admin install --non-interactive
-            sudo yarn global add prettier@3.2.5
+            sudo yarn --cwd CTFd/themes/core install --non-interactive
 
       - name: Lint
-        run: make lint
+        run: uv run make lint
         env:
             TESTING_DATABASE_URL: 'sqlite://'
 
       - name: Lint Dockerfile
-        uses: brpaz/hadolint-action@master
+        uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # v3.3.0
         with:
           dockerfile: "Dockerfile"
 
@@ -43,9 +44,14 @@ jobs:
 
       - name: Lint translations
         run: |
-          make translations-lint
+          uv run make translations-lint
 
       - name: Check translations are compiled
         run: |
-          make translations-compile
+          uv run make translations-compile
           git diff --exit-code CTFd/translations/ || (echo "Translations need to be recompiled" && exit 1)
+
+      - name: Check requirements.txt is up to date
+        run: |
+          make requirements
+          git diff --exit-code requirements.txt || (echo "requirements.txt is out of sync with uv.lock, run 'make requirements'" && exit 1)

@@ -1,6 +1,7 @@
 from flask import Blueprint, current_app
 from flask_restx import Api
 
+from CTFd.api.v1.audiences import audiences_namespace
 from CTFd.api.v1.awards import awards_namespace
 from CTFd.api.v1.brackets import brackets_namespace
 from CTFd.api.v1.challenges import challenges_namespace
@@ -10,6 +11,7 @@ from CTFd.api.v1.exports import exports_namespace
 from CTFd.api.v1.files import files_namespace
 from CTFd.api.v1.flags import flags_namespace
 from CTFd.api.v1.hints import hints_namespace
+from CTFd.api.v1.modules import modules_namespace
 from CTFd.api.v1.notifications import notifications_namespace
 from CTFd.api.v1.pages import pages_namespace
 from CTFd.api.v1.schemas import (
@@ -71,5 +73,7 @@ CTFd_API_v1.add_namespace(tokens_namespace, "/tokens")
 CTFd_API_v1.add_namespace(comments_namespace, "/comments")
 CTFd_API_v1.add_namespace(shares_namespace, "/shares")
 CTFd_API_v1.add_namespace(brackets_namespace, "/brackets")
+CTFd_API_v1.add_namespace(audiences_namespace, "/audiences")
+CTFd_API_v1.add_namespace(modules_namespace, "/modules")
 CTFd_API_v1.add_namespace(exports_namespace, "/exports")
 CTFd_API_v1.add_namespace(solutions_namespace, "/solutions")

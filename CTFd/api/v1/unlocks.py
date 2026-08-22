@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -18,7 +18,8 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.user import get_current_user
+from CTFd.utils.modules import can_access_challenge
+from CTFd.utils.user import get_current_user, is_admin
 
 unlocks_namespace = Namespace("unlocks", description="Endpoint to retrieve Unlocks")
 
@@ -110,6 +111,9 @@ class UnlockList(Resource):
         target = Model.query.filter_by(id=req["target"]).first_or_404()
 
         if target_type == "hints":
+            if not is_admin() and not can_access_challenge(target.challenge, user):
+                abort(404)
+
             # We should use the team's score if in teams mode
             # user.account gives the appropriate account based on team mode
             # Use get_score with admin to get the account's full score value
@@ -167,6 +171,9 @@ class UnlockList(Resource):
 
             return {"success": True, "data": response.data}
         elif target_type == "solutions":
+            if not is_admin() and not can_access_challenge(target.challenge, user):
+                abort(404)
+
             schema = UnlockSchema()
             response = schema.load(req, session=db.session)
 

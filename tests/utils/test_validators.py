@@ -57,9 +57,9 @@ def test_is_safe_url_bad_urls():
     app = create_ctfd()
     with app.test_request_context("/", base_url="http://examplectf.com"):
         for bad_url in bad_urls:
-            assert (
-                is_safe_url(bad_url) is False
-            ), f"Expected {bad_url!r} to be rejected as unsafe"
+            assert is_safe_url(bad_url) is False, (
+                f"Expected {bad_url!r} to be rejected as unsafe"
+            )
     destroy_ctfd(app)
 
 
@@ -80,9 +80,9 @@ def test_is_safe_url_good_urls():
     app = create_ctfd()
     with app.test_request_context("/", base_url="http://examplectf.com"):
         for good_url in good_urls:
-            assert (
-                is_safe_url(good_url) is True
-            ), f"Expected {good_url!r} to be accepted as safe"
+            assert is_safe_url(good_url) is True, (
+                f"Expected {good_url!r} to be accepted as safe"
+            )
     destroy_ctfd(app)
 
 
@@ -185,9 +185,9 @@ def test_is_safe_url_open_redirect_payloads():
     app = create_ctfd()
     with app.test_request_context("/", base_url="http://examplectf.com"):
         for url in bad_urls:
-            assert (
-                is_safe_url(url) is False
-            ), f"Expected {url!r} to be rejected as unsafe"
+            assert is_safe_url(url) is False, (
+                f"Expected {url!r} to be rejected as unsafe"
+            )
         for url in good_urls:
             assert is_safe_url(url) is True, f"Expected {url!r} to be accepted as safe"
     destroy_ctfd(app)
