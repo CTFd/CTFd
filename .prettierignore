@@ -3,6 +3,11 @@ CTFd/themes/core-deprecated/
 CTFd/themes/core/static/
 CTFd/themes/core-beta/**/*
 CTFd/themes/admin/static/**/*
+CTFd/themes/bsidesct2023/**/*
+CTFd/themes/bsidesct2024/**/*
+CTFd/themes/bsidesct2025/**/*
+CTFd/themes/bsidesct2026/**/*
+CTFd/themes/crimson/**/*
 *.html
 *.njk
 *.png
@@ -12,6 +17,13 @@ CTFd/themes/admin/static/**/*
 *.svg
 *.mp3
 *.webm
+*.woff
+*.woff2
+*.ttf
+*.eot
+*.jpg
+*.jpeg
+*.gif
 .pytest_cache
 venv*
 .venv*
