@@ -1,0 +1,237 @@
+// BSides CT 2026 Theme
+// Color palette extracted from bsidesct.org
+// Warm cream background, dark text, sage green/gold/blue/red accents
+
+// BSidesCT brand colors
+$bsides-cream: #f4f2ee;
+$bsides-dark: #1c1c1c;
+$bsides-sage: #7a8b6c;
+$bsides-gold: #e8a820;
+$bsides-blue: #2b8fd8;
+$bsides-red: #ff0000;
+$bsides-gray: #5a5a5a;
+$bsides-light-gray: #e0ddd8;
+
+@use "bootstrap/scss/bootstrap" as * with (
+  $primary: $bsides-sage,
+  $secondary: $bsides-dark,
+  $success: $bsides-sage,
+  $danger: $bsides-red,
+  $warning: $bsides-gold,
+  $info: $bsides-blue,
+  $light: $bsides-cream,
+  $dark: $bsides-dark,
+  $body-bg: $bsides-cream,
+  $body-color: $bsides-dark,
+  $link-color: $bsides-sage,
+  $link-hover-color: $bsides-dark,
+  $font-family-sans-serif: #{"Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, sans-serif},
+  $headings-font-weight: 700
+);
+
+@use "includes/components/table";
+@use "includes/components/jumbotron";
+@use "includes/components/challenge";
+@use "includes/components/sticky-footer";
+@use "includes/components/graphs";
+
+@use "includes/utils/fonts";
+@use "includes/utils/opacity";
+@use "includes/utils/min-height";
+@use "includes/utils/cursors";
+@use "includes/utils/lolight";
+
+@use "includes/icons/award-icons";
+@use "includes/icons/flag-icons";
+
+// Typography
+h1,
+h2 {
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+}
+
+blockquote {
+  border-left: 4px solid $bsides-sage;
+  padding-left: 15px;
+  background: rgba($bsides-sage, 0.05);
+}
+
+input,
+select {
+  padding: 0.6rem !important;
+  height: auto !important;
+}
+
+.fa-spin.spinner {
+  text-align: center;
+  opacity: 0.5;
+}
+
+.badge-notification {
+  vertical-align: top;
+  margin-left: -1.5em;
+  font-size: 50%;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%231c1c1c' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+  background-size: 8px 10px;
+}
+
+// Navbar styling to match bsidesct.org
+.navbar {
+  background-color: $bsides-cream !important;
+  border-bottom: 1px solid $bsides-light-gray;
+
+  .navbar-brand {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $bsides-dark;
+    letter-spacing: 1px;
+  }
+
+  .nav-link {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $bsides-gray !important;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+
+    &:hover,
+    &.active {
+      color: $bsides-dark !important;
+    }
+  }
+}
+
+// Buttons - match the bsidesct.org style
+.btn-primary {
+  background-color: $bsides-sage;
+  border-color: $bsides-sage;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &:hover,
+  &:focus {
+    background-color: darken($bsides-sage, 10%);
+    border-color: darken($bsides-sage, 10%);
+    color: #fff;
+  }
+}
+
+.btn-outline-primary {
+  border-color: $bsides-sage;
+  color: $bsides-sage;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &:hover,
+  &:focus {
+    background-color: $bsides-sage;
+    color: #fff;
+  }
+}
+
+// CTA buttons (like "Get Tickets!" on the main site - red outlined)
+.btn-danger,
+.btn-outline-danger {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+// Cards and panels
+.card {
+  border: 1px solid $bsides-light-gray;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+// Challenge cards
+.challenge-button {
+  border: 1px solid $bsides-light-gray;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: $bsides-sage;
+    box-shadow: 0 2px 8px rgba($bsides-sage, 0.15);
+  }
+}
+
+// Footer styling - dark bg matching bsidesct.org footer
+.footer {
+  background-color: $bsides-dark;
+  color: $bsides-cream;
+
+  a {
+    color: $bsides-cream;
+
+    &:hover {
+      color: $bsides-gold;
+    }
+  }
+}
+
+// Jumbotron / hero area
+.jumbotron {
+  background-color: $bsides-sage;
+  color: $bsides-cream;
+
+  h1, h2, h3 {
+    color: $bsides-cream;
+  }
+
+  a {
+    color: $bsides-cream;
+    text-decoration: underline !important;
+
+    &:hover {
+      color: $bsides-gold;
+    }
+  }
+}
+
+// Scoreboard
+.table {
+  th {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: $bsides-gray;
+  }
+}
+
+// Alerts and notifications
+.alert-success {
+  background-color: rgba($bsides-sage, 0.1);
+  border-color: $bsides-sage;
+  color: darken($bsides-sage, 20%);
+}
+
+// Gold accent for special elements
+.text-warning,
+.badge-warning {
+  color: $bsides-gold !important;
+}
+
+// BSides CT branding element
+.bsides-brand {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
