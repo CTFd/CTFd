@@ -36,6 +36,14 @@
 							{{ form.domain_blacklist.description }}
 						</small>
 					</div>
+
+					<div class="form-group">
+						{{ form.password_min_length.label }}
+						{{ form.password_min_length(class="form-control", value=password_min_length) }}
+						<small class="form-text text-muted">
+							{{ form.password_min_length.description }}
+						</small>
+					</div>
 			
 					<div class="form-group">
 						{{ form.verify_emails.label }}

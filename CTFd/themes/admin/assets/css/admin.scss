@@ -120,9 +120,104 @@ input[type="checkbox"] {
     background-color 0.3s,
     border-color 0.3s;
 }
+
 .card-radio:checked + .card .card-radio-clone {
   visibility: visible !important;
 }
+
 .card:hover {
   cursor: pointer;
+}
+
+/* Scoreboard Matrix Styles */
+.matrix-container {
+  max-height: 600px;
+  overflow: auto;
+  padding-bottom: 10px; // horizontal scroll
+}
+
+#matrix-scoreboard {
+  font-size: 11px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-top: 1px solid #dee2e6;
+  border-left: 1px solid #dee2e6;
+}
+
+#matrix-scoreboard th,
+#matrix-scoreboard td {
+  border: none;
+  border-right: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+  white-space: nowrap;
+  background-clip: padding-box;
+}
+
+/* Sticky Header Logic */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  vertical-align: middle !important;
+}
+
+/* Sticky Column Logic */
+.sticky-cell {
+  position: sticky;
+  z-index: 10;
+  background-color: white !important;
+}
+
+.sticky-col-place {
+  left: 0;
+  min-width: 50px;
+  max-width: 50px;
+  text-align: center;
+}
+
+.sticky-col-name {
+  left: 50px;
+  min-width: 150px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.sticky-col-score {
+  left: 200px;
+  min-width: 80px;
+  max-width: 80px;
+  text-align: center;
+}
+
+/* Ensure headers for sticky columns have even higher z-index to stay above body sticky cells */
+th.sticky-col-place,
+th.sticky-col-name,
+th.sticky-col-score {
+  z-index: 40;
+}
+
+.challenge-col {
+  min-width: 120px;
+  max-width: 120px;
+  background-color: #343a40;
+}
+
+.challenge-info {
+  margin-top: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filter-col {
+  height: 400px;
+}
+
+.filter-list {
+  height: 100%;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  background: white;
 }

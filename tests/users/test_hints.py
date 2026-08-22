@@ -93,6 +93,17 @@ def test_unlocking_hints_with_no_cost():
         chal_id = chal.id
         gen_hint(app.db, chal_id)
         client = login_as_user(app)
+        # Attempt to access hint
+        r = client.get("/api/v1/hints/1")
+        resp = r.get_json()["data"]
+
+        # Hint does not provide content until an unlock is generated
+        assert resp.get("content") is None
+
+        # We generate an unlock for the free hint
+        client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
+
+        # We should now be able to see content
         r = client.get("/api/v1/hints/1")
         resp = r.get_json()["data"]
         assert resp.get("content") == "This is a hint"
@@ -269,6 +280,8 @@ def test_unlocking_hint_for_unicode_challenge():
 
         client = login_as_user(app)
 
+        # Generate an unlock for the free hint
+        client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
         r = client.get("/api/v1/hints/1")
         assert r.status_code == 200
         resp = r.get_json()["data"]

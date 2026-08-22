@@ -23,7 +23,8 @@ from CTFd.models import db, get_class_by_tablename
 from CTFd.plugins import get_plugin_names
 from CTFd.plugins.migrations import current as plugin_current
 from CTFd.plugins.migrations import upgrade as plugin_upgrade
-from CTFd.utils import get_app_config, set_config, string_types
+from CTFd.utils import get_app_config, get_config, set_config, string_types
+from CTFd.utils.config import get_themes
 from CTFd.utils.dates import unix_time
 from CTFd.utils.exports.databases import is_database_mariadb
 from CTFd.utils.exports.freeze import freeze_export
@@ -37,7 +38,12 @@ from CTFd.utils.migrations import (
 from CTFd.utils.uploads import get_uploader
 
 
-def export_ctf():
+def export_ctf(ignore_overrides=False):
+    if not ignore_overrides:
+        custom_export_ctf = app.overridden_functions.get("export_ctf")
+        if custom_export_ctf:
+            return custom_export_ctf()
+
     # TODO: For some unknown reason dataset is only able to see alembic_version during tests.
     # Even using a real sqlite database. This makes this test impossible to pass in sqlite.
     db = dataset.connect(get_app_config("SQLALCHEMY_DATABASE_URI"))
@@ -112,7 +118,12 @@ def set_import_end_time(value, timeout=604800, skip_print=False):
         print(value)
 
 
-def import_ctf(backup, erase=True):
+def import_ctf(backup, erase=True, ignore_overrides=False):
+    if not ignore_overrides:
+        custom_import_ctf = app.overridden_functions.get("import_ctf")
+        if custom_import_ctf:
+            return custom_import_ctf(backup, erase=erase)
+
     # Reset import cache keys and don't print these values
     set_import_error(value=None, skip_print=True)
     set_import_status(value=None, skip_print=True)
@@ -134,7 +145,13 @@ def import_ctf(backup, erase=True):
     members = backup.namelist()
     max_content_length = get_app_config("MAX_CONTENT_LENGTH")
     for f in members:
-        if f.startswith("/") or ".." in f:
+        if (
+            f.startswith("/")
+            or ".." in f
+            or os.path.isabs(f)
+            or "//" in f
+            or "\\\\" in f
+        ):
             # Abort on malicious zip files
             set_import_error("zipfile.BadZipfile: zipfile is malicious")
             raise zipfile.BadZipfile
@@ -365,10 +382,12 @@ def import_ctf(backup, erase=True):
 
                         try:
                             table.insert(entry)
-                        except ProgrammingError:
+                        except (ProgrammingError, TypeError):
                             # MariaDB does not like JSON objects and prefers strings because it internally
                             # represents JSON with LONGTEXT.
                             # See Issue #973
+                            # We also catch TypeError here so that PyMySQL can properly send over JSON strings to MariaDB
+                            # https://github.com/PyMySQL/PyMySQL/commit/521e40050cb386a499f68f483fefd144c493053c
                             requirements = entry.get("requirements")
                             if requirements and isinstance(requirements, dict):
                                 entry["requirements"] = json.dumps(requirements)
@@ -378,7 +397,7 @@ def import_ctf(backup, erase=True):
                             if member == "db/config.json":
                                 config_id = int(entry["id"])
                                 side_db.query(  # nosec B608
-                                    f"DELETE FROM config WHERE id={config_id}"
+                                    f"DELETE FROM config WHERE id={config_id}"  # nosec B608
                                 )
                                 table.insert(entry)
                             else:
@@ -439,6 +458,12 @@ def import_ctf(backup, erase=True):
             continue
 
         filename = filename[1]  # Get the second entry in the list (the actual filename)
+
+        # Handle possibility of an absolute path or traversal in the raw filename
+        if os.path.isabs(filename) or ".." in filename:
+            set_import_error("Encountered invalid upload file in import")
+            raise Exception("Encountered invalid upload file in import")
+
         source = backup.open(f)
         uploader.store(fileobj=source, filename=filename)
 
@@ -466,8 +491,12 @@ def import_ctf(backup, erase=True):
     set_import_status("clearing caches")
     cache.clear()
 
-    # Set default theme in case the current instance or the import does not provide it
-    set_config("ctf_theme", DEFAULT_THEME)
+    # Set theme from backup if it is installed, otherwise fall back to the default theme
+    backup_theme = get_config("ctf_theme")
+    if backup_theme and backup_theme in get_themes():
+        set_config("ctf_theme", backup_theme)
+    else:
+        set_config("ctf_theme", DEFAULT_THEME)
     set_config("ctf_version", CTFD_VERSION)
 
     # Set config variables to mark import completed

@@ -143,6 +143,93 @@ def test_api_challenges_challenge_with_requirements_banned_user():
     destroy_ctfd(app)
 
 
+def test_api_challenges_challenge_with_requirements_anonymize_preview():
+    """Does the challenge list API show preview anonymized challenge details?"""
+    app = create_ctfd()
+    with app.app_context():
+        prereq_id = gen_challenge(app.db).id
+        chal_obj = gen_challenge(app.db)
+        chal_obj.requirements = {"prerequisites": [prereq_id], "anonymize": "preview"}
+        chal_id = chal_obj.id
+        chal_name = chal_obj.name
+        chal_category = chal_obj.category
+        chal_value = chal_obj.value
+        register_user(app)
+
+        with login_as_user(app) as client:
+            # ChallengeList for preview anonymize shows identifying details but type "hidden"
+            r = client.get("/api/v1/challenges")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert len(data) == 2
+            locked = next(c for c in data if c["id"] == chal_id)
+            assert locked["type"] == "hidden"
+            assert locked["name"] == chal_name
+            assert locked["value"] == chal_value
+            assert locked["category"] == chal_category
+            assert locked["solved_by_me"] is False
+
+            # Challenge for preview anonymize shows details but type "hidden"
+            r = client.get(f"/api/v1/challenges/{chal_id}")
+            assert r.status_code == 200
+            locked_data = r.get_json()["data"]
+            assert locked_data["type"] == "hidden"
+            assert locked_data["name"] == chal_name
+            assert locked_data["value"] == chal_value
+            assert locked_data["category"] == chal_category
+
+        # After solving the prerequisite, the challenge is fully visible
+        gen_solve(app.db, user_id=2, challenge_id=prereq_id)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{chal_id}")
+            assert r.status_code == 200
+            assert r.get_json()["data"]["type"] == "standard"
+    destroy_ctfd(app)
+
+
+def test_api_challenges_challenge_with_requirements_anonymize_true():
+    """Does the challenge list API show fully anonymized challenges when requirements aren't met?"""
+    app = create_ctfd()
+    with app.app_context():
+        prereq_id = gen_challenge(app.db).id
+        chal_obj = gen_challenge(app.db)
+        chal_obj.requirements = {"prerequisites": [prereq_id], "anonymize": True}
+        chal_id = chal_obj.id
+        chal_name = chal_obj.name
+        register_user(app)
+
+        with login_as_user(app) as client:
+            # List endpoint: full anonymize shows "???" placeholders
+            r = client.get("/api/v1/challenges")
+            assert r.status_code == 200
+            data = r.get_json()["data"]
+            assert len(data) == 2
+            locked = next(c for c in data if c["id"] == chal_id)
+            assert locked["type"] == "hidden"
+            assert locked["name"] == "???"
+            assert locked["value"] == 0
+            assert locked["category"] == "???"
+            assert locked["tags"] == []
+            assert locked["solved_by_me"] is False
+
+            # Single challenge endpoint: returns anonymized "???"
+            r = client.get(f"/api/v1/challenges/{chal_id}")
+            assert r.status_code == 200
+            locked_data = r.get_json()["data"]
+            assert locked_data["type"] == "hidden"
+            assert locked_data["name"] == "???"
+            assert locked_data["value"] == 0
+            assert locked_data["category"] == "???"
+
+        # After solving the prerequisite, the challenge is fully visible
+        gen_solve(app.db, user_id=2, challenge_id=prereq_id)
+        with login_as_user(app) as client:
+            r = client.get(f"/api/v1/challenges/{chal_id}")
+            assert r.status_code == 200
+            assert r.get_json()["data"]["name"] == chal_name
+    destroy_ctfd(app)
+
+
 def test_api_challenges_challenge_with_requirements_no_user():
     """Does the challenge list API show gated challenges to the public?"""
     app = create_ctfd()

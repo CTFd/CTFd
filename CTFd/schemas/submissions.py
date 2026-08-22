@@ -30,6 +30,16 @@ class SubmissionSchema(ma.ModelSchema):
             "id",
         ],
         "user": ["challenge_id", "challenge", "user", "team", "date", "type", "id"],
+        "self": [
+            "challenge_id",
+            "challenge",
+            "user",
+            "team",
+            "date",
+            "type",
+            "id",
+            "provided",
+        ],
     }
 
     def __init__(self, view=None, *args, **kwargs):
@@ -37,6 +47,10 @@ class SubmissionSchema(ma.ModelSchema):
             if isinstance(view, string_types):
                 kwargs["only"] = self.views[view]
             elif isinstance(view, list):
+                # TODO: CTFd 4.0 Passing a list of fields to SubmissionSchema as the view will be removed
+                print(
+                    "Passing a list of fields to SubmissionSchema will be removed in CTFd 4.0. Please pass a view name instead."
+                )
                 kwargs["only"] = view
 
         super(SubmissionSchema, self).__init__(*args, **kwargs)

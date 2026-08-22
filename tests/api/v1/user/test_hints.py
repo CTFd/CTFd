@@ -206,6 +206,14 @@ def test_api_hints_accessible_public():
         app.db.session.commit()
 
         with app.test_client() as non_logged_in_user:
+            # Hints cannot be seen unless free public access is on
+            r = non_logged_in_user.get("/api/v1/hints/1")
+            assert r.status_code == 403
+            errors = r.get_json()["errors"]
+            assert errors == {"cost": ["You must login to unlock this hint"]}
+
+            # Enable free public access
+            set_config("hints_free_public_access", True)
             r = non_logged_in_user.get("/api/v1/hints/1")
             hint = r.get_json()["data"]
             assert hint["content"] == "This is a free hint"
@@ -235,6 +243,13 @@ def test_api_hints_accessible_public():
 
         # Verify existing hint behavior for authed users
         with login_as_user(app) as client:
+            # Free hints require an unlock
+            r = client.get("/api/v1/hints/1")
+            hint = r.get_json()["data"]
+            assert hint.get("content") is None
+
+            # Issue the unlock and then request the content
+            r = client.post("/api/v1/unlocks", json={"target": 1, "type": "hints"})
             r = client.get("/api/v1/hints/1")
             hint = r.get_json()["data"]
             assert hint["content"] == "This is a free hint"

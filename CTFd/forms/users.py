@@ -187,6 +187,7 @@ class UserBaseForm(BaseForm):
     verified = BooleanField("Verified")
     hidden = BooleanField("Hidden")
     banned = BooleanField("Banned")
+    change_password = BooleanField("Require password change on next login")
     submit = SubmitField("Submit")
 
 

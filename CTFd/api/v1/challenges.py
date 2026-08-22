@@ -1,31 +1,47 @@
+import math
+from datetime import datetime, timedelta
 from typing import List  # noqa: I001
 
-from flask import abort, render_template, request, url_for
+from flask import abort, render_template, request, session, url_for
 from flask_restx import Namespace, Resource
 from sqlalchemy.sql import and_
 
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
-from CTFd.cache import clear_challenges, clear_standings
+from CTFd.cache import cache, clear_challenges, clear_ratings, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.exceptions.challenges import (
     ChallengeCreateException,
+    ChallengeSolveException,
     ChallengeUpdateException,
 )
 from CTFd.models import ChallengeFiles as ChallengeFilesModel
 from CTFd.models import Challenges
 from CTFd.models import ChallengeTopics as ChallengeTopicsModel
-from CTFd.models import Fails, Flags, Hints, HintUnlocks, Solves, Submissions, Tags, db
+from CTFd.models import (
+    Fails,
+    Flags,
+    Hints,
+    HintUnlocks,
+    Ratings,
+    Solves,
+    Submissions,
+    Tags,
+    Tracking,
+    db,
+)
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
 from CTFd.schemas.challenges import ChallengeSchema
 from CTFd.schemas.flags import FlagSchema
 from CTFd.schemas.hints import HintSchema
+from CTFd.schemas.ratings import RatingSchema
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils import config, get_config
 from CTFd.utils import user as current_user
 from CTFd.utils.challenges import (
     get_all_challenges,
+    get_rating_average_for_challenge_id,
     get_solve_counts_for_challenges,
     get_solve_ids_for_user_id,
     get_solves_for_challenge_id,
@@ -35,9 +51,10 @@ from CTFd.utils.config.visibility import (
     challenges_visible,
     scores_visible,
 )
-from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime
+from CTFd.utils.dates import ctf_ended, ctf_paused, ctftime, isoformat
 from CTFd.utils.decorators import (
     admins_only,
+    authed_only,
     during_ctf_time_only,
     require_verified_emails,
 )
@@ -55,6 +72,7 @@ from CTFd.utils.user import (
     get_current_team_attrs,
     get_current_user,
     get_current_user_attrs,
+    get_ip,
     is_admin,
 )
 
@@ -169,7 +187,6 @@ class ChallengeList(Resource):
         # Iterate through the list of challenges, adding to the object which
         # will be JSONified back to the client
         response = []
-        tag_schema = TagSchema(view="user", many=True)
 
         # Gather all challenge IDs so that we can determine invalid challenge prereqs
         all_challenge_ids = {
@@ -184,20 +201,38 @@ class ChallengeList(Resource):
                     pass
                 else:
                     if anonymize:
-                        response.append(
-                            {
-                                "id": challenge.id,
-                                "type": "hidden",
-                                "name": "???",
-                                "value": 0,
-                                "solves": None,
-                                "solved_by_me": False,
-                                "category": "???",
-                                "tags": [],
-                                "template": "",
-                                "script": "",
-                            }
-                        )
+                        # TODO: We should consider doing a whole migration to better structure the requirements schema
+                        if anonymize == "preview":
+                            # Show identifying details but don't allow actual access
+                            response.append(
+                                {
+                                    "id": challenge.id,
+                                    "type": "hidden",
+                                    "name": challenge.name,
+                                    "value": challenge.value,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "category": challenge.category,
+                                    "tags": challenge.tags,
+                                    "template": "",
+                                    "script": "",
+                                }
+                            )
+                        else:
+                            response.append(
+                                {
+                                    "id": challenge.id,
+                                    "type": "hidden",
+                                    "name": "???",
+                                    "value": 0,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "category": "???",
+                                    "tags": [],
+                                    "template": "",
+                                    "script": "",
+                                }
+                            )
                     # Fallthrough to continue
                     continue
 
@@ -214,10 +249,11 @@ class ChallengeList(Resource):
                     "type": challenge_type.name,
                     "name": challenge.name,
                     "value": challenge.value,
+                    "position": challenge.position,
                     "solves": solve_counts.get(challenge.id, solve_count_dfl),
                     "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
-                    "tags": tag_schema.dump(challenge.tags).data,
+                    "tags": challenge.tags,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
                 }
@@ -313,6 +349,10 @@ class Challenge(Resource):
                 f"The underlying challenge type ({chal.type}) is not installed. This challenge can not be loaded.",
             )
 
+        tags = [
+            tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
+        ]
+
         if chal.requirements:
             requirements = chal.requirements.get("prerequisites", [])
             anonymize = chal.requirements.get("anonymize")
@@ -332,34 +372,52 @@ class Challenge(Resource):
                 else:
                     # We need to handle the case where a user is viewing challenges anonymously
                     solve_ids = []
-                solve_ids = {value for value, in solve_ids}
+                solve_ids = {value for (value,) in solve_ids}
                 prereqs = set(requirements).intersection(all_challenge_ids)
                 if solve_ids >= prereqs or is_admin():
                     pass
                 else:
                     if anonymize:
-                        return {
-                            "success": True,
-                            "data": {
-                                "id": chal.id,
-                                "type": "hidden",
-                                "name": "???",
-                                "value": 0,
-                                "solves": None,
-                                "solved_by_me": False,
-                                "category": "???",
-                                "tags": [],
-                                "template": "",
-                                "script": "",
-                            },
-                        }
+                        # TODO: We should consider doing a whole migration to better structure the requirements schema
+                        if anonymize == "preview":
+                            return {
+                                "success": True,
+                                "data": {
+                                    "id": chal.id,
+                                    "type": "hidden",
+                                    "name": chal.name,
+                                    "value": chal.value,
+                                    "logic": None,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "solution_id": None,
+                                    "category": chal.category,
+                                    "tags": tags,
+                                    "template": "",
+                                    "script": "",
+                                },
+                            }
+                        else:
+                            return {
+                                "success": True,
+                                "data": {
+                                    "id": chal.id,
+                                    "type": "hidden",
+                                    "name": "???",
+                                    "value": 0,
+                                    "logic": None,
+                                    "solves": None,
+                                    "solved_by_me": False,
+                                    "solution_id": None,
+                                    "category": "???",
+                                    "tags": [],
+                                    "template": "",
+                                    "script": "",
+                                },
+                            }
                     abort(403)
             else:
                 abort(403)
-
-        tags = [
-            tag["value"] for tag in TagSchema("user", many=True).dump(chal.tags).data
-        ]
 
         unlocked_hints = set()
         hints = []
@@ -396,7 +454,12 @@ class Challenge(Resource):
         for hint in Hints.query.filter_by(challenge_id=chal.id).all():
             if hint.id in unlocked_hints or ctf_ended():
                 hints.append(
-                    {"id": hint.id, "cost": hint.cost, "content": hint.content}
+                    {
+                        "id": hint.id,
+                        "cost": hint.cost,
+                        "title": hint.title,
+                        "content": hint.content,
+                    }
                 )
             else:
                 hints.append({"id": hint.id, "cost": hint.cost, "title": hint.title})
@@ -424,11 +487,34 @@ class Challenge(Resource):
 
         if authed():
             # Get current attempts for the user
-            attempts = Submissions.query.filter_by(
+            attempts_query = Submissions.query.filter_by(
                 account_id=user.account_id, challenge_id=challenge_id
-            ).count()
+            )
+            # Don't consider discarded or ratelimited attempts
+            attempts_query = attempts_query.filter(
+                Submissions.type != "discard", Submissions.type != "ratelimited"
+            )
+            max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
+            if max_attempts_behavior == "timeout":
+                max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
+                timeout_delta = datetime.utcnow() - timedelta(
+                    seconds=max_attempts_timeout
+                )
+                attempts_query = attempts_query.filter(
+                    Submissions.date >= timeout_delta
+                )
+            attempts = attempts_query.count()
+            rating = Ratings.query.filter_by(
+                user_id=user.id, challenge_id=challenge_id
+            ).first()
+            if rating:
+                rating = {
+                    "value": rating.value,
+                    "review": rating.review,
+                }
         else:
             attempts = 0
+            rating = None
 
         response["solves"] = solve_count
         response["solved_by_me"] = solved_by_user
@@ -437,6 +523,41 @@ class Challenge(Resource):
         response["tags"] = tags
         response["hints"] = hints
 
+        # If we didn't disable ratings then we should allow the user to see their own challenge rating
+        if get_config("challenge_ratings", default="public") != "disabled":
+            response["rating"] = rating
+        else:
+            response["rating"] = None
+            rating = None
+
+        # If ratings are public then we show the aggregated ratings
+        if get_config("challenge_ratings", default="public") == "public":
+            # Get rating information for this challenge
+            rating_info = get_rating_average_for_challenge_id(challenge_id)
+            response["ratings"] = {
+                "up": rating_info.up,
+                "down": rating_info.down,
+                "count": rating_info.count,
+            }
+        else:
+            rating_info = None
+            response["ratings"] = None
+
+        solution_id = None
+        solution_state = "hidden"
+        if chal.solution_id:
+            # Share the solution state to the user but default to hidden
+            solution_state = chal.solution.state
+            # We explicitly want the solution visible
+            if chal.solution.state == "visible":
+                solution_id = chal.solution.id
+            # We only want the solution to be visible if the challenge has been solved
+            elif chal.solution.state == "solved":
+                if int(challenge_id) in user_solves:
+                    solution_id = chal.solution.id
+        response["solution_id"] = solution_id
+        response["solution_state"] = solution_state
+
         response["view"] = render_template(
             chal_class.templates["view"].lstrip("/"),
             solves=solve_count,
@@ -444,12 +565,31 @@ class Challenge(Resource):
             files=files,
             tags=tags,
             hints=[Hints(**h) for h in hints],
+            rating=rating,
+            ratings=rating_info,
             max_attempts=chal.max_attempts,
             attempts=attempts,
             challenge=chal,
         )
 
-        db.session.close()
+        if (
+            authed() is True
+            and is_admin() is False
+            and Tracking.query.filter_by(
+                type="challenges.open", user_id=session["id"], target=challenge_id
+            ).first()
+            is None
+        ):
+            track = Tracking(
+                ip=get_ip(),
+                user_id=session["id"],
+                type="challenges.open",
+                target=challenge_id,
+            )
+            db.session.add(track)
+            db.session.commit()
+            db.session.close()
+
         return {"success": True, "data": response}
 
     @admins_only
@@ -524,12 +664,19 @@ class ChallengeAttempt(Resource):
             if preview:
                 challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
                 chal_class = get_chal_class(challenge.type)
-                status, message = chal_class.attempt(challenge, request)
+                response = chal_class.attempt(challenge, request)
+                # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+                if isinstance(response, tuple):
+                    status = "correct" if response[0] else "incorrect"
+                    message = response[1]
+                else:
+                    status = response.status
+                    message = response.message
 
                 return {
                     "success": True,
                     "data": {
-                        "status": "correct" if status else "incorrect",
+                        "status": status,
                         "message": message,
                     },
                 }
@@ -553,10 +700,6 @@ class ChallengeAttempt(Resource):
         if config.is_teams_mode() and team is None:
             abort(403)
 
-        fails = Fails.query.filter_by(
-            account_id=user.account_id, challenge_id=challenge_id
-        ).count()
-
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
 
         if challenge.state == "hidden":
@@ -573,7 +716,7 @@ class ChallengeAttempt(Resource):
                 .order_by(Solves.challenge_id.asc())
                 .all()
             )
-            solve_ids = {solve_id for solve_id, in solve_ids}
+            solve_ids = {solve_id for (solve_id,) in solve_ids}
             # Gather all challenge IDs so that we can determine invalid challenge prereqs
             all_challenge_ids = {
                 c.id for c in Challenges.query.with_entities(Challenges.id).all()
@@ -587,134 +730,329 @@ class ChallengeAttempt(Resource):
         chal_class = get_chal_class(challenge.type)
 
         # Anti-bruteforce / submitting Flags too quickly
-        kpm = current_user.get_wrong_submissions_per_minute(user.account_id)
+        recent_fails = current_user.get_wrong_submissions_per_delta(user.account_id)
+        kpm = len(recent_fails)
         kpm_limit = int(get_config("incorrect_submissions_per_min", default=10))
-        if kpm > kpm_limit:
-            if ctftime():
-                chal_class.fail(
-                    user=user, team=team, challenge=challenge, request=request
-                )
-            log(
-                "submissions",
-                "warning",
-                "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
-                name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
-                challenge_id=challenge_id,
-                kpm=kpm,
-            )
-            # Submitting too fast
-            return (
-                {
-                    "success": True,
-                    "data": {
-                        "status": "ratelimited",
-                        "message": "You're submitting flags too fast. Slow down.",
-                    },
-                },
-                429,
+        max_attempts_timeout = int(get_config("max_attempts_timeout", 300))
+
+        # We want to expire recent_attempt_count around the same time as our oldest submission slides off
+        time_delay = 60
+        if recent_fails:
+            time_delay -= int(
+                (datetime.utcnow() - recent_fails[0].date).total_seconds()
             )
 
-        solves = Solves.query.filter_by(
-            account_id=user.account_id, challenge_id=challenge_id
-        ).first()
-
-        # Challenge not solved yet
-        if not solves:
-            # Hit max attempts
-            max_tries = challenge.max_attempts
-            if max_tries and fails >= max_tries > 0:
+        # Hit max attempts
+        max_tries = challenge.max_attempts
+        max_attempts_behavior = get_config("max_attempts_behavior", "lockout")
+        # Track the submission lock if we acquire one below so it can be
+        # released explicitly in the finally at the end of processing
+        submission_lock_key = None
+        # We default fails to 0 as it's not needed unless we are working with max attempts
+        fails = 0
+        if max_tries and max_tries > 0:
+            # TODO CTFd 4.0 We should implement this with Redlock instead of SETNX
+            # Lock every attempt so only one submission is processed at a time
+            # cache.add is SETNX, it only succeeds when the key is absent
+            # So exactly one submission holds the lock
+            # The lock can be released by timeout or by the finally block
+            lock_key = f"submission_lock_{user.account_id}_{challenge.id}_{max_attempts_behavior}"
+            if cache.add(lock_key, 1, timeout=30):
+                # We hold the lock; remember it so the finally releases it
+                submission_lock_key = lock_key
+            else:
                 return (
                     {
                         "success": True,
                         "data": {
-                            "status": "incorrect",
-                            "message": "You have 0 tries remaining",
+                            "status": "ratelimited",
+                            "message": "Another submission is already being processed. Try again shortly.",
                         },
                     },
                     403,
                 )
+        try:
+            # Serialize attempt counting through redis to get a more accurate attempt count
+            # kpm_limit and max_attempts_timeout are included in the cache key as they are admin-editable and can affect limits
+            acc_kpm_key = f"account_kpm_{user.account_id}_{challenge.id}_{kpm_limit}_{max_attempts_timeout}"
+            # Atomically reserve this attempt; INCR returns the post-increment count
+            recent_attempt_count = int(cache.inc(acc_kpm_key))
+            # Decrement so the limit checks reflect the attempts stored before this one
+            recent_attempt_count_check = recent_attempt_count - 1
 
-            status, message = chal_class.attempt(challenge, request)
-            if status:  # The challenge plugin says the input is right
-                if ctftime() or current_user.is_admin():
-                    chal_class.solve(
+            if max_tries and max_tries > 0:
+                if max_attempts_behavior == "timeout":  # Use timeout behavior
+                    timeout_delta = timedelta(seconds=-max_attempts_timeout)
+                    max_attempts_recent_fails = (
+                        current_user.get_wrong_submissions_per_delta(
+                            user.account_id,
+                            challenge_id=challenge_id,
+                            delta=timeout_delta,
+                        )
+                    )
+                    fails = len(max_attempts_recent_fails)
+                else:  # Use lockout behavior
+                    fails = Fails.query.filter_by(
+                        account_id=user.account_id, challenge_id=challenge_id
+                    ).count()
+
+                if fails >= max_tries or recent_attempt_count_check >= max_tries:
+                    if max_attempts_behavior == "timeout":
+                        # We specifically override the outer time_delay because max_attempts timeout can be different than the minute
+                        time_delay = max_attempts_timeout
+                        if max_attempts_recent_fails:
+                            time_delay -= int(
+                                (
+                                    datetime.utcnow()
+                                    - max_attempts_recent_fails[0].date
+                                ).total_seconds()
+                            )
+                        # Calculate actual time remaining based on oldest fail
+                        response = f"Not accepted. Try again in {time_delay} seconds"
+                        response_code = 429
+                        if ctftime():
+                            chal_class.ratelimited(
+                                user=user,
+                                team=team,
+                                challenge=challenge,
+                                request=request,
+                            )
+                    else:  # Use lockout behavior
+                        response = "Not accepted. You have 0 tries remaining"
+                        response_code = 403
+                    # Expire the cache key directly since we will not hit the normal expire flow
+                    cache.expire(acc_kpm_key, time_delay)
+                    return (
+                        {
+                            "success": True,
+                            "data": {
+                                "status": "ratelimited",
+                                "message": response,
+                            },
+                        },
+                        response_code,
+                    )
+
+            if kpm >= kpm_limit or recent_attempt_count_check >= kpm_limit:
+                if ctftime():
+                    chal_class.ratelimited(
                         user=user, team=team, challenge=challenge, request=request
                     )
-                    clear_standings()
-                    clear_challenges()
-
                 log(
                     "submissions",
-                    "info",
-                    "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
+                    "warning",
+                    "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [TOO FAST]",
                     name=user.name,
                     submission=request_data.get("submission", "").encode("utf-8"),
                     challenge_id=challenge_id,
                     kpm=kpm,
                 )
-                return {
-                    "success": True,
-                    "data": {"status": "correct", "message": message},
-                }
-            else:  # The challenge plugin says the input is wrong
-                if ctftime() or current_user.is_admin():
-                    chal_class.fail(
-                        user=user, team=team, challenge=challenge, request=request
-                    )
-                    clear_standings()
-                    clear_challenges()
-
-                log(
-                    "submissions",
-                    "info",
-                    "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
-                    name=user.name,
-                    submission=request_data.get("submission", "").encode("utf-8"),
-                    challenge_id=challenge_id,
-                    kpm=kpm,
-                )
-
-                if max_tries:
-                    # Off by one since fails has changed since it was gotten
-                    attempts_left = max_tries - fails - 1
-                    tries_str = pluralize(attempts_left, singular="try", plural="tries")
-                    # Add a punctuation mark if there isn't one
-                    if message[-1] not in "!().;?[]{}":
-                        message = message + "."
-                    return {
+                # Expire the cache key directly since we will not hit the normal expire flow
+                cache.expire(acc_kpm_key, time_delay)
+                # Submitting too fast
+                return (
+                    {
                         "success": True,
                         "data": {
-                            "status": "incorrect",
-                            "message": "{} You have {} {} remaining.".format(
-                                message, attempts_left, tries_str
-                            ),
+                            "status": "ratelimited",
+                            "message": f"You're submitting flags too fast. Try again in {time_delay} seconds.",
                         },
-                    }
+                    },
+                    429,
+                )
+
+            # Attempt already reserved above; set the expiration as we will process it
+            cache.expire(acc_kpm_key, time_delay)
+
+            solves = Solves.query.filter_by(
+                account_id=user.account_id, challenge_id=challenge_id
+            ).first()
+
+            # Challenge not solved yet
+            if not solves:
+                response = chal_class.attempt(challenge, request)
+                # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+                if isinstance(response, tuple):
+                    status = response[0]
+                    message = response[1]
                 else:
+                    status = response.status
+                    message = response.message
+
+                if status == "correct" or status is True:
+                    # The challenge plugin says the input is right
+                    if ctftime() or current_user.is_admin():
+                        try:
+                            chal_class.solve(
+                                user=user,
+                                team=team,
+                                challenge=challenge,
+                                request=request,
+                            )
+
+                        # ChallengeSoleException is raised on duplicate solve - so treat it as already_solved
+                        except ChallengeSolveException:
+                            log(
+                                "submissions",
+                                "info",
+                                "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                                name=user.name,
+                                submission=request_data.get("submission", "").encode(
+                                    "utf-8"
+                                ),
+                                challenge_id=challenge_id,
+                                kpm=kpm,
+                            )
+
+                            return {
+                                "success": True,
+                                "data": {
+                                    "status": "already_solved",
+                                    "message": f"{message} but you already solved this",
+                                },
+                            }
+
+                        clear_standings()
+                        clear_challenges()
+
+                    log(
+                        "submissions",
+                        "info",
+                        "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [CORRECT]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
                     return {
                         "success": True,
-                        "data": {"status": "incorrect", "message": message},
+                        "data": {"status": "correct", "message": message},
                     }
+                elif status == "partial":
+                    # The challenge plugin says that the input is a partial solve
+                    if ctftime() or current_user.is_admin():
+                        chal_class.partial(
+                            user=user, team=team, challenge=challenge, request=request
+                        )
+                        clear_standings()
+                        clear_challenges()
 
-        # Challenge already solved
-        else:
-            log(
-                "submissions",
-                "info",
-                "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
-                name=user.name,
-                submission=request_data.get("submission", "").encode("utf-8"),
-                challenge_id=challenge_id,
-                kpm=kpm,
-            )
-            return {
-                "success": True,
-                "data": {
-                    "status": "already_solved",
-                    "message": "You already solved this",
-                },
-            }
+                    log(
+                        "submissions",
+                        "info",
+                        "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [PARTIAL]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
+                    return {
+                        "success": True,
+                        "data": {"status": "partial", "message": message},
+                    }
+                elif status == "incorrect" or status is False:
+                    # The challenge plugin says the input is wrong
+                    if ctftime() or current_user.is_admin():
+                        chal_class.fail(
+                            user=user, team=team, challenge=challenge, request=request
+                        )
+                        clear_standings()
+                        clear_challenges()
+
+                    log(
+                        "submissions",
+                        "info",
+                        "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [WRONG]",
+                        name=user.name,
+                        submission=request_data.get("submission", "").encode("utf-8"),
+                        challenge_id=challenge_id,
+                        kpm=kpm,
+                    )
+
+                    if max_tries:
+                        # Off by one since fails has changed since it was gotten
+                        attempts_left = max_tries - fails - 1
+                        tries_str = pluralize(
+                            attempts_left, singular="try", plural="tries"
+                        )
+                        # Add a punctuation mark if there isn't one
+                        if message[-1] not in "!().;?[]{}":
+                            message = message + "."
+                        message = "{} You have {} {} remaining.".format(
+                            message, attempts_left, tries_str
+                        )
+                        if attempts_left == 0:
+                            max_attempts_behavior = get_config(
+                                "max_attempts_behavior", "lockout"
+                            )
+                            if max_attempts_behavior == "timeout":
+                                # Calculate actual time remaining based on the most recent fail
+                                timeout_delta = datetime.utcnow() - timedelta(
+                                    seconds=max_attempts_timeout
+                                )
+                                most_recent_fail = (
+                                    Fails.query.filter_by(
+                                        account_id=user.account_id,
+                                        challenge_id=challenge_id,
+                                    )
+                                    .filter(Fails.date >= timeout_delta)
+                                    .order_by(Fails.id.asc())
+                                    .first()
+                                )
+                                if most_recent_fail:
+                                    time_since_fail = (
+                                        datetime.utcnow() - most_recent_fail.date
+                                    ).total_seconds()
+                                    remaining_seconds = (
+                                        max_attempts_timeout - time_since_fail
+                                    )
+                                    message += f" Try again in {math.ceil(remaining_seconds)} seconds"
+                                else:
+                                    message += f" Try again in {math.ceil(max_attempts_timeout)} seconds"
+                        return {
+                            "success": True,
+                            "data": {
+                                "status": "incorrect",
+                                "message": message,
+                            },
+                        }
+                    else:
+                        return {
+                            "success": True,
+                            "data": {"status": "incorrect", "message": message},
+                        }
+
+            # Challenge already solved
+            else:
+                log(
+                    "submissions",
+                    "info",
+                    "{ip} - {name} submitted {submission} on {challenge_id} with kpm {kpm} [ALREADY SOLVED]",
+                    name=user.name,
+                    submission=request_data.get("submission", "").encode("utf-8"),
+                    challenge_id=challenge_id,
+                    kpm=kpm,
+                )
+                response = chal_class.attempt(challenge, request)
+                # TODO: CTFd 4.0 We should remove the tuple strategy for Challenge plugins in favor of ChallengeResponse
+                if isinstance(response, tuple):
+                    status = response[0]
+                    message = response[1]
+                else:
+                    status = response.status
+                    message = response.message
+                return {
+                    "success": True,
+                    "data": {
+                        "status": "already_solved",
+                        "message": f"{message} but you already solved this",
+                    },
+                }
+        finally:
+            # Release the submission lock if we acquired one so the next
+            # submission can proceed without waiting for the TTL to lapse
+            if submission_lock_key:
+                cache.delete(submission_lock_key)
 
 
 @challenges_namespace.route("/<challenge_id>/solves")
@@ -837,3 +1175,183 @@ class ChallengeRequirements(Resource):
     def get(self, challenge_id):
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
         return {"success": True, "data": challenge.requirements}
+
+
+@challenges_namespace.route("/<challenge_id>/ratings")
+class ChallengeRatings(Resource):
+    @admins_only
+    def get(self, challenge_id):
+        """Get paginated ratings for a challenge"""
+        # Get pagination parameters
+        page = int(request.args.get("page", 1))
+
+        # Get paginated ratings with user information
+        ratings_query = Ratings.query.filter(
+            Ratings.challenge_id == challenge_id
+        ).order_by(Ratings.id.desc())
+
+        paginated_ratings = ratings_query.paginate(
+            page=page, max_per_page=50, error_out=False
+        )
+
+        # Use schema to serialize the ratings data
+        schema = RatingSchema(view="admin", many=True)
+        ratings_data = schema.dump(paginated_ratings.items)
+
+        if ratings_data.errors:
+            return {"success": False, "errors": ratings_data.errors}, 400
+
+        # Use cached utility function to get rating statistics for meta
+        rating_info = get_rating_average_for_challenge_id(challenge_id)
+
+        return {
+            "meta": {
+                "pagination": {
+                    "page": paginated_ratings.page,
+                    "next": paginated_ratings.next_num,
+                    "prev": paginated_ratings.prev_num,
+                    "pages": paginated_ratings.pages,
+                    "per_page": paginated_ratings.per_page,
+                    "total": paginated_ratings.total,
+                },
+                "summary": {
+                    "up": rating_info.up,
+                    "down": rating_info.down,
+                    "count": rating_info.count,
+                },
+            },
+            "success": True,
+            "data": ratings_data.data,
+        }
+
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @authed_only
+    @require_verified_emails
+    def put(self, challenge_id):
+        """Create or update a rating for a challenge"""
+        # If challenge ratings are disabled we should not receive any ratings information
+        # If they are public or private we still want to collect the data
+        if get_config("challenge_ratings") == "disabled":
+            abort(403)
+
+        user = get_current_user()
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        # Check if challenge is visible to the user
+        if challenge.state == "hidden" and not is_admin():
+            abort(404)
+
+        # Check if user/team has solved this challenge (only allow rating if solved)
+        if not is_admin():
+            user_solves = get_solve_ids_for_user_id(user_id=user.id)
+            if int(challenge_id) not in user_solves:
+                return {
+                    "success": False,
+                    "errors": {"": ["You must solve this challenge before rating it"]},
+                }, 403
+
+        data = request.get_json()
+        if not data or "value" not in data:
+            return {
+                "success": False,
+                "errors": {"value": ["Rating value is required"]},
+            }, 400
+
+        try:
+            rating_value = int(data["value"])
+        except (ValueError, TypeError):
+            return {
+                "success": False,
+                "errors": {"value": ["Rating value must be an integer"]},
+            }, 400
+
+        # Validate rating value (1-5 scale)
+        if abs(rating_value) != 1:
+            return {
+                "success": False,
+                "errors": {"value": ["Rating value must be either 1 or -1"]},
+            }, 400
+
+        # Get review text (optional)
+        review_text = data.get("review", "")
+        if review_text and len(review_text) > 2000:
+            return {
+                "success": False,
+                "errors": {"review": ["Review text cannot exceed 2000 characters"]},
+            }, 400
+
+        # Find existing rating or create new one
+        rating = Ratings.query.filter_by(
+            user_id=user.id, challenge_id=challenge_id
+        ).first()
+
+        if rating:
+            # Update existing rating
+            rating.value = rating_value
+            rating.review = review_text
+            rating.date = datetime.utcnow()
+        else:
+            # Create new rating
+            rating = Ratings(
+                user_id=user.id,
+                challenge_id=challenge_id,
+                value=rating_value,
+                review=review_text,
+            )
+            db.session.add(rating)
+
+        db.session.commit()
+
+        # Clear cached rating data since we just created/updated a rating
+        clear_ratings()
+
+        return {
+            "success": True,
+            "data": {
+                "id": rating.id,
+                "user_id": rating.user_id,
+                "challenge_id": rating.challenge_id,
+                "value": rating.value,
+                "review": rating.review,
+                "date": isoformat(rating.date),
+            },
+        }
+
+
+@challenges_namespace.route("/<challenge_id>/solution")
+class ChallengeSolution(Resource):
+    @check_challenge_visibility
+    @during_ctf_time_only
+    @authed_only
+    @require_verified_emails
+    def get(self, challenge_id):
+        challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
+
+        # Check if challenge is visible to the user
+        if challenge.state == "hidden" and not is_admin():
+            abort(404)
+
+        # Get user's current solves
+        user = get_current_user_attrs()
+        user_solves = get_solve_ids_for_user_id(user_id=user.id)
+
+        response = {
+            "id": None,
+            "state": None,
+        }
+        solution_id = None
+        solution_state = "hidden"
+        if challenge.solution_id:
+            # Share the solution state to the user but default to hidden
+            solution_state = challenge.solution.state
+            # We explicitly want the solution visible
+            if challenge.solution.state == "visible":
+                solution_id = challenge.solution.id
+            # We only want the solution to be visible if the challenge has been solved
+            elif challenge.solution.state == "solved":
+                if int(challenge_id) in user_solves:
+                    solution_id = challenge.solution.id
+        response["id"] = solution_id
+        response["state"] = solution_state
+        return {"success": True, "data": response}

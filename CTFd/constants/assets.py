@@ -2,6 +2,7 @@ import os
 
 from flask import current_app, url_for
 
+from CTFd.constants.themes import DEFAULT_THEME
 from CTFd.utils import get_asset_json
 from CTFd.utils.config import ctf_theme
 from CTFd.utils.helpers import markup
@@ -14,6 +15,14 @@ class _AssetsWrapper:
         file_path = os.path.join(
             current_app.root_path, "themes", theme, "static", "manifest.json"
         )
+
+        if bool(current_app.config.get("THEME_FALLBACK")) and not os.path.isfile(
+            file_path
+        ):
+            theme = DEFAULT_THEME
+            file_path = os.path.join(
+                current_app.root_path, "themes", theme, "static", "manifest.json"
+            )
 
         try:
             manifest = get_asset_json(path=file_path)

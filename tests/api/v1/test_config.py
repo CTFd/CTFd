@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from CTFd.models import Teams, Users
-from CTFd.utils import get_config
+from CTFd.utils import get_config, set_config
 from tests.helpers import create_ctfd, destroy_ctfd, gen_team, login_as_user
 
 
@@ -99,9 +99,15 @@ def test_api_config_delete_admin():
     app = create_ctfd()
     with app.app_context():
         with login_as_user(app, "admin") as admin:
-            r = admin.delete("/api/v1/configs/ctf_name", json="")
+            set_config("temp_config", "testing")
+            r = admin.get("/api/v1/configs/temp_config", json="")
+            data = r.get_json()
             assert r.status_code == 200
-            assert get_config("ctf_name") is None
+            assert data["data"]["value"] == "testing"
+
+            r = admin.delete("/api/v1/configs/temp_config", json="")
+            assert r.status_code == 200
+            assert get_config("temp_config") is None
     destroy_ctfd(app)
 
 

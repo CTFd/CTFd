@@ -2,50 +2,16 @@ import json
 
 from flask import url_for
 
-from CTFd.constants import JinjaEnum, RawEnum
+# TODO: CTFd 4.0. These imports previously specified in this file but have moved. We could consider removing these imports
+from CTFd.constants.options import (  # noqa: F401
+    AccountVisibilityTypes,
+    ChallengeVisibilityTypes,
+    ConfigTypes,
+    RegistrationVisibilityTypes,
+    ScoreVisibilityTypes,
+    UserModeTypes,
+)
 from CTFd.utils import get_config
-
-
-class ConfigTypes(str, RawEnum):
-    CHALLENGE_VISIBILITY = "challenge_visibility"
-    SCORE_VISIBILITY = "score_visibility"
-    ACCOUNT_VISIBILITY = "account_visibility"
-    REGISTRATION_VISIBILITY = "registration_visibility"
-
-
-@JinjaEnum
-class UserModeTypes(str, RawEnum):
-    USERS = "users"
-    TEAMS = "teams"
-
-
-@JinjaEnum
-class ChallengeVisibilityTypes(str, RawEnum):
-    PUBLIC = "public"
-    PRIVATE = "private"
-    ADMINS = "admins"
-
-
-@JinjaEnum
-class ScoreVisibilityTypes(str, RawEnum):
-    PUBLIC = "public"
-    PRIVATE = "private"
-    HIDDEN = "hidden"
-    ADMINS = "admins"
-
-
-@JinjaEnum
-class AccountVisibilityTypes(str, RawEnum):
-    PUBLIC = "public"
-    PRIVATE = "private"
-    ADMINS = "admins"
-
-
-@JinjaEnum
-class RegistrationVisibilityTypes(str, RawEnum):
-    PUBLIC = "public"
-    PRIVATE = "private"
-    MLC = "mlc"
 
 
 class _ConfigsWrapper:
@@ -95,6 +61,14 @@ class _ConfigsWrapper:
     @property
     def privacy_link(self):
         return get_config("privacy_url", default=url_for("views.privacy"))
+
+    @property
+    def social_shares(self):
+        return get_config("social_shares", default=True)
+
+    @property
+    def challenge_ratings(self):
+        return get_config("challenge_ratings", default="public")
 
 
 Configs = _ConfigsWrapper()

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Join Team</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				{% include "components/errors.html" %}
+
+				<p class="text-center">
+					Welcome to <strong>{{ team.name }}</strong>!
+				</p>
+
+				<p class="text-center">
+					Click the button below to join the team!
+					<br>
+					<small class="text-muted">
+						Or <a href="{{ url_for('teams.new') }}">click here</a> if you'd prefer to create your own team.
+					</small>
+				</p>
+
+				{% with form = Forms.teams.TeamInviteJoinForm() %}
+				<form method="POST">
+					<div class="row pt-3 text-center">
+						<div class="col-md-12">
+							{{ form.submit(class="btn btn-success btn-block") }}
+						</div>
+					</div>
+					{{ form.nonce() }}
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

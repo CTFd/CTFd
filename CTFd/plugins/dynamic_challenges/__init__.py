@@ -16,10 +16,42 @@ class DynamicChallenge(Challenges):
     id = db.Column(
         db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), primary_key=True
     )
-    initial = db.Column(db.Integer, default=0)
-    minimum = db.Column(db.Integer, default=0)
-    decay = db.Column(db.Integer, default=0)
-    function = db.Column(db.String(32), default="logarithmic")
+    dynamic_initial = db.Column(db.Integer, default=0)
+    dynamic_minimum = db.Column(db.Integer, default=0)
+    dynamic_decay = db.Column(db.Integer, default=0)
+    dynamic_function = db.Column(db.String(32), default="logarithmic")
+
+    @property
+    def initial(self):
+        return self.dynamic_initial
+
+    @initial.setter
+    def initial(self, initial_value):
+        self.dynamic_initial = initial_value
+
+    @property
+    def minimum(self):
+        return self.dynamic_minimum
+
+    @minimum.setter
+    def minimum(self, minimum_value):
+        self.dynamic_minimum = minimum_value
+
+    @property
+    def decay(self):
+        return self.dynamic_decay
+
+    @decay.setter
+    def decay(self, decay_value):
+        self.dynamic_decay = decay_value
+
+    @property
+    def function(self):
+        return self.dynamic_function
+
+    @function.setter
+    def function(self, function_value):
+        self.dynamic_function = function_value
 
     def __init__(self, *args, **kwargs):
         super(DynamicChallenge, self).__init__(**kwargs)

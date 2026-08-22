@@ -49,6 +49,13 @@
 		</div>
 	</div>
 
+	<div class="form-group">
+		<div class="form-check form-check-inline">
+			{{ form.change_password(class="form-check-input", autocomplete="off") }}
+			{{ form.change_password.label(class="form-check-label") }}
+		</div>
+	</div>
+
 	{% if can_send_mail() %}
 	<div class="form-group">
 		<div class="form-check form-check-inline">

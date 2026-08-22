@@ -25,16 +25,37 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="challenge-comments-window" role="dialog">
+	<div class="modal fade" id="challenge-ratings-window" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2 class="modal-action text-center w-100">Comments</h2>
+					<h2 class="modal-title text-center w-100">Ratings</h2>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<div class="modal-body clearfix">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div id="ratings-box">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="challenge-comments-window" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title text-center w-100">Comments</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
 					<div class="row">
 						<div class="col-md-12">
 							<div id="comment-box">
@@ -67,6 +88,10 @@
 					<i class="btn-fa fas fa-tasks fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Correct Submissions"></i>
 				</a>
+				<a class="ratings-challenge" id="ratings-viewer-load">
+					<i class="btn-fa fa-regular fa-star fa-2x px-2" data-toggle="tooltip" data-placement="top"
+					   title="Challenge Ratings"></i>
+				</a>
 				<a class="comments-challenge">
 					<i class="btn-fa fas fa-comments fa-2x px-2" data-toggle="tooltip" data-placement="top"
 					   title="Comments"></i>
@@ -79,12 +104,13 @@
 		</div>
 	</div>
 
-	<div class="container">
+	<div class="container-fluid" style="width: 80%;">
 		<div class="row">
 			<div class="col-md-6">
 				<nav class="nav nav-tabs nav-fill" id="challenge-properties" role="tablist">
 					<a class="nav-item nav-link small active" data-toggle="tab" href="#files" role="tab">Files</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#flags" role="tab">Flags</a>
+					<a class="nav-item nav-link small" data-toggle="tab" href="#solution" role="tab">Solution</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#topics" role="tab">Topics</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#tags" role="tab">Tags</a>
 					<a class="nav-item nav-link small" data-toggle="tab" href="#hints" role="tab">Hints</a>
@@ -106,6 +132,14 @@
 							<div class="col-md-12">
 								<h3 class="text-center py-3 d-block">Flags</h3>
 								{% include "admin/modals/challenges/flags.html" %}
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="solution" role="tabpanel">
+						<div class="row">
+							<div class="col-md-12">
+								<h3 class="text-center py-3 d-block">Solution</h3>
+								{% include "admin/modals/challenges/solution.html" %}
 							</div>
 						</div>
 					</div>
@@ -164,6 +198,7 @@
 	<script>
         var CHALLENGE_ID = {{ challenge.id }};
         var CHALLENGE_NAME = {{ challenge.name | tojson }};
+        var CHALLENGE_SOLUTION_ID = {{ challenge.solution_id | tojson }};
 	</script>
 	<script defer src="{{ request.script_root }}{{ update_script }}"></script>
 {% endblock %}
