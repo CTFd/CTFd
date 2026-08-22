@@ -2,7 +2,11 @@ from flask import abort, render_template, request, url_for
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
-from CTFd.plugins.challenges import CHALLENGE_CLASSES, get_chal_class
+from CTFd.plugins.challenges import (
+    CHALLENGE_CLASSES,
+    ChallengeRenderData,
+    get_chal_class,
+)
 from CTFd.schemas.tags import TagSchema
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.security.signing import serialize
@@ -104,7 +108,9 @@ def challenges_preview(challenge_id):
         hints=challenge.hints,
         max_attempts=challenge.max_attempts,
         attempts=0,
-        challenge=challenge,
+        challenge=ChallengeRenderData(
+            challenge=challenge, data=chal_class.read(challenge)
+        ),
         rating=None,
         ratings=None,
     )
