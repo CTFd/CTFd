@@ -82,8 +82,8 @@ services:
     volumes:
       - ./conf/frp/frps.toml:/etc/frp/frps.toml
     ports:
-      - "10000-10100:10000-10100" # port range for frp
-      - "8080:8080"
+      - "10100-10200:10100-10200" # port range for frp
+      - "28080:28080"
     networks:
       default:
       frp_containers:
