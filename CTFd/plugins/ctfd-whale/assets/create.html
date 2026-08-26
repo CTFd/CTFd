@@ -1,0 +1,100 @@
+{% extends "admin/challenges/create.html" %}
+
+{% block header %}
+    <div class="alert alert-secondary" role="alert">
+        Dynamic docker challenge allows players to deploy their per-challenge standalone instances.
+    </div>
+{% endblock %}
+
+
+{% block value %}
+    <div class="form-group">
+        <label for="value">Docker Image<br>
+            <small class="form-text text-muted">
+                The docker image used to deploy
+            </small>
+        </label>
+        <input type="text" class="form-control" name="docker_image" placeholder="Enter docker image name" required>
+    </div>
+    <div class="form-group">
+        <label for="value">Frp Redirect Type<br>
+            <small class="form-text text-muted">
+                Decide the redirect type how frp redirect traffic
+            </small>
+        </label>
+        <select class="form-control" name="redirect_type">
+            <option value="http" selected>HTTP</option>
+            <option value="direct">Direct</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="value">Frp Redirect Port<br>
+            <small class="form-text text-muted">
+                Decide which port in the instance that frp should redirect traffic for
+            </small>
+        </label>
+        <input type="number" class="form-control" name="redirect_port" placeholder="Enter the port you want to open"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="value">Docker Container Memory Limit<br>
+            <small class="form-text text-muted">
+                The memory usage limit
+            </small>
+        </label>
+        <input type="text" class="form-control" name="memory_limit" placeholder="Enter the memory limit" value="128m"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="value">Docker Container CPU Limit<br>
+            <small class="form-text text-muted">
+                The CPU usage limit
+            </small>
+        </label>
+        <input type="number" class="form-control" name="cpu_limit" placeholder="Enter the cpu limit" value="0.5"
+               required>
+    </div>
+    <div class="form-group">
+        <label for="value">Initial Value<br>
+            <small class="form-text text-muted">
+                This is how many points the challenge is worth initially.
+            </small>
+        </label>
+        <input type="number" class="form-control" name="value" placeholder="Enter value" required>
+    </div>
+
+    <div class="form-group">
+        <label for="value">Decay Limit<br>
+            <small class="form-text text-muted">
+                The amount of solves before the challenge reaches its minimum value
+            </small>
+        </label>
+        <input type="number" class="form-control" name="decay" placeholder="Enter decay limit" required>
+    </div>
+
+    <div class="form-group">
+        <label for="value">Minimum Value<br>
+            <small class="form-text text-muted">
+                This is the lowest that the challenge can be worth
+            </small>
+        </label>
+        <input type="number" class="form-control" name="minimum" placeholder="Enter minimum value" required>
+    </div>
+
+    <div class="form-group">
+        <label for="value">Score Type<br>
+            <small class="form-text text-muted">
+                Decide it use dynamic score or not
+            </small>
+        </label>
+
+        <select class="form-control" name="dynamic_score">
+            <option value="0" selected>Static Score</option>
+            <option value="1">Dynamic Score</option>
+        </select>
+    </div>
+{% endblock %}
+
+{% block type %}
+    <input type="hidden" value="dynamic_docker" name="type" id="chaltype">
+{% endblock %}

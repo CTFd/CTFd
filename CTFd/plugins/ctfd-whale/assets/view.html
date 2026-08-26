@@ -1,0 +1,36 @@
+{% extends "challenge.html" %}
+
+{% block description %}
+{{ challenge.html }}
+    <div class="row text-center pb-3">
+        <div id="whale-panel" style="width: 100%;">
+            <div id="whale-panel-stopped" class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">Instance Info</h5>
+                    <button class="btn btn-primary card-link" id="whale-button-boot" type="button"
+                        onclick="CTFd._internal.challenge.boot()">Launch an instance</button>
+                </div>
+            </div>
+            <div id="whale-panel-started" type="hidden" class="card" style="width: 100%;">
+                <div class="card-body">
+                    <h5 class="card-title">Instance Info</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        Remaining Time: <span id="whale-challenge-count-down"></span>s
+                    </h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        Lan Domain: <span id="whale-challenge-lan-domain"></span>
+                    </h6>
+                    <p id="whale-challenge-user-access" class="card-text"></p>
+                    <button type="button" class="btn btn-danger card-link" id="whale-button-destroy"
+                            onclick="CTFd._internal.challenge.destroy()">
+                        Destroy this instance
+                    </button>
+                    <button type="button" class="btn btn-success card-link" id="whale-button-renew"
+                            onclick="CTFd._internal.challenge.renew()">
+                        Renew this instance
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

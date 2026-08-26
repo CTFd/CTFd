@@ -1,0 +1,78 @@
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped border">
+            <thead>
+            <tr>
+                <th class="border-right" data-checkbox>
+                    <div class="form-check text-center">&nbsp;
+                        <input type="checkbox" class="form-check-input" data-checkbox-all>
+                    </div>
+                </th>
+                <th class="sort-col text-center"><b>ID</b></td>
+                <th class="text-center"><b>User</b></td>
+                <th class="sort-col text-center"><b>Challenge</b></td>
+                <th class="text-center"><b>Access Method</b></td>
+                <th class="text-center"><b>Flag</b></td>
+                <th class="sort-col text-center"><b>Startup Time</b></td>
+                <th class="sort-col text-center"><b>Renewal Times</b></td>
+                <th class="text-center"><b>Delete</b></td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for container in containers %}
+                <tr>
+                    <td class="border-right" data-checkbox>
+                        <div class="form-check text-center">&nbsp;
+                            <input type="checkbox" class="form-check-input" data-user-id="{{ container.user.id }}">
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        {{ container.id }}
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ url_for('admin.users_detail', user_id=container.user.id) }}">
+                            {{ container.user.name | truncate(12) }}
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ url_for('admin.challenges_detail', challenge_id=container.challenge.id) }}">
+                            {{ container.challenge.name }}
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        {{ container.challenge.redirect_type }}&nbsp;
+                        <button class="btn btn-link p-0 click-copy" data-copy="{{ container.user_access }}">
+                            <i class="fas fa-clipboard"></i>
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-link p-0 click-copy" data-copy="{{ container.flag }}">
+                            <i class="fas fa-clipboard"></i>
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <span data-time="{{ container.start_time | isoformat }}"></span>
+                    </td>
+                    <td class="text-center">
+                        {{ container.renew_count }}&nbsp;
+                        <button class="btn btn-link p-0 renew-container"
+                           container-id="{{ container.id }}" data-toggle="tooltip"
+                           user-id="{{ container.user.id }}" data-placement="top"
+                           title="Renew Container #{{ container.id }}">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-link p-0 delete-container"
+                           container-id="{{ container.id }}" data-toggle="tooltip"
+                           user-id="{{ container.user.id }}" data-placement="top"
+                           title="Destroy Container #{{ container.id }}">
+                            <i class="fas fa-times"></i>
+                    </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="tab-pane fade" id="challenges" role="tabpanel">
+    {% for config, val in {
+        "Subdomain Template": ("template_http_subdomain", "Controls how the subdomain of a container is generated"),
+        "Flag Template": ("template_chall_flag", "Controls how a flag is generated"),
+    }.items() %}
+        {% set value = get_config('whale:' + val[0]) %}
+        <div class="form-group">
+            <label for="{{ val[0].replace('_', '-') }}">
+                {{ config }}
+                <small class="form-text text-muted">
+                    {{ val[1] }}
+                </small>
+            </label>
+            <input type="text" class="form-control"
+                   id="{{ val[0].replace('_', '-') }}" name="{{ 'whale:' + val[0] }}"
+                   {% if value != None %}value="{{ value }}"{% endif %}>
+        </div>
+    {% endfor %}
+
+    <div class="submit-row float-right">
+        <button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">
+            Submit
+        </button>
+    </div>
+</div>

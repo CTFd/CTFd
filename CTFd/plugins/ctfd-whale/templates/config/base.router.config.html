@@ -1,0 +1,24 @@
+<div class="tab-pane fade" id="router" role="tabpanel">
+    {% set value = get_config('whale:router_type') %}
+    {% set cur_type = get_config("whale:router_type", "frp") %}
+    <div class="form-group">
+        <label for="router-type">
+            Router type
+            <small class="form-text text-muted">
+                Select which router backend to use
+            </small>
+        </label>
+        <select id="router-type" class="form-control custom-select" onchange="window.updateConfigs">
+            {% for type in ["frp", "trp"] %}
+                <option value="{{ type }}" {{ "selected" if value == type }}>{{ type }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% set template = "config/" + cur_type + ".router.config.html" %}
+    {% include template %}
+    <div class="submit-row float-right">
+        <button type="submit" tabindex="0" class="btn btn-md btn-primary btn-outlined">
+            Submit
+        </button>
+    </div>
+</div>

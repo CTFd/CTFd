@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>CTFd Whale</h1>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <ul class="nav nav-pills flex-column">
+                    {% block menu %}
+                    {% endblock %}
+                </ul>
+            </div>
+            <div class="col-md-9">
+                <div class="tab-content">
+                    {% block panel %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

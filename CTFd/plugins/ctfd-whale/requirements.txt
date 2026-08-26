@@ -1,0 +1,4 @@
+docker==4.1.0
+Flask-APScheduler==1.11.0
+flask-redis==0.4.0
+redis==3.3.11

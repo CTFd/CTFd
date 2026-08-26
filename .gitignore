@@ -101,3 +101,7 @@ CTFd/themes/*
 !CTFd/themes/admin/
 !CTFd/themes/core/
 !CTFd/themes/core-deprecated/
+
+# CTFd-whale
+!CTFd/plugins/ctfd-whale/
+!CTFd/plugins/ctfd-whale/**

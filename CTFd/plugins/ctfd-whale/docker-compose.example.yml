@@ -1,0 +1,105 @@
+version: '3.7'
+
+services:
+  ctfd:
+    build: .
+    user: root
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - UPLOAD_FOLDER=/var/uploads
+      - DATABASE_URL=mysql+pymysql://ctfd:ctfd@db/ctfd
+      - REDIS_URL=redis://cache:6379
+      - WORKERS=1
+      - LOG_FOLDER=/var/log/CTFd
+      - ACCESS_LOG=-
+      - ERROR_LOG=-
+      - REVERSE_PROXY=true
+    volumes:
+      - .data/CTFd/logs:/var/log/CTFd
+      - .data/CTFd/uploads:/var/uploads
+      - .:/opt/CTFd:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - db
+    networks:
+        default:
+        internal:
+
+  nginx:
+    image: nginx:1.17
+    restart: always
+    volumes:
+      - ./conf/nginx/http.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - ctfd
+
+  db:
+    image: mariadb:10.4.12
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=ctfd
+      - MYSQL_USER=ctfd
+      - MYSQL_PASSWORD=ctfd
+      - MYSQL_DATABASE=ctfd
+    volumes:
+      - .data/mysql:/var/lib/mysql
+    networks:
+        internal:
+    # This command is required to set important mariadb defaults
+    command: [mysqld, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+
+  cache:
+    image: redis:4
+    restart: always
+    volumes:
+    - .data/redis:/data
+    networks:
+        internal:
+
+  frpc:
+    image: frankli0324/frp:frpc
+    restart: always
+    command: [
+      "--server_addr=frps",
+      "--server_port=7000",
+      "--token=your_token",
+      "--admin_addr=0.0.0.0",
+      "--admin_port=7000",
+      "--admin_user=frank",
+      "--admin_pwd=qwer",
+    ]
+    networks:
+      frp:
+      internal:
+      containers:
+
+  frps:
+    image: frankli0324/frp:frps
+    restart: always
+    command: [
+      "--bind_addr=0.0.0.0",
+      "--bind_port=7000",
+      "--token=your_token",
+      "--subdomain_host=127.0.0.1.nip.io",
+      "--vhost_http_port=8080",
+    ]
+    ports:
+      - 8080:8080
+    networks:
+      frp:
+      default:
+
+networks:
+    default:
+    internal:
+        internal: true
+    frp:
+        internal: true
+    containers:
+        internal: true
+        driver: overlay
+        attachable: true

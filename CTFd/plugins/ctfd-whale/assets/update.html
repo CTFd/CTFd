@@ -1,0 +1,94 @@
+{% extends "admin/challenges/update.html" %}
+
+{% block value %}
+    <div class="form-group">
+        <label for="value">Current Value<br>
+            <small class="form-text text-muted">
+                This is how many points the challenge is worth right now.
+            </small>
+        </label>
+        <input type="number" class="form-control chal-value" name="value" value="{{ challenge.value }}" disabled>
+    </div>
+    <div class="form-group">
+        <label for="value">Initial Value<br>
+            <small class="form-text text-muted">
+                This is how many points the challenge was worth initially.
+            </small>
+        </label>
+        <input type="number" class="form-control chal-initial" name="initial" value="{{ challenge.initial }}" required>
+    </div>
+    <div class="form-group">
+        <label for="value">Decay Limit<br>
+            <small class="form-text text-muted">
+                The amount of solves before the challenge reaches its minimum value
+            </small>
+        </label>
+        <input type="number" class="form-control chal-decay" name="decay" value="{{ challenge.decay }}" required>
+    </div>
+    <div class="form-group">
+        <label for="value">Minimum Value<br>
+            <small class="form-text text-muted">
+                This is the lowest that the challenge can be worth
+            </small>
+        </label>
+        <input type="number" class="form-control chal-minimum" name="minimum" value="{{ challenge.minimum }}" required>
+    </div>
+    <div class="form-group">
+        <label for="value">Docker Image<br>
+            <small class="form-text text-muted">
+                The docker image used to deploy
+            </small>
+        </label>
+        <input type="text" class="form-control" name="docker_image" placeholder="Enter docker image name"
+               required value="{{ challenge.docker_image }}">
+    </div>
+    <div class="form-group">
+        <label for="value">Frp Redirect Type<br>
+            <small class="form-text text-muted">
+                Decide the redirect type how frp redirect traffic
+            </small>
+        </label>
+        <select class="form-control" name="redirect_type">
+            <option value="http" {% if challenge.redirect_type == "http" %}selected{% endif %}>HTTP</option>
+            <option value="direct" {% if challenge.redirect_type == "direct" %}selected{% endif %}>Direct</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="value">Frp Redirect Port<br>
+            <small class="form-text text-muted">
+                Decide which port in the instance that frp should redirect traffic for
+            </small>
+        </label>
+        <input type="number" class="form-control" name="redirect_port" placeholder="Enter the port you want to open"
+               required value="{{ challenge.redirect_port }}">
+    </div>
+    <div class="form-group">
+        <label for="value">Docker Container Memory Limit<br>
+            <small class="form-text text-muted">
+                The memory usage limit
+            </small>
+        </label>
+        <input type="text" class="form-control" name="memory_limit" placeholder="Enter the memory limit"
+               value="{{ challenge.memory_limit }}" required>
+    </div>
+    <div class="form-group">
+        <label for="value">Docker Container CPU Limit<br>
+            <small class="form-text text-muted">
+                The CPU usage limit
+            </small>
+        </label>
+        <input type="number" class="form-control" name="cpu_limit" placeholder="Enter the cpu limit"
+               value="{{ challenge.cpu_limit }}" required>
+    </div>
+    <div class="form-group">
+        <label for="value">Score Type<br>
+            <small class="form-text text-muted">
+                Decide it use dynamic score or not
+            </small>
+        </label>
+        <select class="form-control" name="dynamic_score">
+            <option value="0" {% if challenge.dynamic_score == 0 %}selected{% endif %}>Static Score</option>
+            <option value="1" {% if challenge.dynamic_score == 1 %}selected{% endif %}>Dynamic Score</option>
+        </select>
+    </div>
+{% endblock %}

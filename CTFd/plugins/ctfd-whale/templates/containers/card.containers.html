@@ -1,0 +1,57 @@
+<style>
+    .info-card.card {
+        height: 11rem;
+    }
+
+    .card-text {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .card-text:hover {
+        white-space: pre-line;
+        overflow: visible;
+    }
+</style>
+
+<div class="row">
+    {% for container in containers %}
+        <div class="col-sm-6 pb-3">
+            <div class="info-card card">
+                <div class="card-body">
+                    <h5 class="d-inline-block card-title">
+                        <a style="width: 5rem;"
+                           href="{{ url_for('admin.challenges_detail', challenge_id=container.challenge.id) }}"
+                        >{{ container.challenge.name | truncate(15) }}
+                        </a>
+                    </h5>
+                    <h6 class="d-inline-block card-subtitle float-right">
+                        <a style="width: 5rem;"
+                           class="btn btn-outline-secondary rounded"
+                           href="{{ url_for('admin.users_detail', user_id=container.user.id) }}"
+                        >{{ container.user.name | truncate(5) }}
+                        </a>
+                    </h6>
+                    <p class="card-text">{{ container.user_access }}</p>
+                    <p class="card-text">{{ container.flag }}</p>
+                    Time Started: {{ container.start_time }}
+                    <a class="delete-container float-right" container-id="{{ container.id }}"
+                       data-toggle="tooltip" data-placement="top"
+                       user-id="{{ container.user.id }}"
+                       style="margin-right: 0.5rem;"
+                       title="Destroy Container #{{ container.id }}">
+                        <i class="fas fa-stop-circle"></i>
+                    </a>
+                    <a class="renew-container float-right" container-id="{{ container.id }}"
+                       data-toggle="tooltip" data-placement="top"
+                       user-id="{{ container.user.id }}"
+                       style="margin-right: 0.5rem;"
+                       title="Renew Container #{{ container.id }}">
+                        <i class="fas fa-clock"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
