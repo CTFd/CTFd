@@ -27,7 +27,7 @@ def during_ctf_time_only(f):
                 if view_after_ctf():
                     return f(*args, **kwargs)
                 else:
-                    error = gettext(
+                    error = get_config("ctf_ended_message") or gettext(
                         "%(ctf_name)s has ended", ctf_name=config.ctf_name()
                     )
                     abort(403, description=error)
@@ -35,7 +35,7 @@ def during_ctf_time_only(f):
                 if is_teams_mode() and get_current_team() is None:
                     return redirect(url_for("teams.private", next=request.full_path))
                 else:
-                    error = gettext(
+                    error = get_config("ctf_not_started_message") or gettext(
                         "%(ctf_name)s has not started yet", ctf_name=config.ctf_name()
                     )
                     abort(403, description=error)

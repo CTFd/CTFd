@@ -62,11 +62,13 @@ def test_user_token_access():
             headers = {"Authorization": "token " + token.value}
             r = client.get("/api/v1/users/me", headers=headers, json="")
             assert r.status_code == 401
+            assert r.get_json()["message"] == "Your access token has expired"
 
         with app.test_client() as client:
             headers = {"Authorization": "token invalid_token"}
             r = client.get("/api/v1/users/me", headers=headers, json="")
             assert r.status_code == 401
+            assert r.get_json()["message"] == "Your access token is invalid"
 
         with app.test_client() as client:
             user = gen_user(app.db, name="user1", email="user1@examplectf.com")
