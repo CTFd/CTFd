@@ -224,11 +224,7 @@ def test_api_solution_unlock_stores_ip():
         with login_as_user(app) as client:
             r = client.post(
                 "/api/v1/unlocks",
-                json={
-                    "target": solution_id,
-                    "type": "solutions",
-                    "ip": "198.51.100.99",
-                },
+                json={"target": solution_id, "type": "solutions"},
                 environ_base={"REMOTE_ADDR": "203.0.113.11"},
             )
             assert r.status_code == 200

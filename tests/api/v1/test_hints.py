@@ -160,7 +160,7 @@ def test_api_hint_unlock_stores_ip():
         with login_as_user(app) as client:
             r = client.post(
                 "/api/v1/unlocks",
-                json={"target": 1, "type": "hints", "ip": "198.51.100.99"},
+                json={"target": 1, "type": "hints"},
                 environ_base={"REMOTE_ADDR": "203.0.113.10"},
             )
             assert r.status_code == 200
