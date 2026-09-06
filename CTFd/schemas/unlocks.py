@@ -9,7 +9,7 @@ class UnlockSchema(ma.ModelSchema):
         dump_only = ("id", "date")
 
     views = {
-        "admin": ["user_id", "target", "team_id", "date", "type", "id"],
+        "admin": ["user_id", "target", "team_id", "ip", "date", "type", "id"],
         "user": ["target", "date", "type", "id"],
     }
 

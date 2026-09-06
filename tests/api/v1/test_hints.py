@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Hints
+from CTFd.models import Hints, Unlocks
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -146,6 +146,28 @@ def test_admin_cannot_unlock_hint_with_prerequisite():
         assert r.status_code == 200
         data = r.get_json()
         assert data["data"]["content"] == "Second hint"
+    destroy_ctfd(app)
+
+
+def test_api_hint_unlock_stores_ip():
+    """Test that unlocking a hint stores the request IP address"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        gen_hint(app.db, challenge_id=1, cost=0)
+        register_user(app)
+
+        with login_as_user(app) as client:
+            r = client.post(
+                "/api/v1/unlocks",
+                json={"target": 1, "type": "hints", "ip": "198.51.100.99"},
+                environ_base={"REMOTE_ADDR": "203.0.113.10"},
+            )
+            assert r.status_code == 200
+
+            unlock = Unlocks.query.first()
+            assert unlock.ip == "203.0.113.10"
+            assert r.get_json()["data"]["ip"] == "203.0.113.10"
     destroy_ctfd(app)
 
 
