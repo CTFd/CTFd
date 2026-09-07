@@ -204,7 +204,7 @@ function emailUser(event) {
             body: "E-Mail sent successfully!",
           }),
         );
-        $("#user-mail-form").find("input[type=text], textarea").val("");
+        $("#user-mail-form").find("textarea").val("");
       } else {
         $("#user-mail-form > #results").empty();
         Object.keys(response.errors).forEach(function (key, _index) {
