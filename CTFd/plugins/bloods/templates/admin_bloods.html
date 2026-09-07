@@ -1,0 +1,102 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container text-center">
+        <h1>Bloods</h1>
+    </div>
+</div>
+
+<div class="container">
+    {% if success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+        
+        <div class="row">
+            <div class="col-md-8">
+                
+                <div class="card mb-4">
+                    <div class="card-header">General Settings</div>
+                    <div class="card-body">
+                        <div class="form-group mb-0">
+                            <label><strong>Number of Bloods</strong></label>
+                            <input type="number" class="form-control" name="{{ config_key_no_bloods() }}" value="{{ no_bloods }}" min="0" required>
+                            <small class="form-text text-muted">
+                                If you increase this number, click "Save" first to generate the new rows below so you can edit them!
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">Award Details</div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Bonus Points</th>
+                                    <th>Award Title</th>
+                                    <th>FontAwesome Icon</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in range(1, no_bloods + 1) %}
+                                <tr>
+                                    <td class="align-middle"><strong>{{ i }}</strong></td>
+                                    <td>
+                                        <input type="number" class="form-control" name="{{ config_key_blood_val(i) }}" value="{{ config_get_blood_val(i) or '0' }}" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="{{ config_key_blood_title(i) }}" value="{{ config_get_blood_title(i) or i ~ 'th Blood' }}" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="{{ config_key_blood_icon(i) }}" value="{{ config_get_blood_icon(i) or 'lightning' }}" required>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">Challenge Filters</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Filter Mode</label>
+                            <select class="form-control" name="{{ config_key_filter_mode() }}">
+                                <option value="blacklist" {% if config_get_filter_mode() == 'blacklist' %}selected{% endif %}>Blacklist (Exclude specific)</option>
+                                <option value="whitelist" {% if config_get_filter_mode() == 'whitelist' %}selected{% endif %}>Whitelist (Only include specific)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Challenge Names</label>
+                            <textarea class="form-control" name="{{ config_key_filter_list() }}" rows="5" placeholder="welcome, sanity check, rules">{{ config_get_filter_list() }}</textarea>
+                            <small class="form-text text-muted">Separate multiple challenge names with a comma.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center mt-3 mb-5">
+                <button type="submit" name="action" value="save" class="btn btn-primary btn-lg px-5">Save and Re-Sync Database</button>
+                
+                <button type="submit" name="action" value="reset" class="btn btn-danger btn-lg px-5 ml-3" onclick="return confirm('Are you sure you want to reset all settings to defaults? This will erase custom points, titles, and filters.');">Reset to Defaults</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

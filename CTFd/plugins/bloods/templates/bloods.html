@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-3 slide-up">
+            <i class="fas fa-tint text-danger me-3"></i>
+            {% trans %}Bloods{% endtrans %}
+          </h1>
+          <p class="lead mb-4 slide-up" style="animation-delay: 0.1s;">
+            {% trans %}See who drew first blood on every challenge.{% endtrans %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden slide-up">
+          <div class="card-header bg-light border-0 py-3">
+            <h5 class="card-title mb-0 fw-bold">
+              <i class="fas fa-list text-primary me-2"></i>
+              {% trans %}First Bloods{% endtrans %}
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            {% if bloods %}
+              <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                  <thead>
+                    <tr>
+                      <th>{% trans %}Challenge{% endtrans %}</th>
+                      <th class="text-center">{% trans %}Rank{% endtrans %}</th>
+                      <th>{% trans %}User{% endtrans %}</th>
+                      <th>{% trans %}Team{% endtrans %}</th>
+                      <th>{% trans %}Time Achieved{% endtrans %}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for challenge_name, challenge_bloods in bloods|groupby('challenge_name') %}
+                      {% for blood in challenge_bloods|sort(attribute='position') %}
+                        <tr>
+                          {% if loop.first %}
+                            <td rowspan="{{ challenge_bloods|length }}" class="align-middle text-start">
+                              <a href="{{ url_for('challenges.listing') }}#{{ challenge_name }}-{{ blood.challenge_id }}">{{ challenge_name }}</a>
+                            </td>
+                          {% endif %}
+
+                          <td class="align-middle text-center">
+                            {% if blood.position == 1 %}
+                              <span class="blood-icon first" title="{% trans %}1st{% endtrans %}"></span>
+                            {% elif blood.position == 2 %}
+                              <span class="blood-icon second" title="{% trans %}2nd{% endtrans %}"></span>
+                            {% elif blood.position == 3 %}
+                              <span class="blood-icon third" title="{% trans %}3rd{% endtrans %}"></span>
+                            {% else %}
+                              <i class="fas fa-medal text-muted" title="#{{ blood.position }}"></i> {{ blood.position }}
+                            {% endif %}
+                          </td>
+
+                          <td class="align-middle">
+                            {% if blood.user_id %}
+                              <a href="{{ url_for('users.public', user_id=blood.user_id) }}">{{ blood.user_name }}</a>
+                            {% else %}
+                              {{ blood.user_name }}
+                            {% endif %}
+                          </td>
+
+                          <td class="align-middle">
+                            {% if blood.team_id %}
+                              <a href="{{ url_for('teams.public', team_id=blood.team_id) }}">{{ blood.team_name }}</a>
+                            {% elif blood.team_name != 'None' %}
+                              {{ blood.team_name }}
+                            {% endif %}
+                          </td>
+
+                          <td class="blood-time align-middle text-muted small" data-time="{{ blood.date.isoformat() }}Z"></td>
+                        </tr>
+                      {% endfor %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-center py-5">
+                <div class="empty-icon">
+                  <i class="fas fa-tint"></i>
+                </div>
+                <h4 class="text-muted mb-2">{% trans %}No bloods drawn yet!{% endtrans %}</h4>
+                <p class="text-muted mb-0">
+                  {% trans %}Solve a challenge first to claim the first blood.{% endtrans %}
+                </p>
+                <a href="{{ url_for('challenges.listing') }}" class="btn btn-primary mt-3 rounded-pill px-4">
+                  <i class="fas fa-flag me-2"></i>
+                  {% trans %}Start Challenges{% endtrans %}
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // format utc database times into the user's local timezone
+    document.addEventListener('DOMContentLoaded', function () {
+      const timeCells = document.querySelectorAll('.blood-time')
+      timeCells.forEach(function (cell) {
+        const utcTime = cell.getAttribute('data-time')
+        if (utcTime && utcTime !== 'NoneZ') {
+          const dateObj = new Date(utcTime)
+          cell.innerText = dateObj.toLocaleString()
+        } else {
+          cell.innerText = 'Unknown Time'
+        }
+      })
+    })
+  </script>
+
+{% endblock %}

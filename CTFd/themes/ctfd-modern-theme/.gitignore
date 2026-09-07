@@ -1,0 +1,32 @@
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+AGENTS.md
+
+.vscode/
+.agents/
+.codex/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+graphify-out/
+
+# NOTE: Vite build output under static/ is committed on purpose, matching the
+# core/admin themes. CTFd serves themes from these prebuilt assets and the
+# Dockerfile has no build step, so static/assets, static/webfonts and
+# static/img must be tracked. Rebuild with `npm install && npm run build`.
+
+yarn.lock

@@ -1,0 +1,159 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container text-center">
+      <h1>Writeups</h1>
+    </div>
+  </div>
+
+  <div class="container">
+    <ul class="nav nav-tabs mb-4" id="writeups-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active font-weight-bold" id="submissions-tab" data-toggle="tab" href="#submissions" role="tab">Submissions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link font-weight-bold" id="settings-tab" data-toggle="tab" href="#settings" role="tab">Challenge Settings</a>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="writeups-tabContent">
+      <div class="tab-pane fade show active" id="submissions" role="tabpanel">
+        <div class="card mb-5 shadow-sm">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="font-weight-bold">Writeups</span>
+            {% if writeups %}
+              <form method="POST" class="m-0">
+                <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+                <input type="hidden" name="action" value="delete_all" />
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you absolutely sure you want to delete ALL writeups? This cannot be undone.');">Delete All Writeups</button>
+              </form>
+            {% endif %}
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+              <thead>
+                <tr>
+                  <th>Date (UTC)</th>
+                  <th>User</th>
+                  <th>Challenge</th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for writeup in writeups %}
+                  <tr>
+                    <td class="align-middle">{{ writeup.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+
+                    <td class="align-middle">
+                      <a href="{{ url_for('admin.users_detail', user_id=writeup.user_id) }}">{{ writeup.user.name }}</a>
+                      <form method="POST" style="display:inline-block; margin-left: 8px;">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+                        <input type="hidden" name="action" value="delete_user" />
+                        <input type="hidden" name="target_user_id" value="{{ writeup.user_id }}" />
+                        <button type="submit" class="btn btn-sm text-danger p-0 border-0 bg-transparent cursor-pointer" onclick="return confirm('Delete ALL writeups submitted by {{ writeup.user.name }}?');" title="Delete all from this user"><i class="fas fa-trash-alt"></i></button>
+                      </form>
+                    </td>
+
+                    <td class="align-middle">
+                      <a href="{{ url_for('admin.challenges_detail', challenge_id=writeup.challenge_id) }}">{{ writeup.challenge.name }}</a>
+                      <form method="POST" style="display:inline-block; margin-left: 8px;">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+                        <input type="hidden" name="action" value="delete_challenge" />
+                        <input type="hidden" name="target_challenge_id" value="{{ writeup.challenge_id }}" />
+                        <button type="submit" class="btn btn-sm text-danger p-0 border-0 bg-transparent cursor-pointer" onclick="return confirm('Delete ALL writeups for {{ writeup.challenge.name }}?');" title="Delete all for this challenge"><i class="fas fa-trash-alt"></i></button>
+                      </form>
+                    </td>
+
+                    <td class="text-right align-middle">
+                      <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#codeModal-{{ writeup.id }}">View Code</button>
+                      <form method="POST" style="display:inline-block;">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+                        <input type="hidden" name="action" value="delete_writeup" />
+                        <input type="hidden" name="writeup_id" value="{{ writeup.id }}" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this specific writeup?');">Delete</button>
+                      </form>
+
+                      <div class="modal fade text-left" id="codeModal-{{ writeup.id }}" tabindex="-1" role="dialog">
+                        <div class="modal-dialog modal-lg" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title"><code>{{ writeup.user.name }}</code>'s writeup for <strong>{{ writeup.challenge.name }}</strong></h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body bg-light">
+                              <pre>
+                                <code style="white-space: pre-wrap; word-break: break-all; color: #d63384;">{{ writeup.code }}</code>
+                              </pre>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-4">No writeups have been submitted yet.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="settings" role="tabpanel">
+        <div class="card mb-5 shadow-sm">
+          <div class="card-header">
+            <span class="font-weight-bold">Opt-Out Challenges</span>
+            <small class="form-text text-muted mb-0">Challenges opted out will not appear in the Writeups hub.</small>
+          </div>
+          <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+              <thead>
+                <tr>
+                  <th>Challenge Name</th>
+                  <th>Category</th>
+                  <th class="text-right">Writeups Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in all_challenges %}
+                  <tr>
+                    <td class="align-middle">
+                      <a href="{{ url_for('admin.challenges_detail', challenge_id=c.id) }}">{{ c.name }}</a>
+                    </td>
+                    <td class="align-middle">{{ c.category }}</td>
+                    <td class="text-right align-middle">
+                      {% if c.id in disabled_chal_ids %}
+                        <form method="POST" class="m-0">
+                          <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+                          <input type="hidden" name="action" value="set_chal_status" />
+                          <input type="hidden" name="challenge_id" value="{{ c.id }}" />
+                          <input type="hidden" name="status" value="enabled" />
+                          <button type="submit" class="btn btn-success btn-sm w-100" style="max-width: 150px;">Enable</button>
+                        </form>
+                      {% else %}
+                        <form method="POST" class="m-0">
+                          <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+                          <input type="hidden" name="action" value="set_chal_status" />
+                          <input type="hidden" name="challenge_id" value="{{ c.id }}" />
+                          <input type="hidden" name="status" value="disabled" />
+                          <button type="submit" class="btn btn-warning btn-sm w-100" style="max-width: 150px;" onclick="return confirm('Disable writeups for {{ c.name }}?');">Opt Out</button>
+                        </form>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="3" class="text-center text-muted py-4">No challenges exist yet.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,24 @@
+.table tr > td:not(:first-of-type) {
+  text-align: center !important;
+}
+
+.table td,
+th {
+  vertical-align: middle !important;
+}
+
+.table > tbody > tr > td {
+  padding: 0.8rem 1rem !important;
+}
+
+.table > tbody {
+  border-top: none !important;
+}
+
+.table > thead > tr > td:first-of-type {
+  padding-left: 1rem !important;
+}
+
+.table > thead > th {
+  white-space: nowrap;
+}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3 slide-up">
+            <i class="fas fa-question-circle text-primary me-3"></i>
+            FAQs
+        </h1>
+        <p class="lead mb-4 slide-up" style="animation-delay: 0.1s;">
+            Frequently asked questions about the platform and its challenges.
+        </p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8 mt-4">
+
+            {% for faq in faqs %}
+            <div class="mb-5">
+                <h3 class="mb-3 d-flex align-items-center">
+                    <i class="fas fa-chevron-right me-3 text-primary" style="font-size: 0.6em; opacity: 0.7;"></i>
+                    <span>{{ faq.question }}</span>
+                </h3>
+
+                <div class="ps-4 ms-2 border-start" style="border-width: 2px !important; border-color: rgba(128, 128, 128, 0.3) !important; padding: 5px 5px 5px 5px">
+                    <p class="mb-0" style="font-size: 1.05rem;">
+                        {{ faq.answer | safe }}
+                    </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center text-muted py-4">
+                <h4>No FAQs have been added yet.</h4>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container text-center">
+        <h1>Google Analytics Integration</h1>
+    </div>
+</div>
+
+<div class="container">
+    {% if success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> {{ msg }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header">Tracking Script Settings</div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                        
+                        <div class="form-group mb-4">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="google_analytics_enabled" name="google_analytics_enabled" {% if enabled %}checked{% endif %}>
+                                <label class="custom-control-label" for="google_analytics_enabled"><strong>Enable Script Injection</strong></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><strong>Injection Code</strong></label>
+                            <textarea class="form-control" name="google_analytics_script" rows="12" style="font-family: monospace;" placeholder="">{{ script or '' }}</textarea>
+                            <small class="form-text text-muted mt-2">
+                                Paste the raw HTML/JavaScript provided by Google Analytics (or any other tracker). This will be automatically injected into the <code>&lt;head&gt;</code> of all public-facing pages.
+                            </small>
+                        </div>
+                        
+                        <div class="float-right mt-3">
+                            <button type="submit" name="action" value="clear" class="btn btn-danger px-4 mr-2" onclick="return confirm('Are you sure you want to clear the script? This action cannot be undone.');">Clear Script</button>
+                            <button type="submit" name="action" value="save" class="btn btn-primary px-4">Save Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

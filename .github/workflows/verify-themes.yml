@@ -44,3 +44,13 @@ jobs:
             yarn install --frozen-lockfile
             yarn verify
         working-directory: ./CTFd/themes/core
+
+      # ctfd-modern-theme uses npm + a committed package-lock.json.
+      # `npm run verify` builds with Vite and fails if the committed
+      # static/ assets differ from a fresh build.
+      - name: Verify ctfd-modern-theme
+        run: |
+            pwd
+            npm ci
+            npm run verify
+        working-directory: ./CTFd/themes/ctfd-modern-theme

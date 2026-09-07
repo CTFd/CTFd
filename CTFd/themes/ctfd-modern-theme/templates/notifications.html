@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="notifications-page">
+  
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12 text-center">
+          <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-bell text-primary me-2"></i>
+            {% trans %}Notifications{% endtrans %}
+          </h1>
+          <p class="lead mb-0 text-muted">
+            {% trans %}Stay updated with the latest announcements{% endtrans %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    {% if not notifications %}
+      
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-bell-slash"></i>
+        </div>
+        <h3>{% trans %}No notifications yet{% endtrans %}</h3>
+        <p>{% trans %}When there are announcements or updates, they will appear here.{% endtrans %}</p>
+      </div>
+    {% else %}
+      
+      <div class="notifications-list">
+        {% for notification in notifications %}
+          <div class="notification-card">
+            <div class="notification-indicator"></div>
+            <div class="notification-content">
+              <div class="notification-header">
+                <div class="notification-icon">
+                  <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3 class="notification-title">{{ notification.title }}</h3>
+                <span class="notification-time">
+                  <i class="far fa-clock"></i>
+                  <span data-time="{{ notification.date | isoformat }}"></span>
+                </span>
+              </div>
+              <div class="notification-body">
+                {{ notification.html }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+
+
+.notifications-page {
+  min-height: calc(100vh - 150px);
+  padding-bottom: 60px;
+}
+
+.notifications-page .container {
+  margin-top: 20px;
+}
+
+
+
+
+.empty-state {
+  text-align: center;
+  padding: 100px 20px;
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+
+.empty-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 30px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-icon i {
+  font-size: 2.5rem;
+  color: #4a5568;
+}
+
+.empty-state h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #8892a0;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  color: #6b7280;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notification-card {
+  display: flex;
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.notification-card:hover {
+  border-color: rgba(32, 201, 151, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.notification-indicator {
+  width: 4px;
+  background: linear-gradient(180deg, #20c997 0%, #1fb88a 100%);
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+  padding: 24px 28px;
+}
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.notification-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, rgba(32, 201, 151, 0.15) 0%, rgba(32, 201, 151, 0.05) 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #20c997;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.notification-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  flex: 1;
+}
+
+.notification-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #8892a0;
+  white-space: nowrap;
+}
+
+.notification-time i {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.notification-body {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #c9d1d9;
+}
+
+.notification-body p {
+  margin: 0 0 12px 0;
+}
+
+.notification-body p:last-child {
+  margin-bottom: 0;
+}
+
+.notification-body a {
+  color: #20c997;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.notification-body a:hover {
+  color: #1fb88a;
+  text-decoration: underline;
+}
+
+.notification-body code {
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  color: #20c997;
+}
+
+.notification-body pre {
+  padding: 16px;
+  background: #0d1117;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.notification-body pre code {
+  padding: 0;
+  background: none;
+  border: none;
+  color: #c9d1d9;
+}
+
+.notification-body ul,
+.notification-body ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.notification-body li {
+  margin-bottom: 8px;
+}
+
+.notification-body blockquote {
+  margin: 16px 0;
+  padding: 12px 20px;
+  background: rgba(32, 201, 151, 0.05);
+  border-left: 3px solid #20c997;
+  border-radius: 0 8px 8px 0;
+  color: #a8b2bd;
+}
+
+.notification-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.notification-body h1,
+.notification-body h2,
+.notification-body h3,
+.notification-body h4 {
+  color: #fff;
+  margin: 20px 0 12px 0;
+}
+
+.notification-body h1:first-child,
+.notification-body h2:first-child,
+.notification-body h3:first-child,
+.notification-body h4:first-child {
+  margin-top: 0;
+}
+
+
+@media (max-width: 768px) {
+  .notification-content {
+    padding: 20px;
+  }
+  
+  .notification-header {
+    flex-wrap: wrap;
+  }
+  
+  .notification-title {
+    width: 100%;
+    order: 2;
+    margin-top: 8px;
+  }
+  
+  .notification-time {
+    order: 1;
+    margin-left: auto;
+  }
+}
+
+
+[data-bs-theme="light"] .empty-state {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .notification-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+[data-bs-theme="light"] .notification-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .notification-title {
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .notification-body {
+  color: #444;
+}
+
+[data-bs-theme="light"] .notification-body pre {
+  background: #f6f8fa;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .notification-body pre code {
+  color: #444;
+}
+
+[data-bs-theme="light"] .notification-body code {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .notification-body h1,
+[data-bs-theme="light"] .notification-body h2,
+[data-bs-theme="light"] .notification-body h3,
+[data-bs-theme="light"] .notification-body h4 {
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .notification-body blockquote {
+  background: rgba(32, 201, 151, 0.04);
+  color: #555;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/notifications.js") }}
+{% endblock %}

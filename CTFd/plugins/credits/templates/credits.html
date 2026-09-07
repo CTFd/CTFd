@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3 slide-up">
+            <i class="fas fa-award text-primary me-3"></i>
+            Credits
+        </h1>
+        <p class="lead mb-4 slide-up" style="animation-delay: 0.1s;">
+            Recognizing the people who made this platform possible.
+        </p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8 mt-4">
+            <div class="card shadow-sm border-0">
+                <ul class="list-group list-group-flush">
+                    {% for credit in credits %}
+                    <li class="list-group-item d-flex align-items-center py-3">
+                        <i class="fas fa-star text-primary me-3" style="font-size: 0.7em; opacity: 0.7;"></i>
+                        <span style="font-size: 1.05rem;">{{ credit.content }}</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted py-4">
+                        <h4 class="mb-0">No credits have been added yet.</h4>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

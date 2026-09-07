@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3 slide-up">
+            <i class="fas fa-file-signature text-primary me-3"></i>
+            Writeups
+        </h1>
+        <p class="lead mb-4 slide-up" style="animation-delay: 0.1s;">
+            Share your solutions and learn from other players' writeups for challenges you've solved.
+        </p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <h3 class="mb-3">Solved Challenges</h3>
+            
+            <div class="nav flex-column nav-pills" id="challenge-list" role="tablist" aria-orientation="vertical">
+                {% for chal in challenges %}
+                <a class="nav-link chal-btn fw-bold" style="cursor: pointer;" data-id="{{ chal.id }}" data-name="{{ chal.name }}">
+                    {{ chal.name }}
+                </a>
+                {% else %}
+                <div class="alert alert-info border-0 shadow-sm">
+                    You haven't solved yet any challenges which have writeups enabled.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            
+            <div id="writeup-placeholder" class="text-center py-5 mt-5">
+                <h4 class="mb-0" style="opacity: 0.7;">Select a challenge to view or submit writeups.</h4>
+            </div>
+
+            <div id="writeup-workspace" style="display: none;">
+                
+                <h2 class="border-bottom pb-2 mb-4" id="workspace-title">Challenge Name</h2>
+                
+                <div class="mb-5 pb-4 border-bottom">
+                    <select id="solution-viewer-select" class="form-select mb-3">
+                    </select>
+                    <pre id="solution-viewer-code" class="form-control" style="display: none; height: auto; max-height: 400px; padding: 15px; white-space: pre-wrap; word-break: break-all; font-family: monospace; overflow-y: auto;"></pre>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-end mb-3">
+                    <h4 class="mb-0" id="editor-title">Share your writeup</h4>
+                    <small id="char-count" class="text-muted fw-bold">0 / 50,000</small>
+                </div>
+                
+                <textarea id="solution-code" class="form-control mb-3" rows="8" 
+                          placeholder="Paste your writeup here..." 
+                          style="font-family: monospace;" 
+                          maxlength="50000"></textarea>
+                
+                <button id="submit-solution-btn" class="btn btn-primary float-end px-4">Submit</button>
+                <button id="delete-solution-btn" class="btn btn-danger float-end px-4 me-2" style="display: none;">Delete</button>
+
+                <span id="solution-status" class="float-end me-3 mt-2 fw-bold" style="display: none;"></span>
+                <div class="clearfix"></div>
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.chal-btn');
+    const placeholder = document.getElementById('writeup-placeholder');
+    const workspace = document.getElementById('writeup-workspace');
+    const title = document.getElementById('workspace-title');
+    
+    const selectMenu = document.getElementById('solution-viewer-select');
+    const codeView = document.getElementById('solution-viewer-code');
+    const textarea = document.getElementById('solution-code');
+    const submitBtn = document.getElementById('submit-solution-btn');
+    const deleteBtn = document.getElementById('delete-solution-btn');
+    const statusMsg = document.getElementById('solution-status');
+    const editorTitle = document.getElementById('editor-title');
+    const charCount = document.getElementById('char-count');
+
+    let currentChalId = null;
+    let loadedSolutions = [];
+    let activeUserId = null;
+
+    function updateCharCounter() {
+        const len = textarea.value.length;
+        charCount.textContent = `${len.toLocaleString()} / 50,000`;
+        if (len > 50000) {
+            charCount.classList.replace('text-muted', 'text-danger');
+        } else {
+            charCount.classList.replace('text-danger', 'text-muted');
+        }
+    }
+
+    textarea.addEventListener('input', updateCharCounter);
+
+    function rebuildDropdown(currentUserId) {
+        let myCode = "";
+        let optionsHtml = '<option value="">-- Select a player to view their writeup --</option>';
+        
+        loadedSolutions.forEach(s => {
+            if (s.user_id === currentUserId) myCode = s.code;
+            optionsHtml += `<option value="${s.user_id}">${s.user_name} (${s.submitted_at})</option>`;
+        });
+
+        selectMenu.innerHTML = optionsHtml;
+        textarea.value = myCode;
+        updateCharCounter();
+        
+        if (myCode) {
+            editorTitle.textContent = 'Update your writeup';
+            submitBtn.textContent = 'Update';
+            deleteBtn.style.display = 'inline-block';
+        } else {
+            editorTitle.textContent = 'Share your writeup';
+            submitBtn.textContent = 'Submit';
+            deleteBtn.style.display = 'none';
+        }
+    }
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            currentChalId = btn.dataset.id;
+            title.textContent = btn.dataset.name;
+            
+            placeholder.style.display = 'none';
+            workspace.style.display = 'block';
+            
+            codeView.style.display = 'none';
+            textarea.value = '';
+            updateCharCounter();
+            selectMenu.innerHTML = '<option value="">Loading...</option>';
+
+            fetch(`/api/v1/writeups/${currentChalId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.success) return;
+                    
+                    loadedSolutions = data.solutions;
+                    activeUserId = data.current_user_id;
+                    rebuildDropdown(activeUserId);
+                });
+        });
+    });
+
+    selectMenu.addEventListener('change', (e) => {
+        const selectedUserId = parseInt(e.target.value);
+        if (!selectedUserId) {
+            codeView.style.display = 'none';
+            return;
+        }
+        const selectedSol = loadedSolutions.find(s => s.user_id === selectedUserId);
+        if (selectedSol) {
+            codeView.textContent = selectedSol.code;
+            codeView.style.display = 'block';
+        }
+    });
+
+    submitBtn.addEventListener('click', () => {
+        const code = textarea.value.trim();
+        if (!code || !currentChalId) return;
+
+        if (code.length > 50000) {
+            statusMsg.style.display = 'inline-block';
+            statusMsg.innerHTML = '<span class="text-danger">Error: Content too long.</span>';
+            setTimeout(() => statusMsg.style.display = 'none', 3000);
+            return;
+        }
+
+        submitBtn.disabled = true;
+        const csrfToken = window.init ? window.init.csrfNonce : '';
+
+        fetch(`/api/v1/writeups/${currentChalId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
+            body: JSON.stringify({ action: 'submit', code: code }) 
+        })
+        .then(r => r.json())
+        .then(data => {
+            submitBtn.disabled = false;
+            statusMsg.style.display = 'inline-block';
+
+            if (data.success) {
+                statusMsg.innerHTML = '<span class="text-success">Saved successfully!</span>';
+                const existingIndex = loadedSolutions.findIndex(s => s.user_id === activeUserId);
+                if (existingIndex !== -1) {
+                    loadedSolutions[existingIndex].code = code;
+                } else {
+                    document.querySelector(`.chal-btn[data-id="${currentChalId}"]`).click();
+                    return; 
+                }
+                rebuildDropdown(activeUserId);
+            } else {
+                statusMsg.innerHTML = `<span class="text-danger">Error: ${data.error}</span>`;
+            }
+            setTimeout(() => statusMsg.style.display = 'none', 3000);
+        })
+        .catch(() => submitBtn.disabled = false);
+    });
+
+    deleteBtn.addEventListener('click', () => {
+        if (!currentChalId) return;
+        if (!confirm("Are you sure you want to permanently delete your writeup?")) return;
+
+        deleteBtn.disabled = true;
+        submitBtn.disabled = true;
+        const csrfToken = window.init ? window.init.csrfNonce : '';
+
+        fetch(`/api/v1/writeups/${currentChalId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'CSRF-Token': csrfToken },
+            body: JSON.stringify({ action: 'delete' })
+        })
+        .then(r => r.json())
+        .then(data => {
+            deleteBtn.disabled = false;
+            submitBtn.disabled = false;
+            statusMsg.style.display = 'inline-block';
+
+            if (data.success) {
+                statusMsg.innerHTML = '<span class="text-success">Deleted successfully!</span>';
+                loadedSolutions = loadedSolutions.filter(s => s.user_id !== activeUserId);
+                rebuildDropdown(activeUserId);
+                if (parseInt(selectMenu.value) === activeUserId) {
+                    selectMenu.value = "";
+                    codeView.style.display = 'none';
+                }
+            } else {
+                statusMsg.innerHTML = `<span class="text-danger">Error: ${data.error}</span>`;
+            }
+            setTimeout(() => statusMsg.style.display = 'none', 3000);
+        })
+        .catch(() => {
+            deleteBtn.disabled = false;
+            submitBtn.disabled = false;
+        });
+    });
+});
+</script>
+{% endblock %}

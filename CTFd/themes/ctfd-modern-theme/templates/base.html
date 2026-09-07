@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ title or Configs.ctf_name }}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:image" content="{{ Configs.ctf_small_icon }}">
+  <link rel="shortcut icon" href="{{ Configs.ctf_small_icon }}" type="image/x-icon">
+
+  {{ meta | safe }}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script>
+    (function() {
+      var t = localStorage.getItem('theme') ||
+              (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', t);
+    })();
+  </script>
+
+  {% block stylesheets %}
+    {{ Assets.css("assets/scss/main.scss") }}
+  {% endblock %}
+
+  {{ Plugins.styles }}
+
+  <script type="text/javascript">
+      window.init = {
+          'urlRoot': "{{ request.script_root }}",
+          'csrfNonce': "{{ Session.nonce }}",
+          'userMode': "{{ Configs.user_mode }}",
+          'userId': {{ Session.id }},
+          'userName': {{ User.name | tojson }},
+          'teamId': {{ Team.id | tojson }}, 
+          'teamName': {{ Team.name | tojson }},
+          'start': {{ Configs.start | tojson }},
+          'end': {{ Configs.end | tojson }},
+          'themeSettings': {{ Configs.theme_settings | tojson }},
+          'eventSounds': [
+            "/themes/core/static/sounds/notification.webm",
+            "/themes/core/static/sounds/notification.mp3",
+          ],
+      }
+  </script>
+
+  {{ Configs.theme_header }}
+</head>
+<body>
+{% include "components/navbar.html" %}
+
+<main role="main">
+  {% block content %}
+  {% endblock %}
+</main>
+
+
+{% include "components/notifications.html" %}
+
+<script>
+(function() {
+  function getPreferredTheme() {
+    var stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function showActiveTheme(theme) {
+    var icon = document.querySelector('.theme-switch i.fas');
+    if (!icon) return;
+    icon.classList.toggle('fa-moon', theme === 'dark');
+    icon.classList.toggle('fa-sun', theme !== 'dark');
+  }
+
+  var currentTheme = getPreferredTheme();
+  document.documentElement.setAttribute('data-bs-theme', currentTheme);
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+    currentTheme = getPreferredTheme();
+    document.documentElement.setAttribute('data-bs-theme', currentTheme);
+    showActiveTheme(currentTheme);
+  });
+
+  window.addEventListener('load', function() {
+    showActiveTheme(currentTheme);
+    document.querySelectorAll('.theme-switch').forEach(function(btn) {
+      btn.addEventListener('click', function(ev) {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-bs-theme', currentTheme);
+        localStorage.setItem('theme', currentTheme);
+        showActiveTheme(currentTheme);
+        ev.preventDefault();
+      });
+    });
+  });
+})();
+</script>
+
+{% block scripts %}
+  {{ Assets.js("assets/js/page.js") }}
+{% endblock %}
+
+{{ Plugins.scripts }}
+
+{{ Configs.theme_footer }}
+</body>
+</html>

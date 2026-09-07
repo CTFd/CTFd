@@ -1,0 +1,470 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  
+  <div class="login-branding">
+    <div class="branding-content">
+      
+      <div class="brand-logo">
+        <img src="{{ url_for('views.themes', path='img/logo.png') }}" alt="Logo" style="width: 50%; height: 50%; object-fit: contain;">
+      </div>
+      
+      
+      <h1 class="brand-title">
+        {% trans %}A few more clicks to{% endtrans %}<br>{% trans %}sign in to your account.{% endtrans %}
+      </h1>
+      
+      <p class="brand-subtitle">
+        {% trans %}Hackers have their own language and it is not all in code!{% endtrans %}
+      </p>
+    </div>
+    
+    
+    <div class="brand-wave"></div>
+  </div>
+  
+  
+  <div class="login-form-section">
+    <div class="login-form-container">
+      <h2 class="form-title">{% trans %}Sign In{% endtrans %}</h2>
+      
+      {% include "components/errors.html" %}
+      
+      {% if integrations.mlc() %}
+        <a class="oauth-btn" href="{{ url_for('auth.oauth_login') }}">
+          <i class="fas fa-shield-alt"></i>
+          {% trans %}Login with Major League Cyber{% endtrans %}
+        </a>
+        <div class="divider">
+          <span>{% trans %}or{% endtrans %}</span>
+        </div>
+      {% endif %}
+      
+      {% with form = Forms.auth.LoginForm() %}
+        <form method="post" accept-charset="utf-8" autocomplete="off" class="login-form">
+          <div class="form-group">
+            <input 
+              type="text" 
+              name="name" 
+              class="form-input" 
+              placeholder="{% trans %}Username or Email{% endtrans %}"
+              value="{{ name or '' }}"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <input 
+              type="password" 
+              name="password" 
+              class="form-input" 
+              placeholder="{% trans %}Password{% endtrans %}"
+              required
+            >
+          </div>
+          
+          <a href="{{ url_for('auth.reset_password') }}" class="forgot-link">
+            {% trans %}Forgot your password?{% endtrans %}
+          </a>
+          
+          <div class="form-buttons">
+            <button type="submit" class="btn-login">
+              {% trans %}Login{% endtrans %}
+            </button>
+            {% if registration_visible() %}
+            <a href="{{ url_for('auth.register') }}" class="btn-register">
+              <i class="fas fa-user-plus"></i>
+              {% trans %}Register{% endtrans %}
+            </a>
+            {% endif %}
+          </div>
+          
+          {{ form.nonce() }}
+        </form>
+      {% endwith %}
+    </div>
+  </div>
+</div>
+
+<style>
+
+
+
+.login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  z-index: 9999;
+}
+
+body {
+  padding-top: 0 !important;
+}
+
+.navbar, footer, .jumbotron {
+  display: none !important;
+}
+
+
+.login-branding {
+  flex: 1;
+  background: linear-gradient(135deg, #1a1f2e 0%, #0f1219 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 60px;
+}
+
+.branding-content {
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+}
+
+.brand-logo {
+  margin-bottom: 40px;
+}
+
+.brand-logo img {
+  max-width: 280px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(32, 201, 151, 0.3));
+}
+
+.brand-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+.brand-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #8892a0;
+  line-height: 1.6;
+}
+
+
+.brand-wave {
+  position: absolute;
+  top: 0;
+  right: -100px;
+  bottom: 0;
+  width: 300px;
+  background: linear-gradient(180deg, 
+    rgba(32, 201, 151, 0.05) 0%, 
+    rgba(32, 201, 151, 0.02) 50%,
+    rgba(32, 201, 151, 0.05) 100%
+  );
+  transform: skewX(-10deg);
+  z-index: 1;
+}
+
+.brand-wave::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, 
+    transparent 0%, 
+    rgba(32, 201, 151, 0.3) 30%,
+    rgba(32, 201, 151, 0.3) 70%,
+    transparent 100%
+  );
+}
+
+
+.login-form-section {
+  flex: 1;
+  background: #0d1117;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 32px;
+}
+
+
+.oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.oauth-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(32, 201, 151, 0.3);
+  color: #20c997;
+}
+
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  color: #4a5568;
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.divider span {
+  padding: 0 16px;
+}
+
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 16px 20px;
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: #e8e8e8;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #20c997;
+  box-shadow: 0 0 0 3px rgba(32, 201, 151, 0.15);
+}
+
+.form-input::placeholder {
+  color: #6b7280;
+}
+
+
+.forgot-link {
+  display: inline-block;
+  margin-bottom: 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #20c997;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.forgot-link:hover {
+  color: #2dd4a8;
+  text-decoration: underline;
+}
+
+
+.form-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-login {
+  flex: 1;
+  padding: 14px 24px;
+  background: #20c997;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-login:hover {
+  background: #1fb88a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(32, 201, 151, 0.3);
+}
+
+.btn-register {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-register:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+
+.login-form-container .alert {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+
+@media (max-width: 992px) {
+  .login-page {
+    flex-direction: column;
+  }
+  
+  .login-branding {
+    padding: 40px 30px;
+    min-height: auto;
+  }
+  
+  .branding-content {
+    text-align: center;
+  }
+  
+  .brand-logo img {
+    max-width: 200px;
+  }
+  
+  .brand-title {
+    font-size: 1.75rem;
+  }
+  
+  .brand-wave {
+    display: none;
+  }
+  
+  .login-form-section {
+    padding: 40px 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-branding {
+    padding: 30px 20px;
+  }
+  
+  .brand-title {
+    font-size: 1.5rem;
+  }
+  
+  .login-form-section {
+    padding: 30px 20px;
+  }
+  
+  .form-buttons {
+    flex-direction: column;
+  }
+}
+
+
+[data-bs-theme="light"] .login-branding {
+  background: linear-gradient(135deg, #e8f5f0 0%, #d4ede5 100%);
+}
+
+[data-bs-theme="light"] .brand-title {
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .brand-subtitle {
+  color: #666;
+}
+
+[data-bs-theme="light"] .login-form-section {
+  background: #f6f8fa;
+}
+
+[data-bs-theme="light"] .form-title {
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .form-input {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #1a1a2e;
+}
+
+[data-bs-theme="light"] .oauth-btn {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+[data-bs-theme="light"] .oauth-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-bs-theme="light"] .divider {
+  color: #999;
+}
+
+[data-bs-theme="light"] .divider::before,
+[data-bs-theme="light"] .divider::after {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .btn-register {
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #333;
+}
+
+[data-bs-theme="light"] .btn-register:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #333;
+}
+</style>
+{% endblock %}
