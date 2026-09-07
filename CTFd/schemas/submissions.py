@@ -15,7 +15,7 @@ class SubmissionSchema(ma.ModelSchema):
     class Meta:
         model = Submissions
         include_fk = True
-        dump_only = ("id", "ip")
+        dump_only = ("id",)
 
     views = {
         "admin": [
