@@ -2,7 +2,7 @@ from flask import render_template, request, url_for
 from sqlalchemy.sql import not_
 
 from CTFd.admin import admin
-from CTFd.models import Challenges, Tracking, Users
+from CTFd.models import Challenges, Tracking, Users, Brackets
 from CTFd.utils import get_config
 from CTFd.utils.decorators import admins_only
 from CTFd.utils.modes import TEAMS_MODE
@@ -15,29 +15,34 @@ def users_listing():
     field = request.args.get("field")
     page = abs(request.args.get("page", 1, type=int))
     filters = []
-    users = []
+
+    # Get 'bracket' filter parameter
+    bracket_param = request.args.get("bracket")
+    if bracket_param:
+        try:
+            bracket_param = int(bracket_param)
+        except ValueError:
+            bracket_param = None
 
     if q:
-        # The field exists as an exposed column
         if Users.__mapper__.has_property(field):
             filters.append(getattr(Users, field).like("%{}%".format(q)))
 
     if q and field == "ip":
-        users = (
-            Users.query.join(Tracking, Users.id == Tracking.user_id)
-            .filter(Tracking.ip.like("%{}%".format(q)))
-            .order_by(Users.id.asc())
-            .paginate(page=page, per_page=50, error_out=False)
-        )
+        query = Users.query.join(Tracking, Users.id == Tracking.user_id).filter(Tracking.ip.like("%{}%".format(q)))
+        if bracket_param:
+            query = query.filter(Users.bracket_id == bracket_param)
+        users = query.order_by(Users.id.asc()).paginate(page=page, per_page=50, error_out=False)
     else:
-        users = (
-            Users.query.filter(*filters)
-            .order_by(Users.id.asc())
-            .paginate(page=page, per_page=50, error_out=False)
-        )
+        if bracket_param:
+            filters.append(Users.bracket_id == bracket_param)
+        users = Users.query.filter(*filters).order_by(Users.id.asc()).paginate(page=page, per_page=50, error_out=False)
 
     args = dict(request.args)
     args.pop("page", 1)
+
+    # Retrieve available brackets for users
+    brackets = Brackets.query.filter_by(type="users").all()
 
     return render_template(
         "admin/users/users.html",
@@ -46,6 +51,7 @@ def users_listing():
         next_page=url_for(request.endpoint, page=users.next_num, **args),
         q=q,
         field=field,
+        brackets=brackets
     )
 
 

@@ -2,7 +2,7 @@ from flask import render_template, request, url_for
 from sqlalchemy.sql import not_
 
 from CTFd.admin import admin
-from CTFd.models import Challenges, Teams, Tracking
+from CTFd.models import Challenges, Teams, Tracking, Brackets
 from CTFd.utils.decorators import admins_only
 
 
@@ -14,10 +14,21 @@ def teams_listing():
     page = abs(request.args.get("page", 1, type=int))
     filters = []
 
+    # Get 'bracket' filter parameter
+    bracket_param = request.args.get("bracket")
+    if bracket_param:
+        try:
+            bracket_param = int(bracket_param)
+        except ValueError:
+            bracket_param = None
+
     if q:
         # The field exists as an exposed column
         if Teams.__mapper__.has_property(field):
             filters.append(getattr(Teams, field).like("%{}%".format(q)))
+
+    if bracket_param:
+        filters.append(Teams.bracket_id == bracket_param)
 
     teams = (
         Teams.query.filter(*filters)
@@ -28,6 +39,9 @@ def teams_listing():
     args = dict(request.args)
     args.pop("page", 1)
 
+    # Retrieve available brackets for teams
+    brackets = Brackets.query.filter_by(type="teams").all()
+
     return render_template(
         "admin/teams/teams.html",
         teams=teams,
@@ -35,6 +49,7 @@ def teams_listing():
         next_page=url_for(request.endpoint, page=teams.next_num, **args),
         q=q,
         field=field,
+        brackets=brackets
     )
 
 
