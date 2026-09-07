@@ -983,6 +983,7 @@ class Unlocks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="CASCADE"))
+    ip = db.Column(db.String(46))
     target = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     type = db.Column(db.String(32))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Challenges, SolutionFiles, Solutions, SolutionUnlocks
+from CTFd.models import Challenges, SolutionFiles, Solutions, SolutionUnlocks, Unlocks
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -209,6 +209,29 @@ def test_api_solutions_get_detail_non_admin_unlocked():
             assert "state" in data["data"]
             assert "content" in data["data"]
             assert "html" in data["data"]
+    destroy_ctfd(app)
+
+
+def test_api_solution_unlock_stores_ip():
+    """Test that unlocking a solution stores the request IP address"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        solution = gen_solution(app.db, challenge_id=1, state="visible")
+        solution_id = solution.id
+        register_user(app)
+
+        with login_as_user(app) as client:
+            r = client.post(
+                "/api/v1/unlocks",
+                json={"target": solution_id, "type": "solutions"},
+                environ_base={"REMOTE_ADDR": "203.0.113.11"},
+            )
+            assert r.status_code == 200
+
+            unlock = Unlocks.query.first()
+            assert unlock.ip == "203.0.113.11"
+            assert r.get_json()["data"]["ip"] == "203.0.113.11"
     destroy_ctfd(app)
 
 
