@@ -218,9 +218,11 @@ def test_validate_email():
     for invalid_email in [
         "user.@examplectf.com",
         ".user@examplectf.com",
+        "user..period1234@examplectf.com",
         "user@ctfd..io",
+        "user@-examplectf.com",
+        "user@examplectf-.com",
+        "user@example_ctf.com",
+        "user@examplectf.com\n",
     ]:
-        try:
-            assert validate_email(invalid_email) is False
-        except AssertionError:
-            print(invalid_email, "did not pass validation")
+        assert validate_email(invalid_email) is False
