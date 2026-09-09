@@ -127,6 +127,7 @@ class ChallengeList(Resource):
             "category": (str, None),
             "type": (str, None),
             "state": (str, None),
+            "tag": (str, None),
             "q": (str, None),
             "field": (
                 RawEnum(
@@ -158,6 +159,7 @@ class ChallengeList(Resource):
         # Build filtering queries
         q = query_args.pop("q", None)
         field = str(query_args.pop("field", None))
+        tag = query_args.pop("tag", None)
 
         # Admins get a shortcut to see all challenges despite pre-requisites
         admin_view = is_admin() and request.args.get("view") == "admin"
@@ -184,7 +186,9 @@ class ChallengeList(Resource):
             # `None` for the solve count if visiblity checks fail
             solve_count_dfl = None
 
-        chal_q = get_all_challenges(admin=admin_view, field=field, q=q, **query_args)
+        chal_q = get_all_challenges(
+            admin=admin_view, field=field, q=q, tag=tag, **query_args
+        )
 
         # Filter out challenges in modules the current account can't access.
         # Ungrouped challenges (module_id is None) remain visible to everyone.
