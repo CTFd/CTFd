@@ -514,7 +514,7 @@ class UserEmails(Resource):
         description="Endpoint to email a User object",
         responses={200: ("Success", "APISimpleSuccessResponse")},
     )
-    @ratelimit(method="POST", limit=10, interval=60)
+    @ratelimit(method="POST", rl_key="RL_EMAIL_USER")
     def post(self, user_id):
         req = request.get_json()
         text = req.get("text", "").strip()
