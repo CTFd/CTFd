@@ -2,23 +2,18 @@ FROM python:3.11-slim-bookworm AS build
 
 WORKDIR /opt/CTFd
 
-# hadolint ignore=DL3008
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        build-essential \
-        libffi-dev \
-        libssl-dev \
-        git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && python -m venv /opt/venv
+RUN python -m venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY . /opt/CTFd
+# Install CTFd requirements before copying the whole project,
+# this layer will be reused when rebuilding CTFd after a small change
+COPY ./requirements.txt /opt/CTFd
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt \
-    && for d in CTFd/plugins/*; do \
+# Install CTFd plugins requirements
+COPY . /opt/CTFd
+RUN for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
             pip install --no-cache-dir -r "$d/requirements.txt";\
         fi; \
@@ -27,14 +22,6 @@ RUN pip install --no-cache-dir -r requirements.txt \
 
 FROM python:3.11-slim-bookworm AS release
 WORKDIR /opt/CTFd
-
-# hadolint ignore=DL3008
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libffi8 \
-        libssl3 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
 
 COPY --chown=1001:1001 . /opt/CTFd
 
