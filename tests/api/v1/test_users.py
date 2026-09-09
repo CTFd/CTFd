@@ -858,6 +858,11 @@ def test_api_accessing_hidden_users():
             assert client.get("/api/v1/users/3/fails").status_code == 404
             assert client.get("/api/v1/users/3/awards").status_code == 404
 
+            # Users can't filter by status
+            assert client.get("/api/v1/users?hidden=1").status_code == 400
+            assert client.get("/api/v1/users?banned=1").status_code == 400
+            assert client.get("/api/v1/users?verified=0").status_code == 400
+
         with login_as_user(app, name="admin") as client:
             # Admins see the user in lists
             list_users = client.get("/api/v1/users?view=admin").get_json()["data"]
@@ -867,6 +872,12 @@ def test_api_accessing_hidden_users():
             assert client.get("/api/v1/users/3/solves").status_code == 200
             assert client.get("/api/v1/users/3/fails").status_code == 200
             assert client.get("/api/v1/users/3/awards").status_code == 200
+
+            # Admins can filter by status
+            list_users = client.get("/api/v1/users?view=admin&hidden=1").get_json()[
+                "data"
+            ]
+            assert len(list_users) == 2
     destroy_ctfd(app)
 
 
