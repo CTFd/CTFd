@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+TIMEOUT=${TIMEOUT:-30}
 WORKERS=${WORKERS:-1}
 WORKER_CLASS=${WORKER_CLASS:-gevent}
 ACCESS_LOG=${ACCESS_LOG:--}
@@ -32,6 +33,7 @@ flask db upgrade
 echo "Starting CTFd"
 exec gunicorn 'CTFd:create_app()' \
     --bind '0.0.0.0:8000' \
+    --timeout $TIMEOUT \
     --workers $WORKERS \
     --worker-tmp-dir "$WORKER_TEMP_DIR" \
     --worker-class "$WORKER_CLASS" \
