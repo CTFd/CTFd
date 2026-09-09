@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: ctfd-system
+data:
+  nginx.conf: |
+    worker_processes 1;
+    
+    events {
+      worker_connections 1024;
+    }
+    
+    http {
+      upstream app_servers {
+        server ctfd-svc:8000;
+      }
+      
+      server {
+        listen 80;
+        
+        location / {
+          proxy_pass http://app_servers;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+        }
+      }
+    }
