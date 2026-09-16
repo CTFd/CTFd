@@ -19,7 +19,7 @@ from CTFd.utils.decorators import (
 )
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modules import can_access_challenge
-from CTFd.utils.user import get_current_user, is_admin
+from CTFd.utils.user import get_current_user, get_ip, is_admin
 
 unlocks_namespace = Namespace("unlocks", description="Endpoint to retrieve Unlocks")
 
@@ -65,9 +65,12 @@ class UnlockList(Resource):
             "type": (str, None),
             "q": (str, None),
             "field": (
-                RawEnum("UnlockFields", {"target": "target", "type": "type"}),
+                RawEnum(
+                    "UnlockFields", {"target": "target", "type": "type", "ip": "ip"}
+                ),
                 None,
             ),
+            "ip": (str, None),
         },
         location="query",
     )
@@ -134,6 +137,8 @@ class UnlockList(Resource):
             if response.errors:
                 return {"success": False, "errors": response.errors}, 400
 
+            response.data.ip = get_ip(req=request)
+
             # Search for an existing unlock that matches the target and type
             # And matches either the requesting user id or the requesting team id
             existing = Unlocks.query.filter(
@@ -179,6 +184,8 @@ class UnlockList(Resource):
 
             if response.errors:
                 return {"success": False, "errors": response.errors}, 400
+
+            response.data.ip = get_ip(req=request)
 
             # Search for an existing unlock that matches the target and type
             # And matches either the requesting user id or the requesting team id

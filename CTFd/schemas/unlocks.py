@@ -6,10 +6,10 @@ class UnlockSchema(ma.ModelSchema):
     class Meta:
         model = Unlocks
         include_fk = True
-        dump_only = ("id", "date")
+        dump_only = ("id", "date", "ip")
 
     views = {
-        "admin": ["user_id", "target", "team_id", "date", "type", "id"],
+        "admin": ["user_id", "target", "team_id", "ip", "date", "type", "id"],
         "user": ["target", "date", "type", "id"],
     }
 
