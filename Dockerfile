@@ -39,6 +39,7 @@ RUN apt-get update \
 COPY --chown=1001:1001 . /opt/CTFd
 
 RUN useradd \
+    --create-home \
     --no-log-init \
     --shell /bin/bash \
     -u 1001 \
