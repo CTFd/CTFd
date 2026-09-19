@@ -15,7 +15,7 @@ class EnvInterpolation(configparser.BasicInterpolation):
     def before_get(self, parser, section, option, value, defaults):
         value = super().before_get(parser, section, option, value, defaults)
         envvar = os.getenv(option)
-        if value == "" and envvar:
+        if not value and envvar:
             return process_string_var(envvar, key=option)
         else:
             return value
