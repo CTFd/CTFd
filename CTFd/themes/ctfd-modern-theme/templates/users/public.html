@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-page">
+  
+  <div>
+    <div class="container">
+      <div class="profile-main">
+        <div class="profile-avatar" x-data="{ hasError: false }">
+          <img 
+            src="https://api.dicebear.com/9.x/identicon/svg?seed={{ (user.email) | urlencode }}&size=200"
+            alt="{{ user.name }}"
+            @error="hasError = true"
+            x-show="!hasError"
+            class="avatar-img"
+          >
+          <i class="fas fa-user" x-show="hasError" x-cloak></i>
+        </div>
+        
+        <div class="profile-info">
+          <div class="profile-kicker">Competitor Profile</div>
+          <div class="profile-name-row">
+            <h1>{{ user.name }}</h1>
+            {% if user.oauth_id %}
+              <a href="https://majorleaguecyber.org/u/{{ user.name }}" class="badge-official">
+                <i class="fas fa-check-circle"></i>
+                {% trans %}Official{% endtrans %}
+              </a>
+            {% endif %}
+          </div>
+
+          <p class="profile-description">
+            {% if user.team_id %}
+              Tracking solves, rankings, and profile details for this active competitor.
+            {% else %}
+              Public competition profile with progress, rankings, and recent challenge history.
+            {% endif %}
+          </p>
+          
+          {% if user.team_id %}
+            <a href="{{ url_for('teams.public', team_id=user.team_id) }}" class="team-badge">
+              <i class="fas fa-users"></i>
+              {{ user.team.name }}
+            </a>
+          {% endif %}
+          
+          <div class="profile-badges">
+            {% if user.affiliation %}
+              <span class="profile-badge">
+                <i class="fas fa-building"></i>
+                {{ user.affiliation }}
+              </span>
+            {% endif %}
+            
+            {% if user.country %}
+              <span class="profile-badge">
+                <i class="flag-{{ user.country.lower() }}"></i>
+                {{ lookup_country_code(user.country) }}
+              </span>
+            {% endif %}
+            
+            {% if user.website %}
+              <a href="{{ user.website }}" target="_blank" rel="noopener noreferrer" class="profile-badge profile-badge-link">
+                <i class="fas fa-globe"></i>
+                Website
+              </a>
+            {% endif %}
+          </div>
+
+          <div class="profile-overview-grid">
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Mode</span>
+              <span class="profile-overview-value">{{ "Team competitor" if user.team_id else "Solo competitor" }}</span>
+            </div>
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Team</span>
+              <span class="profile-overview-value">{{ user.team.name if user.team_id else "Independent" }}</span>
+            </div>
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Visibility</span>
+              <span class="profile-overview-value">Public profile</span>
+            </div>
+          </div>
+
+          {% if user.fields %}
+            <div class="profile-field-grid">
+              {% for field in user.fields %}
+                <div class="profile-field-card">
+                  <span class="profile-field-label">{{ field.name }}</span>
+                  <span class="profile-field-value">{{ field.value }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        
+        
+        <div class="profile-stats">
+          {% if account.place %}
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ account.place }}</div>
+                <div class="stat-label">{% trans %}Place{% endtrans %}</div>
+              </div>
+            </div>
+          {% endif %}
+          
+          {% if account.score is not none %}
+            <div class="stat-card stat-primary">
+              <div class="stat-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ account.score }}</div>
+                <div class="stat-label">{% trans %}Points{% endtrans %}</div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    {% include "components/errors.html" %}
+
+    {% set solves = user.solves %}
+    {% set awards = user.awards %}
+    
+    {% if solves or awards %}
+      
+      {% if awards %}
+        <div class="section-block">
+          <div class="section-header">
+            <i class="fas fa-award"></i>
+            <h2>{% trans %}Awards{% endtrans %}</h2>
+            <span class="section-count">{{ awards|length }}</span>
+          </div>
+          
+          <div class="awards-grid">
+            {% for award in awards %}
+              <div class="award-card">
+                <div class="award-icon-wrapper">
+                  <i class="award-icon fas fa-award" aria-hidden="true"></i>
+                </div>
+                <div class="award-info">
+                  <div class="award-name">{{ award.name }}</div>
+                  {% if award.category %}
+                    <div class="award-category">{{ award.category }}</div>
+                  {% endif %}
+                  {% if award.description %}
+                    <div class="award-desc">{{ award.description }}</div>
+                  {% endif %}
+                  <div class="award-value">+{{ award.value }} pts</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      
+      <div class="section-block">
+        <div class="section-header">
+          <i class="fas fa-flag"></i>
+          <h2>{% trans %}Solves{% endtrans %}</h2>
+          <span class="section-count">{{ solves|length }}</span>
+        </div>
+        
+        <div class="solves-table-wrapper">
+          <table class="solves-table">
+            <thead>
+              <tr>
+                <th>{% trans %}Challenge{% endtrans %}</th>
+                <th class="d-none d-md-table-cell">{% trans %}Category{% endtrans %}</th>
+                <th>{% trans %}Value{% endtrans %}</th>
+                <th>{% trans %}Time{% endtrans %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for solve in solves %}
+                <tr>
+                  <td>
+                    <a href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}" class="challenge-link">
+                      {{ solve.challenge.name }}
+                    </a>
+                  </td>
+                  <td class="d-none d-md-table-cell">
+                    <span class="category-tag">{{ solve.challenge.category }}</span>
+                  </td>
+                  <td>
+                    <span class="points-value">{{ solve.challenge.value }}</span>
+                  </td>
+                  <td class="solve-time">
+                    <span data-time="{{ solve.date | isoformat }}"></span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      
+      <div class="section-block" x-data="UserGraphs">
+        <div class="section-header">
+          <i class="fas fa-chart-line"></i>
+          <h2>{% trans %}Statistics{% endtrans %}</h2>
+        </div>
+        
+        <div class="stats-grid">
+          
+          <div class="progress-card d-none d-md-block">
+            <h4>{% trans %}Solve Rate{% endtrans %}</h4>
+            <div class="custom-progress">
+              <div class="progress-bar-success" role="progressbar" :style="{ width: `${getSolvePercentage()}%` }"></div>
+              <div class="progress-bar-fail" role="progressbar" :style="{ width: `${getFailPercentage()}%` }"></div>
+            </div>
+            <div class="progress-legend">
+              <div class="legend-item">
+                <span class="legend-dot success"></span>
+                <span x-text="`Solves (${getSolvePercentage()}%)`"></span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot fail"></span>
+                <span x-text="`Fails (${getFailPercentage()}%)`"></span>
+              </div>
+            </div>
+          </div>
+          
+          
+          <div class="progress-card d-none d-md-block">
+            <h4>{% trans %}Categories{% endtrans %}</h4>
+            <div class="custom-progress">
+              <template x-for="category in getCategoryBreakdown()" :key="category.name">
+                <div class="progress-bar-category" role="progressbar" :style="{ width: `${category.percent}%`, backgroundColor: category.color }"></div>
+              </template>
+            </div>
+            <div class="progress-legend category-legend">
+              <template x-for="category in getCategoryBreakdown()" :key="category.name">
+                <div class="legend-item">
+                  <span class="legend-dot" :style="{ backgroundColor: category.color }"></span>
+                  <span x-text="`${category.name} (${category.percent}%)`"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+        
+        
+        <div class="graph-card d-none d-md-block">
+          <h4>{% trans %}Score Over Time{% endtrans %}</h4>
+          <div id="score-graph" x-ref="scoregraph" class="score-graph">
+            <div class="graph-loading">
+              <i class="fas fa-circle-notch fa-spin fa-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-flag"></i>
+        </div>
+        <h3>{% trans %}No solves yet{% endtrans %}</h3>
+        <p>{% trans %}This user hasn't solved any challenges yet.{% endtrans %}</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    window.USER = {{ {
+      'type': 'user',
+      'id': user.id,
+      'name': user.name,
+      'account_id': user.id,
+    } | tojson }};
+  </script>
+
+  {{ Assets.js("assets/js/users/public.js") }}
+{% endblock %}

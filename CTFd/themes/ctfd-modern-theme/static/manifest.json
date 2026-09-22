@@ -1,0 +1,168 @@
+{
+  "_clipboard-C1ayhmno.js": {
+    "file": "assets/clipboard-C1ayhmno.js",
+    "name": "clipboard",
+    "imports": [
+      "assets/js/index.js"
+    ]
+  },
+  "_echarts-BhZoeAkw.js": {
+    "file": "assets/echarts-BhZoeAkw.js",
+    "name": "echarts"
+  },
+  "_index-Bm1zM802.js": {
+    "file": "assets/index-Bm1zM802.js",
+    "name": "index",
+    "imports": [
+      "assets/js/index.js",
+      "_echarts-BhZoeAkw.js"
+    ]
+  },
+  "_userscore-BQuUoXAl.js": {
+    "file": "assets/userscore-BQuUoXAl.js",
+    "name": "userscore",
+    "imports": [
+      "assets/js/index.js",
+      "_index-Bm1zM802.js"
+    ]
+  },
+  "assets/img/logo.png": {
+    "file": "assets/logo-C_GKAgpa.png",
+    "src": "assets/img/logo.png"
+  },
+  "assets/js/challenges.js": {
+    "file": "assets/challenges-DslZg2hT.js",
+    "name": "challenges",
+    "src": "assets/js/challenges.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js"
+    ]
+  },
+  "assets/js/index.js": {
+    "file": "assets/index-C2cv1Dbk.js",
+    "name": "index",
+    "src": "assets/js/index.js",
+    "isEntry": true
+  },
+  "assets/js/notifications.js": {
+    "file": "assets/notifications-9yONyozH.js",
+    "name": "notifications",
+    "src": "assets/js/notifications.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js"
+    ]
+  },
+  "assets/js/page.js": {
+    "file": "assets/page-CJDDjXzW.js",
+    "name": "page",
+    "src": "assets/js/page.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js"
+    ]
+  },
+  "assets/js/scoreboard.js": {
+    "file": "assets/scoreboard-Dg4r4xhv.js",
+    "name": "scoreboard",
+    "src": "assets/js/scoreboard.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js",
+      "_index-Bm1zM802.js",
+      "_echarts-BhZoeAkw.js"
+    ]
+  },
+  "assets/js/settings.js": {
+    "file": "assets/settings-BYFjruko.js",
+    "name": "settings",
+    "src": "assets/js/settings.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js",
+      "_clipboard-C1ayhmno.js"
+    ]
+  },
+  "assets/js/setup.js": {
+    "file": "assets/setup-1BDCL90m.js",
+    "name": "setup",
+    "src": "assets/js/setup.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js"
+    ]
+  },
+  "assets/js/teams/list.js": {
+    "file": "assets/teams_list-CJDDjXzW.js",
+    "name": "teams_list",
+    "src": "assets/js/teams/list.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js"
+    ]
+  },
+  "assets/js/teams/private.js": {
+    "file": "assets/teams_private-BzFHYjIb.js",
+    "name": "teams_private",
+    "src": "assets/js/teams/private.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js",
+      "_clipboard-C1ayhmno.js",
+      "_userscore-BQuUoXAl.js",
+      "_index-Bm1zM802.js",
+      "_echarts-BhZoeAkw.js"
+    ]
+  },
+  "assets/js/teams/public.js": {
+    "file": "assets/teams_public-BjVfJ9jD.js",
+    "name": "teams_public",
+    "src": "assets/js/teams/public.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js",
+      "_userscore-BQuUoXAl.js",
+      "_index-Bm1zM802.js",
+      "_echarts-BhZoeAkw.js"
+    ]
+  },
+  "assets/js/users/list.js": {
+    "file": "assets/users_list-CJDDjXzW.js",
+    "name": "users_list",
+    "src": "assets/js/users/list.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js"
+    ]
+  },
+  "assets/js/users/private.js": {
+    "file": "assets/users_private-BPWe4RZg.js",
+    "name": "users_private",
+    "src": "assets/js/users/private.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js",
+      "_userscore-BQuUoXAl.js",
+      "_index-Bm1zM802.js",
+      "_echarts-BhZoeAkw.js"
+    ]
+  },
+  "assets/js/users/public.js": {
+    "file": "assets/users_public-iFO1fv_y.js",
+    "name": "users_public",
+    "src": "assets/js/users/public.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/index.js",
+      "_userscore-BQuUoXAl.js",
+      "_index-Bm1zM802.js",
+      "_echarts-BhZoeAkw.js"
+    ]
+  },
+  "assets/scss/main.scss": {
+    "file": "assets/main-DElK3RQQ.css",
+    "src": "assets/scss/main.scss",
+    "isEntry": true
+  }
+}

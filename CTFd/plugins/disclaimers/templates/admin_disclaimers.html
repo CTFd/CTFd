@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container text-center">
+        <h1>Manage Disclaimers</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            
+            <div class="card mb-5">
+                <div class="card-header">Add a New Disclaimer</div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                        <input type="hidden" name="action" value="add">
+                        <div class="form-group">
+                            <label>Disclaimer Text</label>
+                            <input type="text" class="form-control" name="content" placeholder='e.g., the platform is for educational purposes only' required>
+                        </div>
+                        <button type="submit" class="btn btn-primary float-right">Add Disclaimer</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-5">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="font-weight-bold">Current Disclaimers</span>
+                    
+                    {% if disclaimers %}
+                    <form method="POST" class="m-0">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                        <input type="hidden" name="action" value="delete_all">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you absolutely sure you want to delete ALL disclaimers? This cannot be undone.');">
+                            Remove All Disclaimers
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Disclaimer Description</th>
+                                <th class="text-right" style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for disclaimer in disclaimers %}
+                            <tr>
+                                <td class="align-middle">{{ disclaimer.content }}</td>
+                                <td class="text-right align-middle">
+                                    <form method="POST" style="display:inline;">
+                                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="disclaimer_id" value="{{ disclaimer.id }}">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this disclaimer?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted py-4">No Disclaimers currently in the database.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

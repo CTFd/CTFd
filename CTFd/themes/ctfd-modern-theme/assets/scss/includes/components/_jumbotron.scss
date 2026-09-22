@@ -1,0 +1,16 @@
+main {
+  padding-top: 3.5rem;
+}
+
+.jumbotron {
+  padding: 2rem 1rem;
+  text-align: center;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-white);
+}
+
+@media (min-width: 576px) {
+  .jumbotron {
+    padding: 1rem 2rem;
+  }
+}

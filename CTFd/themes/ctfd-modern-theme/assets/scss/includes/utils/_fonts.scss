@@ -1,0 +1,24 @@
+@use "~/@fontsource/jetbrains-mono/scss/mixins" as JetBrainsMono;
+
+@include JetBrainsMono.fontFace($fontDir: "../webfonts", $weight: 400);
+@include JetBrainsMono.fontFace($fontDir: "../webfonts", $weight: 500);
+@include JetBrainsMono.fontFace($fontDir: "../webfonts", $weight: 700);
+
+$fa-font-path: "../webfonts";
+@import "~/@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~/@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~/@fortawesome/fontawesome-free/scss/brands.scss";
+
+html,
+body,
+.container {
+  font-family: "JetBrains Mono", sans-serif;
+}
+
+.jumbotron .container {
+  font-family: "JetBrains Mono", sans-serif;
+}
+
+.jumbotron .container h1 {
+  font-weight: 700;
+}

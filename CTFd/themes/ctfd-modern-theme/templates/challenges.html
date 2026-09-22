@@ -1,0 +1,2850 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  
+  <div class="jumbotron">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-12 text-center">
+          <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-flag text-primary me-2"></i>
+            {% trans %}Challenges{% endtrans %}
+          </h1>
+          <p class="lead mb-0 text-muted">
+            {% trans %}Test your skills and solve challenging problems{% endtrans %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid px-4 py-3">
+    
+    <div class="row mb-3">
+      <div class="col-12">
+        {% include "components/errors.html" %}
+      </div>
+    </div>
+
+    
+    <div class="row g-4" 
+         x-data="{
+           ...ChallengeBoard(),
+           selectedCategory: null,
+           hideSolved: false,
+           
+           filterChallenges() {
+             // This method triggers re-render when hideSolved changes
+           },
+           
+           getVisibleChallenges(category) {
+             let challenges = this.getSortedChallenges(category);
+             if (this.hideSolved) {
+               challenges = challenges.filter(c => !c.solved_by_me);
+             }
+             return challenges;
+           },
+           
+           getFilteredCategories() {
+             if (this.selectedCategory) {
+               return [this.selectedCategory];
+             }
+             return this.getCategories();
+           },
+           
+           getTotalChallenges() {
+             if (!this.loaded || !this.challenges) return 0;
+             return this.challenges.length;
+           },
+           
+           getCategoryIcon(category) {
+             const icons = {
+               'web': 'fas fa-globe',
+               'crypto': 'fas fa-lock',
+               'pwn': 'fas fa-bug',
+               'reverse': 'fas fa-cogs',
+               'forensics': 'fas fa-search',
+               'misc': 'fas fa-puzzle-piece',
+               'binary': 'fas fa-file-code',
+               'steganography': 'fas fa-eye',
+               'osint': 'fas fa-satellite',
+               'network': 'fas fa-network-wired',
+               'mobile': 'fas fa-mobile-alt',
+               'blockchain': 'fas fa-link',
+               'ai': 'fas fa-robot',
+               'iot': 'fas fa-microchip',
+               'hardware': 'fas fa-microchip',
+               'ppc': 'fas fa-code',
+               'pentest': 'fas fa-user-secret',
+               'redteam': 'fas fa-user-secret'
+             };
+             const key = category.toLowerCase();
+             return icons[key] || 'fas fa-folder';
+           },
+           
+           getCategoryColor(category) {
+             const colors = {
+               'web': '#329af1',
+               'crypto': '#845ef7', 
+               'pwn': '#ff6b6b',
+               'reverse': '#fdc419',
+               'forensics': '#5473e1',
+               'misc': '#20c897',
+               'binary': '#17a2b8',
+               'osint': '#ff922b',
+               'network': '#34C759',
+               'mobile': '#f16594',
+               'blockchain': '#50cf66',
+               'hardware': '#d1d0d1',
+               'ai': '#94d82c',
+               'pentest': '#cd5de8',
+               'redteam': '#cd5de8',
+               'ppc': '#9C27B0'
+             };
+             const key = category.toLowerCase();
+             return colors[key] || '#329af1';
+           },
+           
+           getCategoryBadgeStyle(category) {
+             const color = this.getCategoryColor(category);
+             return `background: ${color}20; color: ${color}; border: 1px solid ${color}40;`;
+           },
+           
+           getDifficultyFromTags(tags) {
+             if (!tags || tags.length === 0) return 'medium';
+             const tag = tags[0]?.value?.toLowerCase() || '';
+             if (tag.includes('easy')) return 'easy';
+             if (tag.includes('hard')) return 'hard';
+             return 'medium';
+           },
+           
+           getSortedChallenges(category) {
+             const challenges = this.getChallenges(category);
+             return challenges.sort((a, b) => a.value - b.value);
+           }
+         }" 
+         @load-challenges.window="loadChallenges()" 
+         @load-challenge.window="loadChallenge($event.detail)">
+      
+      
+      <div x-ref="challengeWindow" id="challenge-window" class="modal fade challenge-modal-container" tabindex="-1" role="dialog" x-data="" x-html="$store.challenge.data.view"></div>
+
+      
+      <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-12 order-lg-0 order-first">
+        <div class="category-sidebar sticky-top" style="top: 90px;">
+          <div class="category-filter-container">
+            
+            <div class="hide-solved-toggle">
+              <label class="toggle-switch">
+                <input type="checkbox" x-model="hideSolved" @change="filterChallenges()">
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label">{% trans %}Hide solved challenges{% endtrans %}</span>
+            </div>
+            
+            <div x-show="loaded" class="category-list">
+              <button 
+                class="category-filter-btn w-100 d-flex align-items-center"
+                :class="!selectedCategory ? 'active' : ''"
+                @click="selectedCategory = null"
+              >
+                <i class="fas fa-puzzle-piece category-icon"></i>
+                <span class="category-name flex-grow-1">{% trans %}All{% endtrans %}</span>
+                <span class="category-count" x-text="getTotalChallenges()"></span>
+              </button>
+              
+              
+              <template x-for="(category, idx) in getCategories()" :key="idx">
+                <button 
+                  class="category-filter-btn w-100 d-flex align-items-center"
+                  :class="selectedCategory === category ? 'active' : ''"
+                  @click="selectedCategory = category"
+                >
+                  <i class="category-icon" :class="getCategoryIcon(category)"></i>
+                  <span class="category-name flex-grow-1" x-text="category"></span>
+                  <span class="category-count" x-text="getSortedChallenges(category).length"></span>
+                </button>
+              </template>
+            </div>
+            
+            
+            <div x-show="!loaded" class="text-center py-4">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-xxl-7 col-xl-7 col-lg-6 col-md-6 col-12">
+        <div class="challenges-main">
+          
+          <div x-show="!loaded" class="text-center py-5">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted">{% trans %}Loading challenges...{% endtrans %}</p>
+          </div>
+
+          
+          <div x-show="loaded">
+            <template x-for="(category, idx) in getFilteredCategories()" :key="idx">
+              <div class="challenge-category mb-4" x-show="!selectedCategory || selectedCategory === category">
+                
+                <div x-show="!selectedCategory" class="category-header-card mb-3 p-3 rounded-3">
+                  <div class="d-flex align-items-center">
+                    <div class="category-icon me-3" :style="'color: ' + getCategoryColor(category)">
+                      <i :class="getCategoryIcon(category)" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                      <h5 class="mb-1 fw-bold" x-text="category"></h5>
+                      <small class="text-muted">
+                        <span x-text="getSortedChallenges(category).length"></span> {% trans %}challenges{% endtrans %}
+                        · <span x-text="getSortedChallenges(category).filter(c => c.solved_by_me).length"></span> {% trans %}solved{% endtrans %}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                
+                <div class="row g-3">
+                  <template x-for="(c, challengeIdx) in getVisibleChallenges(category)" :key="c.id">
+                    <div class="col-12 col-sm-6 col-lg-6 col-xl-4">
+                      <div 
+                        class="challenge-card-matrix h-100"
+                        :class="[
+                          c.solved_by_me ? 'is-solved' : '',
+                          'category-' + c.category.toLowerCase().replace(/[^a-z0-9]/g, '')
+                        ]"
+                        :data-category="c.category"
+                        :data-challenge-id="c.id"
+                        @click="loadChallenge(c.id)"
+                      >
+                        
+                        <div class="matrix-rain" x-data="{ 
+                          columns: Array.from({length: 8 + Math.floor(Math.random() * 5)}, (_, i) => ({
+                            left: (5 + Math.random() * 90).toFixed(1),
+                            delay: (Math.random() * 3).toFixed(2),
+                            speed: (2 + Math.random() * 2.5).toFixed(2)
+                          }))
+                        }">
+                          <template x-for="(col, i) in columns" :key="i">
+                            <div class="matrix-column" 
+                              :style="`--delay: ${col.delay}s; --left: ${col.left}%; --speed: ${col.speed}s;`">
+                            </div>
+                          </template>
+                        </div>
+                        
+                        
+                        <div class="card-content">
+                          
+                          <template x-if="c.solved_by_me">
+                            <div class="solved-state">
+                              <div class="solved-badge-large">
+                                <i class="fas fa-check-circle"></i>
+                                <span>SOLVED</span>
+                              </div>
+                              <h3 class="challenge-name solved-name" x-text="c.name"></h3>
+                              <div class="solved-info">
+                                <span class="solved-points">
+                                  <i class="fas fa-trophy"></i>
+                                  +<span x-text="c.value"></span> pts earned
+                                </span>
+                              </div>
+                            </div>
+                          </template>
+                          
+                          
+                          <template x-if="!c.solved_by_me">
+                            <div class="unsolved-state">
+                              
+                              <h3 class="challenge-name" x-text="c.name"></h3>
+                              
+                              
+                              <div class="accent-line"></div>
+                              
+                              
+                              <div class="stats-row">
+                                <div class="points">
+                                  <span class="value" x-text="c.value"></span>
+                                  <span class="label">pts</span>
+                                </div>
+                                <div class="solves">
+                                  <span class="value" x-text="c.solves || 0"></span>
+                                  <span class="label">SOLVES</span>
+                                </div>
+                              </div>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-12">
+        <div class="user-sidebar sticky-top" style="top: 90px;">
+          {% if authed() %}
+          <div class="user-activity-card" x-data="UserActivityCard()" x-init="init()">
+            
+            
+            <div class="user-header-section">
+              <div class="user-avatar" x-data="{ hasError: false }">
+                <img
+                  src="https://api.dicebear.com/9.x/identicon/svg?seed={{ ((User.team.captain.email if User.team_id and User.team and User.team.captain and User.team.captain.email else User.email or User.name)) | urlencode }}&size=96"
+                  alt="{{ User.name }}"
+                  @error="hasError = true"
+                  x-show="!hasError"
+                  class="avatar-img"
+                >
+                <span x-show="hasError" x-cloak>{{ User.name[0] | upper }}</span>
+              </div>
+              <div class="user-name">{{ User.name }}</div>
+              <div class="live-indicator" title="Auto-refreshing every 15 seconds">
+                <span class="live-dot"></span>
+                <span class="live-text">LIVE</span>
+              </div>
+            </div>
+            
+            
+            <div class="user-stats-row">
+              <div class="stat-item">
+                <div class="stat-value" x-text="solvedCount">0</div>
+                <div class="stat-label">{% trans %}Total{% endtrans %}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" x-text="userScore">{{ User.score }}</div>
+                <div class="stat-label">{% trans %}Points{% endtrans %}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" x-text="userRank">{{ User.place or '-' }}</div>
+                <div class="stat-label">{% trans %}Solved{% endtrans %}</div>
+              </div>
+            </div>
+            
+            
+            <div class="user-progress">
+              <div class="progress-bar-fill" 
+                   :style="{ width: totalChallenges > 0 ? ((solvedCount / totalChallenges) * 100) + '%' : '0%' }">
+              </div>
+            </div>
+            
+            
+            <div class="progress-info">
+              <a href="{{ url_for('views.settings') }}" class="progress-link" title="{% trans %}Settings{% endtrans %}">
+                <i class="fas fa-cog"></i>
+              </a>
+              <span class="progress-text">
+                <span x-text="solvedCount">0</span> / <span x-text="totalChallenges">0</span>
+              </span>
+              <a href="{{ url_for('users.private') }}" class="progress-link" title="{% trans %}Profile{% endtrans %}">
+                <i class="fas fa-eye"></i>
+              </a>
+            </div>
+            
+            
+            <div class="activity-tabs">
+              <button class="activity-tab" :class="activeTab === 'all' ? 'active' : ''" @click="activeTab = 'all'">
+                {% trans %}All{% endtrans %}
+              </button>
+              <button class="activity-tab icon-tab" :class="activeTab === 'notifications' ? 'active' : ''" @click="activeTab = 'notifications'" title="{% trans %}Notifications{% endtrans %}" aria-label="{% trans %}Notifications{% endtrans %}">
+                <i class="fas fa-bell"></i>
+              </button>
+              <button class="activity-tab icon-tab" :class="activeTab === 'challenges' ? 'active' : ''" @click="activeTab = 'challenges'" title="{% trans %}Challenges{% endtrans %}" aria-label="{% trans %}Challenges{% endtrans %}">
+                <i class="fas fa-flag"></i>
+              </button>
+
+              <button class="activity-tab icon-tab refresh-tab" @click="checkForUpdates()" :disabled="isRefreshing" title="Refresh" aria-label="Refresh">
+                <i class="fas fa-sync-alt" :class="isRefreshing ? 'fa-spin' : ''"></i>
+              </button>
+            </div>
+            
+            
+            <div class="activity-list">
+              <template x-if="getFilteredActivities().length === 0">
+                <div class="no-activity">
+                  <i class="fas fa-inbox"></i>
+                  <p>{% trans %}No notifications yet{% endtrans %}</p>
+                </div>
+              </template>
+              
+              <template x-for="activity in getFilteredActivities()" :key="activity.id">
+                <div class="activity-item-new">
+                  
+                  <div class="activity-icon-wrapper" :class="activity.type">
+                    <template x-if="activity.type === 'hint'">
+                      <i class="fas fa-lightbulb"></i>
+                    </template>
+                    <template x-if="activity.type === 'first_blood'">
+                      <span class="blood-hexagon blood-hexagon-gold"></span>
+                    </template>
+                    <template x-if="activity.type === 'second_blood'">
+                      <span class="blood-hexagon blood-hexagon-silver"></span>
+                    </template>
+                    <template x-if="activity.type === 'third_blood'">
+                      <span class="blood-hexagon blood-hexagon-bronze"></span>
+                    </template>
+                    <template x-if="activity.type === 'new_challenge'">
+                      <i class="fas fa-plus"></i>
+                    </template>
+                    <template x-if="activity.type === 'solve'">
+                      <span class="solve-check"><i class="fas fa-check"></i></span>
+                    </template>
+                    <template x-if="!['hint', 'first_blood', 'second_blood', 'third_blood', 'new_challenge', 'solve'].includes(activity.type)">
+                      <i class="fas fa-bell"></i>
+                    </template>
+                  </div>
+                  
+                  
+                  <div class="activity-content-new">
+                    <div class="activity-date" x-text="activity.date"></div>
+                    <div class="activity-message" x-html="activity.message"></div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+          {% else %}
+          <div class="guest-discovery-card">
+            <div class="guest-card-header">
+              <span class="guest-card-badge">Guest Mode</span>
+              <h3>Explore before you commit</h3>
+              <p>Browse the board, inspect categories, and jump in when you are ready to compete.</p>
+            </div>
+
+            <div class="guest-card-actions">
+              {% if registration_visible() %}
+              <a href="{{ url_for('auth.register') }}" class="guest-primary-action">
+                <i class="fas fa-user-plus"></i>
+                <span>Create account</span>
+              </a>
+              {% endif %}
+              <a href="{{ url_for('auth.login') }}" class="guest-secondary-action">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Sign in</span>
+              </a>
+            </div>
+
+            <div class="guest-tip-list">
+              <div class="guest-tip-item">
+                <i class="fas fa-layer-group"></i>
+                <div>
+                  <strong>Filter categories</strong>
+                  <span>Use the left rail to scan the board faster.</span>
+                </div>
+              </div>
+              <div class="guest-tip-item">
+                <i class="fas fa-eye"></i>
+                <div>
+                  <strong>Preview pacing</strong>
+                  <span>See how the challenge set is structured before joining.</span>
+                </div>
+              </div>
+              <div class="guest-tip-item">
+                <i class="fas fa-satellite-dish"></i>
+                <div>
+                  <strong>Watch the feed</strong>
+                  <span>Live status keeps the page feeling active once you log in.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    
+    .user-header {
+      background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%) !important;
+    }
+
+    
+    .category-filter-container {
+      background: #2d2d2d;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    
+    .hide-solved-toggle {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #4a4a4a;
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #20c897;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(18px);
+    }
+
+    .toggle-label {
+      font-size: 0.9rem;
+      color: #e5e5e5;
+      line-height: 1.3;
+    }
+
+    
+    .category-sidebar {
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .category-filter-btn {
+      border: none !important;
+      background: transparent;
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #e5e5e5;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .category-filter-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .category-filter-btn.active {
+      background: linear-gradient(135deg, #20c897 0%, #17a085 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(32, 200, 151, 0.3);
+    }
+
+    .category-filter-btn.active .category-icon {
+      color: white !important;
+    }
+
+    .category-filter-btn.active .category-count {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+
+    .category-icon {
+      width: 20px;
+      font-size: 1rem;
+      margin-right: 10px;
+      color: #888;
+      transition: all 0.2s ease;
+    }
+
+    .category-name {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .category-count {
+      background: rgba(255, 255, 255, 0.1);
+      color: #888;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      min-width: 28px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    
+    .category-header-card {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+    }
+
+    
+    
+    
+    
+    
+    .challenge-card-matrix {
+      --cat-color: #20c997;
+      --cat-color-rgb: 32, 201, 151;
+      --cat-bg: rgba(32, 201, 151, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-pwn,
+    .challenge-card-matrix.category-pwnable {
+      --cat-color: #ef4444;
+      --cat-color-rgb: 239, 68, 68;
+      --cat-bg: rgba(239, 68, 68, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-web {
+      --cat-color: #f59e0b;
+      --cat-color-rgb: 245, 158, 11;
+      --cat-bg: rgba(245, 158, 11, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-crypto,
+    .challenge-card-matrix.category-cryptography {
+      --cat-color: #8b5cf6;
+      --cat-color-rgb: 139, 92, 246;
+      --cat-bg: rgba(139, 92, 246, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-reverse,
+    .challenge-card-matrix.category-reversing,
+    .challenge-card-matrix.category-re {
+      --cat-color: #0ea5e9;
+      --cat-color-rgb: 14, 165, 233;
+      --cat-bg: rgba(14, 165, 233, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-forensics,
+    .challenge-card-matrix.category-forensic {
+      --cat-color: #06b6d4;
+      --cat-color-rgb: 6, 182, 212;
+      --cat-bg: rgba(6, 182, 212, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-misc,
+    .challenge-card-matrix.category-miscellaneous {
+      --cat-color: #14b8a6;
+      --cat-color-rgb: 20, 184, 166;
+      --cat-bg: rgba(20, 184, 166, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-osint {
+      --cat-color: #84cc16;
+      --cat-color-rgb: 132, 204, 22;
+      --cat-bg: rgba(132, 204, 22, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-hardware {
+      --cat-color: #ec4899;
+      --cat-color-rgb: 236, 72, 153;
+      --cat-bg: rgba(236, 72, 153, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-blockchain {
+      --cat-color: #f97316;
+      --cat-color-rgb: 249, 115, 22;
+      --cat-bg: rgba(249, 115, 22, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-stego,
+    .challenge-card-matrix.category-steganography {
+      --cat-color: #6366f1;
+      --cat-color-rgb: 99, 102, 241;
+      --cat-bg: rgba(99, 102, 241, 0.06);
+    }
+    
+    
+    .challenge-card-matrix.category-mobile {
+      --cat-color: #d946ef;
+      --cat-color-rgb: 217, 70, 239;
+      --cat-bg: rgba(217, 70, 239, 0.06);
+    }
+
+    .challenge-card-matrix {
+      background: linear-gradient(160deg, #1e1e2a 0%, #16161f 100%);
+      border: 1px solid rgba(var(--cat-color-rgb), 0.25);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      min-height: 145px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .challenge-card-matrix:hover {
+      transform: translateY(-4px);
+      border-color: rgba(var(--cat-color-rgb), 0.6);
+      box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(var(--cat-color-rgb), 0.12);
+    }
+
+    .challenge-card-matrix:hover .accent-line {
+      width: 100%;
+    }
+
+    
+    .matrix-rain {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.15;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .challenge-card-matrix:hover .matrix-rain {
+      opacity: 0.5;
+    }
+
+    .matrix-column {
+      position: absolute;
+      top: -100%;
+      left: var(--left);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--cat-color);
+      text-shadow: 0 0 6px var(--cat-color);
+      animation: matrixFall var(--speed, 3s) linear infinite;
+      animation-delay: var(--delay);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+    }
+
+    .matrix-column::before {
+      content: '10010110100101101001011010010110100101101001011010010110';
+    }
+    
+    
+    .matrix-column:nth-child(2n)::before {
+      content: '01101001011010010110100101101001011010010110100101101001';
+    }
+    .matrix-column:nth-child(3n)::before {
+      content: '11001010110010101100101011001010110010101100101011001010';
+    }
+    .matrix-column:nth-child(4n)::before {
+      content: '00110101001101010011010100110101001101010011010100110101';
+    }
+    .matrix-column:nth-child(5n)::before {
+      content: '10101100101011001010110010101100101011001010110010101100';
+    }
+    .matrix-column:nth-child(7n)::before {
+      content: '01010011010100110101001101010011010100110101001101010011';
+    }
+
+    @keyframes matrixFall {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(400%);
+      }
+    }
+
+    
+    .challenge-card-matrix .card-content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      background: linear-gradient(180deg, transparent 0%, rgba(13, 13, 20, 0.95) 30%);
+    }
+
+    
+    .challenge-card-matrix .challenge-name {
+      font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #e8e8e8;
+      margin: 0 0 10px 0;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    
+    .challenge-card-matrix .accent-line {
+      height: 2px;
+      width: 50px;
+      background: linear-gradient(90deg, var(--cat-color), transparent);
+      border-radius: 1px;
+      margin-bottom: 16px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    
+    .challenge-card-matrix .stats-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: auto;
+    }
+
+    .challenge-card-matrix .points {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+
+    .challenge-card-matrix .points .value {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--cat-color);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(var(--cat-color-rgb), 0.4);
+    }
+
+    .challenge-card-matrix .points .label {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: rgba(var(--cat-color-rgb), 0.6);
+      text-transform: lowercase;
+    }
+
+    .challenge-card-matrix .solves {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      text-align: right;
+    }
+
+    .challenge-card-matrix .solves .value {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #888;
+      letter-spacing: -0.02em;
+    }
+
+    .challenge-card-matrix .solves .label {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    
+    .challenge-card-matrix.is-solved {
+      --cat-color: #20c997;
+      --cat-color-rgb: 32, 201, 151;
+      background: linear-gradient(160deg, #12201c 0%, #141a18 100%);
+      border-color: rgba(32, 201, 151, 0.4);
+    }
+
+    .challenge-card-matrix.is-solved:hover {
+      border-color: rgba(32, 201, 151, 0.6);
+      box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.4),
+        0 0 25px rgba(32, 201, 151, 0.15);
+    }
+
+    .challenge-card-matrix.is-solved .matrix-column {
+      color: #20c997;
+      text-shadow: 0 0 8px #20c997;
+    }
+
+    
+    .challenge-card-matrix .solved-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      padding: 10px 0;
+    }
+
+    .challenge-card-matrix .solved-badge-large {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(32, 201, 151, 0.15);
+      border: 1px solid rgba(32, 201, 151, 0.4);
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .challenge-card-matrix .solved-badge-large i {
+      font-size: 1rem;
+      color: #20c997;
+      text-shadow: 0 0 10px rgba(32, 201, 151, 0.6);
+    }
+
+    .challenge-card-matrix .solved-badge-large span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #20c997;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .challenge-card-matrix .solved-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.75);
+      margin: 0 0 10px 0 !important;
+      max-width: 100%;
+      text-decoration: line-through;
+      text-decoration-color: rgba(32, 201, 151, 0.5);
+    }
+
+    .challenge-card-matrix .solved-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .challenge-card-matrix .solved-points {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #20c997;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .challenge-card-matrix .solved-points i {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    
+    .challenge-card-matrix .unsolved-state {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    
+    .bg-gradient-primary {
+      background: linear-gradient(135deg, var(--wmctf-primary) 0%, #5856D6 100%);
+      color: white !important;
+    }
+
+    
+    .stat-number {
+      font-size: 1.5rem;
+      line-height: 1.2;
+    }
+
+    
+    .user-activity-card {
+      background: #2d2d2d;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .user-header-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      background: #363636;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #20c897 0%, #17a085 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .user-avatar .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e5e5e5;
+      flex: 1;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: livePulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes livePulse {
+      0%, 100% { 
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+      }
+      50% { 
+        opacity: 0.7;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+      }
+    }
+
+    .live-text {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #ef4444;
+      letter-spacing: 0.5px;
+    }
+
+    .user-stats-row {
+      display: flex;
+      justify-content: space-around;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .user-stats-row .stat-item {
+      text-align: center;
+    }
+
+    .user-stats-row .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e5e5e5;
+      line-height: 1.2;
+    }
+
+    .user-stats-row .stat-label {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .user-progress {
+      height: 4px;
+      background: #404040;
+      margin: 0 20px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #20c897 0%, #17a085 100%);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    
+    .progress-info {
+      display: grid;
+      grid-template-columns: 32px 1fr 32px;
+      align-items: center;
+      padding: 12px 20px;
+      column-gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .progress-link {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .progress-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #e5e5e5;
+    }
+
+    .progress-text {
+      font-size: 0.9rem;
+      color: #888;
+      text-align: center;
+    }
+
+    
+    .activity-tabs {
+      display: grid;
+      grid-template-columns: max-content repeat(3, minmax(0, 1fr));
+      width: 100%;
+      align-items: center;
+      column-gap: 0;
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .activity-tab {
+      height: 40px;
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: #888;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .activity-tab.icon-tab {
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      padding-inline: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 40px;
+      justify-self: center;
+    }
+
+    .activity-tab.refresh-tab {
+      margin-left: 0;
+      justify-self: end;
+    }
+
+    .activity-tab i {
+      display: inline-flex;
+      width: 1.1rem;
+      min-width: 1.1rem;
+      height: 1.1rem;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .activity-tab:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e5e5e5;
+    }
+
+    .activity-tab.active {
+      background: linear-gradient(135deg, #20c897 0%, #17a085 100%);
+      color: white;
+    }
+
+    
+    .activity-list {
+      padding: 12px 16px;
+      height: 350px;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .no-activity {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .no-activity i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .no-activity p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .activity-item-new {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .activity-item-new:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon-wrapper {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .activity-icon-wrapper.hint i {
+      color: #ffd700;
+      font-size: 1.2rem;
+    }
+
+    .activity-icon-wrapper.new_challenge i {
+      color: #20c897;
+      font-size: 1rem;
+    }
+
+    .activity-icon-wrapper i {
+      color: #888;
+      font-size: 1rem;
+    }
+
+    
+    .blood-hexagon {
+      width: 24px;
+      height: 26px;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: inline-block;
+    }
+    
+    .blood-hexagon-gold {
+      background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+    }
+    
+    .blood-hexagon-silver {
+      background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+    }
+    
+    .blood-hexagon-bronze {
+      background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+    }
+    
+    .solve-check {
+      color: #20c997;
+      font-size: 1rem;
+    }
+
+    .activity-content-new {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-date {
+      font-size: 0.75rem;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .activity-message {
+      font-size: 0.85rem;
+      color: #c5c5c5;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .activity-message strong {
+      color: #e5e5e5;
+    }
+
+    
+    .activity-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .activity-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .activity-list::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 4px;
+    }
+
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .category-sidebar {
+    max-height: calc(100vh - 120px);
+  }
+
+  .category-filter-container {
+    padding: 12px;
+  }
+
+  .category-filter-btn {
+    padding: 10px 12px;
+  }
+
+  .category-name {
+    font-size: 0.88rem;
+  }
+
+  .toggle-label {
+    font-size: 0.8rem;
+  }
+
+  .challenge-card-matrix {
+    min-height: 130px;
+  }
+
+  .challenge-card-matrix .card-content {
+    padding: 16px;
+  }
+
+  .challenge-card-matrix .challenge-name {
+    font-size: 1.05rem;
+  }
+
+  .challenge-card-matrix .points .value {
+    font-size: 1.4rem;
+  }
+
+  .user-activity-card {
+    margin-top: 0;
+  }
+
+  .user-header-section {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .user-name {
+    font-size: 1rem;
+  }
+
+  .user-stats-row {
+    padding: 12px 16px;
+  }
+
+  .user-stats-row .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .activity-tabs {
+    padding: 10px 12px;
+  }
+
+  .activity-tab {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .activity-list {
+    padding: 10px 12px;
+    height: 300px;
+    max-height: 300px;
+  }
+}
+
+
+@media (max-width: 1199.98px) {
+  .category-sidebar {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  .category-filter-container {
+    padding: 12px;
+  }
+
+  .hide-solved-toggle {
+    padding: 8px 0;
+    gap: 8px;
+  }
+
+  .toggle-label {
+    font-size: 0.78rem;
+    line-height: 1.2;
+  }
+
+  .toggle-switch {
+    width: 36px;
+    height: 20px;
+  }
+
+  .toggle-slider:before {
+    height: 14px;
+    width: 14px;
+  }
+
+  .toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(16px);
+  }
+
+  .category-filter-btn {
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+
+  .category-name {
+    font-size: 0.82rem;
+  }
+
+  .category-icon {
+    width: 16px;
+    font-size: 0.85rem;
+    margin-right: 6px;
+  }
+
+  .category-count {
+    font-size: 0.78rem;
+    padding: 2px 7px;
+    min-width: 24px;
+  }
+
+  .challenges-main {
+    margin-top: 0;
+  }
+
+  .challenge-card-matrix {
+    min-height: 125px;
+  }
+
+  .challenge-card-matrix .card-content {
+    padding: 14px;
+  }
+
+  .challenge-card-matrix .challenge-name {
+    font-size: 0.95rem;
+  }
+
+  .challenge-card-matrix .points .value {
+    font-size: 1.2rem;
+  }
+
+  .user-activity-card {
+    margin-top: 0;
+  }
+
+  .user-header-section {
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+  }
+
+  .user-name {
+    font-size: 0.9rem;
+  }
+
+  .live-indicator {
+    padding: 2px 6px;
+    gap: 4px;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .live-text {
+    font-size: 0.55rem;
+  }
+
+  .user-stats-row {
+    padding: 10px 12px;
+  }
+
+  .user-stats-row .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .user-stats-row .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .progress-info {
+    padding: 8px 12px;
+  }
+
+  .progress-link {
+    width: 28px;
+    height: 28px;
+  }
+
+  .progress-text {
+    font-size: 0.8rem;
+  }
+
+  .activity-tabs {
+    padding: 8px 10px;
+  }
+
+  .activity-tab {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
+  .activity-tab.icon-tab {
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .activity-list {
+    padding: 8px 10px;
+    height: 250px;
+    max-height: 250px;
+  }
+
+  .activity-item-new {
+    gap: 8px;
+    padding: 8px 0;
+  }
+
+  .activity-icon-wrapper {
+    width: 26px;
+    height: 26px;
+  }
+
+  .activity-date {
+    font-size: 0.68rem;
+  }
+
+  .activity-message {
+    font-size: 0.78rem;
+  }
+}
+
+
+@media (max-width: 991.98px) {
+  .category-filter-container {
+    padding: 10px;
+  }
+
+  .hide-solved-toggle {
+    padding: 6px 0;
+    gap: 6px;
+  }
+
+  .toggle-label {
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  .toggle-switch {
+    width: 32px;
+    height: 18px;
+  }
+
+  .toggle-slider:before {
+    height: 12px;
+    width: 12px;
+  }
+
+  .toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(14px);
+  }
+
+  .category-filter-btn {
+    padding: 7px 8px;
+    border-radius: 8px;
+  }
+
+  .category-name {
+    font-size: 0.78rem;
+  }
+
+  .category-icon {
+    width: 14px;
+    font-size: 0.8rem;
+    margin-right: 5px;
+  }
+
+  .category-count {
+    font-size: 0.72rem;
+    padding: 2px 6px;
+    min-width: 20px;
+  }
+
+  .category-list {
+    gap: 4px;
+  }
+
+  .challenge-card-matrix {
+    min-height: 115px;
+  }
+
+  .challenge-card-matrix .card-content {
+    padding: 12px;
+  }
+
+  .challenge-card-matrix .challenge-name {
+    font-size: 0.9rem;
+  }
+
+  .challenge-card-matrix .points .value {
+    font-size: 1.1rem;
+  }
+
+  .challenge-card-matrix .solves .value {
+    font-size: 0.85rem;
+  }
+
+  .challenge-card-matrix .solves .label {
+    font-size: 0.55rem;
+  }
+
+  .category-header-card {
+    padding: 8px 10px !important;
+  }
+
+  .category-header-card h5 {
+    font-size: 0.9rem;
+  }
+
+  .category-header-card .category-icon {
+    font-size: 1.2rem !important;
+  }
+
+  .category-header-card .category-icon.me-3 {
+    margin-right: 0.5rem !important;
+  }
+
+  .user-header-section {
+    padding: 12px;
+    gap: 6px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
+  .user-name {
+    font-size: 0.82rem;
+  }
+
+  .live-indicator {
+    padding: 2px 5px;
+    gap: 3px;
+    border-radius: 8px;
+  }
+
+  .live-dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .live-text {
+    font-size: 0.5rem;
+  }
+
+  .user-stats-row {
+    padding: 8px 10px;
+  }
+
+  .user-stats-row .stat-value {
+    font-size: 1rem;
+  }
+
+  .user-stats-row .stat-label {
+    font-size: 0.65rem;
+  }
+
+  .user-progress {
+    margin: 0 10px;
+  }
+
+  .progress-info {
+    padding: 6px 10px;
+  }
+
+  .progress-link {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+
+  .progress-text {
+    font-size: 0.75rem;
+  }
+
+  .activity-tabs {
+    padding: 6px 8px;
+  }
+
+  .activity-tab {
+    padding: 4px 7px;
+    font-size: 0.68rem;
+  }
+
+  .activity-tab.icon-tab {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+
+  .activity-list {
+    padding: 8px;
+    height: 220px;
+    max-height: 220px;
+  }
+
+  .activity-item-new {
+    gap: 6px;
+    padding: 6px 0;
+  }
+
+  .activity-icon-wrapper {
+    width: 22px;
+    height: 22px;
+  }
+
+  .activity-icon-wrapper i {
+    font-size: 0.8rem;
+  }
+
+  .blood-hexagon {
+    width: 18px;
+    height: 20px;
+  }
+
+  .activity-date {
+    font-size: 0.62rem;
+  }
+
+  .activity-message {
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+}
+
+    
+    .activity-item:last-child {
+      border-bottom: none !important;
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+    
+    .challenge-modal-container {
+      outline: none !important;
+    }
+    
+    .challenge-modal-container:focus,
+    .challenge-modal-container .modal-content:focus {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    
+    @media (max-width: 767.98px) {
+      .category-sidebar,
+      .user-sidebar {
+        position: static !important;
+        margin-bottom: 1rem;
+      }
+
+      .category-filter-container {
+        padding: 12px;
+      }
+
+      .hide-solved-toggle {
+        padding: 8px 0;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .toggle-label {
+        font-size: 0.85rem;
+      }
+
+      .toggle-switch {
+        width: 42px;
+        height: 24px;
+      }
+
+      .toggle-slider:before {
+        height: 18px;
+        width: 18px;
+      }
+
+      .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(18px);
+      }
+
+      .category-list {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .category-filter-btn {
+        width: auto !important;
+        padding: 8px 14px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      .category-name {
+        font-size: 0.88rem;
+      }
+
+      .category-count {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+      }
+
+      .category-icon {
+        font-size: 0.88rem;
+        margin-right: 6px;
+        width: 18px;
+      }
+
+      .challenge-category .row.g-3 > div {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+
+      .challenge-card-matrix {
+        min-height: 120px;
+      }
+
+      .challenge-card-matrix .card-content {
+        padding: 14px;
+      }
+
+      .challenge-card-matrix .challenge-name {
+        font-size: 1rem;
+      }
+
+      .challenge-card-matrix .points .value {
+        font-size: 1.3rem;
+      }
+
+      .challenge-card-matrix:hover {
+        transform: translateY(-2px);
+      }
+
+      .category-header-card {
+        padding: 10px !important;
+      }
+
+      .category-header-card h5 {
+        font-size: 1rem;
+      }
+
+      .user-header-section {
+        padding: 16px;
+      }
+
+      .user-avatar {
+        width: 44px;
+        height: 44px;
+      }
+
+      .user-name {
+        font-size: 1rem;
+      }
+
+      .user-stats-row {
+        padding: 14px;
+      }
+
+      .user-stats-row .stat-value {
+        font-size: 1.4rem;
+      }
+
+      .user-stats-row .stat-label {
+        font-size: 0.8rem;
+      }
+
+      .activity-tabs {
+        padding: 10px 12px;
+        gap: 6px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .activity-tab {
+        padding: 7px 12px;
+        font-size: 0.82rem;
+      }
+
+      .activity-list {
+        height: 300px;
+        max-height: 300px;
+        padding: 12px;
+      }
+
+      .progress-info {
+        padding: 10px 14px;
+      }
+    }
+
+    
+    @media (max-width: 479.98px) {
+      .container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+      }
+
+      .category-filter-container {
+        padding: 10px;
+      }
+
+      .category-filter-btn {
+        padding: 6px 10px;
+      }
+
+      .category-name {
+        font-size: 0.82rem;
+      }
+
+      .challenge-card-matrix {
+        min-height: 110px;
+      }
+
+      .challenge-card-matrix .card-content {
+        padding: 12px;
+      }
+
+      .challenge-card-matrix .challenge-name {
+        font-size: 0.9rem;
+      }
+
+      .challenge-card-matrix .points .value {
+        font-size: 1.1rem;
+      }
+
+      .user-header-section {
+        padding: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+      }
+
+      .user-name {
+        font-size: 0.9rem;
+      }
+
+      .user-stats-row .stat-value {
+        font-size: 1.1rem;
+      }
+
+      .activity-list {
+        height: 250px;
+        max-height: 250px;
+      }
+    }
+
+    
+    .toast-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 380px;
+    }
+
+    .realtime-toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #1e1e2a 0%, #252532 100%);
+      border: 1px solid rgba(32, 201, 151, 0.3);
+      border-left: 4px solid #20c997;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(32, 201, 151, 0.1);
+      animation: toastSlideIn 0.3s ease-out;
+      backdrop-filter: blur(10px);
+    }
+
+    .realtime-toast.toast-fade-out {
+      animation: toastFadeOut 0.3s ease-out forwards;
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes toastFadeOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+    }
+
+    .toast-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(32, 201, 151, 0.15);
+    }
+
+    .toast-icon.first_blood {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 183, 0, 0.1) 100%);
+    }
+
+    .toast-icon.solve {
+      background: linear-gradient(135deg, rgba(192, 192, 192, 0.2) 0%, rgba(205, 127, 50, 0.1) 100%);
+    }
+
+    .toast-icon.solve i.fa-medal {
+      font-size: 1.1rem;
+    }
+
+    .toast-icon.hint {
+      background: rgba(255, 215, 0, 0.15);
+    }
+
+    .toast-icon.hint i {
+      color: #ffd700;
+      font-size: 1.1rem;
+    }
+
+    .toast-icon.new_challenge {
+      background: rgba(32, 201, 151, 0.15);
+    }
+
+    .toast-icon.new_challenge i {
+      color: #20c997;
+      font-size: 1rem;
+    }
+
+    .toast-icon.notification i {
+      color: #818cf8;
+      font-size: 1rem;
+    }
+
+    .blood-hexagon-small {
+      width: 18px;
+      height: 20px;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: inline-block;
+    }
+    
+    .blood-hexagon-small.blood-hexagon-gold {
+      background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+    }
+    
+    .blood-hexagon-small.blood-hexagon-silver {
+      background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 100%);
+    }
+    
+    .blood-hexagon-small.blood-hexagon-bronze {
+      background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+    }
+
+    .toast-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-message {
+      font-size: 0.9rem;
+      color: #e5e5e5;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .toast-message strong {
+      color: #20c997;
+    }
+
+    .toast-time {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .toast-close {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .toast-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e5e5e5;
+    }
+
+    
+    .activity-refresh-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(32, 201, 151, 0.15);
+      border-radius: 12px;
+      font-size: 0.75rem;
+      color: #20c997;
+      margin-left: auto;
+    }
+
+    .activity-refresh-indicator i {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    
+    .new-notification-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      background: #ef4444;
+      border-radius: 9px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+      margin-left: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @media (max-width: 767.98px) {
+      .toast-container {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+        top: 70px;
+      }
+
+      .realtime-toast {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .toast-message {
+        font-size: 0.82rem;
+      }
+    }
+
+    
+    [data-bs-theme="light"] .category-filter-container {
+      background: #f0f2f5;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    [data-bs-theme="light"] .hide-solved-toggle {
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
+
+    [data-bs-theme="light"] .toggle-slider {
+      background-color: #c0c0c0;
+    }
+
+    [data-bs-theme="light"] .toggle-label {
+      color: #333;
+    }
+
+    [data-bs-theme="light"] .category-filter-btn {
+      color: #333;
+    }
+
+    [data-bs-theme="light"] .category-filter-btn:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    [data-bs-theme="light"] .category-icon {
+      color: #777;
+    }
+
+    [data-bs-theme="light"] .category-count {
+      background: rgba(0, 0, 0, 0.06);
+      color: #666;
+    }
+
+    [data-bs-theme="light"] .category-header-card {
+      background: #f0f2f5;
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    
+    [data-bs-theme="light"] .challenge-card-matrix {
+      background: linear-gradient(160deg, #fafbfc 0%, #f0f2f5 100%);
+      border-color: rgba(var(--cat-color-rgb), 0.3);
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix:hover {
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.1),
+        0 0 20px rgba(var(--cat-color-rgb), 0.1);
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix .card-content {
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.95) 30%);
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix .challenge-name {
+      color: #1a1a2e;
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix .solves .value {
+      color: #666;
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix .solves .label {
+      color: #888;
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix.is-solved {
+      background: linear-gradient(160deg, #f0faf6 0%, #e8f5f0 100%);
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix .solved-name {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    
+    [data-bs-theme="light"] .user-activity-card {
+      background: #f0f2f5;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    [data-bs-theme="light"] .user-header-section {
+      background: #e8eaed;
+    }
+
+    [data-bs-theme="light"] .user-name {
+      color: #1a1a2e;
+    }
+
+    [data-bs-theme="light"] .user-stats-row {
+      border-bottom-color: rgba(0, 0, 0, 0.08);
+    }
+
+    [data-bs-theme="light"] .user-stats-row .stat-value {
+      color: #1a1a2e;
+    }
+
+    [data-bs-theme="light"] .user-stats-row .stat-label {
+      color: #666;
+    }
+
+    [data-bs-theme="light"] .user-progress {
+      background: #d0d0d0;
+    }
+
+    [data-bs-theme="light"] .progress-info {
+      border-bottom-color: rgba(0, 0, 0, 0.08);
+    }
+
+    [data-bs-theme="light"] .progress-link {
+      background: rgba(0, 0, 0, 0.06);
+      color: #666;
+    }
+
+    [data-bs-theme="light"] .progress-link:hover {
+      background: rgba(0, 0, 0, 0.1);
+      color: #333;
+    }
+
+    [data-bs-theme="light"] .progress-text {
+      color: #666;
+    }
+
+    
+    [data-bs-theme="light"] .activity-tabs {
+      border-bottom-color: rgba(0, 0, 0, 0.08);
+    }
+
+    [data-bs-theme="light"] .activity-tab {
+      color: #666;
+    }
+
+    [data-bs-theme="light"] .activity-tab:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: #333;
+    }
+
+    
+    [data-bs-theme="light"] .activity-item-new {
+      border-bottom-color: rgba(0, 0, 0, 0.06);
+    }
+
+    [data-bs-theme="light"] .activity-message {
+      color: #444;
+    }
+
+    [data-bs-theme="light"] .activity-message strong {
+      color: #1a1a2e;
+    }
+
+    [data-bs-theme="light"] .activity-date {
+      color: #999;
+    }
+
+    [data-bs-theme="light"] .no-activity {
+      color: #999;
+    }
+
+    
+    [data-bs-theme="light"] .realtime-toast {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-color: rgba(32, 201, 151, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 20px rgba(32, 201, 151, 0.06);
+    }
+
+    [data-bs-theme="light"] .toast-message {
+      color: #333;
+    }
+
+    [data-bs-theme="light"] .toast-close:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: #333;
+    }
+
+    
+    [data-bs-theme="light"] .matrix-rain {
+      opacity: 0.08;
+    }
+
+    [data-bs-theme="light"] .challenge-card-matrix:hover .matrix-rain {
+      opacity: 0.2;
+    }
+
+    
+    [data-bs-theme="light"] .activity-list::-webkit-scrollbar-thumb {
+      background: #ccc;
+    }
+  </style>
+
+  <script>
+    // HTML escape helper to prevent XSS in user-generated content
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    }
+
+    document.addEventListener('alpine:init', () => {
+      // UserStats Alpine component
+      // Combined UserActivityCard component
+      Alpine.data('UserActivityCard', () => ({
+        // User stats
+        userScore: '{{ User.score }}',
+        solvedCount: 0,
+        userRank: '{{ User.place or "-" }}',
+        totalChallenges: 0,
+        
+        // Activity feed
+        activities: [],
+        activeTab: 'all',
+        
+        // Realtime polling
+        pollInterval: null,
+        lastNotificationCount: 0,
+        hasNewNotifications: false,
+        isRefreshing: false,
+        
+        async init() {
+          await Promise.all([
+            this.loadUserStats(),
+            this.loadAllActivities()
+          ]);
+          
+          // Store initial count
+          this.lastNotificationCount = this.activities.length;
+          
+          // Start realtime polling (every 15 seconds)
+          this.startPolling();
+        },
+        
+        startPolling() {
+          // Poll every 15 seconds for new notifications
+          this.pollInterval = setInterval(async () => {
+            await this.checkForUpdates();
+          }, 15000);
+          
+          // Also listen for window focus to refresh
+          window.addEventListener('focus', () => {
+            this.checkForUpdates();
+          });
+        },
+        
+        stopPolling() {
+          if (this.pollInterval) {
+            clearInterval(this.pollInterval);
+            this.pollInterval = null;
+          }
+        },
+        
+        async checkForUpdates() {
+          if (this.isRefreshing) return;
+          this.isRefreshing = true;
+          
+          try {
+            const oldIds = new Set(this.activities.map(a => a.id));
+            await this.loadAllActivities();
+            
+            const newItems = this.activities.filter(a => !oldIds.has(a.id));
+            
+            if (newItems.length > 0) {
+              this.hasNewNotifications = true;
+              
+
+              const itemsToToast = newItems.filter(item => {
+                if (item.type === 'notification' || item.type === 'hint' || item.type === 'new_challenge') {
+                  return true;
+                }
+                if (item.type === 'first_blood' || item.type === 'second_blood' || item.type === 'third_blood') {
+                  return true;
+                }
+                if (item.type === 'solve') {
+                  return item.rank && item.rank <= 3;
+                }
+                return false;
+              });
+              
+              itemsToToast.forEach(item => {
+                this.showToast(item);
+              });
+              
+              if (newItems.some(item => item.type === 'new_challenge')) {
+                window.dispatchEvent(new CustomEvent('load-challenges'));
+              }
+            }
+            
+            await this.loadUserStats();
+            
+          } catch (error) {
+            // Error checking for updates silently handled
+          } finally {
+            this.isRefreshing = false;
+          }
+        },
+        
+        showToast(item) {
+          let iconHtml = '';
+          if (item.type === 'first_blood') {
+            iconHtml = '<span class="blood-hexagon-small blood-hexagon-gold"></span>';
+          } else if (item.type === 'second_blood') {
+            iconHtml = '<span class="blood-hexagon-small blood-hexagon-silver"></span>';
+          } else if (item.type === 'third_blood') {
+            iconHtml = '<span class="blood-hexagon-small blood-hexagon-bronze"></span>';
+          } else if (item.type === 'solve') {
+            iconHtml = '<span class="solve-check"><i class="fas fa-check"></i></span>';
+          } else if (item.type === 'hint') {
+            iconHtml = '<i class="fas fa-lightbulb"></i>';
+          } else if (item.type === 'new_challenge') {
+            iconHtml = '<i class="fas fa-plus"></i>';
+          } else if (item.type === 'notification') {
+            iconHtml = '<i class="fas fa-bell"></i>';
+          }
+          
+          // Create toast notification
+          const toast = document.createElement('div');
+          toast.className = 'realtime-toast';
+          toast.innerHTML = `
+            <div class="toast-icon ${item.type}">
+              ${iconHtml}
+            </div>
+            <div class="toast-content">
+              <div class="toast-message">${item.message}</div>
+              <div class="toast-time">${item.date}</div>
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">
+              <i class="fas fa-times"></i>
+            </button>
+          `;
+          
+          // Add to container
+          let container = document.querySelector('.toast-container');
+          if (!container) {
+            container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+          }
+          
+          container.appendChild(toast);
+          
+          this.playNotificationSound();
+          
+          setTimeout(() => {
+            toast.classList.add('toast-fade-out');
+            setTimeout(() => toast.remove(), 300);
+          }, 5000);
+        },
+        
+        playNotificationSound() {
+          try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+          } catch (e) {
+          }
+        },
+        
+        async loadUserStats() {
+          try {
+            const userResponse = await CTFd.fetch('/api/v1/users/me');
+            if (userResponse.ok) {
+              const userData = await userResponse.json();
+              if (userData.success) {
+                this.userScore = userData.data.score;
+                this.userRank = userData.data.place || '-';
+              }
+            }
+            
+            const solvesResponse = await CTFd.fetch('/api/v1/users/me/solves');
+            if (solvesResponse.ok) {
+              const solvesData = await solvesResponse.json();
+              if (solvesData.success) {
+                this.solvedCount = solvesData.meta.count;
+              }
+            }
+            
+            const challengesResponse = await CTFd.fetch('/api/v1/challenges');
+            if (challengesResponse.ok) {
+              const challengesData = await challengesResponse.json();
+              if (challengesData.success) {
+                this.totalChallenges = challengesData.data.length;
+              }
+            }
+          } catch (error) {
+            console.log('Error loading user stats:', error);
+          }
+        },
+        
+        formatDate(dateStr) {
+          const date = new Date(dateStr);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = String(date.getFullYear()).slice(-2);
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          const seconds = String(date.getSeconds()).padStart(2, '0');
+          return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        },
+        
+        async loadAllActivities() {
+          const allActivities = [];
+          
+          try {
+            const notifResponse = await CTFd.fetch('/api/v1/notifications');
+            if (notifResponse.ok) {
+              const notifData = await notifResponse.json();
+              if (notifData.success && notifData.data) {
+                notifData.data.forEach(notif => {
+                  let type = 'notification';
+                  let message = notif.content || notif.title;
+                  
+                  if (message.toLowerCase().includes('hint')) {
+                    type = 'hint';
+                    message = `Hint for <strong>${notif.title || 'challenge'}</strong> has been updated.`;
+                  } else if (message.toLowerCase().includes('first blood')) {
+                    type = 'first_blood';
+                  } else if (message.toLowerCase().includes('new challenge')) {
+                    type = 'new_challenge';
+                    message = `New challenge <strong>${notif.title || ''}</strong> has been released.`;
+                  }
+                  
+                  allActivities.push({
+                    id: 'notif-' + notif.id,
+                    type: type,
+                    date: this.formatDate(notif.date),
+                    message: message,
+                    rawDate: new Date(notif.date),
+                    category: type === 'hint' ? 'hints' : (type === 'new_challenge' ? 'challenges' : 'notifications')
+                  });
+                });
+              }
+            }
+            
+            const scoreboardResponse = await CTFd.fetch('/api/v1/scoreboard/top/10');
+            if (scoreboardResponse.ok) {
+              const scoreboardData = await scoreboardResponse.json();
+              if (scoreboardData.success) {
+                let challengesMap = {};
+                try {
+                  const challengesResponse = await CTFd.fetch('/api/v1/challenges');
+                  if (challengesResponse.ok) {
+                    const challengesData = await challengesResponse.json();
+                    if (challengesData.success) {
+                      challengesMap = challengesData.data.reduce((map, c) => {
+                        map[c.id] = c.name;
+                        return map;
+                      }, {});
+                    }
+                  }
+                } catch (e) {}
+                
+                const challengeSolves = {};
+                const isTeamMode = CTFd.config.userMode === 'teams';
+                
+                for (const entry of Object.values(scoreboardData.data)) {
+                  if (entry.solves && entry.solves.length > 0) {
+                    entry.solves.forEach(solve => {
+                      if (solve.challenge_id === null) return;
+                      
+                      if (!challengeSolves[solve.challenge_id]) {
+                        challengeSolves[solve.challenge_id] = [];
+                      }
+                      
+                      challengeSolves[solve.challenge_id].push({
+                        team: isTeamMode ? entry.name : undefined,
+                        user: !isTeamMode ? entry.name : undefined,
+                        teamId: isTeamMode ? entry.id : undefined,
+                        userId: !isTeamMode ? entry.id : undefined,
+                        date: new Date(solve.date),
+                        rawDate: solve.date
+                      });
+                    });
+                  }
+                }
+                
+                for (const challengeId in challengeSolves) {
+                  challengeSolves[challengeId].sort((a, b) => a.date - b.date);
+                  
+                  challengeSolves[challengeId].forEach((solve, index) => {
+                    solve.rank = index + 1;
+                  });
+                }
+                
+                for (const challengeId in challengeSolves) {
+                  challengeSolves[challengeId].forEach(solve => {
+                    const challengeName = challengesMap[challengeId] || `Challenge ${challengeId}`;
+                    const rank = solve.rank;
+                    
+                    let message = '';
+                    let type = 'solve';
+                    
+                    const safeName = isTeamMode ? escapeHtml(solve.team) : escapeHtml(solve.user);
+                    const safeChallenge = escapeHtml(challengeName);
+                    const nameLabel = isTeamMode ? 'team' : 'user';
+
+                    if (rank === 1) {
+                      message = `Congratulations to ${nameLabel} <strong>${safeName}</strong> for first blood the challenge <strong>${safeChallenge}</strong>.`;
+                      type = 'first_blood';
+                    } else if (rank === 2) {
+                      message = `${isTeamMode ? 'Team' : 'User'} <strong>${safeName}</strong> solved <strong>${safeChallenge}</strong>`;
+                      type = 'second_blood';
+                    } else if (rank === 3) {
+                      message = `${isTeamMode ? 'Team' : 'User'} <strong>${safeName}</strong> solved <strong>${safeChallenge}</strong>`;
+                      type = 'third_blood';
+                    } else {
+                      message = `${isTeamMode ? 'Team' : 'User'} <strong>${safeName}</strong> solved <strong>${safeChallenge}</strong>.`;
+                      type = 'solve';
+                    }
+                    
+                    allActivities.push({
+                      id: `solve-${solve.teamId || solve.userId}-${challengeId}-${solve.rawDate}`,
+                      type: type,
+                      rank: rank,
+                      date: this.formatDate(solve.rawDate),
+                      message: message,
+                      rawDate: solve.date,  
+                      category: 'challenges'
+                    });
+                  });
+                }
+              }
+            }
+            
+            this.activities = allActivities.sort((a, b) => b.rawDate - a.rawDate);
+            
+          } catch (error) {
+            // Error loading activities silently handled
+            this.activities = [];
+          }
+        },
+        
+        getFilteredActivities() {
+          if (this.activeTab === 'all') {
+            return this.activities.slice(0, 20);
+          }
+          return this.activities
+            .filter(a => a.category === this.activeTab)
+            .slice(0, 20);
+        }
+      }));
+      
+      Alpine.data('UserStats', () => ({
+        userScore: null,
+        solvedCount: 0,
+        userRank: null,
+        totalChallenges: 0,
+        
+        async loadUserStats() {
+          try {
+            const userResponse = await CTFd.fetch('/api/v1/users/me');
+            if (userResponse.ok) {
+              const userData = await userResponse.json();
+              if (userData.success) {
+                this.userScore = userData.data.score;
+                this.userRank = userData.data.place ? `#${userData.data.place}` : '#-';
+              }
+            }
+            
+            const solvesResponse = await CTFd.fetch('/api/v1/users/me/solves');
+            if (solvesResponse.ok) {
+              const solvesData = await solvesResponse.json();
+              if (solvesData.success) {
+                this.solvedCount = solvesData.meta.count;
+              }
+            }
+            
+            const challengesResponse = await CTFd.fetch('/api/v1/challenges');
+            if (challengesResponse.ok) {
+              const challengesData = await challengesResponse.json();
+              if (challengesData.success) {
+                this.totalChallenges = challengesData.data.length;
+              }
+            }
+          } catch (error) {
+            console.log('Error loading user stats:', error);
+          }
+        }
+      }));
+    });
+  </script>
+
+{% endblock %}
+
+{% block scripts %}
+  
+  {{ Assets.js("assets/js/challenges.js") }}
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container text-center">
+      <h1>FAQs</h1>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header font-weight-bold">Add New FAQ</div>
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                        <input type="hidden" name="action" value="add">
+                        
+                        <div class="form-group">
+                            <label>Question</label>
+                            <input type="text" class="form-control" name="question" placeholder="e.g., Who are we?" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Answer</label>
+                            <small class="form-text text-muted mb-2">You can use standard HTML like &lt;br&gt; or &lt;b&gt; for formatting.</small>
+                            <textarea class="form-control" name="answer" rows="4" placeholder="Enter the answer here..." required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary float-right">Add to FAQ</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="font-weight-bold">Existing FAQs</span>
+            {% if faqs %}
+            <form method="POST" class="m-0">
+                <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                <input type="hidden" name="action" value="delete_all">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you absolutely sure you want to delete ALL FAQs? This cannot be undone.');">
+                    Delete All
+                </button>
+            </form>
+            {% endif %}
+          </div>
+          
+          <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+              <thead>
+                <tr>
+                  <th style="width: 30%;">Question</th>
+                  <th>Answer</th>
+                  <th class="text-right" style="width: 10%;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for faq in faqs %}
+                  <tr>
+                    <td class="align-middle font-weight-bold">{{ faq.question }}</td>
+                    <td class="align-middle text-muted">{{ faq.answer }}</td>
+                    <td class="text-right align-middle">
+                      <form method="POST" class="m-0">
+                        <input type="hidden" name="nonce" value="{{ Session.nonce }}" />
+                        <input type="hidden" name="action" value="delete" />
+                        <input type="hidden" name="faq_id" value="{{ faq.id }}" />
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this FAQ permanently?');">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="3" class="text-center text-muted py-4">No FAQs added yet.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
