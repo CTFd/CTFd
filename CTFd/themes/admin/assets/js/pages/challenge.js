@@ -244,6 +244,8 @@ $(() => {
     if (utc) {
       $input.val(dayjs(utc).format("YYYY-MM-DDTHH:mm:ss"));
     }
+
+    $input.data("initial", $input.val());
   });
 
   $("#challenge-update-container > form").submit(function (e) {
