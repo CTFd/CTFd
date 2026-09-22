@@ -1,0 +1,24 @@
+{% macro challenge_state_badge(challenge, classes="") -%}
+	{%- set display_state = challenge.display_state -%}
+	{%- if display_state == 'scheduled' -%}
+		{%- set badge_state = 'badge-warning' -%}
+	{%- elif display_state == 'hidden' -%}
+		{%- set badge_state = 'badge-danger' -%}
+	{%- else -%}
+		{%- set badge_state = 'badge-success' -%}
+	{%- endif -%}
+	{%- if display_state == 'scheduled' -%}
+		{%- set schedule_note = 'Becomes visible to users at {time}.' -%}
+		{%- set schedule_time = challenge.scheduled_at | isoformat -%}
+	{%- elif display_state == 'hidden' and challenge.scheduled_at -%}
+		{%- set schedule_note = 'This challenge is hidden. Scheduling will not make it visible.' -%}
+		{%- set schedule_time = None -%}
+	{%- else -%}
+		{%- set schedule_note = None -%}
+		{%- set schedule_time = None -%}
+	{%- endif -%}
+	<span class="badge {{ badge_state }} {{ classes }}"
+		{%- if schedule_note %} data-toggle="tooltip" data-placement="top"{% if schedule_time %} data-schedule-time="{{ schedule_time }}"{% endif %} title="{{ schedule_note }}"{% endif %}>
+		{{- display_state -}}
+	</span>
+{%- endmacro %}

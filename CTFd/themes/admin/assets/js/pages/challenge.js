@@ -140,6 +140,65 @@ function handleChallengeOptions(event) {
   });
 }
 
+const SCHEDULE_TOOLTIPS = {
+  scheduled: "Becomes visible to users at {time}.",
+  hidden: "This challenge is hidden. Scheduling will not make it visible.",
+};
+
+// The API serializes scheduled_at as a naive UTC timestamp, so mark it as UTC
+// before parsing or dayjs would read it as local time.
+function parseScheduledAt(value) {
+  return dayjs(/(Z|[+-]\d{2}:?\d{2})$/.test(value) ? value : value + "Z");
+}
+
+// Mirrors the Challenges.display_state property so that the badge
+// stays accurate after saving without requiring a page reload.
+function updateChallengeStateBadge(state, scheduledAt) {
+  const pending =
+    state === "visible" &&
+    scheduledAt &&
+    parseScheduledAt(scheduledAt).isAfter(dayjs());
+  const displayState = pending ? "scheduled" : state;
+  const badgeClass =
+    { scheduled: "badge-warning", hidden: "badge-danger" }[displayState] ||
+    "badge-success";
+
+  const $badge = $(".challenge-state");
+  $badge.tooltip("dispose");
+  $badge
+    .removeClass("badge-success badge-danger badge-warning")
+    .addClass(badgeClass)
+    .text(displayState);
+
+  const note = scheduledAt ? SCHEDULE_TOOLTIPS[displayState] : undefined;
+  if (note) {
+    // Only the scheduled note names a time
+    if (displayState === "scheduled") {
+      $badge.attr("data-schedule-time", scheduledAt);
+    } else {
+      $badge.removeAttr("data-schedule-time");
+    }
+    $badge
+      .attr("data-toggle", "tooltip")
+      .attr("data-placement", "top")
+      .attr(
+        "title",
+        note.replace(
+          "{time}",
+          parseScheduledAt(scheduledAt).format("MMMM Do, h:mm:ss A"),
+        ),
+      )
+      .tooltip();
+  } else {
+    $badge
+      .removeAttr("data-toggle")
+      .removeAttr("data-placement")
+      .removeAttr("data-schedule-time")
+      .removeAttr("data-original-title")
+      .removeAttr("title");
+  }
+}
+
 $(() => {
   $(".preview-challenge").click(function (_e) {
     let url = `${CTFd.config.urlRoot}/admin/challenges/preview/${window.CHALLENGE_ID}`;
@@ -223,21 +282,10 @@ $(() => {
             })
             .then(function (response) {
               if (response.success) {
-                $(".challenge-state").text(response.data.state);
-                switch (response.data.state) {
-                  case "visible":
-                    $(".challenge-state")
-                      .removeClass("badge-danger")
-                      .addClass("badge-success");
-                    break;
-                  case "hidden":
-                    $(".challenge-state")
-                      .removeClass("badge-success")
-                      .addClass("badge-danger");
-                    break;
-                  default:
-                    break;
-                }
+                updateChallengeStateBadge(
+                  response.data.state,
+                  response.data.scheduled_at,
+                );
                 ezToast({
                   title: "Success",
                   body: "Your challenge has been updated!",

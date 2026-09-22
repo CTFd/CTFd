@@ -1,3 +1,5 @@
+import datetime
+
 from CTFd.models import Challenges
 from CTFd.utils import set_config
 from tests.helpers import (
@@ -5,9 +7,14 @@ from tests.helpers import (
     destroy_ctfd,
     gen_challenge,
     gen_flag,
+    gen_module,
     login_as_user,
     register_user,
 )
+
+
+def _future():
+    return datetime.datetime.utcnow() + datetime.timedelta(days=1)
 
 
 def test_create_new_challenge():
@@ -92,4 +99,80 @@ def test_challenges_admin_only_as_user():
         data = {"submission": "flag", "challenge_id": 1}
         r = client.post("/api/v1/challenges/attempt", json=data)
         assert r.status_code == 403
+    destroy_ctfd(app)
+
+
+def test_admin_challenges_listing_shows_scheduled_badge():
+    """The admin challenge listing badges a not-yet-released challenge as scheduled"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db, name="later", state="visible", scheduled_at=_future())
+        with login_as_user(app, "admin") as admin:
+            r = admin.get("/admin/challenges")
+            assert r.status_code == 200
+            html = r.get_data(as_text=True)
+            assert "badge-warning" in html
+            assert "scheduled" in html
+            assert "Becomes visible to users at" in html
+    destroy_ctfd(app)
+
+
+def test_admin_challenges_listing_warns_schedule_does_not_unhide():
+    """The admin challenge listing warns that a schedule will not unhide a challenge"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db, name="later", state="hidden", scheduled_at=_future())
+        with login_as_user(app, "admin") as admin:
+            html = admin.get("/admin/challenges").get_data(as_text=True)
+            assert "will not make it visible" in html
+            assert "badge-warning" not in html
+            # The release time is irrelevant for a hidden challenge, so the
+            # tooltip states the rule without it
+            assert "data-schedule-time" not in html
+            assert "{time}" not in html
+    destroy_ctfd(app)
+
+
+def test_admin_challenges_listing_has_no_schedule_tooltip_without_schedule():
+    """Challenges without a schedule keep their plain state badge"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db, name="plain", state="visible")
+        with login_as_user(app, "admin") as admin:
+            html = admin.get("/admin/challenges").get_data(as_text=True)
+            assert "data-schedule-time" not in html
+            assert "badge-success" in html
+    destroy_ctfd(app)
+
+
+def test_admin_challenge_detail_shows_scheduled_badge():
+    """The admin challenge detail page badges a not-yet-released challenge as scheduled"""
+    app = create_ctfd()
+    with app.app_context():
+        chal_id = gen_challenge(
+            app.db, name="later", state="visible", scheduled_at=_future()
+        ).id
+        with login_as_user(app, "admin") as admin:
+            html = admin.get(f"/admin/challenges/{chal_id}").get_data(as_text=True)
+            assert "badge-warning" in html
+            assert "Becomes visible to users at" in html
+    destroy_ctfd(app)
+
+
+def test_admin_module_detail_shows_scheduled_badge():
+    """The admin module detail page badges a not-yet-released challenge as scheduled"""
+    app = create_ctfd()
+    with app.app_context():
+        module_id = gen_module(app.db, name="Week 1").id
+        gen_challenge(
+            app.db,
+            name="later",
+            state="visible",
+            scheduled_at=_future(),
+            module_id=module_id,
+        )
+        with login_as_user(app, "admin") as admin:
+            html = admin.get(f"/admin/modules/{module_id}").get_data(as_text=True)
+            assert "badge-warning" in html
+            assert "Becomes visible to users at" in html
     destroy_ctfd(app)
