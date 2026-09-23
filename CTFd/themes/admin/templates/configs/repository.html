@@ -188,6 +188,7 @@
 			button.addEventListener("click", function () {
 				state.provider = this.dataset.provider;
 				setError(null);
+				$("repo-pat").value = "";
 				show("repo-auth");
 				var settings = state.providers[state.provider] || {};
 				var deviceBtn = $("repo-device-btn");
@@ -261,6 +262,7 @@
 			hide("repo-pick");
 			show("repo-providers");
 			setError(null);
+			$("repo-pat").value = "";
 			$("repo-connect-btn").disabled = false;
 		});
 	})();
