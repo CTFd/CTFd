@@ -69,6 +69,7 @@ def init_template_globals(app):
     from CTFd.constants import JINJA_ENUMS  # noqa: I001
     from CTFd.constants.assets import Assets
     from CTFd.constants.config import Configs
+    from CTFd.constants.git import Git
     from CTFd.constants.languages import Languages
     from CTFd.constants.plugins import Plugins
     from CTFd.constants.sessions import Session
@@ -128,6 +129,7 @@ def init_template_globals(app):
     app.jinja_env.globals.update(User=User)
     app.jinja_env.globals.update(Team=Team)
     app.jinja_env.globals.update(Languages=Languages)
+    app.jinja_env.globals.update(Git=Git)
 
     # Add in JinjaEnums
     # The reason this exists is that on double import, JinjaEnums are not reinitialized
@@ -229,6 +231,11 @@ def init_request_processors(app):
             if request.endpoint in (
                 "views.setup",
                 "views.integrations",
+                "views.git.repository",
+                "views.git.device",
+                "views.git.device_token",
+                "views.git.token",
+                "views.git.repositories",
                 "views.themes",
                 "views.themes_beta",
                 "views.files",
