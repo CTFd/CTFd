@@ -17,10 +17,6 @@ def _future():
     return datetime.datetime.utcnow() + datetime.timedelta(days=1)
 
 
-def _past():
-    return datetime.datetime.utcnow() - datetime.timedelta(days=1)
-
-
 def test_challenge_file_for_scheduled_challenge_is_404():
     """Non-admins cannot download challenge files before scheduled_at"""
     app = create_ctfd()
@@ -92,51 +88,4 @@ def test_unlock_solution_for_scheduled_challenge_is_404():
             )
             assert r.status_code == 404
             assert Unlocks.query.count() == 0
-    destroy_ctfd(app)
-
-
-def test_display_state_is_scheduled_before_release():
-    """A visible challenge whose scheduled_at is in the future displays as scheduled"""
-    app = create_ctfd()
-    with app.app_context():
-        chal = gen_challenge(app.db, state="visible", scheduled_at=_future())
-        assert chal.display_state == "scheduled"
-    destroy_ctfd(app)
-
-
-def test_display_state_is_visible_after_release():
-    """A visible challenge whose scheduled_at has passed displays as visible"""
-    app = create_ctfd()
-    with app.app_context():
-        chal = gen_challenge(app.db, state="visible", scheduled_at=_past())
-        assert chal.display_state == "visible"
-    destroy_ctfd(app)
-
-
-def test_display_state_is_visible_without_schedule():
-    """An unscheduled visible challenge displays as visible"""
-    app = create_ctfd()
-    with app.app_context():
-        chal = gen_challenge(app.db, state="visible", scheduled_at=None)
-        assert chal.display_state == "visible"
-    destroy_ctfd(app)
-
-
-def test_display_state_is_hidden_even_when_scheduled():
-    """Scheduling never overrides a hidden state in the display"""
-    app = create_ctfd()
-    with app.app_context():
-        chal = gen_challenge(app.db, state="hidden", scheduled_at=_future())
-        assert chal.display_state == "hidden"
-        chal = gen_challenge(app.db, name="past", state="hidden", scheduled_at=_past())
-        assert chal.display_state == "hidden"
-    destroy_ctfd(app)
-
-
-def test_display_state_passes_through_unknown_states():
-    """States other than visible are displayed verbatim"""
-    app = create_ctfd()
-    with app.app_context():
-        chal = gen_challenge(app.db, state="locked", scheduled_at=_future())
-        assert chal.display_state == "locked"
     destroy_ctfd(app)

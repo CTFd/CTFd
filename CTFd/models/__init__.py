@@ -186,17 +186,6 @@ class Challenges(db.Model):
 
         return get_chal_class(self.type)
 
-    @property
-    def display_state(self):
-        # differentiate scheduled from visible in the UI only
-        if (
-            self.state == "visible"
-            and self.scheduled_at is not None
-            and self.scheduled_at > datetime.datetime.utcnow()
-        ):
-            return "scheduled"
-        return self.state
-
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
 

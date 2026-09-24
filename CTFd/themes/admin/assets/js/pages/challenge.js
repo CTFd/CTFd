@@ -151,7 +151,7 @@ function parseScheduledAt(value) {
   return dayjs(/(Z|[+-]\d{2}:?\d{2})$/.test(value) ? value : value + "Z");
 }
 
-// Mirrors the Challenges.display_state property so that the badge
+// Mirrors the challenge_state_badge macro so that the badge
 // stays accurate after saving without requiring a page reload.
 function updateChallengeStateBadge(state, scheduledAt) {
   const pending =
