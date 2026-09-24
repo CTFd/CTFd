@@ -283,6 +283,12 @@ class ServerConfig(object):
     OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
     OAUTH_CLIENT_SECRET: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_SECRET"])
 
+    # === GIT ===
+    GITHUB_CLIENT_ID: str = empty_str_cast(config_ini["git"].get("GITHUB_CLIENT_ID", "")) if config_ini.has_section("git") else None
+    GITHUB_URL: str = empty_str_cast(config_ini["git"].get("GITHUB_URL", "")) if config_ini.has_section("git") else None
+    GITLAB_CLIENT_ID: str = empty_str_cast(config_ini["git"].get("GITLAB_CLIENT_ID", "")) if config_ini.has_section("git") else None
+    GITLAB_URL: str = empty_str_cast(config_ini["git"].get("GITLAB_URL", "")) if config_ini.has_section("git") else None
+
     # === MANAGEMENT ===
     PRESET_ADMIN_NAME: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_NAME", "")) if config_ini.has_section("management") else None
     PRESET_ADMIN_EMAIL: str = empty_str_cast(config_ini["management"].get("PRESET_ADMIN_EMAIL", "")) if config_ini.has_section("management") else None
