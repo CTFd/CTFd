@@ -8,9 +8,17 @@ from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
 from CTFd.cache import clear_standings
 from CTFd.constants import RawEnum
-from CTFd.models import Unlocks, db, get_class_by_tablename
+from CTFd.models import (
+    Challenges,
+    Hints,
+    HintUnlocks,
+    Unlocks,
+    db,
+    get_class_by_tablename,
+)
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.unlocks import UnlockSchema
+from CTFd.utils.challenges import get_solve_ids_for_user_id
 from CTFd.utils.decorators import (
     admins_only,
     authed_only,
@@ -103,6 +111,15 @@ class UnlockList(Resource):
     )
     def post(self):
         req = request.get_json()
+        if not isinstance(req, dict) or "type" not in req or "target" not in req:
+            return (
+                {
+                    "success": False,
+                    "errors": {"target": "Missing target or type"},
+                },
+                400,
+            )
+
         user = get_current_user()
 
         target_type = req["type"]
@@ -110,12 +127,46 @@ class UnlockList(Resource):
         req["user_id"] = user.id
         req["team_id"] = user.team_id
 
-        Model = get_class_by_tablename(req["type"])
+        Model = get_class_by_tablename(target_type)
+        if Model is None:
+            return (
+                {
+                    "success": False,
+                    "errors": {"type": "Unknown target type"},
+                },
+                400,
+            )
         target = Model.query.filter_by(id=req["target"]).first_or_404()
+        challenge = getattr(target, "challenge", None)
+
+        if not is_admin() and challenge is not None:
+            if challenge.state in ("hidden", "locked"):
+                abort(404)
+
+            if not can_access_challenge(challenge, user):
+                abort(404)
+
+            if challenge.requirements:
+                requirements = challenge.requirements.get("prerequisites", [])
+                all_challenge_ids = {
+                    c.id for c in Challenges.query.with_entities(Challenges.id).all()
+                }
+                prereqs = set(requirements).intersection(all_challenge_ids)
+                if not get_solve_ids_for_user_id(user_id=user.id) >= prereqs:
+                    abort(403)
 
         if target_type == "hints":
-            if not is_admin() and not can_access_challenge(target.challenge, user):
-                abort(404)
+            if not is_admin() and target.prerequisites:
+                unlock_ids = {
+                    u.target
+                    for u in HintUnlocks.query.filter_by(
+                        account_id=user.account_id
+                    ).all()
+                }
+                all_hint_ids = {h.id for h in Hints.query.with_entities(Hints.id).all()}
+                prereqs = set(target.prerequisites).intersection(all_hint_ids)
+                if not unlock_ids >= prereqs:
+                    abort(403)
 
             # We should use the team's score if in teams mode
             # user.account gives the appropriate account based on team mode
@@ -176,8 +227,20 @@ class UnlockList(Resource):
 
             return {"success": True, "data": response.data}
         elif target_type == "solutions":
-            if not is_admin() and not can_access_challenge(target.challenge, user):
-                abort(404)
+            if not is_admin():
+                if target.state == "visible":
+                    pass
+                elif target.state == "solved":
+                    if (
+                        challenge is None
+                        or challenge.id
+                        not in get_solve_ids_for_user_id(user_id=user.id)
+                    ):
+                        # We return 403 here because technically the unlock is not allowed
+                        # because the user hasn't solved the challenge not because the challenge doesn't exist
+                        abort(403)
+                else:
+                    abort(404)
 
             schema = UnlockSchema()
             response = schema.load(req, session=db.session)
