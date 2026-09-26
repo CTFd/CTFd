@@ -1,0 +1,110 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Signature Stripe
+// ─────────────────────────────────────────────────────────────────────────────
+// The signature stripe: blue, white gap, ochre — stacked vertically.
+// Blue and ochre are ALWAYS equal in height; the gap is half of either.
+// Proportions (in units of --stripe-size, base 1rem):
+//   lg  2.2 / 1.1 / 2.2   — hero, masthead
+//   md  1.4 / 0.7 / 1.4   — default, section dividers
+//   sm  0.8 / 0.4 / 0.8   — cards, panels
+//   xs  0.4 / 0.2 / 0.4   — nav, table headers
+//
+// The container has NO explicit height — it is sized by the sum of its
+// three children (exactly as in the style guide).
+//
+// Usage (markup from the style guide):
+//   <div class="stripe stripe-md">
+//       <div class="s-blue"></div>
+//       <div class="s-gap"></div>
+//       <div class="s-ochre"></div>
+//   </div>
+// ─────────────────────────────────────────────────────────────────────────────
+
+.stripe {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .s-blue {
+        background: var(--blue);
+    }
+
+    .s-gap {
+        background: var(--white);
+    }
+
+    .s-ochre {
+        background: var(--ochre);
+    }
+}
+
+// Large — hero / masthead
+.stripe-lg {
+    .s-blue,
+    .s-ochre {
+        height: calc(var(--stripe-size) * 2.2);
+    }
+
+    .s-gap {
+        height: calc(var(--stripe-size) * 1.1);
+    }
+}
+
+// Medium — default / section dividers
+.stripe-md,
+.stripe {
+    .s-blue,
+    .s-ochre {
+        height: calc(var(--stripe-size) * 1.4);
+    }
+
+    .s-gap {
+        height: calc(var(--stripe-size) * 0.7);
+    }
+}
+
+// Small — cards, panels
+.stripe-sm {
+    .s-blue,
+    .s-ochre {
+        height: calc(var(--stripe-size) * 0.8);
+    }
+
+    .s-gap {
+        height: calc(var(--stripe-size) * 0.4);
+    }
+}
+
+// Extra small — nav, table headers
+.stripe-xs {
+    .s-blue,
+    .s-ochre {
+        height: calc(var(--stripe-size) * 0.4);
+    }
+
+    .s-gap {
+        height: calc(var(--stripe-size) * 0.2);
+    }
+}
+
+// ── Solid stripe (single color, no gap) ──────────────────────────────────────
+.stripe-solid {
+    display: block;
+    height: calc(var(--stripe-size) * 1.4);
+
+    &.stripe-solid-blue {
+        background: var(--blue);
+    }
+
+    &.stripe-solid-ochre {
+        background: var(--ochre);
+    }
+
+    &.stripe-solid-gg {
+        background: var(--grey-green);
+    }
+
+    &.stripe-solid-dark {
+        background: var(--dark);
+    }
+}

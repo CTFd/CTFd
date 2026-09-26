@@ -1,0 +1,146 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Forms
+// ─────────────────────────────────────────────────────────────────────────────
+// 2px light borders, white fields, blue focus, uppercase 10px/700 labels,
+// neutral red error state. Ported from the style guide form section.
+// ─────────────────────────────────────────────────────────────────────────────
+
+.form-control {
+    border: 2px solid $bell-light;
+    border-radius: 0;
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: $bell-dark;
+    background-color: #fff;
+    box-shadow: none;
+    transition: border-color 0.12s ease;
+
+    &::placeholder {
+        color: $bell-light;
+    }
+
+    &:focus {
+        border-color: $bell-blue;
+        color: $bell-dark;
+        box-shadow: none;
+    }
+
+    &:disabled,
+    &[readonly] {
+        background-color: $bell-gg-light;
+        opacity: 1;
+    }
+}
+
+.form-select {
+    border: 2px solid $bell-light;
+    border-radius: 0;
+    padding: 12px 16px;
+    font-size: 15px;
+    color: $bell-dark;
+    background-color: #fff;
+    box-shadow: none;
+    transition: border-color 0.12s ease;
+
+    &:focus {
+        border-color: $bell-blue;
+        box-shadow: none;
+    }
+}
+
+// ── Labels ───────────────────────────────────────────────────────────────────
+.form-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $bell-dark;
+    margin-bottom: 0.5rem;
+}
+
+.form-text {
+    font-size: 11px;
+    color: $bell-mid;
+}
+
+// ── Checkboxes / radios ──────────────────────────────────────────────────────
+.form-check-input {
+    border: 2px solid $bell-light;
+    border-radius: 0;
+    width: 1.1em;
+    height: 1.1em;
+    margin-top: 0.15em;
+    background-color: #fff;
+    box-shadow: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+
+    &:focus {
+        border-color: $bell-blue;
+        box-shadow: none;
+    }
+
+    &:checked {
+        background-color: $bell-blue;
+        border-color: $bell-blue;
+    }
+}
+
+.form-check-label {
+    font-size: 14px;
+    color: $bell-dark;
+}
+
+// ── Validation ───────────────────────────────────────────────────────────────
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: $bell-red;
+    background-image: none;
+
+    &:focus {
+        border-color: $bell-red;
+        background-color: $bell-red-light;
+        box-shadow: none;
+    }
+}
+
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: $bell-gg;
+    background-image: none;
+
+    &:focus {
+        border-color: $bell-gg;
+        box-shadow: none;
+    }
+}
+
+.invalid-feedback {
+    color: $bell-red-dark;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.valid-feedback {
+    color: $bell-gg-dark;
+    font-size: 12px;
+}
+
+// ── Input groups ─────────────────────────────────────────────────────────────
+.input-group-text {
+    border: 2px solid $bell-light;
+    border-radius: 0;
+    background: $bell-gg-light;
+    color: $bell-dark;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.input-group .form-control {
+    border-radius: 0;
+}
+
+// ── Challenge flag input (CTFd) ──────────────────────────────────────────────
+.challenge-input {
+    font-family: $bell-mono;
+}

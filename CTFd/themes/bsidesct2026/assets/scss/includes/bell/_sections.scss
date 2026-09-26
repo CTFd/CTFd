@@ -1,0 +1,262 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Sections, Hero, Jumbotron
+// ─────────────────────────────────────────────────────────────────────────────
+// Reusable section scaffolding from the style guide: numbered section labels
+// (1px light rule, 1.5em, uppercase title), section descriptions that overlap
+// the label rule, grey-green surface variant, hero split layout, and the CTFd
+// jumbotron restyled as a Bell masthead.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Section scaffolding ──────────────────────────────────────────────────────
+.section {
+    padding: 96px 0;
+
+    @media (max-width: 767.98px) {
+        padding: 64px 0;
+    }
+
+    &.section-tight {
+        padding: 64px 0;
+    }
+
+    // Grey-green surface variant (guide 1:1)
+    &.bg-gg {
+        background: $bell-gg;
+        color: $bell-white;
+
+        .section-num {
+            color: $bell-ochre;
+        }
+
+        .section-title {
+            color: $bell-white;
+        }
+
+        .section-label {
+            border-color: rgba($bell-white, 0.25);
+        }
+
+        .section-desc {
+            color: rgba($bell-white, 0.7);
+        }
+    }
+
+    // Dark surface variant (CTFd extension)
+    &.bg-dark {
+        background: $bell-dark;
+        color: $bell-white;
+
+        .section-num {
+            color: $bell-ochre;
+        }
+
+        .section-title {
+            color: $bell-white;
+        }
+
+        .section-label {
+            border-color: rgba($bell-white, 0.25);
+        }
+
+        .section-desc {
+            color: rgba($bell-white, 0.7);
+        }
+    }
+}
+
+.section-inner {
+    max-width: $bell-max;
+    margin: 0 auto;
+    padding: 0 $bell-pad;
+
+    @media (max-width: 767.98px) {
+        padding: 0 24px;
+    }
+}
+
+// Numbered label row: "02 — Color Palette"
+.section-label {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 64px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $bell-light;
+    font-size: 1.5em;
+}
+
+.section-num {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $bell-blue;
+    min-width: 28px;
+}
+
+.section-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $bell-dark;
+}
+
+// Description overlaps the label rule (negative top margin, guide 1:1)
+.section-desc {
+    margin-top: -32px;
+    margin-bottom: 64px;
+    max-width: 560px;
+    font-size: 14px;
+    color: $bell-mid;
+    line-height: 1.7;
+}
+
+// ── Hero (guide split layout) ────────────────────────────────────────────────
+.hero {
+    background: $bell-white;
+    overflow: hidden;
+}
+
+.hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 520px;
+    max-width: $bell-max;
+    width: 100%;
+    margin: auto;
+}
+
+.hero-left {
+    padding: 80px $bell-pad 80px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-right {
+    background: $bell-white;
+    display: flex;
+    justify-content: center;
+    padding: 64px;
+    position: relative;
+}
+
+.hero-logo-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-eyebrow {
+    font-size: 0.7em;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $bell-blue;
+    margin-bottom: 20px;
+}
+
+.hero-h1 {
+    font-size: 6em;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 28px;
+}
+
+.hero-body {
+    font-size: 14px;
+    color: $bell-mid;
+    max-width: 400px;
+    margin-bottom: 48px;
+    line-height: 1.7;
+}
+
+.hero-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hero-spec-line {
+    display: flex;
+    gap: 16px;
+    font-size: 11px;
+    color: $bell-mid;
+
+    strong {
+        display: inline-block;
+        width: 56px;
+        font-weight: 700;
+        color: $bell-dark;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero-split {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .hero-left {
+        order: 1;
+        padding: 48px 24px 32px;
+    }
+
+    .hero-right {
+        order: 2;
+        padding: 32px 24px 64px;
+    }
+
+    .hero-h1 {
+        font-size: 3em;
+    }
+}
+
+// ── Jumbotron (CTFd page masthead) ───────────────────────────────────────────
+// CTFd pages open with a .jumbotron; restyle it as a Bell masthead:
+// white surface, display heading, md stripe along the bottom edge.
+// The stripe is a CSS gradient here (md proportions 1.4 / 0.7 / 1.4) because
+// the jumbotron markup lives in ~25 core templates and cannot be edited.
+.jumbotron {
+    background: $bell-white;
+    padding: 64px 0 80px;
+    position: relative;
+    margin-bottom: 1rem;
+
+    @media (max-width: 767.98px) {
+        // Bottom padding must exceed the 56px stripe height or the heading
+        // collides with it. 72px leaves a 16px gap (desktop uses 24px).
+        padding: 48px 0 72px;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: calc(var(--stripe-size) * 3.5);
+        background: linear-gradient(to bottom,
+                var(--blue) 0,
+                var(--blue) calc(var(--stripe-size) * 1.4),
+                var(--white) calc(var(--stripe-size) * 1.4),
+                var(--white) calc(var(--stripe-size) * 2.1),
+                var(--ochre) calc(var(--stripe-size) * 2.1),
+                var(--ochre) calc(var(--stripe-size) * 3.5));
+    }
+
+    h1 {
+        margin: 0;
+    }
+
+    .jumbotron-sub {
+        font-size: 16px;
+        color: $bell-mid;
+        margin-top: 16px;
+        max-width: 560px;
+    }
+}
+
+// The first challenge category sits directly under the jumbotron. Its
+// Bootstrap pt-5 (48px) stacks on top of the masthead's bottom margin and
+// leaves a large void — trim it to ~half the original gap. (!important is
+// required to beat Bootstrap's utility, which is emitted with !important.)
+.jumbotron + .container .pt-5:first-child {
+    padding-top: 1.5rem !important;
+}

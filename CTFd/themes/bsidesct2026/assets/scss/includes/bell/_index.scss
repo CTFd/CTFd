@@ -1,0 +1,26 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Theme layer
+// ─────────────────────────────────────────────────────────────────────────────
+// Import hub for the Bell Systems visual style, ported from the BSides CT
+// 2026 style guide (site/style/index.html). Import AFTER Bootstrap so the
+// Bell layer wins on equal specificity.
+//
+// Order matters: tokens → base → structural (stripe/sections) → components
+// (buttons/forms/cards/tables/alerts/nav/footer) → utilities.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// _tokens.scss is imported earlier in main.scss (before Bootstrap) so the
+// SCSS variables are available for theme configuration. Here we emit the
+// CSS custom properties, then the rest of the layer.
+@import "custom-properties";
+@import "base";
+@import "stripe";
+@import "sections";
+@import "buttons";
+@import "forms";
+@import "cards";
+@import "tables";
+@import "alerts";
+@import "nav";
+@import "footer";
+@import "utilities";

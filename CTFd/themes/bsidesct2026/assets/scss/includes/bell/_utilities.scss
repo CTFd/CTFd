@@ -1,0 +1,239 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Utilities
+// ─────────────────────────────────────────────────────────────────────────────
+// Text/background color helpers, badges, spacing helpers used by the style
+// guide markup, and small shared bits (spinner, token, dividers).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Text colors ──────────────────────────────────────────────────────────────
+.text-bell-white {
+    color: $bell-white !important;
+}
+
+.text-bell-gg {
+    color: $bell-gg !important;
+}
+
+.text-bell-gg-dark {
+    color: $bell-gg-dark !important;
+}
+
+.text-bell-blue {
+    color: $bell-blue !important;
+}
+
+.text-bell-blue-dark {
+    color: $bell-blue-dark !important;
+}
+
+.text-bell-ochre {
+    color: $bell-ochre !important;
+}
+
+.text-bell-ochre-dark {
+    color: $bell-ochre-dark !important;
+}
+
+.text-bell-red {
+    color: $bell-red !important;
+}
+
+.text-bell-dark {
+    color: $bell-dark !important;
+}
+
+.text-bell-mid {
+    color: $bell-mid !important;
+}
+
+.text-bell-light {
+    color: $bell-light !important;
+}
+
+// ── Backgrounds ──────────────────────────────────────────────────────────────
+.bg-bell-white {
+    background-color: $bell-white !important;
+}
+
+.bg-bell-gg {
+    background-color: $bell-gg !important;
+}
+
+.bg-bell-gg-light {
+    background-color: $bell-gg-light !important;
+}
+
+.bg-bell-blue {
+    background-color: $bell-blue !important;
+}
+
+.bg-bell-blue-light {
+    background-color: $bell-blue-light !important;
+}
+
+.bg-bell-ochre {
+    background-color: $bell-ochre !important;
+}
+
+.bg-bell-ochre-light {
+    background-color: $bell-ochre-light !important;
+}
+
+.bg-bell-red {
+    background-color: $bell-red !important;
+}
+
+.bg-bell-dark {
+    background-color: $bell-dark !important;
+}
+
+// ── Badges ───────────────────────────────────────────────────────────────────
+.badge {
+    border-radius: 0;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 8px;
+
+    &.bg-primary,
+    &.bg-info {
+        background: $bell-blue-light !important;
+        color: $bell-blue-dark;
+    }
+
+    &.bg-success {
+        background: $bell-gg-light !important;
+        color: $bell-gg-dark;
+    }
+
+    &.bg-warning {
+        background: $bell-ochre-light !important;
+        color: $bell-ochre-dark;
+    }
+
+    &.bg-danger {
+        background: $bell-red-light !important;
+        color: $bell-red-dark;
+    }
+
+    &.bg-secondary,
+    &.bg-dark {
+        background: $bell-gg-light !important;
+        color: $bell-dark;
+    }
+}
+
+// ── Spacing helpers (style guide scale) ──────────────────────────────────────
+.mb-16 {
+    margin-bottom: 16px !important;
+}
+
+.mb-24 {
+    margin-bottom: 24px !important;
+}
+
+.mb-32 {
+    margin-bottom: 32px !important;
+}
+
+.mb-40 {
+    margin-bottom: 40px !important;
+}
+
+.mt-16 {
+    margin-top: 16px !important;
+}
+
+.mt-24 {
+    margin-top: 24px !important;
+}
+
+.mt-32 {
+    margin-top: 32px !important;
+}
+
+.mt-40 {
+    margin-top: 40px !important;
+}
+
+// ── Token (monospace spec values) ────────────────────────────────────────────
+.token {
+    font-family: $bell-mono;
+    font-size: 12px;
+    background: $bell-blue-light;
+    border: 1px solid $bell-blue;
+    padding: 1px 6px;
+    color: $bell-blue-dark;
+}
+
+// ── Spinner (loading states) ─────────────────────────────────────────────────
+.spinner {
+    color: $bell-blue;
+}
+
+// ── Misc ─────────────────────────────────────────────────────────────────────
+// Uppercase label helper
+.label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+// Square everything that Bootstrap rounds by default
+.btn,
+.form-control,
+.form-select,
+.form-check-input,
+.input-group-text,
+.dropdown-menu,
+.modal-content,
+.nav-pills .nav-link,
+.page-link,
+.page-item .active .page-link {
+    border-radius: 0;
+}
+
+// Pagination (user/team listing)
+.pagination {
+    .page-link {
+        border: 2px solid $bell-light;
+        border-radius: 0;
+        color: $bell-dark;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin: 0 2px;
+        padding: 8px 14px;
+        background: $bell-white;
+
+        &:hover {
+            border-color: $bell-blue;
+            color: $bell-blue;
+            background: $bell-white;
+        }
+    }
+
+    .page-item.active .page-link {
+        background: $bell-blue;
+        border-color: $bell-blue;
+        color: $bell-white;
+    }
+
+    .page-item.disabled .page-link {
+        background: $bell-white;
+        border-color: $bell-light;
+        color: $bell-light;
+    }
+}
+
+// Progress bars (challenge progress, etc.)
+.progress {
+    height: 8px;
+    border-radius: 0;
+    background: $bell-light;
+
+    .progress-bar {
+        background: $bell-blue;
+        border-radius: 0;
+    }
+}

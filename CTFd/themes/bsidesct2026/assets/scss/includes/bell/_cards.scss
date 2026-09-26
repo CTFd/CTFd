@@ -1,0 +1,441 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Cards
+// ─────────────────────────────────────────────────────────────────────────────
+// White surface, 2px light border, square corners.
+// Bell card components: .bell-card with stripe top, eyebrow, title, text and
+// footer. Variants: gg (grey-green surface), dark, info (blue surface).
+// Also restyles Bootstrap .card, the CTFd .challenge-button grid card, and
+// the challenge modal + tabs.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Bootstrap card base ──────────────────────────────────────────────────────
+.card {
+    background: #fff;
+    border: 2px solid $bell-light;
+    border-radius: 0;
+    box-shadow: none;
+
+    .card-header {
+        border-bottom: 2px solid $bell-light;
+        background: $bell-white;
+        padding: 12px 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .card-footer {
+        border-top: 1px solid $bell-light;
+        background: none;
+        padding: 12px 20px;
+        font-size: 12px;
+        color: $bell-mid;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+}
+
+// ── Bell card component ──────────────────────────────────────────────────────
+.bell-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 2px solid $bell-light;
+    overflow: hidden;
+    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+
+    .card-stripe-top {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+
+        .cs-blue {
+            height: 6px;
+            background: var(--blue);
+        }
+
+        .cs-gap {
+            height: 2px;
+            background: var(--white);
+        }
+
+        .cs-ochre {
+            height: 5px;
+            background: var(--ochre);
+        }
+    }
+
+    .card-body {
+        padding: 32px;
+        flex: 1 1 auto;
+    }
+
+    .card-eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $bell-blue;
+        margin-bottom: 12px;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: $bell-dark;
+        margin-bottom: 12px;
+    }
+
+    .card-text {
+        font-size: 14px;
+        line-height: 1.65;
+        color: $bell-mid;
+    }
+
+    .card-footer {
+        border-top: 1px solid $bell-light;
+        padding: 16px 32px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $bell-mid;
+    }
+
+    // Variants (guide 1:1 — gg variant is a solid dark grey-green surface)
+    &.card-gg {
+        background: $bell-gg-dark;
+        border-color: $bell-gg-dark;
+        color: $bell-white;
+
+        .card-stripe-top .cs-gap {
+            background: $bell-gg-dark;
+        }
+
+        .card-eyebrow {
+            color: $bell-ochre;
+        }
+
+        .card-title {
+            color: $bell-white;
+        }
+
+        .card-text {
+            color: rgba($bell-white, 0.7);
+        }
+
+        .card-footer {
+            border-top-color: rgba($bell-white, 0.2);
+            color: rgba($bell-white, 0.6);
+        }
+    }
+
+    &.card-dark {
+        background: $bell-dark;
+        border-color: $bell-dark;
+
+        .card-title {
+            color: $bell-white;
+        }
+
+        .card-text {
+            color: rgba($bell-white, 0.7);
+        }
+
+        .card-footer {
+            border-top-color: rgba($bell-white, 0.15);
+            color: rgba($bell-white, 0.5);
+        }
+    }
+
+    &.card-info {
+        background: $bell-blue-light;
+        border-color: $bell-blue;
+
+        .card-stripe-top {
+            .cs-ochre {
+                background: var(--blue-dark);
+            }
+        }
+
+        .card-eyebrow {
+            color: $bell-blue-dark;
+        }
+    }
+}
+
+// ── CTFd challenge grid button ───────────────────────────────────────────────
+// The challenge listing renders each challenge as a .challenge-button
+// (a <button> styled as a card). Give it the Bell card treatment.
+.challenge-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 2px solid $bell-light;
+    border-radius: 0;
+    box-shadow: none;
+    text-align: left;
+    padding: 0;
+    overflow: hidden;
+    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+
+    // Signature stripe top
+    &::before {
+        content: "";
+        display: block;
+        height: 6px;
+        background: linear-gradient(
+            to bottom,
+            var(--blue) 0,
+            var(--blue) 6px,
+            var(--white) 6px,
+            var(--white) 8px,
+            var(--ochre) 8px,
+            var(--ochre) 13px
+        );
+    }
+
+    .challenge-inner {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 16px 20px 20px;
+
+        p {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.35;
+            color: $bell-dark;
+            margin-bottom: 8px;
+        }
+
+        span {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: $bell-mid;
+        }
+    }
+
+    &:hover,
+    &:focus {
+        // Solid accent fill (beats .btn-dark:hover, which would go #000)
+        background: $bell-blue;
+        border-color: $bell-blue;
+
+        .challenge-inner p {
+            color: $bell-white;
+        }
+
+        .challenge-inner span {
+            color: rgba($bell-white, 0.75);
+        }
+    }
+
+    // Solved challenges
+    &.challenge-solved {
+        background: $bell-gg-light;
+        border-color: $bell-gg;
+
+        &::before {
+            background: linear-gradient(
+                to bottom,
+                var(--grey-green) 0,
+                var(--grey-green) 6px,
+                var(--white) 6px,
+                var(--white) 8px,
+                var(--gg-dark) 8px,
+                var(--gg-dark) 13px
+            );
+        }
+
+        .challenge-inner span {
+            color: $bell-gg-dark;
+        }
+
+        &:hover,
+        &:focus {
+            // Solved cards fill with solid grey-green on hover
+            background: $bell-gg;
+            border-color: $bell-gg-dark;
+
+            .challenge-inner p {
+                color: $bell-white;
+            }
+
+            .challenge-inner span {
+                color: rgba($bell-white, 0.75);
+            }
+        }
+    }
+}
+
+// ── Category headers (challenge listing) ─────────────────────────────────────
+.category-header {
+    h3 {
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $bell-dark;
+        border-bottom: 2px solid $bell-dark;
+        padding-bottom: 8px;
+    }
+}
+
+// ── Modal (challenge dialog) ─────────────────────────────────────────────────
+.modal-content {
+    background: $bell-white;
+    border: 2px solid $bell-dark;
+    border-radius: 0;
+    box-shadow: none;
+
+    &::before {
+        // Stripe top on the modal
+        content: "";
+        display: block;
+        height: 13px;
+        background: linear-gradient(
+            to bottom,
+            var(--blue) 0,
+            var(--blue) 6px,
+            var(--white) 6px,
+            var(--white) 8px,
+            var(--ochre) 8px,
+            var(--ochre) 13px
+        );
+    }
+}
+
+.modal-header {
+    border-bottom: 2px solid $bell-light;
+}
+
+.modal-footer {
+    border-top: 1px solid $bell-light;
+}
+
+// ── Tabs (challenge modal: Challenge / Submissions / Solves) ────────────────
+.nav-tabs {
+    border-bottom: 2px solid $bell-light;
+
+    .nav-link {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        padding: 10px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $bell-mid;
+        background: none;
+        border-radius: 0;
+
+        &:hover {
+            border-bottom-color: $bell-light;
+            color: $bell-dark;
+        }
+
+        &.active {
+            background: none;
+            border-bottom-color: $bell-blue;
+            color: $bell-blue;
+        }
+    }
+}
+
+// ── Challenge modal content ──────────────────────────────────────────────────
+.challenge-name {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.challenge-value {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $bell-ochre-dark;
+}
+
+.challenge-tag {
+    background: $bell-blue-light;
+    color: $bell-blue-dark;
+    border: 1px solid $bell-blue;
+    border-radius: 0;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 8px;
+}
+
+.challenge-desc {
+    font-size: 16px;
+    line-height: 1.6;
+
+    a {
+        color: $bell-blue;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+}
+
+// File download buttons in challenge modal
+.btn-file {
+    background: $bell-white;
+    border: 2px solid $bell-light;
+    color: $bell-dark;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 0;
+
+    &:hover,
+    &:focus {
+        border-color: $bell-blue;
+        color: $bell-blue;
+        background: $bell-blue-light;
+    }
+}
+
+// ── Hints (details/summary) ──────────────────────────────────────────────────
+.challenge-hints details {
+    border: 2px solid $bell-light;
+    background: $bell-white;
+    padding: 0;
+
+    summary {
+        cursor: pointer;
+        padding: 12px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $bell-dark;
+        list-style: none;
+
+        &::before {
+            content: "+";
+            display: inline-block;
+            width: 1.4em;
+            color: $bell-blue;
+        }
+    }
+
+    &[open] summary {
+        border-bottom: 1px solid $bell-light;
+
+        &::before {
+            content: "–";
+        }
+    }
+
+    > div {
+        padding: 12px 16px;
+        font-size: 14px;
+        line-height: 1.55;
+    }
+}

@@ -1,237 +1,86 @@
-// BSides CT 2026 Theme
-// Color palette extracted from bsidesct.org
-// Warm cream background, dark text, sage green/gold/blue/red accents
+// ─────────────────────────────────────────────────────────────────────────────
+// BSides CT 2026 — CTFd Theme
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems visual style, ported from the BSides CT 2026 style guide
+// (site/style/index.html).
+//
+// Structure:
+//   1. Bell design tokens (SCSS variables) — before Bootstrap config
+//   2. Bootstrap theme configuration (Bell palette, square corners, type)
+//   3. Bootstrap core
+//   4. Bell Systems layer (base, stripe, sections, components, utilities)
+//   5. Remaining theme includes (syntax highlighting, graphs, icons)
+// ─────────────────────────────────────────────────────────────────────────────
 
-// BSidesCT brand colors
-$bsides-cream: #f4f2ee;
-$bsides-dark: #1c1c1c;
-$bsides-sage: #7a8b6c;
-$bsides-gold: #e8a820;
-$bsides-blue: #2b8fd8;
-$bsides-red: #ff0000;
-$bsides-gray: #5a5a5a;
-$bsides-light-gray: #e0ddd8;
+// 1. Design tokens (SCSS variables, no CSS output)
+@import "includes/bell/tokens";
 
-@use "bootstrap/scss/bootstrap" as * with (
-  $primary: $bsides-sage,
-  $secondary: $bsides-dark,
-  $success: $bsides-sage,
-  $danger: $bsides-red,
-  $warning: $bsides-gold,
-  $info: $bsides-blue,
-  $light: $bsides-cream,
-  $dark: $bsides-dark,
-  $body-bg: $bsides-cream,
-  $body-color: $bsides-dark,
-  $link-color: $bsides-sage,
-  $link-hover-color: $bsides-dark,
-  $font-family-sans-serif: #{"Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, sans-serif},
-  $headings-font-weight: 700
-);
+// 2. Bootstrap theme configuration
+//
+// Brand roles:
+//   primary   → Bell Blue   (actions, links, focus)
+//   secondary → Bell Dark   (neutral solid buttons)
+//   success   → Grey-Green  (solved, positive)
+//   info      → Bell Blue   (informational)
+//   warning   → Bell Ochre  (caution)
+//   danger    → Bell Red    (errors only)
+//   light     → Bell Light  (borders, dividers)
+//   dark      → Bell Dark
+$primary: $bell-blue;
+$secondary: $bell-dark;
+$success: $bell-gg;
+$info: $bell-blue;
+$warning: $bell-ochre;
+$danger: $bell-red;
+$light: $bell-light;
+$dark: $bell-dark;
+$white: $bell-white;
 
-@use "includes/components/table";
-@use "includes/components/jumbotron";
-@use "includes/components/challenge";
-@use "includes/components/sticky-footer";
-@use "includes/components/graphs";
+// Neutrals
+$gray-900: $bell-dark;
+$gray-600: $bell-mid;
+$gray-300: $bell-light;
+$gray-100: $bell-gg-light;
 
-@use "includes/utils/fonts";
-@use "includes/utils/opacity";
-@use "includes/utils/min-height";
-@use "includes/utils/cursors";
-@use "includes/utils/lolight";
+// Body
+$body-bg: $bell-white;
+$body-color: $bell-dark;
+$body-emphasis-color: $bell-dark;
+$body-secondary-color: rgba($bell-dark, 0.7);
+$body-tertiary-color: rgba($bell-dark, 0.5);
+$font-family-base: $bell-font;
+$font-size-base: 1rem;
+$line-height-base: 1.55;
+$headings-font-weight: 700;
+$headings-margin-bottom: 0.5rem;
 
-@use "includes/icons/award-icons";
-@use "includes/icons/flag-icons";
+// Links
+$link-color: $bell-blue;
+$link-hover-color: $bell-blue-dark;
+$link-decoration: none;
+$link-hover-decoration: none;
 
-// Typography
-h1,
-h2 {
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
+// Square corners, no shadows — signature of the Bell style
+$enable-rounded: false;
+$enable-shadows: false;
+$border-radius: 0;
+$border-radius-sm: 0;
+$border-radius-lg: 0;
+$border-radius-xl: 0;
+$border-radius-xxl: 0;
 
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 600;
-}
+// 3. Bootstrap core
+@import "bootstrap/scss/bootstrap";
 
-a {
-  text-decoration: none !important;
-  transition: color 0.2s ease;
-}
+// 4. Bell Systems layer (emits CSS custom properties + all Bell components)
+@import "includes/bell/index";
 
-blockquote {
-  border-left: 4px solid $bsides-sage;
-  padding-left: 15px;
-  background: rgba($bsides-sage, 0.05);
-}
-
-input,
-select {
-  padding: 0.6rem !important;
-  height: auto !important;
-}
-
-.fa-spin.spinner {
-  text-align: center;
-  opacity: 0.5;
-}
-
-.badge-notification {
-  vertical-align: top;
-  margin-left: -1.5em;
-  font-size: 50%;
-}
-
-.form-select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%231c1c1c' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
-  background-size: 8px 10px;
-}
-
-// Navbar styling to match bsidesct.org
-.navbar {
-  background-color: $bsides-cream !important;
-  border-bottom: 1px solid $bsides-light-gray;
-
-  .navbar-brand {
-    font-weight: 700;
-    text-transform: uppercase;
-    color: $bsides-dark;
-    letter-spacing: 1px;
-  }
-
-  .nav-link {
-    font-weight: 700;
-    text-transform: uppercase;
-    color: $bsides-gray !important;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-
-    &:hover,
-    &.active {
-      color: $bsides-dark !important;
-    }
-  }
-}
-
-// Buttons - match the bsidesct.org style
-.btn-primary {
-  background-color: $bsides-sage;
-  border-color: $bsides-sage;
-  color: #fff;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
-  &:hover,
-  &:focus {
-    background-color: darken($bsides-sage, 10%);
-    border-color: darken($bsides-sage, 10%);
-    color: #fff;
-  }
-}
-
-.btn-outline-primary {
-  border-color: $bsides-sage;
-  color: $bsides-sage;
-  font-weight: 700;
-  text-transform: uppercase;
-
-  &:hover,
-  &:focus {
-    background-color: $bsides-sage;
-    color: #fff;
-  }
-}
-
-// CTA buttons (like "Get Tickets!" on the main site - red outlined)
-.btn-danger,
-.btn-outline-danger {
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-// Cards and panels
-.card {
-  border: 1px solid $bsides-light-gray;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-// Challenge cards
-.challenge-button {
-  border: 1px solid $bsides-light-gray;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    border-color: $bsides-sage;
-    box-shadow: 0 2px 8px rgba($bsides-sage, 0.15);
-  }
-}
-
-// Footer styling - dark bg matching bsidesct.org footer
-.footer {
-  background-color: $bsides-dark;
-  color: $bsides-cream;
-
-  a {
-    color: $bsides-cream;
-
-    &:hover {
-      color: $bsides-gold;
-    }
-  }
-}
-
-// Jumbotron / hero area
-.jumbotron {
-  background-color: $bsides-sage;
-  color: $bsides-cream;
-
-  h1, h2, h3 {
-    color: $bsides-cream;
-  }
-
-  a {
-    color: $bsides-cream;
-    text-decoration: underline !important;
-
-    &:hover {
-      color: $bsides-gold;
-    }
-  }
-}
-
-// Scoreboard
-.table {
-  th {
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.5px;
-    color: $bsides-gray;
-  }
-}
-
-// Alerts and notifications
-.alert-success {
-  background-color: rgba($bsides-sage, 0.1);
-  border-color: $bsides-sage;
-  color: darken($bsides-sage, 20%);
-}
-
-// Gold accent for special elements
-.text-warning,
-.badge-warning {
-  color: $bsides-gold !important;
-}
-
-// BSides CT branding element
-.bsides-brand {
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
+// 5. Remaining theme includes
+@import "includes/utils/fonts";
+@import "includes/utils/lolight";
+@import "includes/utils/min-height";
+@import "includes/utils/opacity";
+@import "includes/utils/cursors";
+@import "includes/components/graphs";
+@import "includes/icons/award-icons";
+@import "includes/icons/flag-icons";

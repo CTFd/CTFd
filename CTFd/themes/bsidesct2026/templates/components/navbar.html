@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+<nav class="navbar navbar-expand-md bell-nav fixed-top">
   <div class="container">
     <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
       {% if Configs.ctf_logo %}
@@ -193,19 +193,13 @@
             </ul>
           </form>
         </li>
-
-        <li class="nav-item">
-          <button class="nav-link theme-switch" type="button">
-            <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="{% trans %}Toggle theme{% endtrans %}">
-              <i class="fas fa-sun d-none d-md-inline"></i>
-            </span>
-            <span class="d-sm-inline d-md-none">
-              <i class="fas fa-sun pe-1"></i>
-              {% trans %}Toggle theme{% endtrans %}
-            </span>
-          </button>
-        </li>
       </ul>
     </div>
+  </div>
+
+  <div class="stripe stripe-xs" aria-hidden="true">
+    <div class="s-blue"></div>
+    <div class="s-gap"></div>
+    <div class="s-ochre"></div>
   </div>
 </nav>

@@ -1,0 +1,107 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Tables
+// ─────────────────────────────────────────────────────────────────────────────
+// Uppercase 10px/700 headers in mid-grey, 2px dark header rule, 1px light row
+// rules, grey-green hover/striping. Used by scoreboard, submissions, solves,
+// users, teams.
+// ─────────────────────────────────────────────────────────────────────────────
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: $bell-dark;
+    --bs-table-border-color: #{$bell-light};
+    --bs-table-striped-bg: #{$bell-gg-light};
+    --bs-table-striped-color: #{$bell-dark};
+    --bs-table-active-bg: #{$bell-gg-light};
+    --bs-table-active-color: #{$bell-dark};
+    --bs-table-hover-bg: #{$bell-gg-light};
+    --bs-table-hover-color: #{$bell-dark};
+    --bs-table-hover-factor: 1;
+
+    width: 100%;
+    margin-bottom: 1rem;
+    color: $bell-dark;
+
+    > :not(caption) > * > * {
+        padding: 12px 16px;
+        background-color: transparent;
+        border-bottom: 1px solid $bell-light;
+        box-shadow: none;
+    }
+
+    > thead {
+        background: $bell-white;
+
+        > tr > * {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: $bell-mid;
+            border-bottom: 2px solid $bell-dark;
+            background: none;
+        }
+    }
+
+    > tbody {
+        > tr > * {
+            font-size: 14px;
+            line-height: 1.5;
+            background: none;
+        }
+
+        > tr:hover > * {
+            background: $bell-gg-light;
+        }
+    }
+
+    // Striped rows (scoreboard, submissions, solves)
+    &.table-striped > tbody > tr:nth-of-type(odd) > * {
+        background-color: rgba($bell-gg-light, 0.45);
+    }
+
+    // Row header (place column on scoreboard)
+    > tbody > tr > :first-child {
+        font-weight: 700;
+    }
+
+    a {
+        color: $bell-blue;
+        font-weight: 700;
+        text-decoration: none;
+
+        &:hover {
+            color: $bell-blue-dark;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+    }
+}
+
+// ── Bracket pills (scoreboard nav-pills) ─────────────────────────────────────
+.nav-pills {
+    gap: 8px;
+
+    .nav-link {
+        border: 2px solid $bell-light;
+        border-radius: 0;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $bell-dark;
+        background: $bell-white;
+        transition: border-color 0.15s ease, background-color 0.15s ease,
+            color 0.15s ease;
+
+        &:hover {
+            border-color: $bell-blue;
+            color: $bell-blue;
+        }
+
+        &.active {
+            background: $bell-blue;
+            border-color: $bell-blue;
+            color: $bell-white;
+        }
+    }
+}

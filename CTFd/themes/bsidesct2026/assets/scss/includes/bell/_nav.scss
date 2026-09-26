@@ -1,0 +1,185 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Navigation
+// ─────────────────────────────────────────────────────────────────────────────
+// White fixed nav, 60px tall, hairline bottom shadow, uppercase 12px/700
+// links in mid grey with blue hover. Ported from the style guide nav.
+// The xs signature stripe is a real DOM element (last child of the <nav> in
+// templates/components/navbar.html) — the stripe component is reused, not
+// simulated.
+// The navbar template uses the .bell-nav class.
+// ─────────────────────────────────────────────────────────────────────────────
+
+body {
+    // Room for the fixed nav. The xs stripe is pinned inside the nav's
+    // bottom edge, so the content sits flush against the stripe.
+    padding-top: 60px;
+}
+
+.bell-nav {
+    min-height: 60px;
+    background: $bell-white;
+    padding-top: 0;
+    padding-bottom: 0;
+    box-shadow: 0 1px 0 $bell-light;
+
+    // The navbar is a flex row (nowrap at >=768px via navbar-expand-md),
+    // so the stripe is pinned to the bottom edge of the fixed nav instead.
+    > .stripe {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .container {
+        display: flex;
+        align-items: center;
+        min-height: 60px;
+        flex-wrap: nowrap;
+    }
+
+    // ── Brand ────────────────────────────────────────────────────────────────
+    .navbar-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        line-height: 1;
+        color: $bell-dark;
+        padding: 12px 0;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus {
+            color: $bell-blue;
+        }
+
+        .ctf_logo {
+            height: 24px;
+            width: auto;
+        }
+    }
+
+    // ── Toggler ──────────────────────────────────────────────────────────────
+    .navbar-toggler {
+        border: 2px solid $bell-dark;
+        border-radius: 0;
+        padding: 6px 8px;
+        margin-right: 12px;
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%231C1C1C' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        &:focus {
+            box-shadow: none;
+            outline: 2px solid $bell-blue;
+            outline-offset: 2px;
+        }
+    }
+
+    // ── Links ────────────────────────────────────────────────────────────────
+    .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: $bell-mid;
+        transition: color 0.12s ease;
+
+        &:hover,
+        &:focus {
+            color: $bell-blue;
+        }
+
+        &.active {
+            color: $bell-blue;
+        }
+    }
+
+    .navbar-nav {
+        .nav-item + .nav-item {
+            margin-left: 4px;
+        }
+    }
+
+    // Mobile collapse
+    @media (max-width: 767.98px) {
+        .navbar-collapse {
+            background: $bell-white;
+            border-top: 1px solid $bell-light;
+            padding: 8px 0 16px;
+
+            .nav-link {
+                padding: 10px 8px;
+                border-left: 2px solid transparent;
+
+                &.active {
+                    border-left-color: $bell-blue;
+                }
+            }
+        }
+    }
+
+    // ── Dropdowns ────────────────────────────────────────────────────────────
+    .dropdown-menu {
+        background: $bell-white;
+        border: 2px solid $bell-light;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 4px 0;
+        margin-top: 4px;
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: $bell-dark;
+            background: none;
+            border: 0;
+            border-radius: 0;
+            text-align: inherit;
+            cursor: pointer;
+
+            &:hover,
+            &:focus {
+                background: $bell-gg-light;
+                color: $bell-dark;
+            }
+
+            &.active,
+            &.bg-primary {
+                background: $bell-blue-light;
+                color: $bell-blue-dark;
+            }
+        }
+    }
+
+    .dropdown-toggle::after {
+        border-top: 5px solid currentColor;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+        border-bottom: 0;
+        vertical-align: middle;
+        margin-left: 4px;
+    }
+
+    // Notification badge
+    .badge-notification {
+        background: $bell-red;
+        color: $bell-white;
+        border-radius: 0;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 5px;
+        vertical-align: middle;
+    }
+}

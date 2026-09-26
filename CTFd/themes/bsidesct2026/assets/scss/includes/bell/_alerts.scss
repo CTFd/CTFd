@@ -1,0 +1,114 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Alerts
+// ─────────────────────────────────────────────────────────────────────────────
+// Tinted surface, 4px accent left edge (no full border), uppercase 12px/700
+// title, 13px body. Ported 1:1 from the style guide alerts section and mapped
+// onto Bootstrap .alert-* classes used by CTFd (challenge result, errors,
+// notifications).
+// ─────────────────────────────────────────────────────────────────────────────
+
+.alert {
+    display: flex;
+    gap: 14px;
+    padding: 18px 22px;
+    border: 0;
+    border-left: 4px solid $bell-mid;
+    border-radius: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    box-shadow: none;
+    background-color: $bell-white;
+    color: $bell-dark;
+
+    .alert-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .alert-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .alert-close {
+        margin-left: auto;
+        border: 0;
+        background: none;
+        color: $bell-mid;
+        font-size: 16px;
+        line-height: 1;
+        padding: 2px 6px;
+        cursor: pointer;
+
+        &:hover {
+            color: $bell-dark;
+        }
+    }
+
+    // ── Variants (guide 1:1) ─────────────────────────────────────────────────
+    &.alert-info {
+        background: $bell-blue-light;
+        border-left-color: $bell-blue;
+        color: $bell-dark;
+
+        .alert-title {
+            color: $bell-blue-dark;
+        }
+    }
+
+    &.alert-warning {
+        background: $bell-ochre-light;
+        border-left-color: $bell-ochre;
+        color: $bell-dark;
+
+        .alert-title {
+            color: $bell-ochre-dark;
+        }
+    }
+
+    &.alert-success {
+        background: rgba($bell-gg, 0.1);
+        border-left-color: $bell-gg;
+        color: $bell-dark;
+
+        .alert-title {
+            color: $bell-gg-dark;
+        }
+    }
+
+    &.alert-danger {
+        background: rgba($bell-red-dark, 0.07);
+        border-left-color: $bell-red-dark;
+        color: $bell-dark;
+
+        .alert-title {
+            color: $bell-red-dark;
+        }
+    }
+
+    &.alert-secondary,
+    &.alert-dark {
+        background: $bell-gg-light;
+        border-left-color: $bell-dark;
+        color: $bell-dark;
+
+        .alert-title {
+            color: $bell-dark;
+        }
+    }
+}
+
+// Dismissible alerts (Bootstrap .btn-close inside alerts)
+.alert-dismissible .btn-close {
+    filter: invert(0);
+    opacity: 0.5;
+
+    &:hover,
+    &:focus {
+        opacity: 1;
+    }
+}

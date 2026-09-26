@@ -1,0 +1,309 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Buttons
+// ─────────────────────────────────────────────────────────────────────────────
+// Square corners, 2px borders, uppercase 12px/700 labels, no shadows.
+// Mapped onto Bootstrap .btn-* classes so existing CTFd templates pick up
+// the Bell look without template changes:
+//
+//   .btn-primary            → Bell Blue
+//   .btn-secondary          → Bell Dark
+//   .btn-info               → Bell Blue (info accent)
+//   .btn-success            → Bell Grey-Green
+//   .btn-warning            → Bell Ochre
+//   .btn-danger             → Bell Red
+//   .btn-light / .btn-link  → ghost (dark border) / text link
+//   .btn-outline-*          → ghost variants (white bg, colored border)
+// ─────────────────────────────────────────────────────────────────────────────
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 0;
+    padding: 13px 28px;
+    font-family: $bell-font;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    box-shadow: none;
+    transition: background-color 0.12s ease, color 0.12s ease,
+        border-color 0.12s ease;
+
+    &:focus,
+    &:focus-visible {
+        box-shadow: none;
+        outline: 2px solid $bell-blue;
+        outline-offset: 2px;
+    }
+
+    &:disabled,
+    &.disabled {
+        opacity: 0.5;
+    }
+
+    // Sizes (guide 1:1)
+    &.btn-sm {
+        padding: 9px 20px;
+        font-size: 10px;
+    }
+
+    &.btn-lg {
+        padding: 18px 40px;
+        font-size: 13px;
+    }
+}
+
+// Ghost (outline) buttons carry a 2px border, so their padding is
+// compensated by 2px (guide 1:1).
+$bell-ghost-btns: (
+    ".btn-light",
+    ".btn-outline-primary",
+    ".btn-outline-info",
+    ".btn-outline-secondary",
+    ".btn-outline-dark",
+    ".btn-outline-success",
+    ".btn-outline-warning",
+    ".btn-outline-danger",
+    ".btn-outline-light",
+);
+
+@each $ghost in $bell-ghost-btns {
+    #{$ghost} {
+        border: 2px solid;
+        padding: 11px 26px;
+
+        &.btn-sm {
+            padding: 7px 18px;
+        }
+
+        &.btn-lg {
+            padding: 16px 38px;
+        }
+    }
+}
+
+// ── Solid variants ───────────────────────────────────────────────────────────
+.btn-primary {
+    background: $bell-blue;
+    border-color: $bell-blue;
+    color: $bell-white;
+
+    &:hover,
+    &:focus {
+        background: $bell-blue-dark;
+        border-color: $bell-blue-dark;
+        color: $bell-white;
+    }
+}
+
+.btn-secondary {
+    background: $bell-dark;
+    border-color: $bell-dark;
+    color: $bell-white;
+
+    &:hover,
+    &:focus {
+        background: #000;
+        border-color: #000;
+        color: $bell-white;
+    }
+}
+
+.btn-dark {
+    background: $bell-dark;
+    border-color: $bell-dark;
+    color: $bell-white;
+
+    &:hover,
+    &:focus {
+        background: #000;
+        border-color: #000;
+        color: $bell-white;
+    }
+}
+
+.btn-info {
+    background: $bell-blue;
+    border-color: $bell-blue;
+    color: $bell-white;
+
+    &:hover,
+    &:focus {
+        background: $bell-blue-dark;
+        border-color: $bell-blue-dark;
+        color: $bell-white;
+    }
+}
+
+.btn-success {
+    background: $bell-gg;
+    border-color: $bell-gg;
+    color: $bell-white;
+
+    &:hover,
+    &:focus {
+        background: $bell-gg-dark;
+        border-color: $bell-gg-dark;
+        color: $bell-white;
+    }
+}
+
+.btn-warning {
+    background: $bell-ochre;
+    border-color: $bell-ochre;
+    color: $bell-dark;
+
+    &:hover,
+    &:focus {
+        background: $bell-ochre-dark;
+        border-color: $bell-ochre-dark;
+        color: $bell-white;
+    }
+}
+
+.btn-danger {
+    background: $bell-red;
+    border-color: $bell-red;
+    color: $bell-white;
+
+    &:hover,
+    &:focus {
+        background: $bell-red-dark;
+        border-color: $bell-red-dark;
+        color: $bell-white;
+    }
+}
+
+.btn-light {
+    background: transparent;
+    border-color: $bell-dark;
+    color: $bell-dark;
+
+    &:hover,
+    &:focus {
+        background: $bell-dark;
+        border-color: $bell-dark;
+        color: $bell-white;
+    }
+}
+
+// ── Outline (ghost) variants ─────────────────────────────────────────────────
+.btn-outline-primary,
+.btn-outline-info {
+    background: $bell-white;
+    border-color: $bell-blue;
+    color: $bell-blue;
+
+    &:hover,
+    &:focus {
+        background: $bell-blue;
+        border-color: $bell-blue;
+        color: $bell-white;
+    }
+}
+
+.btn-outline-secondary,
+.btn-outline-dark {
+    background: $bell-white;
+    border-color: $bell-dark;
+    color: $bell-dark;
+
+    &:hover,
+    &:focus {
+        background: $bell-dark;
+        border-color: $bell-dark;
+        color: $bell-white;
+    }
+}
+
+.btn-outline-success {
+    background: $bell-white;
+    border-color: $bell-gg;
+    color: $bell-gg-dark;
+
+    &:hover,
+    &:focus {
+        background: $bell-gg;
+        border-color: $bell-gg;
+        color: $bell-white;
+    }
+}
+
+.btn-outline-warning {
+    background: $bell-white;
+    border-color: $bell-ochre;
+    color: $bell-ochre-dark;
+
+    &:hover,
+    &:focus {
+        background: $bell-ochre;
+        border-color: $bell-ochre;
+        color: $bell-dark;
+    }
+}
+
+.btn-outline-danger {
+    background: $bell-white;
+    border-color: $bell-red;
+    color: $bell-red;
+
+    &:hover,
+    &:focus {
+        background: $bell-red;
+        border-color: $bell-red;
+        color: $bell-white;
+    }
+}
+
+.btn-outline-light {
+    background: transparent;
+    border-color: $bell-white;
+    color: $bell-white;
+
+    &:hover,
+    &:focus {
+        background: $bell-white;
+        border-color: $bell-white;
+        color: $bell-dark;
+    }
+}
+
+// Active state for toggle buttons (e.g. rating thumbs)
+.btn-outline-success.active,
+.btn-outline-danger.active {
+    background: $bell-dark;
+    border-color: $bell-dark;
+    color: $bell-white;
+}
+
+// ── Link button ──────────────────────────────────────────────────────────────
+.btn-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: none;
+    color: $bell-blue;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    &:hover,
+    &:focus {
+        color: $bell-blue-dark;
+    }
+}
+
+// ── Close button (modal X) ───────────────────────────────────────────────────
+.btn-close {
+    filter: invert(0);
+    opacity: 0.5;
+
+    &:hover,
+    &:focus {
+        opacity: 1;
+    }
+}

@@ -1,0 +1,29 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — CSS Custom Properties
+// ─────────────────────────────────────────────────────────────────────────────
+// Mirrors the style guide's :root block 1:1 so guide CSS ports verbatim.
+// Requires _tokens.scss (SCSS variables) to be imported first.
+// ─────────────────────────────────────────────────────────────────────────────
+
+:root {
+    --white: #{$bell-white};
+    --grey-green: #{$bell-gg};
+    --blue: #{$bell-blue};
+    --ochre: #{$bell-ochre};
+    --red: #{$bell-red};
+    --dark: #{$bell-dark};
+    --mid: #{$bell-mid};
+    --light: #{$bell-light};
+    --blue-dark: #{$bell-blue-dark};
+    --blue-light: #{$bell-blue-light};
+    --ochre-dark: #{$bell-ochre-dark};
+    --ochre-light: #{$bell-ochre-light};
+    --gg-dark: #{$bell-gg-dark};
+    --gg-light: #{$bell-gg-light};
+    --red-dark: #{$bell-red-dark};
+    --red-light: #{$bell-red-light};
+    --stripe-size: #{$bell-stripe-size};
+    --font: #{$bell-font};
+    --max: #{$bell-max};
+    --pad: #{$bell-pad};
+}

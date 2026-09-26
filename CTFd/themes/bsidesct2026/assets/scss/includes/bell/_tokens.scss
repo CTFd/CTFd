@@ -1,0 +1,47 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Bell Systems — Design Tokens (SCSS variables)
+// ─────────────────────────────────────────────────────────────────────────────
+// Ported from the BSides CT 2026 style guide (site/style/index.html).
+//
+// Four approved colors only. White and Grey-Green form the structural
+// foundation. Blue and Ochre serve as identification accents — never
+// interchanged, never diluted.
+//
+// This file defines SCSS variables only (no CSS output) so it can be
+// imported before Bootstrap for theme configuration. The matching CSS
+// custom properties live in _custom-properties.scss.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Palette: primary colors ──────────────────────────────────────────────────
+$bell-white: #f4f2ee; // Bell White — structural foundation
+$bell-gg: #7a8b6c; // Bell Grey-Green — structural foundation
+$bell-blue: #2b8fd8; // Bell Blue — identification accent
+$bell-ochre: #e8a820; // Bell Ochre — identification accent
+$bell-red: #e94862; // Bell Red — error / alert only
+
+// ── Palette: neutrals ────────────────────────────────────────────────────────
+$bell-dark: #1c1c1c; // near-black — text, dark surfaces
+$bell-mid: #5a5a5a; // secondary text
+$bell-light: #d8d4cc; // borders, dividers
+
+// ── Palette: dark / light variants ───────────────────────────────────────────
+$bell-blue-dark: #1958d2;
+$bell-blue-light: #eaf4fc;
+$bell-ochre-dark: #a55716;
+$bell-ochre-light: #fdf5dc;
+$bell-gg-dark: #5b6b50;
+$bell-gg-light: #c2cebc;
+$bell-red-dark: #c0392b;
+$bell-red-light: #fce4e8;
+
+// ── Stripe geometry ──────────────────────────────────────────────────────────
+// The signature stripe: blue over ochre, separated by a white gap.
+$bell-stripe-size: 1rem;
+
+// ── Layout ───────────────────────────────────────────────────────────────────
+$bell-max: 1280px; // max content width
+$bell-pad: 64px; // section horizontal padding (desktop)
+
+// ── Type ─────────────────────────────────────────────────────────────────────
+$bell-font: "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, sans-serif;
+$bell-mono: "SF Mono", "Cascadia Code", "DejaVu Sans Mono", Menlo, monospace;
