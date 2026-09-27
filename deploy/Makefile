@@ -203,6 +203,11 @@ arena-koth: ## King of the Hill sur AWS : collines sur l'arena + tunnel frps (po
 	@FRONT_IP=$(FRONT_IP) FRONT_PRIV=$(FRONT_PRIV) ARENA_IP=$(ARENA_IP) BUCKET=$(BUCKET) SSH_OPTS="$(SSH_OPTS)" \
 	  scripts/arena-koth.sh $(if $(STATUS),--status)$(if $(DOWN),--down)
 
+.PHONY: refresh-fronts
+refresh-fronts: ## Rebuild+relance des fronts web (11 servis + colline reseau-fortune :28493) apres MAJ du depot. SERVED=1/KOTH=1 pour cibler ; RECREATE=1 recree les instances servies en cours ; STATUS=1 ; PUSH=1 = aussi vers S3
+	@ARENA_IP=$(ARENA_IP) BUCKET=$(BUCKET) SSH_OPTS="$(SSH_OPTS)" PUSH=$(PUSH) \
+	  scripts/refresh-fronts.sh $(if $(SERVED),--served-only)$(if $(KOTH), --koth-only)$(if $(RECREATE), --recreate-served)$(if $(STATUS), --status)
+
 .PHONY: check-arena
 check-arena: ## Liste les images de challenge reellement presentes sur l'arena
 	@$(ARENA_SSH) 'docker image ls --format "{{.Repository}}:{{.Tag}}" | sort'
