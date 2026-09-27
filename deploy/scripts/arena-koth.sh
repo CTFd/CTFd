@@ -14,7 +14,7 @@
 # Topologie :
 #   joueur -> FRONT_IP:2849x (frps) -> tunnel -> arena 127.0.0.1:2849x (colline)
 #   CTFd (front) -> FRONT_PRIV:2849x/king (X-Scorer-Token) pour le scoring
-# Les ports 28490-28493 sont dans allowPorts de frps (28000-28500) : le script
+# Les ports 28490-28495 sont dans allowPorts de frps (28000-28500) : le script
 # borne l'instancier à WHALE_PORT_RANGE_END=28480 pour éviter toute collision.
 set -euo pipefail
 
@@ -28,6 +28,8 @@ front() { ssh $SSH_OPTS "ubuntu@$FRONT_IP" "$@"; }
 arena() { ssh $SSH_OPTS "ubuntu@$ARENA_IP" "$@"; }
 
 P_THRONE=28490; P_CITADEL=28491; P_ARMORY=28492; P_FORTUNE=28493
+# scorers des collines SSH (doivent rester dans allowPorts de frps : 28000-28500)
+S_CITADEL=28494; S_ARMORY=28495
 ENV_FILE=/opt/ctfd/CTFd/deploy/front/.env
 COMPOSE='docker compose -f deploy/front/docker-compose.prod.yml --env-file deploy/front/.env'
 
@@ -35,7 +37,7 @@ status() {
   echo ">> Collines sur l'arena"
   arena 'docker ps --filter name=koth- --format "  {{.Names}}\t{{.Status}}\t{{.Ports}}"; systemctl is-active frpc-koth 2>/dev/null | sed "s/^/  frpc-koth: /"'
   echo ">> /king via frps (depuis le front, avec le secret scorer)"
-  front "S=\$(grep '^KOTH_SCORER_SECRET=' $ENV_FILE | cut -d= -f2); for p in $P_THRONE $P_CITADEL $P_ARMORY $P_FORTUNE; do printf '  :%s  ' \$p; curl -s -m 5 -H \"X-Scorer-Token: \$S\" http://$FRONT_PRIV:\$p/king | head -c 120; echo; done"
+  front "S=\$(grep '^KOTH_SCORER_SECRET=' $ENV_FILE | cut -d= -f2); for p in $P_THRONE $S_CITADEL $S_ARMORY $P_FORTUNE; do printf '  :%s  ' \$p; curl -s -m 5 -H \"X-Scorer-Token: \$S\" http://$FRONT_PRIV:\$p/king | head -c 120; echo; done"
   echo ">> Plugin koth (CTFd)"
   front "cd /opt/ctfd/CTFd && $COMPOSE exec -T ctfd sh -c 'echo \"  KOTH_TICK=\$KOTH_TICK hills=\$(echo \$KOTH_HILLS | tr -cd , | wc -c)+1\"'; curl -s -m 5 -o /dev/null -w '  /plugins/koth/ -> %{http_code}\n' http://127.0.0.1/plugins/koth/ -H 'Host: ctf.tg'"
 }
@@ -81,12 +83,12 @@ services:
     image: ctf-koth-citadel:latest
     restart: unless-stopped
     environment: [SCORER_SECRET=$SCORER, SCORER_PORT=8081]
-    ports: ['127.0.0.1:$P_CITADEL:22', '127.0.0.1:$((P_CITADEL+100)):8081']
+    ports: ['127.0.0.1:$P_CITADEL:22', '127.0.0.1:$S_CITADEL:8081']
   koth-armory:
     image: ctf-koth-boot2root-armory:latest
     restart: unless-stopped
     environment: [SCORER_SECRET=$SCORER, SCORER_PORT=8082]
-    ports: ['127.0.0.1:$P_ARMORY:22', '127.0.0.1:$((P_ARMORY+100)):8082']
+    ports: ['127.0.0.1:$P_ARMORY:22', '127.0.0.1:$S_ARMORY:8082']
   koth-reseau-fortune:
     image: ctf-koth-reseau-fortune:latest
     restart: unless-stopped
@@ -122,8 +124,8 @@ remotePort = $P_CITADEL
 name = \"koth-citadel-scorer\"
 type = \"tcp\"
 localIP = \"127.0.0.1\"
-localPort = $((P_CITADEL+100))
-remotePort = $((P_CITADEL+100))
+localPort = $S_CITADEL
+remotePort = $S_CITADEL
 
 [[proxies]]
 name = \"koth-armory-ssh\"
@@ -136,8 +138,8 @@ remotePort = $P_ARMORY
 name = \"koth-armory-scorer\"
 type = \"tcp\"
 localIP = \"127.0.0.1\"
-localPort = $((P_ARMORY+100))
-remotePort = $((P_ARMORY+100))
+localPort = $S_ARMORY
+remotePort = $S_ARMORY
 
 [[proxies]]
 name = \"koth-reseau-fortune\"
@@ -164,8 +166,8 @@ sudo systemctl daemon-reload && sudo systemctl enable --now frpc-koth && sudo sy
 echo ">> Plugin koth (front/.env + recréation de ctfd)"
 HILLS=$(printf '[{"id":"koth-throne","name":"The Throne","url":"http://%s:%s","player_url":"http://%s:%s","points":5},{"id":"koth-citadel","name":"The Citadel","url":"http://%s:%s","player_url":"ssh://player@%s:%s","points":5},{"id":"koth-armory","name":"The Armory","url":"http://%s:%s","player_url":"ssh://player@%s:%s","points":5},{"id":"koth-reseau-fortune","name":"Reseau Fortune","url":"http://%s:%s","player_url":"http://%s:%s","points":3}]' \
   "$FRONT_PRIV" "$P_THRONE" "$FRONT_IP" "$P_THRONE" \
-  "$FRONT_PRIV" "$((P_CITADEL+100))" "$FRONT_IP" "$P_CITADEL" \
-  "$FRONT_PRIV" "$((P_ARMORY+100))" "$FRONT_IP" "$P_ARMORY" \
+  "$FRONT_PRIV" "$S_CITADEL" "$FRONT_IP" "$P_CITADEL" \
+  "$FRONT_PRIV" "$S_ARMORY" "$FRONT_IP" "$P_ARMORY" \
   "$FRONT_PRIV" "$P_FORTUNE" "$FRONT_IP" "$P_FORTUNE")
 front "cd /opt/ctfd/CTFd && set -e
   upsert() { grep -q \"^\$1=\" $ENV_FILE && sed -i \"s|^\$1=.*|\$1=\$2|\" $ENV_FILE || echo \"\$1=\$2\" >> $ENV_FILE; }
