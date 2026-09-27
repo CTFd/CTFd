@@ -55,14 +55,63 @@ def parse_xml(doc):
     return out.strip()
 
 
+INDEX_HTML = """<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PostForge &middot; import de sujets</title>
+<style>
+  :root{--bg:#0f1420;--card:#171f30;--line:#26304a;--ink:#e7ecf6;--mut:#8a97b2;
+        --acc:#7c5cff;--bad:#ff6b6b;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(90deg,#1a1440,#0f1420);border-bottom:1px solid var(--line);
+         padding:14px 20px;display:flex;align-items:center;gap:12px}
+  header .logo{font-weight:700}.logo b{color:var(--acc)}
+  header .tag{color:var(--mut);font-size:13px}
+  main{max-width:900px;margin:0 auto;padding:22px 16px;display:grid;gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h2{margin:0 0 4px;font-size:16px}
+  .card p.h{margin:0 0 14px;color:var(--mut);font-size:13px}
+  label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+  textarea{width:100%;background:#0c1120;border:1px solid var(--line);color:var(--ink);
+        border-radius:8px;padding:9px 11px;font-family:var(--mono);font-size:13px;min-height:150px;
+        resize:vertical;white-space:pre}
+  button{margin-top:12px;background:var(--acc);color:#fff;border:0;border-radius:8px;
+        padding:9px 16px;font-weight:600;cursor:pointer}
+  pre{background:#0a0e18;border:1px solid var(--line);border-radius:8px;padding:12px;
+      overflow:auto;font-size:12.5px;color:#cfe0ff;margin:12px 0 0;white-space:pre-wrap}
+  code{font-family:var(--mono);color:#ffd479}
+  .muted{color:var(--mut);font-size:12px}
+</style></head><body>
+<header><div class="logo"><b>Post</b>Forge</div>
+  <div class="tag">migration de forum &middot; import XML de sujets</div></header>
+<main>
+  <div class="card">
+    <h2>Importer des sujets (XML)</h2>
+    <p class="h">Collez un export XML de votre ancien forum. L'analyseur le lit et
+       renvoie le contenu rendu. Format attendu&nbsp;: <code>&lt;r&gt;...&lt;/r&gt;</code>.</p>
+    <label>Document XML</label>
+    <textarea id="xml">&lt;?xml version="1.0"?&gt;
+&lt;r&gt;Bienvenue sur le nouveau forum !&lt;/r&gt;</textarea>
+    <button onclick="imp()">Importer</button>
+    <pre id="out" class="muted">&mdash;</pre>
+  </div>
+</main>
+<script>
+async function imp(){
+  const xml=document.getElementById('xml').value;
+  const r=await fetch('/import',{method:'POST',
+      headers:{'Content-Type':'application/xml'},body:xml});
+  const t=await r.text();let j;try{j=JSON.parse(t)}catch(e){j=t}
+  document.getElementById('out').textContent=
+    typeof j==='string'?j:JSON.stringify(j,null,2);}
+</script>
+</body></html>"""
+
+
 @app.route("/")
 def index():
-    return jsonify(
-        {
-            "service": "forum-xxe",
-            "import": "POST /import  (XML body) -> parsed result",
-        }
-    )
+    return INDEX_HTML
 
 
 @app.route("/import", methods=["POST"])

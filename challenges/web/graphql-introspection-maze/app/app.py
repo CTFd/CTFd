@@ -332,16 +332,60 @@ for _tname, _field, _fn in [
 # ---------------------------------------------------------------------------
 VALIDATION_RULES = list(specified_rules) + [NoSchemaIntrospectionCustomRule]
 
-LANDING = """<!doctype html><meta charset=utf-8>
-<title>Atlas Ops API</title>
-<style>body{font:15px/1.5 system-ui,sans-serif;max-width:52rem;margin:3rem auto;padding:0 1rem;color:#123}code{background:#eef;padding:.1em .3em;border-radius:3px}</style>
-<h1>Atlas Ops &mdash; GraphQL</h1>
-<p>Single endpoint: <code>POST /graphql</code> (JSON body
-<code>{"query": "...", "variables": {...}}</code>).</p>
-<p>Introspection is disabled on this deployment. There is no schema dump,
-no GraphiQL, no <code>__schema</code>.</p>
-<p>Flag format: <code>NCTF{...}</code></p>
-"""
+LANDING = """<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas Ops &middot; GraphQL</title>
+<style>
+  :root{--bg:#0f1420;--card:#171f30;--line:#26304a;--ink:#e7ecf6;--mut:#8a97b2;
+        --acc:#60a5fa;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(90deg,#0b2138,#0f1420);border-bottom:1px solid var(--line);
+         padding:14px 20px;display:flex;align-items:center;gap:12px}
+  .logo{font-weight:700}.logo b{color:var(--acc)}
+  header .tag{color:var(--mut);font-size:13px}
+  main{max-width:940px;margin:0 auto;padding:22px 16px;display:grid;gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h2{margin:0 0 4px;font-size:16px}.card p.h{margin:0 0 14px;color:var(--mut);font-size:13px}
+  label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+  textarea{width:100%;background:#0c1120;border:1px solid var(--line);color:var(--ink);
+        border-radius:8px;padding:9px 11px;font-family:var(--mono);font-size:12.5px;min-height:110px;resize:vertical}
+  textarea#vars{min-height:56px}
+  button{margin-top:12px;background:var(--acc);color:#04223a;border:0;border-radius:8px;
+        padding:9px 16px;font-weight:700;cursor:pointer}
+  pre{background:#0a0e18;border:1px solid var(--line);border-radius:8px;padding:12px;
+      overflow:auto;font-size:12.5px;color:#cfe0ff;margin:12px 0 0;white-space:pre-wrap}
+  code{font-family:var(--mono);color:#ffd479}.muted{color:var(--mut);font-size:12px}
+</style></head><body>
+<header><div class="logo"><b>Atlas</b> Ops</div>
+  <div class="tag">GraphQL &middot; single endpoint</div></header>
+<main>
+  <div class="card">
+    <h2>GraphQL console</h2>
+    <p class="h">Single endpoint&nbsp;: <code>POST /graphql</code>. Introspection is
+       disabled on this deployment&nbsp;: no schema dump, no GraphiQL, no
+       <code>__schema</code>. Flag format&nbsp;: <code>NCTF{...}</code>.</p>
+    <label>Query</label>
+    <textarea id="q">{ serviceInfo { name region build } }</textarea>
+    <label>Variables (JSON)</label>
+    <textarea id="vars">{}</textarea>
+    <button onclick="run()">Run</button>
+    <pre id="out" class="muted">&mdash;</pre>
+  </div>
+</main>
+<script>
+async function run(){
+  let vars={};const vt=document.getElementById('vars').value.trim();
+  if(vt){try{vars=JSON.parse(vt)}catch(e){document.getElementById('out').textContent='Invalid variables JSON: '+e;return;}}
+  const r=await fetch('/graphql',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({query:document.getElementById('q').value,variables:vars})});
+  let b;try{b=await r.json()}catch(e){b=await r.text()}
+  document.getElementById('out').textContent='['+r.status+']\\n'+
+    (typeof b==='string'?b:JSON.stringify(b,null,2));}
+</script>
+</body></html>"""
 
 
 @app.get("/")

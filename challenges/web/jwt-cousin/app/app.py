@@ -150,31 +150,76 @@ STATE = {"maintenance": True, "rotations": 0}
 STATE_LOCK = threading.Lock()
 
 
-INDEX = """<!doctype html><meta charset=utf-8>
-<title>Cousin SSO</title>
-<style>body{font-family:system-ui,sans-serif;max-width:52rem;margin:3rem auto;padding:0 1rem;line-height:1.5}
-code,pre{background:#f4f4f4;padding:.1rem .3rem;border-radius:4px}pre{padding:1rem;overflow:auto}</style>
-<h1>Cousin SSO</h1>
-<p>Internal single-sign-on for the operations console. Tokens are our own
-format &mdash; <em>not</em> JWT, so don't bother with the usual libraries.</p>
-
-<h2>Roles</h2>
-<ul><li><code>guest</code> &mdash; read-only</li>
-<li><code>staff</code> &mdash; can view reports</li>
-<li><code>admin</code> &mdash; can rotate the console (maintenance ops)</li></ul>
-
-<h2>Public demo accounts</h2>
-<ul><li><code>guest</code> / <code>guest</code></li>
-<li><code>staff</code> / <code>staff</code></li></ul>
-
-<h2>API</h2>
-<pre>POST /api/login      {"user":"guest","pass":"guest"}      -&gt; {"token": "..."}
-GET  /api/whoami     Authorization: Bearer &lt;token&gt;         -&gt; your claims
-POST /api/admin/rotate  Authorization: Bearer &lt;token&gt;      -&gt; admin only</pre>
-
-<p>Only an <code>admin</code> may rotate the console. Do that and the console
-hands back the operations flag. Flag format: <code>NCTF{...}</code>.</p>
-"""
+INDEX = """<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cousin SSO &middot; ops console</title>
+<style>
+  :root{--bg:#0f1420;--card:#171f30;--line:#26304a;--ink:#e7ecf6;--mut:#8a97b2;
+        --acc:#fbbf24;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:linear-gradient(90deg,#33290a,#0f1420);border-bottom:1px solid var(--line);
+         padding:14px 20px;display:flex;align-items:center;gap:12px}
+  .logo{font-weight:700}.logo b{color:var(--acc)}
+  header .tag{color:var(--mut);font-size:13px}
+  main{max-width:900px;margin:0 auto;padding:22px 16px;display:grid;gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h2{margin:0 0 4px;font-size:16px}.card p.h{margin:0 0 14px;color:var(--mut);font-size:13px}
+  label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+  input,textarea{width:100%;background:#0c1120;border:1px solid var(--line);color:var(--ink);
+        border-radius:8px;padding:9px 11px;font-family:var(--mono);font-size:12.5px}
+  textarea{min-height:60px;resize:vertical;word-break:break-all}
+  button{margin-top:12px;background:var(--acc);color:#2b2205;border:0;border-radius:8px;
+        padding:9px 16px;font-weight:700;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  pre{background:#0a0e18;border:1px solid var(--line);border-radius:8px;padding:12px;
+      overflow:auto;font-size:12.5px;color:#cfe0ff;margin:12px 0 0;white-space:pre-wrap;word-break:break-all}
+  .row{display:flex;gap:8px}.muted{color:var(--mut);font-size:12px}code{font-family:var(--mono);color:#ffd479}
+  ul{margin:6px 0 0;padding-left:18px;color:var(--mut);font-size:13px}
+</style></head><body>
+<header><div class="logo"><b>Cousin</b> SSO</div>
+  <div class="tag">operations console &middot; custom token format (not JWT)</div></header>
+<main>
+  <div class="card">
+    <h2>Sign in</h2>
+    <p class="h">Demo accounts: <code>guest/guest</code>, <code>staff/staff</code>.
+       The <code>admin</code> role rotates the console but has no public password.</p>
+    <div class="row"><input id="u" value="guest"><input id="p" value="guest"></div>
+    <button onclick="login()">Log in</button>
+    <label>Token</label>
+    <textarea id="tok"></textarea>
+    <div class="row">
+      <button class="ghost" onclick="whoami()">/api/whoami</button>
+      <button onclick="rotate()">Rotate console</button>
+    </div>
+    <pre id="out" class="muted">&mdash;</pre>
+  </div>
+  <div class="card">
+    <h2>Roles</h2>
+    <ul>
+      <li><code>guest</code> &mdash; read-only</li>
+      <li><code>staff</code> &mdash; can view reports</li>
+      <li><code>admin</code> &mdash; can rotate the console (returns the ops flag)</li>
+    </ul>
+    <p class="h" style="margin-top:12px">Tokens are <code>&lt;payload&gt;.&lt;sig&gt;</code>
+       &mdash; our own format, not JWT. Flag format: <code>NCTF{...}</code>.</p>
+  </div>
+</main>
+<script>
+function tok(){return document.getElementById('tok').value.trim();}
+function show(o){document.getElementById('out').textContent='['+o.status+']\\n'+
+  (typeof o.body==='string'?o.body:JSON.stringify(o.body,null,2));}
+async function j(url,opts){const r=await fetch(url,opts);let b;try{b=await r.json()}catch(e){b=await r.text()}return{status:r.status,body:b};}
+async function login(){
+  const o=await j('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({user:document.getElementById('u').value,pass:document.getElementById('p').value})});
+  if(o.body&&o.body.token)document.getElementById('tok').value=o.body.token;
+  show(o);}
+async function whoami(){show(await j('/api/whoami',{headers:{Authorization:'Bearer '+tok()}}));}
+async function rotate(){show(await j('/api/admin/rotate',{method:'POST',headers:{Authorization:'Bearer '+tok()}}));}
+</script>
+</body></html>"""
 
 
 @app.get("/")
