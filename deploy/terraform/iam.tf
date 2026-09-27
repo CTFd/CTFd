@@ -43,6 +43,15 @@ resource "aws_iam_role_policy" "arena_images" {
         Action   = "s3:GetObject"
         Resource = "${aws_s3_bucket.archive.arn}/images/*"
       },
+      {
+        # L'arena peut aussi PUBLIER une image qu'elle a construite sur place
+        # (deploy/scripts/arena-build-images.sh PUSH=1) : ecriture limitee au
+        # prefixe images/, jamais de suppression.
+        Sid      = "PublishBuiltImages"
+        Effect   = "Allow"
+        Action   = "s3:PutObject"
+        Resource = "${aws_s3_bucket.archive.arn}/images/*"
+      },
     ]
   })
 }

@@ -193,6 +193,11 @@ wait-nodes: ## Attend l'arena (et, en repli ollama, le noeud IA) avec delai maxi
 	 done; echo " pret."; \
 	 $(AI_SSH) 'nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv'
 
+.PHONY: arena-build-images
+arena-build-images: ## Construit des images de challenge SUR l'arena (rsync des sources) : ONLY="web/x pwn/y" ou MISSING=1 ; PUSH=1 = aussi vers S3
+	@ARENA_IP=$(ARENA_IP) BUCKET=$(BUCKET) SSH_OPTS="$(SSH_OPTS)" PUSH=$(PUSH) \
+	  scripts/arena-build-images.sh $(if $(MISSING),--missing) $(ONLY)
+
 .PHONY: arena-koth
 arena-koth: ## King of the Hill sur AWS : collines sur l'arena + tunnel frps (ports 28490-28493) + plugin CTFd. STATUS=1 / DOWN=1
 	@FRONT_IP=$(FRONT_IP) FRONT_PRIV=$(FRONT_PRIV) ARENA_IP=$(ARENA_IP) BUCKET=$(BUCKET) SSH_OPTS="$(SSH_OPTS)" \
