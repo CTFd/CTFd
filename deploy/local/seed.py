@@ -214,6 +214,47 @@ def installed_names(s, url):
     }
 
 
+def patch_dynamic_scoring(s, url):
+    """Certaines versions de ctfcli n'ecrivent pas initial/minimum/decay/function
+    des challenges dynamiques/servis a l'install -> ils restent NULL en base et la
+    1re resolution fraiche plante (decay.logarithmic: minimum-initial sur None).
+    On lit extra: du challenge.yml et on PATCH ce qui manque (idempotent). En prod
+    ces champs sont deja poses ; ici ca aligne le local sur la prod."""
+    import yaml  # PyYAML est une dep de ctfcli, donc dispo dans le venv
+    by_name = {}
+    for y in glob.glob(str(CHALLENGES / "*/*/challenge.yml")):
+        try:
+            doc = yaml.safe_load(Path(y).read_text())
+        except Exception:
+            continue
+        if not isinstance(doc, dict):
+            continue
+        by_name[doc.get("name")] = doc
+    fixed = 0
+    for c in s.get(url + "/api/v1/challenges?view=admin").json()["data"]:
+        if c.get("type") not in ("team_instance", "dynamic"):
+            continue
+        detail = s.get(url + f"/api/v1/challenges/{c['id']}").json().get("data", {})
+        if detail.get("initial") not in (None, ""):
+            continue  # deja renseigne
+        doc = by_name.get(c["name"]) or {}
+        extra = doc.get("extra") or {}
+        value = doc.get("value") or detail.get("value") or 500
+        initial = extra.get("initial", value)
+        minimum = extra.get("minimum", max(1, int(initial) // 5))
+        decay = extra.get("decay", 30)
+        function = extra.get("function", "logarithmic")
+        body = {"value": initial, "initial": initial, "minimum": minimum,
+                "decay": decay, "function": function}
+        r = s.patch(url + f"/api/v1/challenges/{c['id']}", json=body)
+        if r.ok:
+            fixed += 1
+        else:
+            log(f"   scoring KO {c['name']}: {r.status_code} {r.text[:100]}")
+    if fixed:
+        log(f">> scoring dynamique corrige sur {fixed} challenge(s)")
+
+
 def install_challenges(url, token, only, already):
     dirs = sorted(
         str(Path(p).parent.relative_to(CHALLENGES))
@@ -357,6 +398,7 @@ def main():
     ok, ko, skip = install_challenges(
         url, api_token(s, url), set(a.only), installed_names(s, url)
     )
+    patch_dynamic_scoring(s, url)
     total = len(installed_names(s, url))
     log(
         f"\ninstalles : {len(ok)}   deja presents : {len(skip)}   en echec : {len(ko)}   -> {total} challenges sur la plateforme"

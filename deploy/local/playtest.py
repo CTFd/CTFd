@@ -229,6 +229,22 @@ def wait_port(host, port, timeout=90):
     return False
 
 
+def wait_http_ready(host, port, timeout=20):
+    """Best-effort : certains services HTTP (ex. ssrf-metadata-decoy) ouvrent le
+    port TCP avant d'accepter des requetes -- le proxy Docker fait un RemoteDisconnect
+    tant que werkzeug n'ecoute pas. On sonde un GET reel ; tout code HTTP = pret.
+    Silencieux et non bloquant pour les challenges TCP bruts (retombe sur le sleep)."""
+    t0 = time.time()
+    url = f"http://{host}:{port}/"
+    while time.time() - t0 < timeout:
+        try:
+            requests.get(url, timeout=3)
+            return True
+        except requests.RequestException:
+            time.sleep(1)
+    return False
+
+
 def run_solver(runner, chdir, cmd, timeout):
     if runner == "docker":
         # Pas de --network host (absent sur Docker Desktop) : le conteneur joint
@@ -398,7 +414,8 @@ def main():
                     if not a.keep:
                         player.destroy(cid)
                     continue
-                time.sleep(2)  # laisser le service finir de demarrer
+                wait_http_ready(host, port)  # HTTP: attend une vraie reponse ; TCP brut: retombe apres 20s
+                time.sleep(1)
 
             cmdf = cmd.format(
                 HOST=host or "",

