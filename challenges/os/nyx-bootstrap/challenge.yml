@@ -3,8 +3,6 @@ author: ctf-2026
 category: os
 type: team_instance
 description: |
-  Bootloader d'un OS custom : validation d'image défaillante -> détournement du boot -> lecture du flag noyau.
-
   This instance's flag is on the service's filesystem, served by no route.
   Exploit the service to read it.
 

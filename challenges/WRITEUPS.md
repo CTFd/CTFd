@@ -13,10 +13,10 @@
 | `ai1-naive-guard`         | 300 | team_instance | [writeup](ai/ai1-naive-guard/solution/)         | Level 1 of the AI track. Nimbus Robotics wired up a quick support          |
 | `ai2-output-filter`       | 350 | team_instance | [writeup](ai/ai2-output-filter/solution/)       | LEVEL 2 of the AI track. Same guard backend as Level 1 (a naive persona    |
 | `ai3-tool-abuse`          | 500 | team_instance | [writeup](ai/ai3-tool-abuse/solution/)          | Level 3 of the AI track -- the heaviest. Meridian Freight runs an internal |
-| `copilotsvc-guard`        | 550 | team_instance | [writeup](ai/copilotsvc-guard/solution/)        | Contournement de garde-fou - chaîne d'outils - action privilégiée.         |
-| `copilotsvc-inject`       | 500 | team_instance | [writeup](ai/copilotsvc-inject/solution/)       | Injection indirecte - abus d'outil - exfiltration de données.              |
-| `deskbot-guard`           | 550 | team_instance | [writeup](ai/deskbot-guard/solution/)           | Contournement de garde-fou - chaîne d'outils - action privilégiée.         |
-| `deskbot-inject`          | 500 | team_instance | [writeup](ai/deskbot-inject/solution/)          | Injection indirecte - abus d'outil - exfiltration de données.              |
+| `copilotsvc-guard`        | 550 | team_instance | [writeup](ai/copilotsvc-guard/solution/)        | This instance's flag is on the service's filesystem, served by no route.   |
+| `copilotsvc-inject`       | 500 | team_instance | [writeup](ai/copilotsvc-inject/solution/)       | This instance's flag is on the service's filesystem, served by no route.   |
+| `deskbot-guard`           | 550 | team_instance | [writeup](ai/deskbot-guard/solution/)           | This instance's flag is on the service's filesystem, served by no route.   |
+| `deskbot-inject`          | 500 | team_instance | [writeup](ai/deskbot-inject/solution/)          | This instance's flag is on the service's filesystem, served by no route.   |
 | `mcp-manifest-audit`      | 250 | dynamic       | [writeup](ai/mcp-manifest-audit/solution/)      | CERT.tg is vetting an internal MCP marketplace before wiring an assistant  |
 | `oracle-canary-decoy`     | 300 | dynamic       | [writeup](ai/oracle-canary-decoy/solution/)     | ChannelBot ships as oracle.py (respond(prompt)). Ask it for the flag       |
 | `oracle-doc-injection`    | 300 | dynamic       | [writeup](ai/oracle-doc-injection/solution/)    | SummarizerBot ships as oracle.py (respond(prompt)). It summarises a        |
@@ -25,71 +25,71 @@
 | `oracle-multi-turn`       | 450 | dynamic       | [writeup](ai/oracle-multi-turn/solution/)       | WardenBot ships as oracle.py with a Session class (and a respond           |
 | `oracle-reverse-emit`     | 150 | dynamic       | [writeup](ai/oracle-reverse-emit/solution/)     | RedactBot ships as oracle.py with a respond(prompt) entry point. It        |
 | `oracle-tool-args`        | 300 | dynamic       | [writeup](ai/oracle-tool-args/solution/)        | ToolBot ships as oracle.py (respond(prompt)) and exposes a                 |
-| `prompt-pivot`            | 500 | team_instance | [writeup](ai/prompt-pivot/solution/)            | Injection indirecte - abus d'outil - exfiltration de données internes.     |
-| `retriever-guard`         | 550 | team_instance | [writeup](ai/retriever-guard/solution/)         | Contournement de garde-fou - chaîne d'outils - action privilégiée.         |
-| `retriever-inject`        | 500 | team_instance | [writeup](ai/retriever-inject/solution/)        | Injection indirecte - abus d'outil - exfiltration de données.              |
-| `tool-ladder`             | 550 | team_instance | [writeup](ai/tool-ladder/solution/)             | Contournement de garde-fou - chaîne d'outils - action privilégiée.         |
-| `triage-guard`            | 550 | team_instance | [writeup](ai/triage-guard/solution/)            | Contournement de garde-fou - chaîne d'outils - action privilégiée.         |
-| `triage-inject`           | 500 | team_instance | [writeup](ai/triage-inject/solution/)           | Injection indirecte - abus d'outil - exfiltration de données.              |
+| `prompt-pivot`            | 500 | team_instance | [writeup](ai/prompt-pivot/solution/)            | This instance's flag is on the service's filesystem, served by no route.   |
+| `retriever-guard`         | 550 | team_instance | [writeup](ai/retriever-guard/solution/)         | This instance's flag is on the service's filesystem, served by no route.   |
+| `retriever-inject`        | 500 | team_instance | [writeup](ai/retriever-inject/solution/)        | This instance's flag is on the service's filesystem, served by no route.   |
+| `tool-ladder`             | 550 | team_instance | [writeup](ai/tool-ladder/solution/)             | This instance's flag is on the service's filesystem, served by no route.   |
+| `triage-guard`            | 550 | team_instance | [writeup](ai/triage-guard/solution/)            | This instance's flag is on the service's filesystem, served by no route.   |
+| `triage-inject`           | 500 | team_instance | [writeup](ai/triage-inject/solution/)           | This instance's flag is on the service's filesystem, served by no route.   |
 
 ## blockchain (27)
 
-| challenge              | pts | type          | writeup                                              | résumé                                                                |
-| ---------------------- | --- | ------------- | ---------------------------------------------------- | --------------------------------------------------------------------- |
-| `airdrop-forge`        | 300 | dynamic       | [writeup](blockchain/airdrop-forge/solution/)        | You get a Merkle-root airdrop contract (MerkleAirdrop.sol) and        |
-| `allowance-drift`      | 150 | dynamic       | [writeup](blockchain/allowance-drift/solution/)      | You get a hand-rolled ERC20 (DriftToken.sol) and tokenstate.json      |
-| `block-oracle`         | 150 | dynamic       | [writeup](blockchain/block-oracle/solution/)         | A lottery seals its pot for whoever guesses the winning ticket. You   |
-| `bridgepool-allowance` | 500 | team_instance | [writeup](blockchain/bridgepool-allowance/solution/) | Dérive d'allowance - approbation - drain.                             |
-| `bridgepool-proxy`     | 500 | team_instance | [writeup](blockchain/bridgepool-proxy/solution/)     | Collision de storage proxy - écrasement d'admin - action.             |
-| `bridgepool-reentry`   | 550 | team_instance | [writeup](blockchain/bridgepool-reentry/solution/)   | Rejeu de signature - réentrance - drain de fonds.                     |
-| `calldata-cache`       | 100 | dynamic       | [writeup](blockchain/calldata-cache/solution/)       | You captured one transaction's raw calldata (calldata.txt) and the    |
-| `escrowd-allowance`    | 500 | team_instance | [writeup](blockchain/escrowd-allowance/solution/)    | Dérive d'allowance - approbation - drain.                             |
-| `escrowd-proxy`        | 500 | team_instance | [writeup](blockchain/escrowd-proxy/solution/)        | Collision de storage proxy - écrasement d'admin - action.             |
-| `escrowd-reentry`      | 550 | team_instance | [writeup](blockchain/escrowd-reentry/solution/)      | Rejeu de signature - réentrance - drain de fonds.                     |
-| `lender-allowance`     | 500 | team_instance | [writeup](blockchain/lender-allowance/solution/)     | Dérive d'allowance - approbation - drain.                             |
-| `lender-proxy`         | 500 | team_instance | [writeup](blockchain/lender-proxy/solution/)         | Collision de storage proxy - écrasement d'admin - action.             |
-| `lender-reentry`       | 550 | team_instance | [writeup](blockchain/lender-reentry/solution/)       | Rejeu de signature - réentrance - drain de fonds.                     |
-| `oraclefeed-allowance` | 500 | team_instance | [writeup](blockchain/oraclefeed-allowance/solution/) | Dérive d'allowance - approbation - drain.                             |
-| `oraclefeed-proxy`     | 500 | team_instance | [writeup](blockchain/oraclefeed-proxy/solution/)     | Collision de storage proxy - écrasement d'admin - action.             |
-| `oraclefeed-reentry`   | 550 | team_instance | [writeup](blockchain/oraclefeed-reentry/solution/)   | Rejeu de signature - réentrance - drain de fonds.                     |
-| `origin-story`         | 300 | dynamic       | [writeup](blockchain/origin-story/solution/)         | You get Vault.sol and vault.json (a sealed note cipherhex plus        |
-| `overflow-mint`        | 300 | dynamic       | [writeup](blockchain/overflow-mint/solution/)        | You get the Solidity source of a token pre-sale (MintSale.sol) and    |
-| `private-ledger`       | 150 | dynamic       | [writeup](blockchain/private-ledger/solution/)       | You are handed the Solidity source of an on-chain ledger and a raw    |
-| `proxy-climb`          | 500 | team_instance | [writeup](blockchain/proxy-climb/solution/)          | Collision de storage proxy - écrasement d'admin - action privilégiée. |
-| `proxy-collision`      | 300 | dynamic       | [writeup](blockchain/proxy-collision/solution/)      | You get an upgradeable Proxy.sol, its Logic.sol implementation, and   |
-| `reentrant-vault`      | 450 | team_instance | [writeup](blockchain/reentrant-vault/solution/)      | Reentrant Vault. (nouvelle catégorie : blockchain / EVM)              |
-| `reentry-chain`        | 550 | team_instance | [writeup](blockchain/reentry-chain/solution/)        | Rejeu de signature - réentrance - drain de fonds gardés.              |
-| `replay-signer`        | 450 | dynamic       | [writeup](blockchain/replay-signer/solution/)        | You captured two withdrawal requests signed by the same treasury key  |
-| `vaultdao-allowance`   | 500 | team_instance | [writeup](blockchain/vaultdao-allowance/solution/)   | Dérive d'allowance - approbation - drain.                             |
-| `vaultdao-proxy`       | 500 | team_instance | [writeup](blockchain/vaultdao-proxy/solution/)       | Collision de storage proxy - écrasement d'admin - action.             |
-| `vaultdao-reentry`     | 550 | team_instance | [writeup](blockchain/vaultdao-reentry/solution/)     | Rejeu de signature - réentrance - drain de fonds.                     |
+| challenge              | pts | type          | writeup                                              | résumé                                                                   |
+| ---------------------- | --- | ------------- | ---------------------------------------------------- | ------------------------------------------------------------------------ |
+| `airdrop-forge`        | 300 | dynamic       | [writeup](blockchain/airdrop-forge/solution/)        | You get a Merkle-root airdrop contract (MerkleAirdrop.sol) and           |
+| `allowance-drift`      | 150 | dynamic       | [writeup](blockchain/allowance-drift/solution/)      | You get a hand-rolled ERC20 (DriftToken.sol) and tokenstate.json         |
+| `block-oracle`         | 150 | dynamic       | [writeup](blockchain/block-oracle/solution/)         | A lottery seals its pot for whoever guesses the winning ticket. You      |
+| `bridgepool-allowance` | 500 | team_instance | [writeup](blockchain/bridgepool-allowance/solution/) | This instance's flag is on the service's filesystem, served by no route. |
+| `bridgepool-proxy`     | 500 | team_instance | [writeup](blockchain/bridgepool-proxy/solution/)     | This instance's flag is on the service's filesystem, served by no route. |
+| `bridgepool-reentry`   | 550 | team_instance | [writeup](blockchain/bridgepool-reentry/solution/)   | This instance's flag is on the service's filesystem, served by no route. |
+| `calldata-cache`       | 100 | dynamic       | [writeup](blockchain/calldata-cache/solution/)       | You captured one transaction's raw calldata (calldata.txt) and the       |
+| `escrowd-allowance`    | 500 | team_instance | [writeup](blockchain/escrowd-allowance/solution/)    | This instance's flag is on the service's filesystem, served by no route. |
+| `escrowd-proxy`        | 500 | team_instance | [writeup](blockchain/escrowd-proxy/solution/)        | This instance's flag is on the service's filesystem, served by no route. |
+| `escrowd-reentry`      | 550 | team_instance | [writeup](blockchain/escrowd-reentry/solution/)      | This instance's flag is on the service's filesystem, served by no route. |
+| `lender-allowance`     | 500 | team_instance | [writeup](blockchain/lender-allowance/solution/)     | This instance's flag is on the service's filesystem, served by no route. |
+| `lender-proxy`         | 500 | team_instance | [writeup](blockchain/lender-proxy/solution/)         | This instance's flag is on the service's filesystem, served by no route. |
+| `lender-reentry`       | 550 | team_instance | [writeup](blockchain/lender-reentry/solution/)       | This instance's flag is on the service's filesystem, served by no route. |
+| `oraclefeed-allowance` | 500 | team_instance | [writeup](blockchain/oraclefeed-allowance/solution/) | This instance's flag is on the service's filesystem, served by no route. |
+| `oraclefeed-proxy`     | 500 | team_instance | [writeup](blockchain/oraclefeed-proxy/solution/)     | This instance's flag is on the service's filesystem, served by no route. |
+| `oraclefeed-reentry`   | 550 | team_instance | [writeup](blockchain/oraclefeed-reentry/solution/)   | This instance's flag is on the service's filesystem, served by no route. |
+| `origin-story`         | 300 | dynamic       | [writeup](blockchain/origin-story/solution/)         | You get Vault.sol and vault.json (a sealed note cipherhex plus           |
+| `overflow-mint`        | 300 | dynamic       | [writeup](blockchain/overflow-mint/solution/)        | You get the Solidity source of a token pre-sale (MintSale.sol) and       |
+| `private-ledger`       | 150 | dynamic       | [writeup](blockchain/private-ledger/solution/)       | You are handed the Solidity source of an on-chain ledger and a raw       |
+| `proxy-climb`          | 500 | team_instance | [writeup](blockchain/proxy-climb/solution/)          | This instance's flag is on the service's filesystem, served by no route. |
+| `proxy-collision`      | 300 | dynamic       | [writeup](blockchain/proxy-collision/solution/)      | You get an upgradeable Proxy.sol, its Logic.sol implementation, and      |
+| `reentrant-vault`      | 450 | team_instance | [writeup](blockchain/reentrant-vault/solution/)      | Reentrant Vault. (nouvelle catégorie : blockchain / EVM)                 |
+| `reentry-chain`        | 550 | team_instance | [writeup](blockchain/reentry-chain/solution/)        | This instance's flag is on the service's filesystem, served by no route. |
+| `replay-signer`        | 450 | dynamic       | [writeup](blockchain/replay-signer/solution/)        | You captured two withdrawal requests signed by the same treasury key     |
+| `vaultdao-allowance`   | 500 | team_instance | [writeup](blockchain/vaultdao-allowance/solution/)   | This instance's flag is on the service's filesystem, served by no route. |
+| `vaultdao-proxy`       | 500 | team_instance | [writeup](blockchain/vaultdao-proxy/solution/)       | This instance's flag is on the service's filesystem, served by no route. |
+| `vaultdao-reentry`     | 550 | team_instance | [writeup](blockchain/vaultdao-reentry/solution/)     | This instance's flag is on the service's filesystem, served by no route. |
 
 ## chains (6)
 
-| challenge    | pts | type          | writeup                                | résumé                                                                      |
-| ------------ | --- | ------------- | -------------------------------------- | --------------------------------------------------------------------------- |
-| `citadel`    | 600 | team_instance | [writeup](chains/citadel/solution/)    | Foothold web - priv-esc user (credential réutilisé) - priv-esc root (SUID/… |
-| `clinic`     | 450 | team_instance | [writeup](chains/clinic/solution/)     | Jeton de session prévisible - IDOR export - action admin (auth - IDOR - ad… |
-| `pipeline`   | 550 | team_instance | [writeup](chains/pipeline/solution/)   | Confusion de dépendance / dérive de lockfile - hook de build exécuté - RCE… |
-| `relay`      | 500 | team_instance | [writeup](chains/relay/solution/)      | Reverse d'un protocole binaire maison - commande cachée - bug mémoire expl… |
-| `tokenforge` | 500 | team_instance | [writeup](chains/tokenforge/solution/) | Oracle crypto - cookie admin forgé - endpoint caché avec SSTI/désérialisat… |
-| `vaultboard` | 500 | team_instance | [writeup](chains/vaultboard/solution/) | SSRF - jeton scopé interne - objet mal-ACLé (web - cloud - objets).         |
+| challenge    | pts | type          | writeup                                | résumé                                                                   |
+| ------------ | --- | ------------- | -------------------------------------- | ------------------------------------------------------------------------ |
+| `citadel`    | 600 | team_instance | [writeup](chains/citadel/solution/)    | This instance's flag is on the service's filesystem, served by no route. |
+| `clinic`     | 450 | team_instance | [writeup](chains/clinic/solution/)     | This instance's flag is on the service's filesystem, served by no route. |
+| `pipeline`   | 550 | team_instance | [writeup](chains/pipeline/solution/)   | This instance's flag is on the service's filesystem, served by no route. |
+| `relay`      | 500 | team_instance | [writeup](chains/relay/solution/)      | This instance's flag is on the service's filesystem, served by no route. |
+| `tokenforge` | 500 | team_instance | [writeup](chains/tokenforge/solution/) | This instance's flag is on the service's filesystem, served by no route. |
+| `vaultboard` | 500 | team_instance | [writeup](chains/vaultboard/solution/) | This instance's flag is on the service's filesystem, served by no route. |
 
 ## cloud (14)
 
 | challenge           | pts | type          | writeup                                      | résumé                                                                      |
 | ------------------- | --- | ------------- | -------------------------------------------- | --------------------------------------------------------------------------- |
-| `artifacts-envexec` | 300 | team_instance | [writeup](cloud/artifacts-envexec/solution/) | Injection d'env dans une fonction - exécution - vol de secret.              |
-| `artifacts-imds`    | 300 | team_instance | [writeup](cloud/artifacts-imds/solution/)    | SSRF - IMDS - assume-role - lecture d'objet privé.                          |
-| `artifacts-oidc`    | 300 | team_instance | [writeup](cloud/artifacts-oidc/solution/)    | Mauvaise config OIDC - jeton forgé - API privilégiée.                       |
-| `artifacts-prefix`  | 300 | team_instance | [writeup](cloud/artifacts-prefix/solution/)  | Préfixe public - credential fuité - escalade de rôle.                       |
-| `artifacts-presign` | 300 | team_instance | [writeup](cloud/artifacts-presign/solution/) | Abus d'URL pré-signée - écriture d'objet - exécution au déploiement.        |
+| `artifacts-envexec` | 300 | team_instance | [writeup](cloud/artifacts-envexec/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
+| `artifacts-imds`    | 300 | team_instance | [writeup](cloud/artifacts-imds/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `artifacts-oidc`    | 300 | team_instance | [writeup](cloud/artifacts-oidc/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `artifacts-prefix`  | 300 | team_instance | [writeup](cloud/artifacts-prefix/solution/)  | This instance's flag is on the service's filesystem, served by no route.    |
+| `artifacts-presign` | 300 | team_instance | [writeup](cloud/artifacts-presign/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
 | `breach-chain`      | 450 | team_instance | [writeup](cloud/breach-chain/solution/)      | Kékéli Cloud. Le service de prévisualisation média de Kékéli Cloud tourne   |
 | `gcp-token-scope`   | 300 | dynamic       | [writeup](cloud/gcp-token-scope/solution/)   | A leaked GCP service-account key (sa-key.json) for a CI helper, the projec… |
 | `imds-ssrf`         | 150 | dynamic       | [writeup](cloud/imds-ssrf/solution/)         | A proxy capture of an SSRF exploit against an EC2-hosted preview service    |
 | `leaky-prefix`      | 100 | dynamic       | [writeup](cloud/leaky-prefix/solution/)      | A snapshot of the kekeli-media-prod S3 bucket: its live bucket policy       |
 | `passrole-ladder`   | 450 | dynamic       | [writeup](cloud/passrole-ladder/solution/)   | An IAM dump from an AWS account: users (iam-users.json), roles              |
-| `queue-poison`      | 500 | team_instance | [writeup](cloud/queue-poison/solution/)      | Message empoisonné - worker - désérialisation - exécution.                  |
+| `queue-poison`      | 500 | team_instance | [writeup](cloud/queue-poison/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
 | `sas-forge`         | 450 | dynamic       | [writeup](cloud/sas-forge/solution/)         | An Azure Storage account key leaked into a backup (leaked-account-key.txt)… |
 | `sub-wildcard`      | 150 | dynamic       | [writeup](cloud/sub-wildcard/solution/)      | The ci-deployer IAM role trusts GitHub Actions via OIDC. You have its trus… |
 | `trail-of-keys`     | 300 | dynamic       | [writeup](cloud/trail-of-keys/solution/)     | A CloudTrail export (cloudtrail.json) from one busy hour on the             |
@@ -107,13 +107,13 @@
 | `lcg-casino`          | 500 | team_instance | [writeup](crypto/lcg-casino/solution/)          | A "provably fair" casino deals from a home-grown verifiable shuffle. It     |
 | `modulus-siblings`    | 300 | dynamic       | [writeup](crypto/modulus-siblings/solution/)    | Two departments encrypted the very same memo for the same recipient, and w… |
 | `nonce-sense`         | 150 | dynamic       | [writeup](crypto/nonce-sense/solution/)         | A hardware signing device produced a batch of ECDSA signatures over         |
-| `notarysvc-ecb`       | 450 | team_instance | [writeup](crypto/notarysvc-ecb/solution/)       | ECB cut-and-paste - contournement d'auth - action privilégiée.              |
-| `notarysvc-kdf`       | 250 | team_instance | [writeup](crypto/notarysvc-kdf/solution/)       | Dérivation de clé faible - prédiction - reprise de session.                 |
-| `notarysvc-nonce`     | 450 | team_instance | [writeup](crypto/notarysvc-nonce/solution/)     | Réutilisation de nonce - récupération de clé - forge de jeton.              |
-| `notarysvc-padoracle` | 500 | team_instance | [writeup](crypto/notarysvc-padoracle/solution/) | Oracle de padding - cookie forgé - endpoint admin atteint.                  |
-| `notarysvc-signext`   | 500 | team_instance | [writeup](crypto/notarysvc-signext/solution/)   | Extension de hash - forge - API privilégiée.                                |
+| `notarysvc-ecb`       | 450 | team_instance | [writeup](crypto/notarysvc-ecb/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `notarysvc-kdf`       | 250 | team_instance | [writeup](crypto/notarysvc-kdf/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `notarysvc-nonce`     | 450 | team_instance | [writeup](crypto/notarysvc-nonce/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `notarysvc-padoracle` | 500 | team_instance | [writeup](crypto/notarysvc-padoracle/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
+| `notarysvc-signext`   | 500 | team_instance | [writeup](crypto/notarysvc-signext/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
 | `padding-oracle-lite` | 350 | team_instance | [writeup](crypto/padding-oracle-lite/solution/) | A decommissioned session service still answers on its own home-grown binar… |
-| `sign-slip`           | 450 | team_instance | [writeup](crypto/sign-slip/solution/)           | Vérification de signature faible - forge - action admin.                    |
+| `sign-slip`           | 450 | team_instance | [writeup](crypto/sign-slip/solution/)           | This instance's flag is on the service's filesystem, served by no route.    |
 | `tlv-vault`           | 350 | dynamic       | [writeup](crypto/tlv-vault/solution/)           | We recovered eight .vlt archives from a decommissioned "vault" service,     |
 | `twister-tell`        | 300 | dynamic       | [writeup](crypto/twister-tell/solution/)        | A token service leaked a run of its random number generator's raw 32-bit    |
 | `vigenere-drift`      | 150 | dynamic       | [writeup](crypto/vigenere-drift/solution/)      | cipher.txt is an intercepted English memorandum enciphered with a repeatin… |
@@ -160,9 +160,9 @@
 | challenge            | pts | type          | writeup                                      | résumé                                                                      |
 | -------------------- | --- | ------------- | -------------------------------------------- | --------------------------------------------------------------------------- |
 | `brainfuck-cascade`  | 300 | dynamic       | [writeup](misc/brainfuck-cascade/solution/)  | All we recovered is one line of dense ASCII (cipher.txt). It decodes to     |
-| `bridged-deser`      | 500 | team_instance | [writeup](misc/bridged-deser/solution/)      | SSRF - RPC interne - désérialisation - exécution.                           |
-| `bridged-envreuse`   | 450 | team_instance | [writeup](misc/bridged-envreuse/solution/)   | Fuite d'env - réutilisation de secret - exécution.                          |
-| `bridged-protoparse` | 450 | team_instance | [writeup](misc/bridged-protoparse/solution/) | Parser maison - état corrompu - lecture hors-borne.                         |
+| `bridged-deser`      | 500 | team_instance | [writeup](misc/bridged-deser/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `bridged-envreuse`   | 450 | team_instance | [writeup](misc/bridged-envreuse/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
+| `bridged-protoparse` | 450 | team_instance | [writeup](misc/bridged-protoparse/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
 | `chunk-hunt`         | 150 | dynamic       | [writeup](misc/chunk-hunt/solution/)         | Someone exported a company badge as a PNG (badge.png). The picture itself … |
 | `dfa-oracle`         | 300 | dynamic       | [writeup](misc/dfa-oracle/solution/)         | automaton.json describes a deterministic finite automaton: an alphabet, a   |
 | `esolang-jail`       | 400 | team_instance | [writeup](misc/esolang-jail/solution/)       | Marble jail -- a tiny stack esoteric language, served over TCP as an        |
@@ -183,22 +183,22 @@
 | `adv-flip`          | 450 | dynamic       | [writeup](ml/adv-flip/solution/)          | gate.npz ships a linear gate: weights w, bias b, and one base input         |
 | `adversarial-gate`  | 500 | team_instance | [writeup](ml/adversarial-gate/solution/)  | SENTRY-6 badge gate. An access gate runs a small convolutional              |
 | `embedding-nn`      | 150 | dynamic       | [writeup](ml/embedding-nn/solution/)      | embedtable.npz holds a token embedding table and a batch of query vectors.  |
-| `feature-inject`    | 450 | team_instance | [writeup](ml/feature-inject/solution/)    | Injection dans le pré-traitement - empoisonnement - exfiltration.           |
-| `featurizer-pickle` | 500 | team_instance | [writeup](ml/featurizer-pickle/solution/) | Upload de modèle - pipeline - désérialisation pickle - exécution.           |
-| `featurizer-poison` | 450 | team_instance | [writeup](ml/featurizer-poison/solution/) | Injection dans le pré-traitement - empoisonnement - exfiltration.           |
+| `feature-inject`    | 450 | team_instance | [writeup](ml/feature-inject/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `featurizer-pickle` | 500 | team_instance | [writeup](ml/featurizer-pickle/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
+| `featurizer-poison` | 450 | team_instance | [writeup](ml/featurizer-poison/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
 | `grad-leak`         | 300 | dynamic       | [writeup](ml/grad-leak/solution/)         | During distributed training a worker leaked the gradients from a single st… |
 | `member-ids`        | 150 | dynamic       | [writeup](ml/member-ids/solution/)        | shadoweval.npz is an evaluation table for a model: for each record it list… |
 | `model-inversion`   | 500 | team_instance | [writeup](ml/model-inversion/solution/)   | AEGIS-VAULT recall service. The vault has memorised one sealed record --    |
-| `model-swap`        | 500 | team_instance | [writeup](ml/model-swap/solution/)        | Upload de modèle - pipeline - désérialisation pickle - exécution.           |
-| `modelhub-pickle`   | 500 | team_instance | [writeup](ml/modelhub-pickle/solution/)   | Upload de modèle - pipeline - désérialisation pickle - exécution.           |
-| `modelhub-poison`   | 450 | team_instance | [writeup](ml/modelhub-poison/solution/)   | Injection dans le pré-traitement - empoisonnement - exfiltration.           |
+| `model-swap`        | 500 | team_instance | [writeup](ml/model-swap/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
+| `modelhub-pickle`   | 500 | team_instance | [writeup](ml/modelhub-pickle/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
+| `modelhub-poison`   | 450 | team_instance | [writeup](ml/modelhub-poison/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
 | `pickle-rce`        | 350 | team_instance | [writeup](ml/pickle-rce/solution/)        | ModelHub is a model registry. Teams upload a serialized model and the       |
 | `poison-shift`      | 300 | dynamic       | [writeup](ml/poison-shift/solution/)      | poisonedtrain.npz is a regression training set: features X, targets y,      |
-| `scorer-pickle`     | 500 | team_instance | [writeup](ml/scorer-pickle/solution/)     | Upload de modèle - pipeline - désérialisation pickle - exécution.           |
-| `scorer-poison`     | 450 | team_instance | [writeup](ml/scorer-poison/solution/)     | Injection dans le pré-traitement - empoisonnement - exfiltration.           |
+| `scorer-pickle`     | 500 | team_instance | [writeup](ml/scorer-pickle/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `scorer-poison`     | 450 | team_instance | [writeup](ml/scorer-poison/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
 | `surrogate-fit`     | 300 | dynamic       | [writeup](ml/surrogate-fit/solution/)     | A hidden model is a black box: you feed it a vector, it returns a number.   |
-| `trainer-pickle`    | 500 | team_instance | [writeup](ml/trainer-pickle/solution/)    | Upload de modèle - pipeline - désérialisation pickle - exécution.           |
-| `trainer-poison`    | 450 | team_instance | [writeup](ml/trainer-poison/solution/)    | Injection dans le pré-traitement - empoisonnement - exfiltration.           |
+| `trainer-pickle`    | 500 | team_instance | [writeup](ml/trainer-pickle/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `trainer-poison`    | 450 | team_instance | [writeup](ml/trainer-poison/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
 | `tree-path`         | 100 | dynamic       | [writeup](ml/tree-path/solution/)         | We recovered a trained binary decision tree from a classifier and dumped i… |
 | `trojan-trigger`    | 450 | dynamic       | [writeup](ml/trojan-trigger/solution/)    | detector.npz ships a hidden "detector" unit that scores an input with       |
 
@@ -231,13 +231,13 @@
 
 ## os (5)
 
-| challenge       | pts | type          | writeup                               | résumé                                                                      |
-| --------------- | --- | ------------- | ------------------------------------- | --------------------------------------------------------------------------- |
-| `nyx-allocator` | 550 | team_instance | [writeup](os/nyx-allocator/solution/) | Allocateur de tas noyau custom : débordement - contrôle d'objet - détourne… |
-| `nyx-bootstrap` | 400 | team_instance | [writeup](os/nyx-bootstrap/solution/) | Bootloader d'un OS custom : validation d'image défaillante - détournement … |
-| `nyx-scheduler` | 550 | team_instance | [writeup](os/nyx-scheduler/solution/) | Ordonnanceur custom : course TOCTOU - confusion de privilège - exécution e… |
-| `nyx-syscall`   | 500 | team_instance | [writeup](os/nyx-syscall/solution/)   | Table d'appels système custom : borne manquante sur un argument - lecture/… |
-| `nyx-vfs`       | 500 | team_instance | [writeup](os/nyx-vfs/solution/)       | Système de fichiers virtuel custom : bug de permission/chemin - lecture du… |
+| challenge       | pts | type          | writeup                               | résumé                                                                   |
+| --------------- | --- | ------------- | ------------------------------------- | ------------------------------------------------------------------------ |
+| `nyx-allocator` | 550 | team_instance | [writeup](os/nyx-allocator/solution/) | This instance's flag is on the service's filesystem, served by no route. |
+| `nyx-bootstrap` | 400 | team_instance | [writeup](os/nyx-bootstrap/solution/) | This instance's flag is on the service's filesystem, served by no route. |
+| `nyx-scheduler` | 550 | team_instance | [writeup](os/nyx-scheduler/solution/) | This instance's flag is on the service's filesystem, served by no route. |
+| `nyx-syscall`   | 500 | team_instance | [writeup](os/nyx-syscall/solution/)   | This instance's flag is on the service's filesystem, served by no route. |
+| `nyx-vfs`       | 500 | team_instance | [writeup](os/nyx-vfs/solution/)       | This instance's flag is on the service's filesystem, served by no route. |
 
 ## osint (8)
 
@@ -270,69 +270,69 @@
 
 | challenge            | pts | type          | writeup                                     | résumé                                                                      |
 | -------------------- | --- | ------------- | ------------------------------------------- | --------------------------------------------------------------------------- |
-| `authd-canary`       | 500 | team_instance | [writeup](pwn/authd-canary/solution/)       | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `authd-fmt`          | 500 | team_instance | [writeup](pwn/authd-fmt/solution/)          | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `authd-heap`         | 550 | team_instance | [writeup](pwn/authd-heap/solution/)         | Reverse d'un protocole - overflow de tas - shell.                           |
-| `authd-sandbox`      | 600 | team_instance | [writeup](pwn/authd-sandbox/solution/)      | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `authd-uaf`          | 550 | team_instance | [writeup](pwn/authd-uaf/solution/)          | Use-after-free - primitive d'écriture - détournement de flux.               |
+| `authd-canary`       | 500 | team_instance | [writeup](pwn/authd-canary/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `authd-fmt`          | 500 | team_instance | [writeup](pwn/authd-fmt/solution/)          | This instance's flag is on the service's filesystem, served by no route.    |
+| `authd-heap`         | 550 | team_instance | [writeup](pwn/authd-heap/solution/)         | This instance's flag is on the service's filesystem, served by no route.    |
+| `authd-sandbox`      | 600 | team_instance | [writeup](pwn/authd-sandbox/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `authd-uaf`          | 550 | team_instance | [writeup](pwn/authd-uaf/solution/)          | This instance's flag is on the service's filesystem, served by no route.    |
 | `boot2root-c2`       | 500 | team_instance | [writeup](pwn/boot2root-c2/solution/)       | boot2root-c2 -- Phantom Wire staging server. During the HIVE CONSULT        |
 | `boot2root-linux`    | 500 | team_instance | [writeup](pwn/boot2root-linux/solution/)    | boot2root-linux -- a full Linux box in a single per-team container. Get a   |
 | `boot2root-ssh`      | 400 | team_instance | [writeup](pwn/boot2root-ssh/solution/)      | boot2root-ssh. Une box Linux complète, un conteneur par équipe. On te       |
 | `boot2root-webapp`   | 500 | team_instance | [writeup](pwn/boot2root-webapp/solution/)   | boot2root-webapp -- SnapNote, a full Linux box in a single per-team         |
-| `brokerd-canary`     | 500 | team_instance | [writeup](pwn/brokerd-canary/solution/)     | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `brokerd-fmt`        | 500 | team_instance | [writeup](pwn/brokerd-fmt/solution/)        | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `brokerd-heap`       | 550 | team_instance | [writeup](pwn/brokerd-heap/solution/)       | Reverse d'un protocole - overflow de tas - shell.                           |
-| `brokerd-sandbox`    | 600 | team_instance | [writeup](pwn/brokerd-sandbox/solution/)    | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `brokerd-uaf`        | 550 | team_instance | [writeup](pwn/brokerd-uaf/solution/)        | Use-after-free - primitive d'écriture - détournement de flux.               |
+| `brokerd-canary`     | 500 | team_instance | [writeup](pwn/brokerd-canary/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `brokerd-fmt`        | 500 | team_instance | [writeup](pwn/brokerd-fmt/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
+| `brokerd-heap`       | 550 | team_instance | [writeup](pwn/brokerd-heap/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `brokerd-sandbox`    | 600 | team_instance | [writeup](pwn/brokerd-sandbox/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `brokerd-uaf`        | 550 | team_instance | [writeup](pwn/brokerd-uaf/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
 | `bss-admin-flip`     | 150 | dynamic       | [writeup](pwn/bss-admin-flip/solution/)     | You are given a single x86-64 Linux binary, chall. It asks you to register… |
-| `cachesrv-canary`    | 500 | team_instance | [writeup](pwn/cachesrv-canary/solution/)    | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `cachesrv-fmt`       | 500 | team_instance | [writeup](pwn/cachesrv-fmt/solution/)       | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `cachesrv-heap`      | 550 | team_instance | [writeup](pwn/cachesrv-heap/solution/)      | Reverse d'un protocole - overflow de tas - shell.                           |
-| `cachesrv-sandbox`   | 600 | team_instance | [writeup](pwn/cachesrv-sandbox/solution/)   | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `cachesrv-uaf`       | 550 | team_instance | [writeup](pwn/cachesrv-uaf/solution/)       | Use-after-free - primitive d'écriture - détournement de flux.               |
+| `cachesrv-canary`    | 500 | team_instance | [writeup](pwn/cachesrv-canary/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `cachesrv-fmt`       | 500 | team_instance | [writeup](pwn/cachesrv-fmt/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `cachesrv-heap`      | 550 | team_instance | [writeup](pwn/cachesrv-heap/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `cachesrv-sandbox`   | 600 | team_instance | [writeup](pwn/cachesrv-sandbox/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
+| `cachesrv-uaf`       | 550 | team_instance | [writeup](pwn/cachesrv-uaf/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
 | `fmt-key-leak`       | 300 | dynamic       | [writeup](pwn/fmt-key-leak/solution/)       | You are given a single x86-64 Linux binary, chall. It echoes a line you ty… |
-| `format-pivot`       | 500 | team_instance | [writeup](pwn/format-pivot/solution/)       | Fuite d'info - format string - ROP - lecture du flag.                       |
+| `format-pivot`       | 500 | team_instance | [writeup](pwn/format-pivot/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
 | `format-string-101`  | 150 | team_instance | [writeup](pwn/format-string-101/solution/)  | format-string-101 -- a small networked service, served as                   |
 | `heap-note`          | 350 | team_instance | [writeup](pwn/heap-note/solution/)          | A tiny note-taking service on a pinned glibc 2.31 (Ubuntu 20.04,            |
-| `heap-relay`         | 550 | team_instance | [writeup](pwn/heap-relay/solution/)         | Reverse d'un protocole - overflow de tas - shell.                           |
-| `keyvault-canary`    | 500 | team_instance | [writeup](pwn/keyvault-canary/solution/)    | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `keyvault-fmt`       | 500 | team_instance | [writeup](pwn/keyvault-fmt/solution/)       | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `keyvault-heap`      | 550 | team_instance | [writeup](pwn/keyvault-heap/solution/)      | Reverse d'un protocole - overflow de tas - shell.                           |
-| `keyvault-sandbox`   | 600 | team_instance | [writeup](pwn/keyvault-sandbox/solution/)   | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `keyvault-uaf`       | 550 | team_instance | [writeup](pwn/keyvault-uaf/solution/)       | Use-after-free - primitive d'écriture - détournement de flux.               |
-| `logd-canary`        | 500 | team_instance | [writeup](pwn/logd-canary/solution/)        | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `logd-fmt`           | 500 | team_instance | [writeup](pwn/logd-fmt/solution/)           | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `logd-heap`          | 550 | team_instance | [writeup](pwn/logd-heap/solution/)          | Reverse d'un protocole - overflow de tas - shell.                           |
-| `logd-sandbox`       | 600 | team_instance | [writeup](pwn/logd-sandbox/solution/)       | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `logd-uaf`           | 550 | team_instance | [writeup](pwn/logd-uaf/solution/)           | Use-after-free - primitive d'écriture - détournement de flux.               |
-| `meshd-canary`       | 500 | team_instance | [writeup](pwn/meshd-canary/solution/)       | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `meshd-fmt`          | 500 | team_instance | [writeup](pwn/meshd-fmt/solution/)          | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `meshd-heap`         | 550 | team_instance | [writeup](pwn/meshd-heap/solution/)         | Reverse d'un protocole - overflow de tas - shell.                           |
-| `meshd-sandbox`      | 600 | team_instance | [writeup](pwn/meshd-sandbox/solution/)      | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `meshd-uaf`          | 550 | team_instance | [writeup](pwn/meshd-uaf/solution/)          | Use-after-free - primitive d'écriture - détournement de flux.               |
+| `heap-relay`         | 550 | team_instance | [writeup](pwn/heap-relay/solution/)         | This instance's flag is on the service's filesystem, served by no route.    |
+| `keyvault-canary`    | 500 | team_instance | [writeup](pwn/keyvault-canary/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `keyvault-fmt`       | 500 | team_instance | [writeup](pwn/keyvault-fmt/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `keyvault-heap`      | 550 | team_instance | [writeup](pwn/keyvault-heap/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `keyvault-sandbox`   | 600 | team_instance | [writeup](pwn/keyvault-sandbox/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
+| `keyvault-uaf`       | 550 | team_instance | [writeup](pwn/keyvault-uaf/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `logd-canary`        | 500 | team_instance | [writeup](pwn/logd-canary/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
+| `logd-fmt`           | 500 | team_instance | [writeup](pwn/logd-fmt/solution/)           | This instance's flag is on the service's filesystem, served by no route.    |
+| `logd-heap`          | 550 | team_instance | [writeup](pwn/logd-heap/solution/)          | This instance's flag is on the service's filesystem, served by no route.    |
+| `logd-sandbox`       | 600 | team_instance | [writeup](pwn/logd-sandbox/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `logd-uaf`           | 550 | team_instance | [writeup](pwn/logd-uaf/solution/)           | This instance's flag is on the service's filesystem, served by no route.    |
+| `meshd-canary`       | 500 | team_instance | [writeup](pwn/meshd-canary/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `meshd-fmt`          | 500 | team_instance | [writeup](pwn/meshd-fmt/solution/)          | This instance's flag is on the service's filesystem, served by no route.    |
+| `meshd-heap`         | 550 | team_instance | [writeup](pwn/meshd-heap/solution/)         | This instance's flag is on the service's filesystem, served by no route.    |
+| `meshd-sandbox`      | 600 | team_instance | [writeup](pwn/meshd-sandbox/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `meshd-uaf`          | 550 | team_instance | [writeup](pwn/meshd-uaf/solution/)          | This instance's flag is on the service's filesystem, served by no route.    |
 | `off-by-one-auth`    | 150 | dynamic       | [writeup](pwn/off-by-one-auth/solution/)    | You are given a single x86-64 Linux binary, chall. It asks how many bytes   |
-| `parserd-canary`     | 500 | team_instance | [writeup](pwn/parserd-canary/solution/)     | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `parserd-fmt`        | 500 | team_instance | [writeup](pwn/parserd-fmt/solution/)        | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `parserd-heap`       | 550 | team_instance | [writeup](pwn/parserd-heap/solution/)       | Reverse d'un protocole - overflow de tas - shell.                           |
-| `parserd-sandbox`    | 600 | team_instance | [writeup](pwn/parserd-sandbox/solution/)    | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `parserd-uaf`        | 550 | team_instance | [writeup](pwn/parserd-uaf/solution/)        | Use-after-free - primitive d'écriture - détournement de flux.               |
-| `relaybox-canary`    | 500 | team_instance | [writeup](pwn/relaybox-canary/solution/)    | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `relaybox-fmt`       | 500 | team_instance | [writeup](pwn/relaybox-fmt/solution/)       | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `relaybox-heap`      | 550 | team_instance | [writeup](pwn/relaybox-heap/solution/)      | Reverse d'un protocole - overflow de tas - shell.                           |
-| `relaybox-sandbox`   | 600 | team_instance | [writeup](pwn/relaybox-sandbox/solution/)   | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `relaybox-uaf`       | 550 | team_instance | [writeup](pwn/relaybox-uaf/solution/)       | Use-after-free - primitive d'écriture - détournement de flux.               |
+| `parserd-canary`     | 500 | team_instance | [writeup](pwn/parserd-canary/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `parserd-fmt`        | 500 | team_instance | [writeup](pwn/parserd-fmt/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
+| `parserd-heap`       | 550 | team_instance | [writeup](pwn/parserd-heap/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `parserd-sandbox`    | 600 | team_instance | [writeup](pwn/parserd-sandbox/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `parserd-uaf`        | 550 | team_instance | [writeup](pwn/parserd-uaf/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
+| `relaybox-canary`    | 500 | team_instance | [writeup](pwn/relaybox-canary/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `relaybox-fmt`       | 500 | team_instance | [writeup](pwn/relaybox-fmt/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `relaybox-heap`      | 550 | team_instance | [writeup](pwn/relaybox-heap/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `relaybox-sandbox`   | 600 | team_instance | [writeup](pwn/relaybox-sandbox/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
+| `relaybox-uaf`       | 550 | team_instance | [writeup](pwn/relaybox-uaf/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
 | `ret2csu-ish`        | 500 | team_instance | [writeup](pwn/ret2csu-ish/solution/)        | ret2csu-ish -- a statically linked, no-PIE x86-64 binary with a stack       |
 | `ret2win-keyed`      | 300 | dynamic       | [writeup](pwn/ret2win-keyed/solution/)      | You are given a single x86-64 Linux binary, chall. It prints a token that   |
-| `rop-diner`          | 500 | team_instance | [writeup](pwn/rop-diner/solution/)          | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `sandbox-break`      | 600 | team_instance | [writeup](pwn/sandbox-break/solution/)      | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `sensorhub-canary`   | 500 | team_instance | [writeup](pwn/sensorhub-canary/solution/)   | Fuite de canari - overflow - chaîne ROP - exécution.                        |
-| `sensorhub-fmt`      | 500 | team_instance | [writeup](pwn/sensorhub-fmt/solution/)      | Fuite d'info - format string - ROP - lecture du flag.                       |
-| `sensorhub-heap`     | 550 | team_instance | [writeup](pwn/sensorhub-heap/solution/)     | Reverse d'un protocole - overflow de tas - shell.                           |
-| `sensorhub-sandbox`  | 600 | team_instance | [writeup](pwn/sensorhub-sandbox/solution/)  | Bug logique d'un bac à sable - évasion - exécution hôte.                    |
-| `sensorhub-uaf`      | 550 | team_instance | [writeup](pwn/sensorhub-uaf/solution/)      | Use-after-free - primitive d'écriture - détournement de flux.               |
+| `rop-diner`          | 500 | team_instance | [writeup](pwn/rop-diner/solution/)          | This instance's flag is on the service's filesystem, served by no route.    |
+| `sandbox-break`      | 600 | team_instance | [writeup](pwn/sandbox-break/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `sensorhub-canary`   | 500 | team_instance | [writeup](pwn/sensorhub-canary/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
+| `sensorhub-fmt`      | 500 | team_instance | [writeup](pwn/sensorhub-fmt/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `sensorhub-heap`     | 550 | team_instance | [writeup](pwn/sensorhub-heap/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `sensorhub-sandbox`  | 600 | team_instance | [writeup](pwn/sensorhub-sandbox/solution/)  | This instance's flag is on the service's filesystem, served by no route.    |
+| `sensorhub-uaf`      | 550 | team_instance | [writeup](pwn/sensorhub-uaf/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
 | `shellcode-decoder`  | 300 | dynamic       | [writeup](pwn/shellcode-decoder/solution/)  | You are given a single x86-64 Linux binary, chall. It prints a couple of    |
 | `stack-smash-reveal` | 100 | dynamic       | [writeup](pwn/stack-smash-reveal/solution/) | You are given a single x86-64 Linux binary, chall. It reads some input and  |
-| `uaf-ladder`         | 550 | team_instance | [writeup](pwn/uaf-ladder/solution/)         | Use-after-free - primitive d'écriture - détournement de flux - exécution.   |
+| `uaf-ladder`         | 550 | team_instance | [writeup](pwn/uaf-ladder/solution/)         | This instance's flag is on the service's filesystem, served by no route.    |
 
 ## reverse (29)
 
@@ -340,33 +340,33 @@
 | --------------------- | --- | ------------- | ------------------------------------------------ | --------------------------------------------------------------------------- |
 | `byte-drift`          | 100 | dynamic       | [writeup](reverse/byte-drift/solution/)          | We recovered a small lock program, chall. It asks for a passphrase and      |
 | `crc-forge`           | 300 | dynamic       | [writeup](reverse/crc-forge/solution/)           | chall is a stripped x86-64 ELF. It reads a flag and answers "checksums      |
-| `firmwarelet-license` | 450 | team_instance | [writeup](reverse/firmwarelet-license/solution/) | Reverse d'un contrôle de licence - forge - canal admin.                     |
-| `firmwarelet-unpack`  | 500 | team_instance | [writeup](reverse/firmwarelet-unpack/solution/)  | Dépaquetage - bug de hook - exécution.                                      |
-| `firmwarelet-vmesc`   | 550 | team_instance | [writeup](reverse/firmwarelet-vmesc/solution/)   | Reverse d'une VM maison - bug d'instruction - évasion et exécution.         |
+| `firmwarelet-license` | 450 | team_instance | [writeup](reverse/firmwarelet-license/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
+| `firmwarelet-unpack`  | 500 | team_instance | [writeup](reverse/firmwarelet-unpack/solution/)  | This instance's flag is on the service's filesystem, served by no route.    |
+| `firmwarelet-vmesc`   | 550 | team_instance | [writeup](reverse/firmwarelet-vmesc/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
 | `java-cafe`           | 300 | dynamic       | [writeup](reverse/java-cafe/solution/)           | We recovered Vault.class, a compiled Java class. Run it with java Vault     |
 | `keygen-me`           | 450 | dynamic       | [writeup](reverse/keygen-me/solution/)           | chall is a stripped x86-64 "ACME license validator". Give it a license key  |
-| `license-forge`       | 450 | team_instance | [writeup](reverse/license-forge/solution/)       | Reverse d'un contrôle de licence - forge - déblocage d'un canal admin.      |
-| `licensed-license`    | 450 | team_instance | [writeup](reverse/licensed-license/solution/)    | Reverse d'un contrôle de licence - forge - canal admin.                     |
-| `licensed-unpack`     | 500 | team_instance | [writeup](reverse/licensed-unpack/solution/)     | Dépaquetage - bug de hook - exécution.                                      |
-| `licensed-vmesc`      | 550 | team_instance | [writeup](reverse/licensed-vmesc/solution/)      | Reverse d'une VM maison - bug d'instruction - évasion et exécution.         |
+| `license-forge`       | 450 | team_instance | [writeup](reverse/license-forge/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `licensed-license`    | 450 | team_instance | [writeup](reverse/licensed-license/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `licensed-unpack`     | 500 | team_instance | [writeup](reverse/licensed-unpack/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `licensed-vmesc`      | 550 | team_instance | [writeup](reverse/licensed-vmesc/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
 | `maze-vm`             | 500 | dynamic       | [writeup](reverse/maze-vm/solution/)             | We recovered a small self-contained "gate" binary, chall. It refuses to     |
 | `packed-vm-lite`      | 350 | dynamic       | [writeup](reverse/packed-vm-lite/solution/)      | We pulled a small license checker, vmcheck, off an embedded device. When y… |
-| `packedsvc-license`   | 450 | team_instance | [writeup](reverse/packedsvc-license/solution/)   | Reverse d'un contrôle de licence - forge - canal admin.                     |
-| `packedsvc-unpack`    | 500 | team_instance | [writeup](reverse/packedsvc-unpack/solution/)    | Dépaquetage - bug de hook - exécution.                                      |
-| `packedsvc-vmesc`     | 550 | team_instance | [writeup](reverse/packedsvc-vmesc/solution/)     | Reverse d'une VM maison - bug d'instruction - évasion et exécution.         |
-| `protod-license`      | 450 | team_instance | [writeup](reverse/protod-license/solution/)      | Reverse d'un contrôle de licence - forge - canal admin.                     |
-| `protod-unpack`       | 500 | team_instance | [writeup](reverse/protod-unpack/solution/)       | Dépaquetage - bug de hook - exécution.                                      |
-| `protod-vmesc`        | 550 | team_instance | [writeup](reverse/protod-vmesc/solution/)        | Reverse d'une VM maison - bug d'instruction - évasion et exécution.         |
+| `packedsvc-license`   | 450 | team_instance | [writeup](reverse/packedsvc-license/solution/)   | This instance's flag is on the service's filesystem, served by no route.    |
+| `packedsvc-unpack`    | 500 | team_instance | [writeup](reverse/packedsvc-unpack/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `packedsvc-vmesc`     | 550 | team_instance | [writeup](reverse/packedsvc-vmesc/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `protod-license`      | 450 | team_instance | [writeup](reverse/protod-license/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `protod-unpack`       | 500 | team_instance | [writeup](reverse/protod-unpack/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `protod-vmesc`        | 550 | team_instance | [writeup](reverse/protod-vmesc/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
 | `pyc-ghost`           | 300 | dynamic       | [writeup](reverse/pyc-ghost/solution/)           | We recovered vault.pyc, a compiled Python module. Run it and it asks for t… |
 | `shell-lock`          | 150 | dynamic       | [writeup](reverse/shell-lock/solution/)          | lock.sh is a small self-decrypting shell script. Run it with the right      |
 | `stack-vm`            | 300 | dynamic       | [writeup](reverse/stack-vm/solution/)            | chall is a stripped x86-64 ELF. It asks for a key and either rejects it or  |
 | `strings-lie`         | 150 | dynamic       | [writeup](reverse/strings-lie/solution/)         | We recovered a tiny "secret vault" binary, chall. Run it and it happily     |
 | `synthvm`             | 500 | dynamic       | [writeup](reverse/synthvm/solution/)             | We pulled a "license core", synthvm, off a device. Enter the key it accept… |
 | `triple-wrap`         | 150 | dynamic       | [writeup](reverse/triple-wrap/solution/)         | chall is a stripped x86-64 ELF that checks a flag. Run it and it prints a   |
-| `vm-escape`           | 550 | team_instance | [writeup](reverse/vm-escape/solution/)           | Reverse d'une VM maison - bug d'instruction - évasion et exécution.         |
-| `vmcore-license`      | 450 | team_instance | [writeup](reverse/vmcore-license/solution/)      | Reverse d'un contrôle de licence - forge - canal admin.                     |
-| `vmcore-unpack`       | 500 | team_instance | [writeup](reverse/vmcore-unpack/solution/)       | Dépaquetage - bug de hook - exécution.                                      |
-| `vmcore-vmesc`        | 550 | team_instance | [writeup](reverse/vmcore-vmesc/solution/)        | Reverse d'une VM maison - bug d'instruction - évasion et exécution.         |
+| `vm-escape`           | 550 | team_instance | [writeup](reverse/vm-escape/solution/)           | This instance's flag is on the service's filesystem, served by no route.    |
+| `vmcore-license`      | 450 | team_instance | [writeup](reverse/vmcore-license/solution/)      | This instance's flag is on the service's filesystem, served by no route.    |
+| `vmcore-unpack`       | 500 | team_instance | [writeup](reverse/vmcore-unpack/solution/)       | This instance's flag is on the service's filesystem, served by no route.    |
+| `vmcore-vmesc`        | 550 | team_instance | [writeup](reverse/vmcore-vmesc/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
 
 ## stego (8)
 
@@ -386,9 +386,9 @@
 | challenge                  | pts | type          | writeup                                                   | résumé                                                                      |
 | -------------------------- | --- | ------------- | --------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `build-cache-poison`       | 150 | dynamic       | [writeup](supplychain/build-cache-poison/solution/)       | On vous donne le Makefile qui alimente le cache de build d'un projet, sa    |
-| `buildfarm-artswap`        | 500 | team_instance | [writeup](supplychain/buildfarm-artswap/solution/)        | Provenance forgée - substitution d'artefact - exécution au déploiement.     |
-| `buildfarm-depconf`        | 550 | team_instance | [writeup](supplychain/buildfarm-depconf/solution/)        | Dérive de lockfile - confusion de dépendance - hook de build exécuté.       |
-| `buildfarm-postinstall`    | 500 | team_instance | [writeup](supplychain/buildfarm-postinstall/solution/)    | Hook post-install - exécution - vol de secret.                              |
+| `buildfarm-artswap`        | 500 | team_instance | [writeup](supplychain/buildfarm-artswap/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
+| `buildfarm-depconf`        | 550 | team_instance | [writeup](supplychain/buildfarm-depconf/solution/)        | This instance's flag is on the service's filesystem, served by no route.    |
+| `buildfarm-postinstall`    | 500 | team_instance | [writeup](supplychain/buildfarm-postinstall/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
 | `dependency-confusion`     | 300 | dynamic       | [writeup](supplychain/dependency-confusion/solution/)     | Notre chaîne de build a récupéré le paquet interne acme-telemetry — mais    |
 | `git-repo-backdoor`        | 450 | dynamic       | [writeup](supplychain/git-repo-backdoor/solution/)        | On a exfiltré un dépôt Git interne, livré ici sous forme d'archive tar du   |
 | `layered-image-leak`       | 450 | dynamic       | [writeup](supplychain/layered-image-leak/solution/)       | On vous donne une image conteneur exportée avec docker save (image.tar).    |
@@ -405,14 +405,14 @@
 | challenge        | pts | type          | writeup                                      | résumé                                                                      |
 | ---------------- | --- | ------------- | -------------------------------------------- | --------------------------------------------------------------------------- |
 | `alias-slip`     | 150 | dynamic       | [writeup](sysadmin/alias-slip/solution/)     | A snapshot of a small nginx-served site: the site config nginx.conf and th… |
-| `auditd-cap`     | 500 | team_instance | [writeup](sysadmin/auditd-cap/solution/)     | Capability mal configurée - escalade - root.                                |
-| `auditd-cron`    | 450 | team_instance | [writeup](sysadmin/auditd-cron/solution/)    | Injection de chemin - cron - root.                                          |
-| `auditd-systemd` | 500 | team_instance | [writeup](sysadmin/auditd-systemd/solution/) | Injection d'env - unit systemd - sudo mal configuré - root.                 |
+| `auditd-cap`     | 500 | team_instance | [writeup](sysadmin/auditd-cap/solution/)     | This instance's flag is on the service's filesystem, served by no route.    |
+| `auditd-cron`    | 450 | team_instance | [writeup](sysadmin/auditd-cron/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
+| `auditd-systemd` | 500 | team_instance | [writeup](sysadmin/auditd-systemd/solution/) | This instance's flag is on the service's filesystem, served by no route.    |
 | `env-forge`      | 300 | dynamic       | [writeup](sysadmin/env-forge/solution/)      | A developer pushed a deploy bundle for an internal API to a public repo:    |
 | `mask-slip`      | 100 | dynamic       | [writeup](sysadmin/mask-slip/solution/)      | A CI pipeline (.github/workflows/deploy.yml) and one of its job logs        |
 | `rbac-reveal`    | 100 | dynamic       | [writeup](sysadmin/rbac-reveal/solution/)    | A Kubernetes manifest bundle: an RBAC Role/RoleBinding (rbac.yaml), a       |
 | `rotate-root`    | 200 | dynamic       | [writeup](sysadmin/rotate-root/solution/)    | An ops bundle from a host (mirrored under fs/): a cron job, a logrotate     |
-| `secret-slip`    | 450 | team_instance | [writeup](sysadmin/secret-slip/solution/)    | Fuite de state - réutilisation de secret - rotation détournée.              |
+| `secret-slip`    | 450 | team_instance | [writeup](sysadmin/secret-slip/solution/)    | This instance's flag is on the service's filesystem, served by no route.    |
 | `state-secret`   | 450 | dynamic       | [writeup](sysadmin/state-secret/solution/)   | A committed Terraform bundle: the config (main.tf), its state file          |
 | `unit-eval`      | 300 | dynamic       | [writeup](sysadmin/unit-eval/solution/)      | A snapshot of a systemd-driven report job: a template unit                  |
 | `vault-reuse`    | 450 | dynamic       | [writeup](sysadmin/vault-reuse/solution/)    | An Ansible project snapshot: ansible.cfg, inventory.ini, groupvars/         |
@@ -442,15 +442,15 @@
 
 | challenge                    | pts | type          | writeup                                             | résumé                                                                      |
 | ---------------------------- | --- | ------------- | --------------------------------------------------- | --------------------------------------------------------------------------- |
-| `cms-authbypass`             | 450 | team_instance | [writeup](web/cms-authbypass/solution/)             | Contournement d'auth - IDOR - mass-assignment vers rôle admin.              |
-| `cms-jwtconf`                | 400 | team_instance | [writeup](web/cms-jwtconf/solution/)                | Confusion d'algorithme JWT - forge - endpoint interne exposé.               |
-| `cms-smuggle`                | 500 | team_instance | [writeup](web/cms-smuggle/solution/)                | Request smuggling - empoisonnement de cache - contournement d'auth.         |
-| `cms-uploadssrf`             | 450 | team_instance | [writeup](web/cms-uploadssrf/solution/)             | Contournement d'upload - SSRF via le rendu - lecture metadata.              |
+| `cms-authbypass`             | 450 | team_instance | [writeup](web/cms-authbypass/solution/)             | This instance's flag is on the service's filesystem, served by no route.    |
+| `cms-jwtconf`                | 400 | team_instance | [writeup](web/cms-jwtconf/solution/)                | This instance's flag is on the service's filesystem, served by no route.    |
+| `cms-smuggle`                | 500 | team_instance | [writeup](web/cms-smuggle/solution/)                | This instance's flag is on the service's filesystem, served by no route.    |
+| `cms-uploadssrf`             | 450 | team_instance | [writeup](web/cms-uploadssrf/solution/)             | This instance's flag is on the service's filesystem, served by no route.    |
 | `flask-unsign`               | 150 | dynamic       | [writeup](web/flask-unsign/solution/)               | A small Members Panel ships as source, along with a session cookie          |
-| `forum-protopoll`            | 500 | team_instance | [writeup](web/forum-protopoll/solution/)            | Prototype pollution - gadget - exécution.                                   |
-| `forum-sqli2`                | 450 | team_instance | [writeup](web/forum-sqli2/solution/)                | Injection SQL de second ordre - contournement d'auth - action admin.        |
-| `forum-xxe`                  | 450 | team_instance | [writeup](web/forum-xxe/solution/)                  | XXE - SSRF - lecture de fichier interne.                                    |
-| `graph-climb`                | 450 | team_instance | [writeup](web/graph-climb/solution/)                | Introspection GraphQL - IDOR - mass-assignment vers rôle admin.             |
+| `forum-protopoll`            | 500 | team_instance | [writeup](web/forum-protopoll/solution/)            | This instance's flag is on the service's filesystem, served by no route.    |
+| `forum-sqli2`                | 450 | team_instance | [writeup](web/forum-sqli2/solution/)                | This instance's flag is on the service's filesystem, served by no route.    |
+| `forum-xxe`                  | 450 | team_instance | [writeup](web/forum-xxe/solution/)                  | This instance's flag is on the service's filesystem, served by no route.    |
+| `graph-climb`                | 450 | team_instance | [writeup](web/graph-climb/solution/)                | This instance's flag is on the service's filesystem, served by no route.    |
 | `graphql-introspection-maze` | 500 | team_instance | [writeup](web/graphql-introspection-maze/solution/) | Atlas Ops exposes a single GraphQL endpoint at POST /graphql                |
 | `jwt-cousin`                 | 150 | team_instance | [writeup](web/jwt-cousin/solution/)                 | "It's basically a JWT," said no one who read the code.                      |
 | `jwt-forge`                  | 150 | dynamic       | [writeup](web/jwt-forge/solution/)                  | You have the full source of an internal Ops Console plus a leaked config    |
@@ -464,4 +464,4 @@
 | `sqlite-union`               | 150 | dynamic       | [writeup](web/sqlite-union/solution/)               | A souvenir shop exposes a product search API. You get the handler source a… |
 | `ssrf-metadata-decoy`        | 350 | team_instance | [writeup](web/ssrf-metadata-decoy/solution/)        | imgproxy is a company image-fetch proxy: give it a URL and it fetches the   |
 | `ssti-jinja`                 | 300 | dynamic       | [writeup](web/ssti-jinja/solution/)                 | A greeting-card service ships as source, with a captured normal request. I… |
-| `webhook-relay`              | 450 | team_instance | [writeup](web/webhook-relay/solution/)              | Validation de webhook contournée - SSRF - service interne.                  |
+| `webhook-relay`              | 450 | team_instance | [writeup](web/webhook-relay/solution/)              | This instance's flag is on the service's filesystem, served by no route.    |

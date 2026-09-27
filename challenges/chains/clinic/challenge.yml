@@ -3,8 +3,6 @@ author: ctf-2026
 category: chains
 type: team_instance
 description: |
-  Jeton de session prévisible -> IDOR export -> action admin (auth -> IDOR -> admin).
-
   This instance's flag is on the service's filesystem, served by no route.
   Exploit the service to read it.
 

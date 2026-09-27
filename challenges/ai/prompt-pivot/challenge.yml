@@ -3,8 +3,6 @@ author: ctf-2026
 category: ai
 type: team_instance
 description: |
-  Injection indirecte -> abus d'outil -> exfiltration de données internes.
-
   This instance's flag is on the service's filesystem, served by no route.
   Exploit the service to read it.
 

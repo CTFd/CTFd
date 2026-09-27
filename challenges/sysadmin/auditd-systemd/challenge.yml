@@ -3,8 +3,6 @@ author: ctf-2026
 category: sysadmin
 type: team_instance
 description: |
-  Injection d'env -> unit systemd -> sudo mal configuré -> root.
-
   This instance's flag is on the service's filesystem, served by no route.
   Exploit the service to read it.
 

@@ -3,8 +3,6 @@ author: ctf-2026
 category: ml
 type: team_instance
 description: |
-  Injection dans le pré-traitement -> empoisonnement -> exfiltration.
-
   This instance's flag is on the service's filesystem, served by no route.
   Exploit the service to read it.
 

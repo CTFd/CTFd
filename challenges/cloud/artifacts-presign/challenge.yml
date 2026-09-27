@@ -3,8 +3,6 @@ author: ctf-2026
 category: cloud
 type: team_instance
 description: |
-  Abus d'URL pré-signée -> écriture d'objet -> exécution au déploiement.
-
   This instance's flag is on the service's filesystem, served by no route.
   Exploit the service to read it.
 
