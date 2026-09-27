@@ -37,7 +37,7 @@ status() {
   echo ">> /king via frps (depuis le front, avec le secret scorer)"
   front "S=\$(grep '^KOTH_SCORER_SECRET=' $ENV_FILE | cut -d= -f2); for p in $P_THRONE $P_CITADEL $P_ARMORY $P_FORTUNE; do printf '  :%s  ' \$p; curl -s -m 5 -H \"X-Scorer-Token: \$S\" http://$FRONT_PRIV:\$p/king | head -c 120; echo; done"
   echo ">> Plugin koth (CTFd)"
-  front "cd /opt/ctfd/CTFd && $COMPOSE exec -T ctfd sh -c 'echo \"  KOTH_TICK=\$KOTH_TICK hills=\$(echo \$KOTH_HILLS | tr -cd , | wc -c)+1\"'; curl -s -m 5 -o /dev/null -w '  /koth -> %{http_code}\n' http://127.0.0.1/koth -H 'Host: ctf.tg'"
+  front "cd /opt/ctfd/CTFd && $COMPOSE exec -T ctfd sh -c 'echo \"  KOTH_TICK=\$KOTH_TICK hills=\$(echo \$KOTH_HILLS | tr -cd , | wc -c)+1\"'; curl -s -m 5 -o /dev/null -w '  /plugins/koth/ -> %{http_code}\n' http://127.0.0.1/plugins/koth/ -H 'Host: ctf.tg'"
 }
 
 down() {
