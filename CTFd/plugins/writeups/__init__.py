@@ -85,7 +85,7 @@ def _meta_of(head: str) -> dict:
     m = _META.search(head or "")
     if not m:
         return {}
-    return {k: v for k, v in _META_KV.findall(m.group(1))}
+    return dict(_META_KV.findall(m.group(1)))
 
 
 def _entry(head: str, slug: str) -> dict:
