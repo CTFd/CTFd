@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # intel-hex
-
-**Catégorie** hardware · **Points** 100 · **Auteur** dagbanjaphet
-
-# intel-hex — writeup
 
 **Flag:** `NCTF{…}`
 

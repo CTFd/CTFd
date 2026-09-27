@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # gcp-token-scope
-
-**Catégorie** cloud · **Points** 300 · **Auteur** dagbanjaphet
-
-# gcp-token-scope — solution
 
 ## TL;DR
 

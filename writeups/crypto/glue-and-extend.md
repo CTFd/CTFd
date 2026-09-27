@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # glue-and-extend
-
-**Catégorie** crypto · **Points** 450 · **Auteur** dagbanjaphet
-
-# glue-and-extend — solution
 
 ## TL;DR
 

@@ -1,6 +1,4 @@
-# z-locator
-
-**Catégorie** ppc · **Points** 150 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="ppc" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
 
 # z-locator
 

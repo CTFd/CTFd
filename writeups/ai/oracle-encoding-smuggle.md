@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # oracle-encoding-smuggle
-
-**Catégorie** ai · **Points** 100 · **Auteur** dagbanjaphet
-
-# oracle-encoding-smuggle -- author solution
 
 **Summary:** Smuggle the request past a raw-text word-list filter by base64
 encoding it; the oracle decodes it after the filter has already passed.

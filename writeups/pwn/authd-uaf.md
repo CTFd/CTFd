@@ -1,10 +1,8 @@
+<!-- nctf-meta category="pwn" difficulty="hard" points="550" author="ctf-2026" stub="1" -->
+
 # authd-uaf
 
-**Catégorie** pwn · **Points** 550 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# pwn-authd-uaf — solution (STUB)
 
 **Category** pwn · **Value** 550 · **Served** yes (per-team flag)
 

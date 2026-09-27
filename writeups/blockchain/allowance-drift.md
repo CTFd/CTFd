@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # allowance-drift
-
-**Catégorie** blockchain · **Points** 150 · **Auteur** dagbanjaphet
-
-# allowance-drift -- solution
 
 **Summary.** `transferFrom` never decrements the allowance, so one approval is
 reusable forever. The number of `transferFrom` calls needed to drain the

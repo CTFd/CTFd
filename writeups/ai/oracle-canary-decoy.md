@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # oracle-canary-decoy
-
-**Catégorie** ai · **Points** 300 · **Auteur** dagbanjaphet
-
-# oracle-canary-decoy -- author solution
 
 **Summary:** The easy answer is a decoy canary. The real flag is on the admin
 channel, unlocked by an `X-Auth` header whose token is XOR-obfuscated in the

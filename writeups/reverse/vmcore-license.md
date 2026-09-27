@@ -1,10 +1,8 @@
+<!-- nctf-meta category="reverse" difficulty="hard" points="450" author="ctf-2026" stub="1" -->
+
 # vmcore-license
 
-**Catégorie** reverse · **Points** 450 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# reverse-vmcore-license — solution (STUB)
 
 **Category** reverse · **Value** 450 · **Served** yes (per-team flag)
 

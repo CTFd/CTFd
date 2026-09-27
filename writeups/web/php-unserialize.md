@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # php-unserialize
-
-**Catégorie** web · **Points** 300 · **Auteur** dagbanjaphet
-
-# php-unserialize -- solution
 
 **Summary:** The portal calls `unserialize()` on the attacker-controlled cookie
 with no class allowlist, so you can inject a `FlagReveal` object whose

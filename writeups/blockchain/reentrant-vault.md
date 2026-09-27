@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # reentrant-vault
-
-**Catégorie** blockchain · **Points** 450 · **Auteur** dagbanjaphet
-
-# blockchain-reentrant-vault — author notes / verification
 
 **Challenge id:** `blockchain-reentrant-vault` · **Category:** blockchain (new) · **Difficulty:** hard
 **Served:** yes (per-team container, `type: team_instance`)

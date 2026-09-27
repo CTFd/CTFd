@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # i2c-sniff
-
-**Catégorie** hardware · **Points** 300 · **Auteur** dagbanjaphet
-
-# i2c-sniff — writeup
 
 **Flag:** `NCTF{…}`
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # adv-flip
-
-**Catégorie** ml · **Points** 450 · **Auteur** dagbanjaphet
-
-# adv-flip -- solution
 
 **One-liner:** The minimum-norm perturbation that moves `x0` to the gate's
 decision boundary lands exactly on the flag bytes.

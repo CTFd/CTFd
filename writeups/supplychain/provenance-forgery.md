@@ -1,6 +1,4 @@
-# provenance-forgery
-
-**Catégorie** supplychain · **Points** 300 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="supplychain" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
 
 # provenance-forgery
 

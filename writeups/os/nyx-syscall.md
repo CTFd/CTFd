@@ -1,10 +1,8 @@
+<!-- nctf-meta category="os" difficulty="hard" points="500" author="ctf-2026" stub="1" -->
+
 # nyx-syscall
 
-**Catégorie** os · **Points** 500 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# os-nyx-syscall — solution (STUB)
 
 **Category** os · **Value** 500 · **Served** yes (per-team flag)
 

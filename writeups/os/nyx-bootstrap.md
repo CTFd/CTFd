@@ -1,10 +1,8 @@
+<!-- nctf-meta category="os" difficulty="hard" points="400" author="ctf-2026" stub="1" -->
+
 # nyx-bootstrap
 
-**Catégorie** os · **Points** 400 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# os-nyx-bootstrap — solution (STUB)
 
 **Category** os · **Value** 400 · **Served** yes (per-team flag)
 

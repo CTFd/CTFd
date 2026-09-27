@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="medium" points="350" author="dagbanjaphet" stub="0" -->
+
 # pickle-rce
-
-**Catégorie** ml · **Points** 350 · **Auteur** dagbanjaphet
-
-# pickle-rce (ModelHub) -- writeup
 
 ## TL;DR
 

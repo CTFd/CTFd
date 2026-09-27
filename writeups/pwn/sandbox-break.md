@@ -1,10 +1,8 @@
+<!-- nctf-meta category="pwn" difficulty="hard" points="600" author="ctf-2026" stub="1" -->
+
 # sandbox-break
 
-**Catégorie** pwn · **Points** 600 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# pwn-sandbox-break — solution (STUB)
 
 **Category** pwn · **Value** 600 · **Served** yes (per-team flag)
 

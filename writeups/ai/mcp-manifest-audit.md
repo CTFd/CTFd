@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="medium" points="250" author="Hibris" stub="0" -->
+
 # mcp-manifest-audit
-
-**Catégorie** ai · **Points** 250 · **Auteur** Hibris
-
-# mcp-manifest-audit -- solution
 
 **Category:** ai · **Class:** MCP tool poisoning (name-squatting + tool
 shadowing + description poisoning) · **Serving:** offline, deterministic host

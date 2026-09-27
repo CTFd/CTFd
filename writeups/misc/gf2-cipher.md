@@ -1,6 +1,4 @@
-# gf2-cipher
-
-**Catégorie** misc · **Points** 450 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="misc" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
 
 # gf2-cipher
 

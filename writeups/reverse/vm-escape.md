@@ -1,10 +1,8 @@
+<!-- nctf-meta category="reverse" difficulty="hard" points="550" author="ctf-2026" stub="1" -->
+
 # vm-escape
 
-**Catégorie** reverse · **Points** 550 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# reverse-vm-escape — solution (STUB)
 
 **Category** reverse · **Value** 550 · **Served** yes (per-team flag)
 

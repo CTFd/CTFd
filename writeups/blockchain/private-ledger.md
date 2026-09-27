@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # private-ledger
-
-**Catégorie** blockchain · **Points** 150 · **Auteur** dagbanjaphet
-
-# private-ledger -- solution
 
 **Summary.** The flag sits in a `private` mapping. Solidity `private` only
 means "no compiler-generated getter"; the bytes are still in plain storage.

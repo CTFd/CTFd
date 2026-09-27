@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # netflow-talker
-
-**Catégorie** networking · **Points** 300 · **Auteur** dagbanjaphet
-
-# netflow-talker — solution
 
 **Summary:** Aggregate flows by source to find the top talker by bytes, then
 decode that host's high destination ports (in time order) into the flag.

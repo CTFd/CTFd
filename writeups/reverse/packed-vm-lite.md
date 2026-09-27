@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="medium" points="350" author="challenge-team" stub="0" -->
+
 # packed-vm-lite
-
-**Catégorie** reverse · **Points** 350 · **Auteur** challenge-team
-
-# packed-vm-lite - writeup
 
 **Flag:** `NCTF{…}`
 

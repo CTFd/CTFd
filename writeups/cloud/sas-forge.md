@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # sas-forge
-
-**Catégorie** cloud · **Points** 450 · **Auteur** dagbanjaphet
-
-# sas-forge — solution
 
 ## TL;DR
 

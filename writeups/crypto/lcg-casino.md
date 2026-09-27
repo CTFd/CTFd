@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="hard" points="500" author="dagbanjaphet" stub="0" -->
+
 # lcg-casino
-
-**Catégorie** crypto · **Points** 500 · **Auteur** dagbanjaphet
-
-# lcg-casino — writeup
 
 ## TL;DR
 

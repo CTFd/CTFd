@@ -1,8 +1,6 @@
+<!-- nctf-meta category="chains" difficulty="hard" points="450" author="ctf-2026" stub="0" -->
+
 # clinic
-
-**Catégorie** chains · **Points** 450 · **Auteur** ctf-2026
-
-# chains-clinic — solution
 
 **Category** chains · **Served** yes (per-team flag) · multi-stage
 

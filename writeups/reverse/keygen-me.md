@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # keygen-me
-
-**Catégorie** reverse · **Points** 450 · **Auteur** dagbanjaphet
-
-# keygen-me — writeup
 
 **Category:** reverse · **Difficulty:** hard
 **Flag:** `NCTF{…}`

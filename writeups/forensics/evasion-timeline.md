@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="medium" points="400" author="ctf-team" stub="0" -->
+
 # Evasion Timeline
-
-**Catégorie** forensics · **Points** 400 · **Auteur** ctf-team
-
-# Evasion Timeline — writeup
 
 **Category:** forensics / DFIR · **Difficulty:** medium(-hard)
 **Challenge ID:** `forensics-evasion-timeline`

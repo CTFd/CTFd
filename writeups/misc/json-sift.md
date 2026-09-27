@@ -1,6 +1,4 @@
-# json-sift
-
-**Catégorie** misc · **Points** 100 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="misc" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
 
 # json-sift
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # java-cafe
-
-**Catégorie** reverse · **Points** 300 · **Auteur** dagbanjaphet
-
-# java-cafe — writeup
 
 **Category:** reverse · **Difficulty:** medium
 **Flag:** `NCTF{…}`

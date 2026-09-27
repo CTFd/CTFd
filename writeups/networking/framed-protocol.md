@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # framed-protocol
-
-**Catégorie** networking · **Points** 300 · **Auteur** dagbanjaphet
-
-# framed-protocol — solution
 
 **Summary:** Reverse a length-prefixed binary framing, CRC-validate frames, keep
 the DATA frames, order by seq, and concatenate their payloads.

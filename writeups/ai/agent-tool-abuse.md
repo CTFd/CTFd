@@ -1,5 +1,5 @@
-# agent-tool-abuse
+<!-- nctf-meta category="ai" difficulty="hard" points="500" author="dagbanjaphet" stub="0" -->
 
-**Catégorie** ai · **Points** 500 · **Auteur** dagbanjaphet
+# agent-tool-abuse
 
 _Pas encore de writeup pour ce challenge._

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="350" author="dagbanjaphet" stub="0" -->
+
 # tlv-vault
-
-**Catégorie** crypto · **Points** 350 · **Auteur** dagbanjaphet
-
-# tlv-vault - writeup
 
 **Category:** crypto - **Difficulty:** medium - **Flag:** `NCTF{…}`
 

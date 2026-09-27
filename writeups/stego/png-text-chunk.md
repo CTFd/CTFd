@@ -1,6 +1,4 @@
-# png-text-chunk
-
-**Catégorie** stego · **Points** 150 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="stego" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
 
 # png-text-chunk
 

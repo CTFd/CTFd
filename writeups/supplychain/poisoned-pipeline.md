@@ -1,8 +1,6 @@
+<!-- nctf-meta category="supplychain" difficulty="medium" points="350" author="dagbanjaphet" stub="0" -->
+
 # poisoned-pipeline
-
-**Catégorie** supplychain · **Points** 350 · **Auteur** dagbanjaphet
-
-# supplychain-poisoned-pipeline (MiniCI) — author notes / verification
 
 **Challenge id:** `supplychain-poisoned-pipeline` · **Category:** supplychain (new) · **Difficulty:** medium
 **Served:** yes (per-team container, `type: team_instance`)

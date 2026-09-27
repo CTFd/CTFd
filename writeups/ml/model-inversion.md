@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="hard" points="500" author="dagbanjaphet" stub="0" -->
+
 # model-inversion
-
-**Catégorie** ml · **Points** 500 · **Auteur** dagbanjaphet
-
-# model-inversion — writeup
 
 **Category:** ml · **Difficulty:** hard · **Challenge ID:** `ml-model-inversion`
 

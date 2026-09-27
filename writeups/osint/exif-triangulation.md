@@ -1,8 +1,6 @@
+<!-- nctf-meta category="osint" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # exif-triangulation
-
-**Catégorie** osint · **Points** 300 · **Auteur** dagbanjaphet
-
-# exif-triangulation — writeup
 
 **Category:** osint · **Difficulty:** medium
 **Flag:** `NCTF{…}`

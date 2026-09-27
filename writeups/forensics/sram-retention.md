@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="medium" points="350" author="ctf-team" stub="0" -->
+
 # SRAM Retention
-
-**Catégorie** forensics · **Points** 350 · **Auteur** ctf-team
-
-# SRAM Retention — writeup
 
 **Category:** forensics · **Difficulty:** medium · **Flag:** `NCTF{…}`
 

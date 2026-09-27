@@ -1,8 +1,6 @@
+<!-- nctf-meta category="chains" difficulty="hard" points="500" author="ctf-2026" stub="0" -->
+
 # vaultboard
-
-**Catégorie** chains · **Points** 500 · **Auteur** ctf-2026
-
-# chains-vaultboard — solution
 
 **Category** chains · **Served** yes (per-team flag) · multi-stage
 

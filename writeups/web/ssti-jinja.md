@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # ssti-jinja
-
-**Catégorie** web · **Points** 300 · **Auteur** dagbanjaphet
-
-# ssti-jinja -- solution
 
 **Summary:** The `name` is concatenated into the Jinja template source before
 rendering, so a `{{ config }}` payload is evaluated and leaks the `config`

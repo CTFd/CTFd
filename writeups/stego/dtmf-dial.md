@@ -1,6 +1,4 @@
-# dtmf-dial
-
-**Catégorie** stego · **Points** 450 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="stego" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
 
 # dtmf-dial
 

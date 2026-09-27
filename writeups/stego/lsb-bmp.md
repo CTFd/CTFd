@@ -1,6 +1,4 @@
-# lsb-bmp
-
-**Catégorie** stego · **Points** 100 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="stego" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
 
 # lsb-bmp
 

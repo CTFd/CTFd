@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="medium" points="300" author="ctf-2026" stub="0" -->
+
 # artifacts-prefix
-
-**Catégorie** cloud · **Points** 300 · **Auteur** ctf-2026
-
-# cloud-artifacts-prefix — solution
 
 **Category** cloud · **Value** 450 · **Served** yes (per-team flag)
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="500" author="ctf-2026" stub="0" -->
+
 # cms-smuggle
-
-**Catégorie** web · **Points** 500 · **Auteur** ctf-2026
-
-# web-cms-smuggle — solution
 
 **Category** web · **Value** 500 · **Served** yes (per-team flag)
 

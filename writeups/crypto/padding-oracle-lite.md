@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="350" author="dagbanjaphet" stub="0" -->
+
 # padding-oracle-lite
-
-**Catégorie** crypto · **Points** 350 · **Auteur** dagbanjaphet
-
-# padding-oracle-lite -- writeup
 
 ## TL;DR
 

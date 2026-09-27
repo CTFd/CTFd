@@ -1,6 +1,4 @@
-# life-decode
-
-**Catégorie** ppc · **Points** 450 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="ppc" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
 
 # life-decode
 

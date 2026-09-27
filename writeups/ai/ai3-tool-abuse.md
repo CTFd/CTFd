@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="hard" points="500" author="dagbanjaphet" stub="0" -->
+
 # ai3-tool-abuse
-
-**Catégorie** ai · **Points** 500 · **Auteur** dagbanjaphet
-
-# ai3-tool-abuse -- writeup
 
 **Category:** ai (Level 3, hard) · **Prereq:** ai2-output-filter
 **Flag:** `NCTF{…}`, per team.

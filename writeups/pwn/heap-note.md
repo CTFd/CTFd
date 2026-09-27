@@ -1,8 +1,6 @@
+<!-- nctf-meta category="pwn" difficulty="medium" points="350" author="dagbanjaphet" stub="0" -->
+
 # heap-note
-
-**Catégorie** pwn · **Points** 350 · **Auteur** dagbanjaphet
-
-# heap-note — writeup
 
 **Category:** pwn · **Difficulty:** medium
 **libc:** glibc 2.31 (Ubuntu 20.04, `2.31-0ubuntu9.18`), pinned and shipped.

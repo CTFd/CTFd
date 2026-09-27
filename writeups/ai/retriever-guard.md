@@ -1,10 +1,8 @@
+<!-- nctf-meta category="ai" difficulty="hard" points="550" author="ctf-2026" stub="1" -->
+
 # retriever-guard
 
-**Catégorie** ai · **Points** 550 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# ai-retriever-guard — solution (STUB)
 
 **Category** ai · **Value** 550 · **Served** yes (per-team flag)
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # airdrop-forge
-
-**Catégorie** blockchain · **Points** 300 · **Auteur** dagbanjaphet
-
-# airdrop-forge -- solution
 
 **Summary.** Given the full leaf set of a sorted-pair keccak Merkle tree, you
 can construct the inclusion proof for any leaf yourself -- including the

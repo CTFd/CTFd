@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # triple-wrap
-
-**Catégorie** reverse · **Points** 150 · **Auteur** dagbanjaphet
-
-# triple-wrap — writeup
 
 **Category:** reverse · **Difficulty:** easy
 **Flag:** `NCTF{…}`

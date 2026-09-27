@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # pyc-ghost
-
-**Catégorie** reverse · **Points** 300 · **Auteur** dagbanjaphet
-
-# pyc-ghost — writeup
 
 **Category:** reverse · **Difficulty:** medium
 **Flag:** `NCTF{…}`

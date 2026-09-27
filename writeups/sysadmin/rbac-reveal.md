@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # rbac-reveal
-
-**Catégorie** sysadmin · **Points** 100 · **Auteur** dagbanjaphet
-
-# rbac-reveal — solution
 
 ## TL;DR
 

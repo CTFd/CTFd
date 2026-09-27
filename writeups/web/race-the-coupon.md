@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="400" author="ctf-2026" stub="0" -->
+
 # race-the-coupon
-
-**Catégorie** web · **Points** 400 · **Auteur** ctf-2026
-
-# race-the-coupon — writeup
 
 **Category:** web · **Difficulty:** medium · **Challenge id:** `web-race-the-coupon`
 

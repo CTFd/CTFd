@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # jwt-forge
-
-**Catégorie** web · **Points** 150 · **Auteur** dagbanjaphet
-
-# jwt-forge -- solution
 
 **Summary:** The HS256 signing secret is leaked in a committed `config.env`, so
 you can forge an `admin` token and unseal the flag offline.

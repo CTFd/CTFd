@@ -1,10 +1,8 @@
+<!-- nctf-meta category="ml" difficulty="hard" points="450" author="ctf-2026" stub="1" -->
+
 # modelhub-poison
 
-**Catégorie** ml · **Points** 450 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# ml-modelhub-poison — solution (STUB)
 
 **Category** ml · **Value** 450 · **Served** yes (per-team flag)
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="chains" difficulty="hard" points="550" author="ctf-2026" stub="0" -->
+
 # pipeline
-
-**Catégorie** chains · **Points** 550 · **Auteur** ctf-2026
-
-# chains-pipeline — solution
 
 **Category** chains · **Served** yes (per-team flag) · multi-stage
 

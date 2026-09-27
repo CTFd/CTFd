@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="hard" points="500" author="ctf-2026" stub="0" -->
+
 # smuggle-gap
-
-**Catégorie** web · **Points** 500 · **Auteur** ctf-2026
-
-# smuggle-gap -- solution
 
 ## TL;DR
 

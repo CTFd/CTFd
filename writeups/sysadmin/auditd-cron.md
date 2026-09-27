@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="medium" points="450" author="ctf-2026" stub="0" -->
+
 # auditd-cron
-
-**Catégorie** sysadmin · **Points** 450 · **Auteur** ctf-2026
-
-# sysadmin-auditd-cron — solution
 
 **Category** sysadmin · **Value** 500 · **Served** yes (per-team flag)
 

@@ -33,6 +33,9 @@ except ImportError:
     sys.exit("pip install pyyaml")
 
 
+DIFFS = ["warmup", "easy", "medium", "hard", "insane"]
+
+
 def field(doc, *keys, default=""):
     for k in keys:
         if doc.get(k):
@@ -40,10 +43,31 @@ def field(doc, *keys, default=""):
     return default
 
 
+def difficulty_of(doc):
+    """First difficulty tag found on the challenge, else "" (no pill)."""
+    tags = [str(t).lower() for t in (doc.get("tags") or [])]
+    for d in DIFFS:
+        if d in tags:
+            return d
+    return ""
+
+
+def _strip_leading_h1(body):
+    """Drop the body's own top-level title (and a trailing blank), so it does
+    not duplicate the canonical `# {name}` header we prepend."""
+    lines = body.split("\n")
+    if lines and lines[0].lstrip().startswith("# "):
+        lines = lines[1:]
+        if lines and lines[0].strip() == "":
+            lines = lines[1:]
+    return "\n".join(lines).strip()
+
+
 def build(cdir, doc, cat, slug):
     name = field(doc, "name", default=slug)
     pts = doc.get("value") or (doc.get("extra") or {}).get("initial") or "?"
     author = field(doc, "author", default="—")
+    diff = difficulty_of(doc)
     readme = os.path.join(cdir, "solution", "README.md")
     if os.path.isfile(readme):
         body = open(readme, encoding="utf-8").read().strip()
@@ -53,7 +77,14 @@ def build(cdir, doc, cat, slug):
     # Un servi implémenté+vérifié reste `state: hidden` jusqu'au Lot-5 mais a un
     # vrai writeup — ne pas le marquer provisoire à cause de son état.
     is_stub = "STUB" in body[:400]
-    header = f"# {name}\n\n**Catégorie** {cat} · **Points** {pts} · **Auteur** {author}"
+    body = _strip_leading_h1(body)
+    # Ligne de méta LISIBLE PAR MACHINE (1re ligne, invisible au rendu : le plugin
+    # la parse pour les pastilles et la retire avant le rendu Markdown).
+    meta = (
+        f'<!-- nctf-meta category="{cat}" difficulty="{diff}" '
+        f'points="{pts}" author="{author}" stub="{1 if is_stub else 0}" -->'
+    )
+    header = f"{meta}\n# {name}"
     if is_stub:
         header += "\n\n> ⚠️ Challenge non finalisé — writeup provisoire."
     md = header + "\n\n" + FLAG.sub("NCTF{…}", body) + "\n"

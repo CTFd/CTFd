@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # ai0-leaked-transcript
-
-**Catégorie** ai · **Points** 100 · **Auteur** dagbanjaphet
-
-# ai0-leaked-transcript -- writeup
 
 **Category:** ai (Level 0, root of the AI track)
 **Difficulty:** easy

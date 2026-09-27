@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # oracle-reverse-emit
-
-**Catégorie** ai · **Points** 150 · **Auteur** dagbanjaphet
-
-# oracle-reverse-emit -- author solution
 
 **Summary:** The oracle emits the flag, but the output redactor only scrubs a
 literal `NCTF{…}` token. Ask for the answer reversed so it no longer matches

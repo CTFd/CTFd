@@ -1,10 +1,8 @@
+<!-- nctf-meta category="os" difficulty="hard" points="550" author="ctf-2026" stub="1" -->
+
 # nyx-scheduler
 
-**Catégorie** os · **Points** 550 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# os-nyx-scheduler — solution (STUB)
 
 **Category** os · **Value** 550 · **Served** yes (per-team flag)
 

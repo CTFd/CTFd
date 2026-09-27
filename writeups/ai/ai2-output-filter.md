@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="medium" points="350" author="dagbanjaphet" stub="0" -->
+
 # ai2-output-filter
-
-**Catégorie** ai · **Points** 350 · **Auteur** dagbanjaphet
-
-# ai2-output-filter -- writeup
 
 **Category:** ai (Level 2)
 **Difficulty:** medium

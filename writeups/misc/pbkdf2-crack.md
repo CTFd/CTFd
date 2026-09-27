@@ -1,6 +1,4 @@
-# pbkdf2-crack
-
-**Catégorie** misc · **Points** 150 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="misc" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
 
 # pbkdf2-crack
 

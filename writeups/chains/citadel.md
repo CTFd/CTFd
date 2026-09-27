@@ -1,8 +1,6 @@
+<!-- nctf-meta category="chains" difficulty="hard" points="600" author="ctf-2026" stub="0" -->
+
 # citadel
-
-**Catégorie** chains · **Points** 600 · **Auteur** ctf-2026
-
-# chains-citadel — solution
 
 **Category** chains · **Served** yes (per-team flag) · multi-stage
 

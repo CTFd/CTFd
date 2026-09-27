@@ -1,6 +1,4 @@
-# knapsack-locker
-
-**Catégorie** ppc · **Points** 300 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="ppc" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
 
 # knapsack-locker
 

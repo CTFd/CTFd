@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cve" difficulty="medium" points="350" author="ctf-2026" stub="0" -->
+
 # hookrelay
-
-**Catégorie** cve · **Points** 350 · **Auteur** ctf-2026
-
-# cve-hookrelay — solution (CVE-2022-24439)
 
 **Category** cve · **Value** 350 (dynamic) · **Served** yes (per-team flag)
 

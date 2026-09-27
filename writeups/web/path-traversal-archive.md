@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # path-traversal-archive
-
-**Catégorie** web · **Points** 150 · **Auteur** dagbanjaphet
-
-# path-traversal-archive -- solution
 
 **Summary:** The download handler joins `?file=` onto the web root without
 normalization, so `../private/service.env` escapes the public folder and leaks

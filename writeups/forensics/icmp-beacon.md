@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # icmp-beacon
-
-**Catégorie** forensics · **Points** 150 · **Auteur** dagbanjaphet
-
-# icmp-beacon — writeup
 
 **Category:** forensics · **Difficulty:** medium
 **Flag:** `NCTF{…}` (static)

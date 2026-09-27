@@ -1,8 +1,6 @@
+<!-- nctf-meta category="supplychain" difficulty="medium" points="550" author="ctf-2026" stub="0" -->
+
 # buildfarm-depconf
-
-**Catégorie** supplychain · **Points** 550 · **Auteur** ctf-2026
-
-# supplychain-buildfarm-depconf — solution
 
 **Category** supplychain · **Value** 500 · **Served** yes (per-team flag)
 

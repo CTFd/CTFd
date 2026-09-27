@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # stack-vm
-
-**Catégorie** reverse · **Points** 300 · **Auteur** dagbanjaphet
-
-# stack-vm — writeup
 
 **Category:** reverse · **Difficulty:** medium
 **Flag:** `NCTF{…}`

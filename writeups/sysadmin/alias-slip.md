@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # alias-slip
-
-**Catégorie** sysadmin · **Points** 150 · **Auteur** dagbanjaphet
-
-# alias-slip — solution
 
 ## TL;DR
 

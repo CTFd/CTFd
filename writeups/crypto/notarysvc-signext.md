@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="500" author="ctf-2026" stub="0" -->
+
 # notarysvc-signext
-
-**Catégorie** crypto · **Points** 500 · **Auteur** ctf-2026
-
-# crypto-notarysvc-signext — solution
 
 **Category** crypto · **Value** 500 · **Served** yes (per-team flag)
 

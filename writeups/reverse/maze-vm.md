@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="hard" points="500" author="challenge-team" stub="0" -->
+
 # maze-vm
-
-**Catégorie** reverse · **Points** 500 · **Auteur** challenge-team
-
-# maze-vm — reference solution
 
 **Flag:** `NCTF{…}`
 

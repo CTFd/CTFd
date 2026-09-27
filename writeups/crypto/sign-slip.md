@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="hard" points="450" author="ctf-2026" stub="0" -->
+
 # sign-slip
-
-**Catégorie** crypto · **Points** 450 · **Auteur** ctf-2026
-
-# crypto-sign-slip — solution
 
 **Category** crypto · **Value** 500 · **Served** yes (per-team flag)
 

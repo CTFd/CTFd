@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # state-secret
-
-**Catégorie** sysadmin · **Points** 450 · **Auteur** dagbanjaphet
-
-# state-secret — solution
 
 ## TL;DR
 

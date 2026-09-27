@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # member-ids
-
-**Catégorie** ml · **Points** 150 · **Auteur** dagbanjaphet
-
-# member-ids -- solution
 
 **One-liner:** Members have distinctly low loss; read their tags in id order.
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # dns-chain
-
-**Catégorie** networking · **Points** 300 · **Auteur** dagbanjaphet
-
-# dns-chain — solution
 
 **Summary:** Parse the raw DNS message (with name compression), follow the CNAME
 chain from the question name, and concatenate the TXT string at each hop.

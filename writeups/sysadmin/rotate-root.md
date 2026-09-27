@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="medium" points="200" author="dagbanjaphet" stub="0" -->
+
 # rotate-root
-
-**Catégorie** sysadmin · **Points** 200 · **Auteur** dagbanjaphet
-
-# rotate-root — solution
 
 ## TL;DR
 

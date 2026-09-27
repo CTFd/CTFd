@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # shell-lock
-
-**Catégorie** reverse · **Points** 150 · **Auteur** dagbanjaphet
-
-# shell-lock — writeup
 
 **Category:** reverse · **Difficulty:** easy
 **Flag:** `NCTF{…}`

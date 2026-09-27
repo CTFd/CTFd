@@ -1,8 +1,6 @@
+<!-- nctf-meta category="chains" difficulty="hard" points="500" author="ctf-2026" stub="0" -->
+
 # tokenforge
-
-**Catégorie** chains · **Points** 500 · **Auteur** ctf-2026
-
-# chains-tokenforge — solution
 
 **Category** chains · **Served** yes (per-team flag) · multi-stage
 

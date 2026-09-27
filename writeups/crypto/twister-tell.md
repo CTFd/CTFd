@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # twister-tell
-
-**Catégorie** crypto · **Points** 300 · **Auteur** dagbanjaphet
-
-# twister-tell — solution
 
 ## TL;DR
 

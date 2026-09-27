@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # surrogate-fit
-
-**Catégorie** ml · **Points** 300 · **Auteur** dagbanjaphet
-
-# surrogate-fit -- solution
 
 **One-liner:** Least-squares fit on the query log recovers the linear oracle's
 weights, which are the flag's ASCII bytes.

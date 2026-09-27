@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # subnet-reach
-
-**Catégorie** networking · **Points** 300 · **Auteur** dagbanjaphet
-
-# subnet-reach — solution
 
 **Summary:** Longest-prefix-match each packet against the forwarding table; the
 packets whose best route action is `local` reach the host. Read their tags in

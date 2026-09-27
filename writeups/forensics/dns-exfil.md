@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="medium" points="300" author="ctf-team" stub="0" -->
+
 # DNS Exfil
-
-**Catégorie** forensics · **Points** 300 · **Auteur** ctf-team
-
-# DNS Exfil — writeup
 
 **Category:** forensics · **Difficulty:** medium
 **Challenge ID:** `forensics-dns-exfil`

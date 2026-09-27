@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # sqlite-wal
-
-**Catégorie** forensics · **Points** 300 · **Auteur** dagbanjaphet
-
-# sqlite-wal — writeup
 
 **Category:** forensics · **Difficulty:** medium
 **Flag:** `NCTF{…}` (static)

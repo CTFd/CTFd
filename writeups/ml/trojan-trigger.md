@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # trojan-trigger
-
-**Catégorie** ml · **Points** 450 · **Auteur** dagbanjaphet
-
-# trojan-trigger -- solution
 
 **One-liner:** Activation maximization reduces to `E @ x = m`; the least-squares
 solution is the planted trigger, whose bytes are the flag.

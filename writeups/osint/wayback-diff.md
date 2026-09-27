@@ -1,8 +1,6 @@
+<!-- nctf-meta category="osint" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # wayback-diff
-
-**Catégorie** osint · **Points** 300 · **Auteur** dagbanjaphet
-
-# wayback-diff — writeup
 
 **Category:** osint · **Difficulty:** medium
 **Flag:** `NCTF{…}`

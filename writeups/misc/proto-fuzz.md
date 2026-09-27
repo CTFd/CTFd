@@ -1,8 +1,6 @@
+<!-- nctf-meta category="misc" difficulty="medium" points="350" author="ctf-2026" stub="0" -->
+
 # proto-fuzz
-
-**Catégorie** misc · **Points** 350 · **Auteur** ctf-2026
-
-# proto-fuzz -- writeup
 
 **Category:** misc &nbsp; **Difficulty:** medium &nbsp; **Challenge id:** `misc-proto-fuzz`
 

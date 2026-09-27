@@ -1,8 +1,6 @@
+<!-- nctf-meta category="misc" difficulty="medium" points="250" author="ctf-authoring" stub="0" -->
+
 # polyglot-onion
-
-**Catégorie** misc · **Points** 250 · **Auteur** ctf-authoring
-
-# polyglot-onion — solution writeup
 
 **Category:** misc (polyglot / file-format forensics) · **Difficulty:** medium
 **Flag:** `NCTF{…}`

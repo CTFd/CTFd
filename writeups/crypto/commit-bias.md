@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # commit-bias
-
-**Catégorie** crypto · **Points** 300 · **Auteur** dagbanjaphet
-
-# commit-bias — solution
 
 ## TL;DR
 

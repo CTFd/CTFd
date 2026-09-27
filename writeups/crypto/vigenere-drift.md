@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # vigenere-drift
-
-**Catégorie** crypto · **Points** 150 · **Auteur** dagbanjaphet
-
-# vigenere-drift — solution
 
 ## TL;DR
 

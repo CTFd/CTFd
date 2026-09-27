@@ -1,8 +1,6 @@
+<!-- nctf-meta category="mobile" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # obfuscated-strings
-
-**Catégorie** mobile · **Points** 150 · **Auteur** dagbanjaphet
-
-# obfuscated-strings — writeup
 
 **Category:** mobile · **Difficulty:** easy
 **Flag:** `NCTF{…}`

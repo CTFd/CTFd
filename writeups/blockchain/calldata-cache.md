@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # calldata-cache
-
-**Catégorie** blockchain · **Points** 100 · **Auteur** dagbanjaphet
-
-# calldata-cache -- solution
 
 **Summary.** The captured calldata is a standard ABI-encoded call to
 `store(uint256,address,string)`. Decoding the dynamic `string` argument yields

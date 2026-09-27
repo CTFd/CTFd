@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # mask-slip
-
-**Catégorie** sysadmin · **Points** 100 · **Auteur** dagbanjaphet
-
-# mask-slip — solution
 
 ## TL;DR
 

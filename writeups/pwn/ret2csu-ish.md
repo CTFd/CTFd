@@ -1,8 +1,6 @@
+<!-- nctf-meta category="pwn" difficulty="hard" points="500" author="ctf-2026" stub="0" -->
+
 # ret2csu-ish
-
-**Catégorie** pwn · **Points** 500 · **Auteur** ctf-2026
-
-# ret2csu-ish — writeup
 
 **Category:** pwn · **Difficulty:** hard · **Flag:** `NCTF{…}`
 

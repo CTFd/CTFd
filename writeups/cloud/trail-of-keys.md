@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # trail-of-keys
-
-**Catégorie** cloud · **Points** 300 · **Auteur** dagbanjaphet
-
-# trail-of-keys — solution
 
 ## TL;DR
 

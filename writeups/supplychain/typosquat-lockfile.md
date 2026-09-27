@@ -1,6 +1,4 @@
-# typosquat-lockfile
-
-**Catégorie** supplychain · **Points** 150 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="supplychain" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
 
 # typosquat-lockfile
 

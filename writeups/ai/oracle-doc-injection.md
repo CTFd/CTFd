@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # oracle-doc-injection
-
-**Catégorie** ai · **Points** 300 · **Auteur** dagbanjaphet
-
-# oracle-doc-injection -- author solution
 
 **Summary:** Indirect prompt injection. Hide an operator directive inside the
 `<document>` body; the guard only filters the request region, but the oracle

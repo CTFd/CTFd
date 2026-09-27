@@ -1,10 +1,8 @@
+<!-- nctf-meta category="ai" difficulty="hard" points="500" author="ctf-2026" stub="1" -->
+
 # prompt-pivot
 
-**Catégorie** ai · **Points** 500 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# ai-prompt-pivot — solution (STUB)
 
 **Category** ai · **Value** 500 · **Served** yes (per-team flag)
 

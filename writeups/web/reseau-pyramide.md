@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="400" author="Hibris" stub="0" -->
+
 # reseau-pyramide
-
-**Catégorie** web · **Points** 400 · **Auteur** Hibris
-
-# reseau-pyramide -- solution
 
 **Category:** web · **Class:** business-logic / anti-fraud bypass (MLM economy)
 · **Serving:** per-team Docker instance (`type: team_instance`), team_hmac flag.

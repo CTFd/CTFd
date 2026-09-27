@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # auth-timeline
-
-**Catégorie** forensics · **Points** 150 · **Auteur** dagbanjaphet
-
-# auth-timeline — writeup
 
 **Category:** forensics · **Difficulty:** easy
 **Flag:** `NCTF{…}` (static)

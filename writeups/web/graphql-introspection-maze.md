@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="hard" points="500" author="ctf-2026" stub="0" -->
+
 # graphql-introspection-maze
-
-**Catégorie** web · **Points** 500 · **Auteur** ctf-2026
-
-# graphql-introspection-maze — writeup
 
 **Category:** web · **Difficulty:** hard · **challenge-id:** `web-graphql-introspection-maze`
 

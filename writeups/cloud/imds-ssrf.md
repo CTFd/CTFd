@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # imds-ssrf
-
-**Catégorie** cloud · **Points** 150 · **Auteur** dagbanjaphet
-
-# imds-ssrf — solution
 
 ## TL;DR
 

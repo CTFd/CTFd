@@ -1,8 +1,6 @@
+<!-- nctf-meta category="osint" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # doc-metadata
-
-**Catégorie** osint · **Points** 150 · **Auteur** dagbanjaphet
-
-# doc-metadata — writeup
 
 **Category:** osint · **Difficulty:** easy
 **Flag:** `NCTF{…}`

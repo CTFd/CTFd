@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # fermat-twins
-
-**Catégorie** crypto · **Points** 150 · **Auteur** dagbanjaphet
-
-# fermat-twins — solution
 
 ## TL;DR
 

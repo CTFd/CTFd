@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # tree-path
-
-**Catégorie** ml · **Points** 100 · **Auteur** dagbanjaphet
-
-# tree-path -- solution
 
 **One-liner:** Read the decision tree's leaf characters in root-to-leaf
 path-index order.

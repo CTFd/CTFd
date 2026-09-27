@@ -1,8 +1,6 @@
+<!-- nctf-meta category="mobile" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # prefs-vault
-
-**Catégorie** mobile · **Points** 300 · **Auteur** dagbanjaphet
-
-# prefs-vault — writeup
 
 **Category:** mobile · **Difficulty:** medium
 **Flag:** `NCTF{…}`

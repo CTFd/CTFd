@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # eui64-slaac
-
-**Catégorie** networking · **Points** 100 · **Auteur** dagbanjaphet
-
-# eui64-slaac — solution
 
 **Summary:** Derive each host's SLAAC IPv6 address via the EUI-64 rule, sort by
 address, and read the per-host `tag` characters in order.

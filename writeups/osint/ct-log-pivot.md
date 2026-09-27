@@ -1,8 +1,6 @@
+<!-- nctf-meta category="osint" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # ct-log-pivot
-
-**Catégorie** osint · **Points** 150 · **Auteur** dagbanjaphet
-
-# ct-log-pivot — writeup
 
 **Category:** osint · **Difficulty:** hard
 **Flag:** `NCTF{…}`

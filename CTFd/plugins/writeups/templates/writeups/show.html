@@ -1,16 +1,74 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+<style>
+/* ===================================================================
+   Writeups — article joueur, thème hibris. Styles préfixés .wu-*.
+   =================================================================== */
+.wu-crumb { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--muted);
+  padding-top: 1.6rem; }
+.wu-crumb a { color: var(--muted); text-decoration: none; }
+.wu-crumb a:hover { color: var(--yellow); }
+.wu-crumb .sep { opacity: .5; margin: 0 .4rem; }
+
+.wu-eyebrow { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.2rem 0 .5rem; }
+.wu-pill { font-family: 'JetBrains Mono', monospace; font-size: .64rem; letter-spacing: .5px;
+  text-transform: uppercase; border-radius: 999px; padding: .22rem .6rem; border: 1px solid var(--line);
+  color: var(--muted); }
+.wu-pill.pts { color: var(--link); border-color: var(--link); }
+.wu-pill.stub { color: var(--red); border-color: var(--red); }
+.wu-diff-warmup, .wu-diff-easy { color: var(--green-b); border-color: var(--green-b); }
+.wu-diff-medium { color: var(--yellow); border-color: var(--yellow); }
+.wu-diff-hard { color: #ff8a5c; border-color: #ff8a5c; }
+.wu-diff-insane { color: #d98cff; border-color: #d98cff; }
+
+.wu-article { max-width: 820px; }
+.wu-body { line-height: 1.7; }
+.wu-body h1 { font-family: 'Tourney', system-ui, sans-serif; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; font-size: 1.9rem; margin: 0 0 .6rem; }
+.wu-body h2 { font-family: 'Tourney', system-ui, sans-serif; font-weight: 700; letter-spacing: .5px;
+  font-size: 1.35rem; margin: 2rem 0 .7rem; padding-bottom: .3rem; border-bottom: 1px solid var(--line); }
+.wu-body h3 { font-family: 'Tourney', system-ui, sans-serif; font-weight: 700; font-size: 1.1rem;
+  margin: 1.5rem 0 .5rem; color: var(--yellow); }
+.wu-body p, .wu-body li { color: #dfe5ee; }
+.wu-body a { color: var(--link); }
+.wu-body code { font-family: 'JetBrains Mono', monospace; font-size: .86em; background: var(--raised);
+  border: 1px solid var(--line); border-radius: 4px; padding: .08em .35em; color: #ffd98a; }
+.wu-body pre { background: var(--raised); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; overflow: auto; }
+.wu-body pre code { background: none; border: 0; padding: 0; color: #cfe0ff; font-size: .82rem; line-height: 1.55; }
+.wu-body blockquote { border-left: 3px solid var(--yellow); background: var(--panel); margin: 1rem 0;
+  padding: .6rem 1rem; color: var(--muted); border-radius: 0 8px 8px 0; }
+.wu-body table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .92rem; }
+.wu-body th, .wu-body td { border: 1px solid var(--line); padding: .5rem .7rem; text-align: left; }
+.wu-body th { background: var(--raised); font-family: 'JetBrains Mono', monospace; font-size: .78rem;
+  text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+.wu-body img { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; }
+.wu-body hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+.wu-back { display: inline-block; margin-top: 2.2rem; font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem; color: var(--muted); text-decoration: none; }
+.wu-back:hover { color: var(--yellow); }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="jumbotron">
-	<div class="container">
-		<h1>{{ title }}</h1>
-		<p class="lead text-capitalize">{{ category }}</p>
-	</div>
-</div>
-<div class="container">
-	<p><a href="{{ url_for('writeups.index') }}">&larr; Tous les writeups</a></p>
-	<div class="writeup-body">
-		{{ content|safe }}
-	</div>
+<div class="container wu-article">
+  <div class="wu-crumb">
+    <a href="{{ url_for('writeups.index') }}">Writeups</a>
+    <span class="sep">/</span><span class="text-capitalize">{{ category }}</span>
+  </div>
+
+  <div class="wu-eyebrow">
+    <span class="wu-pill text-capitalize">{{ category }}</span>
+    {% if difficulty %}<span class="wu-pill wu-diff-{{ difficulty }}">{{ difficulty }}</span>{% endif %}
+    {% if points %}<span class="wu-pill pts">{{ points }} pts</span>{% endif %}
+    {% if stub %}<span class="wu-pill stub">provisoire</span>{% endif %}
+  </div>
+
+  <article class="wu-body">
+    {{ content|safe }}
+  </article>
+
+  <a class="wu-back" href="{{ url_for('writeups.index') }}">&larr; Tous les writeups</a>
 </div>
 {% endblock %}

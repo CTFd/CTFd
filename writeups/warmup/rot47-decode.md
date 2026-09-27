@@ -1,8 +1,6 @@
+<!-- nctf-meta category="warmup" difficulty="warmup" points="50" author="dagbanjaphet" stub="0" -->
+
 # rot47-decode
-
-**Catégorie** warmup · **Points** 50 · **Auteur** dagbanjaphet
-
-# rot47-decode -- solution
 
 ## TL;DR
 

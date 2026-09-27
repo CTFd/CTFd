@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # byte-drift
-
-**Catégorie** reverse · **Points** 100 · **Auteur** dagbanjaphet
-
-# byte-drift — writeup
 
 **Category:** reverse · **Difficulty:** beginner
 **Flag:** `NCTF{…}`

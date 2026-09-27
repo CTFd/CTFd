@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ppc" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # stack-machine
-
-**Catégorie** ppc · **Points** 300 · **Auteur** dagbanjaphet
-
-# stack-vm
 
 `program.txt` is a program for a tiny stack machine; interpreting it faithfully
 prints the flag.

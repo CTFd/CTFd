@@ -1,8 +1,6 @@
+<!-- nctf-meta category="mobile" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # native-xor
-
-**Catégorie** mobile · **Points** 150 · **Auteur** dagbanjaphet
-
-# native-xor — writeup
 
 **Category:** mobile · **Difficulty:** hard
 **Flag:** `NCTF{…}`

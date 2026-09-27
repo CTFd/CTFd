@@ -1,38 +1,171 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+<style>
+/* ===================================================================
+   Writeups — index joueur, thème hibris. Styles autonomes préfixés .wu-*.
+   =================================================================== */
+.wu-hero { position: relative; padding: 2.2rem 0 1.4rem; }
+.wu-hero h1 { font-family: 'Tourney', system-ui, sans-serif; font-weight: 800;
+  letter-spacing: 2px; text-transform: uppercase; margin: 0; font-size: 2.1rem; }
+.wu-hero .wu-sub { color: var(--muted); margin-top: .4rem; font-size: .95rem; }
+.wu-hero::after { content: ""; display: block; height: 3px; width: 120px; margin-top: 1rem;
+  background: linear-gradient(90deg, var(--green) 0 33%, var(--yellow) 33% 66%, var(--red) 66% 100%); }
+
+.wu-alert { border: 1px solid var(--line); border-left-width: 4px; border-radius: var(--radius);
+  background: var(--panel); padding: .9rem 1.1rem; margin: 1rem 0; color: var(--fg); }
+.wu-alert.info { border-left-color: var(--yellow); }
+.wu-alert.warn { border-left-color: var(--red); }
+.wu-alert a { color: var(--link); }
+
+.wu-toolbar { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; margin: 1.3rem 0 .4rem; }
+.wu-search { flex: 1 1 240px; background: var(--raised); border: 1px solid var(--line);
+  color: var(--fg); border-radius: 999px; padding: .55rem 1rem; font-family: 'Lato', sans-serif; }
+.wu-search::placeholder { color: var(--muted); }
+.wu-search:focus { outline: none; border-color: var(--yellow); }
+.wu-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.wu-chip { font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .5px;
+  text-transform: uppercase; border: 1px solid var(--line); background: var(--raised);
+  color: var(--muted); border-radius: 999px; padding: .3rem .8rem; cursor: pointer; transition: all .12s; }
+.wu-chip:hover { color: var(--fg); border-color: var(--muted); }
+.wu-chip.active { color: var(--bg); background: var(--yellow); border-color: var(--yellow); font-weight: 700; }
+
+.wu-cat { margin-top: 2rem; }
+.wu-cat-h { display: flex; align-items: baseline; gap: .6rem; border-bottom: 1px solid var(--line);
+  padding-bottom: .4rem; margin-bottom: 1rem; }
+.wu-cat-h h3 { font-family: 'Tourney', system-ui, sans-serif; font-weight: 700; text-transform: capitalize;
+  margin: 0; font-size: 1.25rem; letter-spacing: 1px; }
+.wu-cat-h .wu-count { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: .8rem; }
+
+.wu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.wu-card { display: flex; flex-direction: column; gap: .6rem; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 12px; padding: 15px 16px; position: relative;
+  overflow: hidden; transition: transform .12s, border-color .12s, box-shadow .12s; }
+.wu-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--line); }
+.wu-card:hover { transform: translateY(-2px); border-color: var(--muted);
+  box-shadow: 0 8px 24px -12px rgba(0,0,0,.8); }
+.wu-card:hover::before { background: var(--yellow); }
+.wu-card a.wu-title { color: var(--fg); font-weight: 700; font-size: 1.02rem; text-decoration: none;
+  line-height: 1.3; }
+.wu-card a.wu-title:hover { color: var(--yellow); }
+.wu-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: auto; }
+.wu-pill { font-family: 'JetBrains Mono', monospace; font-size: .62rem; letter-spacing: .5px;
+  text-transform: uppercase; border-radius: 999px; padding: .2rem .55rem; border: 1px solid var(--line);
+  color: var(--muted); }
+.wu-pill.pts { color: var(--link); border-color: var(--link); }
+.wu-pill.stub { color: var(--red); border-color: var(--red); }
+.wu-diff-warmup, .wu-diff-easy { color: var(--green-b); border-color: var(--green-b); }
+.wu-diff-medium { color: var(--yellow); border-color: var(--yellow); }
+.wu-diff-hard { color: #ff8a5c; border-color: #ff8a5c; }
+.wu-diff-insane { color: #d98cff; border-color: #d98cff; }
+
+.wu-empty { color: var(--muted); }
+.wu-noresult { color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 1.5rem; display: none; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="jumbotron">
-	<div class="container">
-		<h1>📝 Writeups</h1>
-	</div>
-</div>
 <div class="container">
-	{% if not published %}
-	<div class="alert alert-info" role="status">
-		Les writeups ne sont pas encore publiés. Ils seront disponibles après la
-		clôture de l'épreuve.
-	</div>
-	{% else %}
-		{% if admin and not live %}
-		<div class="alert alert-warning" role="status">
-			Aperçu admin — les writeups sont <b>masqués aux joueurs</b>. Active
-			l'affichage depuis la
-			<a href="{{ url_for('writeups.admin_page') }}">page d'administration</a>.
-		</div>
-		{% endif %}
-		{% if not tree %}
-		<p class="text-muted">Aucun writeup pour le moment.</p>
-		{% endif %}
-		{% for category, entries in tree.items() %}
-		<h3 class="mt-4 text-capitalize">{{ category }}</h3>
-		<ul class="list-unstyled">
-			{% for slug, title in entries %}
-			<li>
-				<a href="{{ url_for('writeups.show', category=category, slug=slug) }}">{{ title }}</a>
-			</li>
-			{% endfor %}
-		</ul>
-		{% endfor %}
-	{% endif %}
+  <div class="wu-hero">
+    <h1>Writeups</h1>
+    <div class="wu-sub">
+      {% if published and total %}
+        Solutions officielles — {{ total }} writeup{{ 's' if total > 1 }}
+        sur {{ tree|length }} catégorie{{ 's' if tree|length > 1 }}.
+      {% else %}
+        Solutions officielles des épreuves NCTF.
+      {% endif %}
+    </div>
+  </div>
+
+  {% if not published %}
+  <div class="wu-alert info" role="status">
+    Les writeups ne sont pas encore <b>publiés</b>. Ils seront disponibles après la
+    clôture de l'épreuve.
+  </div>
+  {% else %}
+    {% if admin and not live %}
+    <div class="wu-alert warn" role="status">
+      Aperçu admin — les writeups sont <b>masqués aux joueurs</b>. Active l'affichage
+      depuis la <a href="{{ url_for('writeups.admin_page') }}">page d'administration</a>.
+    </div>
+    {% endif %}
+
+    {% if not tree %}
+    <p class="wu-empty">Aucun writeup pour le moment.</p>
+    {% else %}
+    <div class="wu-toolbar">
+      <input id="wu-search" class="wu-search" type="search" autocomplete="off"
+             placeholder="Rechercher un writeup…" aria-label="Rechercher un writeup">
+      <div class="wu-chips" id="wu-chips">
+        <button type="button" class="wu-chip active" data-cat="*">Tout</button>
+        {% for category in tree.keys() %}
+        <button type="button" class="wu-chip" data-cat="{{ category }}">{{ category }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <p class="wu-noresult" id="wu-noresult">Aucun writeup ne correspond.</p>
+
+    {% for category, entries in tree.items() %}
+    <section class="wu-cat" data-cat="{{ category }}">
+      <div class="wu-cat-h">
+        <h3>{{ category }}</h3>
+        <span class="wu-count">{{ entries|length }}</span>
+      </div>
+      <div class="wu-grid">
+        {% for e in entries %}
+        <article class="wu-card" data-title="{{ e.title|lower }} {{ e.slug }}" data-cat="{{ category }}">
+          <a class="wu-title" href="{{ url_for('writeups.show', category=category, slug=e.slug) }}">{{ e.title }}</a>
+          <div class="wu-tags">
+            {% if e.difficulty %}<span class="wu-pill wu-diff-{{ e.difficulty }}">{{ e.difficulty }}</span>{% endif %}
+            {% if e.points %}<span class="wu-pill pts">{{ e.points }} pts</span>{% endif %}
+            {% if e.stub %}<span class="wu-pill stub">provisoire</span>{% endif %}
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+    {% endif %}
+  {% endif %}
 </div>
+
+<script>
+(function () {
+  var search = document.getElementById('wu-search');
+  if (!search) return;
+  var chips = Array.prototype.slice.call(document.querySelectorAll('#wu-chips .wu-chip'));
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.wu-card'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.wu-cat'));
+  var noresult = document.getElementById('wu-noresult');
+  var activeCat = '*';
+
+  function apply() {
+    var q = search.value.trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (c) {
+      var okCat = activeCat === '*' || c.getAttribute('data-cat') === activeCat;
+      var okText = !q || c.getAttribute('data-title').indexOf(q) !== -1;
+      var vis = okCat && okText;
+      c.style.display = vis ? '' : 'none';
+      if (vis) shown++;
+    });
+    sections.forEach(function (s) {
+      var any = s.querySelectorAll('.wu-card:not([style*="none"])').length;
+      s.style.display = any ? '' : 'none';
+    });
+    if (noresult) noresult.style.display = shown ? 'none' : 'block';
+  }
+  search.addEventListener('input', apply);
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      chips.forEach(function (c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      activeCat = chip.getAttribute('data-cat');
+      apply();
+    });
+  });
+})();
+</script>
 {% endblock %}

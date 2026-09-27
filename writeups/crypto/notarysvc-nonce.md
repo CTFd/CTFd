@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="450" author="ctf-2026" stub="0" -->
+
 # notarysvc-nonce
-
-**Catégorie** crypto · **Points** 450 · **Auteur** ctf-2026
-
-# crypto-notarysvc-nonce — solution
 
 **Category** crypto · **Value** 450 · **Served** yes (per-team flag)
 

@@ -39,6 +39,10 @@ bp = Blueprint(
 _SLUG = re.compile(r"[a-z0-9][a-z0-9-]*")
 _FLAG = re.compile(r"NCTF\{[^}]*\}")
 _TITLE = re.compile(r"^#\s+(.+)$", re.M)
+# Machine-readable meta line written by sync_writeups.py (invisible once
+# rendered: it is parsed here for the pills, then stripped before Markdown).
+_META = re.compile(r"<!--\s*nctf-meta\s+(.*?)-->", re.S)
+_META_KV = re.compile(r'(\w+)="([^"]*)"')
 
 
 def _base_dir() -> str:
@@ -76,8 +80,29 @@ def _title_of(md: str, fallback: str) -> str:
     return m.group(1).strip() if m else fallback
 
 
+def _meta_of(head: str) -> dict:
+    """Parse the `nctf-meta` line into a dict (empty if absent)."""
+    m = _META.search(head or "")
+    if not m:
+        return {}
+    return {k: v for k, v in _META_KV.findall(m.group(1))}
+
+
+def _entry(head: str, slug: str) -> dict:
+    """One writeup's card metadata (title + optional difficulty/points/stub)."""
+    meta = _meta_of(head)
+    pts = (meta.get("points") or "").strip()
+    return {
+        "slug": slug,
+        "title": _title_of(head, slug),
+        "difficulty": (meta.get("difficulty") or "").strip().lower() or None,
+        "points": pts if pts.isdigit() else None,
+        "stub": meta.get("stub") == "1",
+    }
+
+
 def _index():
-    """{category: [(slug, title), ...]} for every writeup file on disk."""
+    """{category: [entry, ...]} for every writeup file on disk (sorted)."""
     base = _base_dir()
     out = {}
     if not os.path.isdir(base):
@@ -97,7 +122,7 @@ def _index():
                 head = open(os.path.join(cat_dir, fn), encoding="utf-8").read(400)
             except OSError:
                 head = ""
-            entries.append((slug, _title_of(head, slug)))
+            entries.append(_entry(head, slug))
         if entries:
             out[cat] = entries
     return out
@@ -105,6 +130,7 @@ def _index():
 
 def _render_md(path: str) -> str:
     md = open(path, encoding="utf-8").read()
+    md = _META.sub("", md, count=1).lstrip()  # drop the machine meta line
     md = _FLAG.sub("NCTF{…}", md)  # never serve a real flag from a writeup
     return build_markdown(md)
 
@@ -115,10 +141,22 @@ def index():
     live = visible()
     if not live and not admin:
         return render_template(
-            "writeups/index.html", published=False, tree={}, admin=False, live=False
+            "writeups/index.html",
+            published=False,
+            tree={},
+            total=0,
+            admin=False,
+            live=False,
         )
+    tree = _index()
+    total = sum(len(v) for v in tree.values())
     return render_template(
-        "writeups/index.html", published=True, tree=_index(), admin=admin, live=live
+        "writeups/index.html",
+        published=True,
+        tree=tree,
+        total=total,
+        admin=admin,
+        live=live,
     )
 
 
@@ -131,9 +169,16 @@ def show(category, slug):
     if not path:
         abort(404)
     content = _render_md(path)
-    title = _title_of(open(path, encoding="utf-8").read(400), slug)
+    head = open(path, encoding="utf-8").read(400)
+    entry = _entry(head, slug)
     return render_template(
-        "writeups/show.html", content=content, title=title, category=category
+        "writeups/show.html",
+        content=content,
+        title=entry["title"],
+        category=category,
+        difficulty=entry["difficulty"],
+        points=entry["points"],
+        stub=entry["stub"],
     )
 
 

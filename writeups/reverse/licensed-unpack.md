@@ -1,10 +1,8 @@
+<!-- nctf-meta category="reverse" difficulty="hard" points="500" author="ctf-2026" stub="1" -->
+
 # licensed-unpack
 
-**Catégorie** reverse · **Points** 500 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# reverse-licensed-unpack — solution (STUB)
 
 **Category** reverse · **Value** 500 · **Served** yes (per-team flag)
 

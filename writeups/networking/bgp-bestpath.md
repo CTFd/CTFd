@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # bgp-bestpath
-
-**Catégorie** networking · **Points** 150 · **Auteur** dagbanjaphet
-
-# bgp-bestpath — solution
 
 **Summary:** Run the BGP best-path decision process per prefix, take the winning
 route's `label`, and read them in prefix order.

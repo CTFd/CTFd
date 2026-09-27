@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # origin-story
-
-**Catégorie** blockchain · **Points** 300 · **Auteur** dagbanjaphet
-
-# origin-story -- solution
 
 **Summary.** `initialize(address)` has no initializer guard and no access
 control, so anyone can set themselves as owner. The vault note is sealed with

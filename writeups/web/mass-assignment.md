@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # mass-assignment
-
-**Catégorie** web · **Points** 150 · **Auteur** dagbanjaphet
-
-# mass-assignment -- solution
 
 **Summary:** `PATCH /api/me` merges the whole request body into the user record
 with no field allowlist, so sending `{"is_admin": true, "role": "admin"}`

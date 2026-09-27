@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # vault-reuse
-
-**Catégorie** sysadmin · **Points** 450 · **Auteur** dagbanjaphet
-
-# vault-reuse — solution
 
 ## TL;DR
 

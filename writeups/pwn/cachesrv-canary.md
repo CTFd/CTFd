@@ -1,10 +1,8 @@
+<!-- nctf-meta category="pwn" difficulty="hard" points="500" author="ctf-2026" stub="1" -->
+
 # cachesrv-canary
 
-**Catégorie** pwn · **Points** 500 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# pwn-cachesrv-canary — solution (STUB)
 
 **Category** pwn · **Value** 500 · **Served** yes (per-team flag)
 

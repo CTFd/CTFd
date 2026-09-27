@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # uart-capture
-
-**Catégorie** hardware · **Points** 100 · **Auteur** dagbanjaphet
-
-# uart-capture — writeup
 
 **Flag:** `NCTF{…}`
 

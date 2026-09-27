@@ -1,8 +1,6 @@
+<!-- nctf-meta category="warmup" difficulty="warmup" points="50" author="dagbanjaphet" stub="0" -->
+
 # vigenere-known-key
-
-**Catégorie** warmup · **Points** 50 · **Auteur** dagbanjaphet
-
-# vigenere-known-key -- solution
 
 ## TL;DR
 

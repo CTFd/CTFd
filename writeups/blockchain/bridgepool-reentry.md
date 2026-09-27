@@ -1,10 +1,8 @@
+<!-- nctf-meta category="blockchain" difficulty="hard" points="550" author="ctf-2026" stub="1" -->
+
 # bridgepool-reentry
 
-**Catégorie** blockchain · **Points** 550 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# blockchain-bridgepool-reentry — solution (STUB)
 
 **Category** blockchain · **Value** 550 · **Served** yes (per-team flag)
 

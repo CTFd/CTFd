@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # replay-signer
-
-**Catégorie** blockchain · **Points** 450 · **Auteur** dagbanjaphet
-
-# replay-signer -- solution
 
 **Summary.** Two ECDSA signatures share the same `r`, so the signer reused the
 nonce `k`. That leaks the private key with schoolbook algebra; the vault note

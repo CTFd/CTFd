@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # manchester-ook
-
-**Catégorie** hardware · **Points** 300 · **Auteur** dagbanjaphet
-
-# manchester-ook — writeup
 
 **Flag:** `NCTF{…}`
 

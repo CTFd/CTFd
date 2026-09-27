@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # gzip-tar-nest
-
-**Catégorie** forensics · **Points** 150 · **Auteur** dagbanjaphet
-
-# gzip-tar-nest — writeup
 
 **Category:** forensics · **Difficulty:** easy
 **Flag:** `NCTF{…}` (static)

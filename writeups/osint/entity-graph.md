@@ -1,8 +1,6 @@
+<!-- nctf-meta category="osint" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # entity-graph
-
-**Catégorie** osint · **Points** 150 · **Auteur** dagbanjaphet
-
-# entity-graph — writeup
 
 **Category:** osint · **Difficulty:** easy
 **Flag:** `NCTF{…}`

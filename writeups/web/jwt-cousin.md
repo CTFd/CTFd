@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="easy" points="150" author="ctf-2026" stub="0" -->
+
 # jwt-cousin
-
-**Catégorie** web · **Points** 150 · **Auteur** ctf-2026
-
-# jwt-cousin — writeup
 
 **Category:** web · **Difficulty:** easy · **challenge-id:** `web-jwt-cousin`
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # overflow-mint
-
-**Catégorie** blockchain · **Points** 300 · **Auteur** dagbanjaphet
-
-# overflow-mint -- solution
 
 **Summary.** Solidity 0.7.x does no overflow checks. `n * price` wraps modulo
 2\*\*256, so a gigantic token count can be bought for a few wei.

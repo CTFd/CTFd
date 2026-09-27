@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # unit-eval
-
-**Catégorie** sysadmin · **Points** 300 · **Auteur** dagbanjaphet
-
-# unit-eval — solution
 
 ## TL;DR
 

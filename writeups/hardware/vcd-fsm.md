@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # vcd-fsm
-
-**Catégorie** hardware · **Points** 300 · **Auteur** dagbanjaphet
-
-# vcd-fsm — writeup
 
 **Flag:** `NCTF{…}`
 

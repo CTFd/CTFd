@@ -1,6 +1,4 @@
-# stack-smash-reveal
-
-**Catégorie** pwn · **Points** 100 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="pwn" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
 
 # stack-smash-reveal
 

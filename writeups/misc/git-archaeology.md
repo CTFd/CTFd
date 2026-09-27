@@ -1,8 +1,6 @@
+<!-- nctf-meta category="misc" difficulty="easy" points="100" author="ctf-authoring" stub="0" -->
+
 # git-archaeology
-
-**Catégorie** misc · **Points** 100 · **Auteur** ctf-authoring
-
-# git-archaeology — solution writeup
 
 **Category:** misc (git forensics) · **Difficulty:** easy
 **Flag:** `NCTF{…}`

@@ -1,6 +1,4 @@
-# bss-admin-flip
-
-**Catégorie** pwn · **Points** 150 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="pwn" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
 
 # bss-admin-flip
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # spi-eeprom
-
-**Catégorie** hardware · **Points** 150 · **Auteur** dagbanjaphet
-
-# spi-eeprom — writeup
 
 **Flag:** `NCTF{…}`
 

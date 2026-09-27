@@ -1,8 +1,6 @@
+<!-- nctf-meta category="warmup" difficulty="warmup" points="50" author="dagbanjaphet" stub="0" -->
+
 # tap-code
-
-**Catégorie** warmup · **Points** 50 · **Auteur** dagbanjaphet
-
-# tap-code -- solution
 
 ## TL;DR
 

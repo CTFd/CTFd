@@ -1,10 +1,8 @@
+<!-- nctf-meta category="blockchain" difficulty="hard" points="550" author="ctf-2026" stub="1" -->
+
 # reentry-chain
 
-**Catégorie** blockchain · **Points** 550 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# blockchain-reentry-chain — solution (STUB)
 
 **Category** blockchain · **Value** 550 · **Served** yes (per-team flag)
 

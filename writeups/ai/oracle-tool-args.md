@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # oracle-tool-args
-
-**Catégorie** ai · **Points** 300 · **Auteur** dagbanjaphet
-
-# oracle-tool-args -- author solution
 
 **Summary:** Steer the `read_file` tool arg past a case-sensitive path
 blocklist by re-casing the path; the store resolves it case-insensitively.

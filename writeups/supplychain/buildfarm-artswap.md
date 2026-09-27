@@ -1,8 +1,6 @@
+<!-- nctf-meta category="supplychain" difficulty="medium" points="500" author="ctf-2026" stub="0" -->
+
 # buildfarm-artswap
-
-**Catégorie** supplychain · **Points** 500 · **Auteur** ctf-2026
-
-# supplychain-buildfarm-artswap — solution
 
 **Category** supplychain · **Value** 500 · **Served** yes (per-team flag)
 

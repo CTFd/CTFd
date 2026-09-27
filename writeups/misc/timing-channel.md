@@ -1,8 +1,6 @@
+<!-- nctf-meta category="misc" difficulty="medium" points="300" author="ctf-team" stub="0" -->
+
 # Heartbeat
-
-**Catégorie** misc · **Points** 300 · **Auteur** ctf-team
-
-# misc/timing-channel — reference solution
 
 **Flag:** `NCTF{…}`
 

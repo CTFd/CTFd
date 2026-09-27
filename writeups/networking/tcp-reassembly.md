@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # tcp-reassembly
-
-**Catégorie** networking · **Points** 450 · **Auteur** dagbanjaphet
-
-# tcp-reassembly — solution
 
 **Summary:** Place each segment's bytes at `offset = (seq - ISN - 1) mod 2**32`
 and read the contiguous buffer.

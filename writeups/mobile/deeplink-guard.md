@@ -1,8 +1,6 @@
+<!-- nctf-meta category="mobile" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # deeplink-guard
-
-**Catégorie** mobile · **Points** 300 · **Auteur** dagbanjaphet
-
-# deeplink-guard — writeup
 
 **Category:** mobile · **Difficulty:** medium
 **Flag:** `NCTF{…}`

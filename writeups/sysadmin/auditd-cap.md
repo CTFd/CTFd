@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="medium" points="500" author="ctf-2026" stub="0" -->
+
 # auditd-cap
-
-**Catégorie** sysadmin · **Points** 500 · **Auteur** ctf-2026
-
-# sysadmin-auditd-cap — solution
 
 **Category** sysadmin · **Value** 500 · **Served** yes (per-team flag)
 

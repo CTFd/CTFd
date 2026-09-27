@@ -1,8 +1,6 @@
+<!-- nctf-meta category="osint" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # device-backup-geo
-
-**Catégorie** osint · **Points** 450 · **Auteur** dagbanjaphet
-
-# device-backup-geo — writeup
 
 **Category:** osint · **Difficulty:** hard
 **Flag:** `NCTF{…}`

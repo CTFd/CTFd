@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="450" author="ctf-2026" stub="0" -->
+
 # cms-uploadssrf
-
-**Catégorie** web · **Points** 450 · **Auteur** ctf-2026
-
-# web-cms-uploadssrf — solution
 
 **Category** web · **Value** 500 · **Served** yes (per-team flag)
 

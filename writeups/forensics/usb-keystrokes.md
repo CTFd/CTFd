@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="easy" points="150" author="ctf-team" stub="0" -->
+
 # USB Keystrokes
-
-**Catégorie** forensics · **Points** 150 · **Auteur** ctf-team
-
-# USB Keystrokes — writeup
 
 **Category:** forensics · **Difficulty:** easy
 **Flag:** `NCTF{…}`

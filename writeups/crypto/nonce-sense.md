@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="150" author="ctf-2026" stub="0" -->
+
 # nonce-sense
-
-**Catégorie** crypto · **Points** 150 · **Auteur** ctf-2026
-
-# nonce-sense — writeup
 
 **Category:** crypto · **Difficulty:** easy · **id:** `crypto-nonce-sense`
 **Flag:** `NCTF{…}`

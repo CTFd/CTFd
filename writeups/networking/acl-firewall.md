@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # acl-firewall
-
-**Catégorie** networking · **Points** 150 · **Auteur** dagbanjaphet
-
-# acl-firewall — solution
 
 **Summary:** Emulate a first-match-wins ACL with implicit default-deny, collect
 the allowed flows, sort by `id`, and read their `tag` characters.

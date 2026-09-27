@@ -1,8 +1,6 @@
+<!-- nctf-meta category="osint" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # cred-reuse
-
-**Catégorie** osint · **Points** 300 · **Auteur** dagbanjaphet
-
-# cred-reuse — writeup
 
 **Category:** osint · **Difficulty:** medium
 **Flag:** `NCTF{…}`

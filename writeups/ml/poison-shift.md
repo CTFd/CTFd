@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # poison-shift
-
-**Catégorie** ml · **Points** 300 · **Auteur** dagbanjaphet
-
-# poison-shift -- solution
 
 **One-liner:** Poisoned rows are the large-residual outliers of a linear fit;
 their tags in id order spell the flag.

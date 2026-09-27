@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="hard" points="450" author="ctf-2026" stub="0" -->
+
 # secret-slip
-
-**Catégorie** sysadmin · **Points** 450 · **Auteur** ctf-2026
-
-# sysadmin-secret-slip — solution
 
 **Category** sysadmin · **Value** 500 · **Served** yes (per-team flag)
 

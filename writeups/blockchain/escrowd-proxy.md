@@ -1,10 +1,8 @@
+<!-- nctf-meta category="blockchain" difficulty="hard" points="500" author="ctf-2026" stub="1" -->
+
 # escrowd-proxy
 
-**Catégorie** blockchain · **Points** 500 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# blockchain-escrowd-proxy — solution (STUB)
 
 **Category** blockchain · **Value** 500 · **Served** yes (per-team flag)
 

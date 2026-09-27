@@ -1,8 +1,6 @@
+<!-- nctf-meta category="reverse" difficulty="" points="150" author="challenge-team" stub="0" -->
+
 # strings-lie
-
-**Catégorie** reverse · **Points** 150 · **Auteur** challenge-team
-
-# strings-lie — writeup
 
 **Category:** reverse · **Difficulty:** easy
 **Flag:** `NCTF{…}`

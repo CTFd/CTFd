@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # http-body-exfil
-
-**Catégorie** forensics · **Points** 300 · **Auteur** dagbanjaphet
-
-# http-body-exfil — writeup
 
 **Category:** forensics · **Difficulty:** medium
 **Flag:** `NCTF{…}` (static)

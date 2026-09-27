@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="hard" points="500" author="ctf-team" stub="0" -->
+
 # Audio FSK
-
-**Catégorie** forensics · **Points** 500 · **Auteur** ctf-team
-
-# Audio FSK — writeup
 
 **Flag:** `NCTF{…}`
 

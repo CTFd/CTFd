@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # embedding-nn
-
-**Catégorie** ml · **Points** 150 · **Auteur** dagbanjaphet
-
-# embedding-nn -- solution
 
 **One-liner:** Each noisy query decodes to its nearest embedding row; the tokens
 in order spell the flag.

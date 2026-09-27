@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # boot-rom
-
-**Catégorie** hardware · **Points** 450 · **Auteur** dagbanjaphet
-
-# boot-rom — writeup
 
 **Flag:** `NCTF{…}`
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="pwn" difficulty="medium" points="400" author="dagbanjaphet" stub="0" -->
+
 # boot2root-ssh
-
-**Catégorie** pwn · **Points** 400 · **Auteur** dagbanjaphet
-
-# boot2root-ssh — author notes / verification
 
 **Challenge id:** `pwn-boot2root-ssh` · **Category:** pwn · **Difficulty:** medium
 **Served:** yes (per-team container, `type: team_instance`, SSH entry on port 22)

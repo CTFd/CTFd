@@ -1,8 +1,6 @@
+<!-- nctf-meta category="pwn" difficulty="" points="150" author="ctf-2026" stub="0" -->
+
 # format-string-101
-
-**Catégorie** pwn · **Points** 150 · **Auteur** ctf-2026
-
-# format-string-101 -- writeup
 
 **Category:** pwn · **Difficulty:** easy · **Challenge id:** `pwn-format-string-101`
 

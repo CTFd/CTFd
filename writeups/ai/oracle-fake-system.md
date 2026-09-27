@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # oracle-fake-system
-
-**Catégorie** ai · **Points** 150 · **Auteur** dagbanjaphet
-
-# oracle-fake-system -- author solution
 
 **Summary:** The oracle trusts any `system:` line it finds in the flattened
 transcript, so inject a fake `system:` policy line that permits disclosure.

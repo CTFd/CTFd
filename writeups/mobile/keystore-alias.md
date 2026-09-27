@@ -1,8 +1,6 @@
+<!-- nctf-meta category="mobile" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # keystore-alias
-
-**Catégorie** mobile · **Points** 450 · **Auteur** dagbanjaphet
-
-# keystore-alias — writeup
 
 **Category:** mobile · **Difficulty:** hard
 **Flag:** `NCTF{…}`

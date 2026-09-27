@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # passrole-ladder
-
-**Catégorie** cloud · **Points** 450 · **Auteur** dagbanjaphet
-
-# passrole-ladder — solution
 
 ## TL;DR
 

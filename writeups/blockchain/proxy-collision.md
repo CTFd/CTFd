@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # proxy-collision
-
-**Catégorie** blockchain · **Points** 300 · **Auteur** dagbanjaphet
-
-# proxy-collision -- solution
 
 **Summary.** `delegatecall` runs the logic contract's code against the
 proxy's storage. `Logic.value` is at slot 0, which is the proxy's

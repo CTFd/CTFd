@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # reset-token-lcg
-
-**Catégorie** web · **Points** 450 · **Auteur** dagbanjaphet
-
-# reset-token-lcg -- solution
 
 **Summary:** Reset tokens come from an LCG seeded with the request's
 whole-second timestamp. The log leaks exact timestamps, so the admin token is

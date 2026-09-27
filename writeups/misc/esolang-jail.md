@@ -1,8 +1,6 @@
+<!-- nctf-meta category="misc" difficulty="medium" points="400" author="ctf-2026" stub="0" -->
+
 # esolang-jail
-
-**Catégorie** misc · **Points** 400 · **Auteur** ctf-2026
-
-# esolang-jail -- solution
 
 ## Summary
 

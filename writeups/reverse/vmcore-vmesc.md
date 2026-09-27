@@ -1,10 +1,8 @@
+<!-- nctf-meta category="reverse" difficulty="hard" points="550" author="ctf-2026" stub="1" -->
+
 # vmcore-vmesc
 
-**Catégorie** reverse · **Points** 550 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# reverse-vmcore-vmesc — solution (STUB)
 
 **Category** reverse · **Value** 550 · **Served** yes (per-team flag)
 

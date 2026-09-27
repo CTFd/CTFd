@@ -1,8 +1,6 @@
+<!-- nctf-meta category="mobile" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # webview-bridge
-
-**Catégorie** mobile · **Points** 300 · **Auteur** dagbanjaphet
-
-# webview-bridge — writeup
 
 **Category:** mobile · **Difficulty:** medium
 **Flag:** `NCTF{…}`

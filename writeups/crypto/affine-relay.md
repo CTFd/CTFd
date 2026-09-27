@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # affine-relay
-
-**Catégorie** crypto · **Points** 100 · **Auteur** dagbanjaphet
-
-# affine-relay — solution
 
 ## TL;DR
 

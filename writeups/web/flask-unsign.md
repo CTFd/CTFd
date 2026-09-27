@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # flask-unsign
-
-**Catégorie** web · **Points** 150 · **Auteur** dagbanjaphet
-
-# flask-unsign -- solution
 
 **Summary:** The Flask `secret_key` is hardcoded in the source, so the captured
 session cookie can be decoded, edited to `role: admin`, re-signed, and the flag

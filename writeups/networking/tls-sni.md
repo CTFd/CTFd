@@ -1,8 +1,6 @@
+<!-- nctf-meta category="networking" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # tls-sni
-
-**Catégorie** networking · **Points** 300 · **Auteur** dagbanjaphet
-
-# tls-sni — solution
 
 **Summary:** Parse the TLS ClientHello structure, read the SNI hostname, and
 hex-decode its labels into the flag.

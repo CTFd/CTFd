@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # leaky-prefix
-
-**Catégorie** cloud · **Points** 100 · **Auteur** dagbanjaphet
-
-# leaky-prefix — solution
 
 ## TL;DR
 

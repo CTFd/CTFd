@@ -1,10 +1,8 @@
+<!-- nctf-meta category="ml" difficulty="hard" points="500" author="ctf-2026" stub="1" -->
+
 # modelhub-pickle
 
-**Catégorie** ml · **Points** 500 · **Auteur** ctf-2026
-
 > ⚠️ Challenge non finalisé — writeup provisoire.
-
-# ml-modelhub-pickle — solution (STUB)
 
 **Category** ml · **Value** 500 · **Served** yes (per-team flag)
 

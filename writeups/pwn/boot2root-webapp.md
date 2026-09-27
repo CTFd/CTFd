@@ -1,8 +1,6 @@
+<!-- nctf-meta category="pwn" difficulty="hard" points="500" author="dagbanjaphet" stub="0" -->
+
 # boot2root-webapp
-
-**Catégorie** pwn · **Points** 500 · **Auteur** dagbanjaphet
-
-# boot2root-webapp (SnapNote) -- author notes / verification
 
 **Challenge id:** `pwn-boot2root-webapp` · **Category:** pwn · **Difficulty:** hard
 **Served:** yes (per-team container, `type: team_instance`)

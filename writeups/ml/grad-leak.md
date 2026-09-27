@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ml" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # grad-leak
-
-**Catégorie** ml · **Points** 300 · **Auteur** dagbanjaphet
-
-# grad-leak -- solution
 
 **One-liner:** A linear layer's weight gradient is rank one, so a row divided by
 its `dL/dy` scalar rebuilds the private input.

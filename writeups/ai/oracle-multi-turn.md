@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="hard" points="450" author="dagbanjaphet" stub="0" -->
+
 # oracle-multi-turn
-
-**Catégorie** ai · **Points** 450 · **Auteur** dagbanjaphet
-
-# oracle-multi-turn -- author solution
 
 **Summary:** The guard weakens across a session. A benign priming turn that
 establishes an "authorized audit" context flips `primed`, after which a

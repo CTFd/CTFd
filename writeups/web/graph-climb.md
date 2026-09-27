@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="hard" points="450" author="ctf-2026" stub="0" -->
+
 # graph-climb
-
-**Catégorie** web · **Points** 450 · **Auteur** ctf-2026
-
-# web-graph-climb — solution
 
 **Category** web · **Value** 450 · **Served** yes (per-team flag)
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="hardware" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # firmware-blob
-
-**Catégorie** hardware · **Points** 150 · **Auteur** dagbanjaphet
-
-# firmware-blob — writeup
 
 **Flag:** `NCTF{…}`
 

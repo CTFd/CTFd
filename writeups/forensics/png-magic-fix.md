@@ -1,8 +1,6 @@
+<!-- nctf-meta category="forensics" difficulty="" points="100" author="dagbanjaphet" stub="0" -->
+
 # png-magic-fix
-
-**Catégorie** forensics · **Points** 100 · **Auteur** dagbanjaphet
-
-# png-magic-fix — writeup
 
 **Category:** forensics · **Difficulty:** beginner
 **Flag:** `NCTF{…}` (static)

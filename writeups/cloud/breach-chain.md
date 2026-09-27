@@ -1,8 +1,6 @@
+<!-- nctf-meta category="cloud" difficulty="medium" points="450" author="dagbanjaphet" stub="0" -->
+
 # breach-chain
-
-**Catégorie** cloud · **Points** 450 · **Auteur** dagbanjaphet
-
-# cloud-breach-chain (Kékéli Cloud) — author notes / verification
 
 **Challenge id:** `cloud-breach-chain` · **Category:** cloud (new) · **Difficulty:** medium
 **Served:** yes (per-team container, `type: team_instance`)

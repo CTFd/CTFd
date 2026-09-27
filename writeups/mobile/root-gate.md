@@ -1,8 +1,6 @@
+<!-- nctf-meta category="mobile" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # root-gate
-
-**Catégorie** mobile · **Points** 150 · **Auteur** dagbanjaphet
-
-# root-gate — writeup
 
 **Category:** mobile · **Difficulty:** easy
 **Flag:** `NCTF{…}`

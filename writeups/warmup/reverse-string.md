@@ -1,8 +1,6 @@
+<!-- nctf-meta category="warmup" difficulty="warmup" points="50" author="dagbanjaphet" stub="0" -->
+
 # reverse-string
-
-**Catégorie** warmup · **Points** 50 · **Auteur** dagbanjaphet
-
-# reverse-string -- solution
 
 ## TL;DR
 

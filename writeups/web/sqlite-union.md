@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # sqlite-union
-
-**Catégorie** web · **Points** 150 · **Auteur** dagbanjaphet
-
-# sqlite-union -- solution
 
 **Summary:** The search endpoint concatenates `q` into a SQL string, so a
 `UNION SELECT` reads a hidden `secrets` row out of the shipped `shop.db`. The

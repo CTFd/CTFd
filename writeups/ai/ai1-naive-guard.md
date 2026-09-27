@@ -1,8 +1,6 @@
+<!-- nctf-meta category="ai" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # ai1-naive-guard
-
-**Catégorie** ai · **Points** 300 · **Auteur** dagbanjaphet
-
-# ai1-naive-guard -- writeup
 
 **Category:** ai **Difficulty:** medium **Challenge id:** `ai-ai1-naive-guard`
 **Requires:** `ai-ai0-leaked-transcript`

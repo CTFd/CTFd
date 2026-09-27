@@ -1,6 +1,4 @@
-# wav-lsb
-
-**Catégorie** stego · **Points** 300 · **Auteur** dagbanjaphet
+<!-- nctf-meta category="stego" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
 
 # wav-lsb
 

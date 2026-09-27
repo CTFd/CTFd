@@ -1,8 +1,6 @@
+<!-- nctf-meta category="blockchain" difficulty="easy" points="150" author="dagbanjaphet" stub="0" -->
+
 # block-oracle
-
-**Catégorie** blockchain · **Points** 150 · **Auteur** dagbanjaphet
-
-# block-oracle -- solution
 
 **Summary.** The lottery's "randomness" is `keccak256(timestamp, number,
 prevrandao)`, all of which are public block header fields. The winning ticket

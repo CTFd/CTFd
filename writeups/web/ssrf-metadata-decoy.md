@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="350" author="ctf-2026" stub="0" -->
+
 # ssrf-metadata-decoy
-
-**Catégorie** web · **Points** 350 · **Auteur** ctf-2026
-
-# ssrf-metadata-decoy — writeup
 
 **Category:** web · **Difficulty:** medium
 **Challenge id:** `web-ssrf-metadata-decoy`

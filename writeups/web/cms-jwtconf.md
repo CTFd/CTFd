@@ -1,8 +1,6 @@
+<!-- nctf-meta category="web" difficulty="medium" points="400" author="ctf-2026" stub="0" -->
+
 # cms-jwtconf
-
-**Catégorie** web · **Points** 400 · **Auteur** ctf-2026
-
-# web-cms-jwtconf — solution
 
 **Category** web · **Value** 400 · **Served** yes (per-team flag)
 

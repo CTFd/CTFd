@@ -1,8 +1,6 @@
+<!-- nctf-meta category="sysadmin" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # env-forge
-
-**Catégorie** sysadmin · **Points** 300 · **Auteur** dagbanjaphet
-
-# env-forge — solution
 
 ## TL;DR
 

@@ -1,8 +1,6 @@
+<!-- nctf-meta category="warmup" difficulty="warmup" points="50" author="dagbanjaphet" stub="0" -->
+
 # base64-decode
-
-**Catégorie** warmup · **Points** 50 · **Auteur** dagbanjaphet
-
-# base64-decode -- solution
 
 ## TL;DR
 

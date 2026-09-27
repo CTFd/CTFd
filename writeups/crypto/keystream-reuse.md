@@ -1,8 +1,6 @@
+<!-- nctf-meta category="crypto" difficulty="medium" points="300" author="dagbanjaphet" stub="0" -->
+
 # keystream-reuse
-
-**Catégorie** crypto · **Points** 300 · **Auteur** dagbanjaphet
-
-# keystream-reuse — solution
 
 ## TL;DR
 
