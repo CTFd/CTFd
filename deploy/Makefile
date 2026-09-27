@@ -286,7 +286,7 @@ link: ## Relie le front a l'arena (et au noeud IA en repli ollama), ecrit AI_BAC
 	@TOKEN=$$($(FRONT_SSH) 'sudo cat /etc/frp/token'); \
 	 test -n "$$TOKEN" || { echo "ERREUR : jeton frp vide cote front"; exit 1; }; \
 	 FRPADMIN=$$(openssl rand -hex 16); \
-	 $(ARENA_SSH) "sudo sed -i -e \"s|REMPLACE_TOKEN|$$TOKEN|\" -e \"s|REMPLACE_ADMIN_PASSWORD|$$FRPADMIN|\" /etc/frp/frpc.toml && sudo systemctl restart frpc"; \
+	 $(ARENA_SSH) "sudo sed -i -e \"s|^auth.token = .*|auth.token = \\\"$$TOKEN\\\"|\" -e \"s|^webServer.password = .*|webServer.password = \\\"$$FRPADMIN\\\"|\" /etc/frp/frpc.toml && sudo systemctl restart frpc"; \
 	 sleep 2; \
 	 $(ARENA_SSH) 'systemctl is-active --quiet frpc' \
 	   || { echo "ERREUR : frpc n'a pas demarre. 'make ssh-arena' puis 'journalctl -u frpc'"; exit 1; }; \

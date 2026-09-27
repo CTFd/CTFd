@@ -143,6 +143,18 @@ durcissement (TOCTOU, cycle de parrainage) : voir `solution/README.md`. Finale
 uniquement (à 300 en présélection, préférer la version jeopardy isolée
 `challenges/web/reseau-pyramide/`).
 
+## Déploiement AWS en une commande (`make arena-koth`)
+
+Après `make link` : `make arena-koth` construit/charge les 4 images sur l'arena
+(`make arena-build-images ONLY="koth/throne koth/citadel koth/boot2root/armory koth/reseau-fortune" PUSH=1`
+si elles manquent), lance les collines en boucle locale de l'arena, les expose via
+un **second client frpc** (`frpc-koth`, proxies fixes 28490-28495 dans `allowPorts`
+de frps — le frpc principal est réécrit par l'instancier) et écrit
+`KOTH_SCORER_SECRET` / `KOTH_HILLS` / `KOTH_TICK` dans `front/.env` (ctfd recréé,
+instancier borné à `WHALE_PORT_RANGE_END=28480`). `STATUS=1` = état, `DOWN=1` =
+retrait. Le plugin lit `/king` sur `FRONT_PRIV:2849x` ; les joueurs attaquent
+`FRONT_IP:2849x` (voir RUNBOOK §3).
+
 ## Configurer le plugin CTFd
 
 Variables d'environnement sur le conteneur **CTFd** :

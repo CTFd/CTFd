@@ -175,6 +175,8 @@ make wait-arena             # arena prête (le nœud IA absent est sauté en bed
 make link                   # relie tout, vérifie l'arena ; écrit AI_BACKEND / AI_BEDROCK_*
 make deploy && make tls-init # si le front a été recréé
 make check-arena            # images de challenge présentes
+make arena-build-images MISSING=1 PUSH=1   # construit SUR l'arena les images des servis `visible` absentes, les publie dans S3
+make arena-koth             # King of the Hill : 4 collines sur l'arena + tunnel frps (28490-28495) + plugin CTFd ; STATUS=1 / DOWN=1
 make check-bedrock          # pool Bedrock : chaque modèle + quotas (remplace la validation du nœud IA)
 CTFD_TOKEN=… make preflight PHASE=preselection   # check-list : DOIT être vert (0 FAIL)
 ```
@@ -182,6 +184,14 @@ CTFD_TOKEN=… make preflight PHASE=preselection   # check-list : DOIT être ver
 - [ ] 🧑 `make preflight PHASE=preselection` vert (secrets, fenêtres 53 h, 203 challenges,
       19 catégories, collines KotH en ligne). Un FAIL = on ne bascule pas. Les WARN se
       lisent une par une ; les 3 lignes `MANUAL` (instancier, IA, images) se font à la main.
+- [ ] 🧑 **Quota vCPU** : l'arena de présélection est une `c6i.4xlarge` (16 vCPU) ; le quota
+      « Running On-Demand Standard » (L-1216C47A) de ce compte est à **16** (demande à 48
+      déposée le 2026-09-27). Tant qu'il n'est pas monté, garder
+      `arena_instance_type_override = "c6i.2xlarge"` dans `terraform.tfvars` (8 vCPU).
+- [ ] 🧑 `make arena-koth STATUS=1` : 4 collines en ligne, `/king` répond via frps sur
+      28490/28493/28494/28495, page `/plugins/koth/` OK. Les joueurs attaquent
+      `FRONT_IP:28490` (Throne), `:28491` (Citadel ssh), `:28492` (Armory ssh), `:28493`
+      (Réseau Fortune) ; l'instancier est borné à 28000-28480.
 - [ ] 🧑 `make check-bedrock` vert : le pool Bedrock répond (4 modèles Nova en eu-west-3) et
       les quotas sont OK. L'IA passe par le rôle IAM du front (`bedrock:InvokeModel`), pas par
       un nœud GPU.
