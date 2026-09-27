@@ -642,10 +642,12 @@ local-smoke: ## [local] Verifie pages, theme, assets, API, chaine IA
 	$(LOCAL_PY) local/smoke.py
 
 # Check-list de mise en prod (lecture seule). PHASE=preselection|finale ;
-# EXPECT=369 challenges (177 statiques + 192 servis Lot-5, 2026-09-23) ; l'env du conteneur CTFd est lu sur stdin et JAMAIS affiche.
+# EXPECT/CATS = set VISIBLE attendu (preflight compte les visibles, pas le total).
+# 2026-09-27 apres sync depot : 238 visibles (177 dynamic + 61 servis state:visible) / 21 categories.
+# 155 servis pre-dedup restent `hidden` (orphelins sans source) -> hors compte.
 PHASE  ?= none
-EXPECT ?= 369
-CATS   ?= 20
+EXPECT ?= 238
+CATS   ?= 21
 PREFLIGHT_ARGS = --env-stdin --phase $(PHASE) --expect-challenges $(EXPECT) --expect-categories $(CATS) $(PREFLIGHT_EXTRA)
 
 .PHONY: local-preflight

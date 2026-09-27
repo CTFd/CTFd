@@ -364,16 +364,22 @@ def check_registration(configs, user_fields, phase):
 def check_content(challenges, flags, expect_challenges=None, expect_categories=None):
     S = "contenu"
     out = []
-    n = len(challenges)
+    # On verifie le set VISIBLE (ce que voient les joueurs) : les challenges
+    # laisses `hidden` (ex. doublons pre-dedup archives) ne doivent pas fausser
+    # le compte. Le detail des caches est signale plus bas.
+    visible = [c for c in challenges if c.get("state") == "visible"]
+    n = len(visible)
     if expect_challenges is not None and n != expect_challenges:
         out.append(
-            Result(FAIL, S, "challenges", "%d au lieu de %d" % (n, expect_challenges))
+            Result(FAIL, S, "challenges",
+                   "%d visibles au lieu de %d (%d au total dont %d caches)"
+                   % (n, expect_challenges, len(challenges), len(challenges) - n))
         )
     elif n == 0:
-        out.append(Result(FAIL, S, "challenges", "aucun challenge"))
+        out.append(Result(FAIL, S, "challenges", "aucun challenge visible"))
     else:
-        out.append(Result(OK, S, "challenges", "%d installes" % n))
-    cats = Counter(c.get("category") for c in challenges)
+        out.append(Result(OK, S, "challenges", "%d visibles (%d au total)" % (n, len(challenges))))
+    cats = Counter(c.get("category") for c in visible)
     if expect_categories is not None and len(cats) != expect_categories:
         out.append(
             Result(
