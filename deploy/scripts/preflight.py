@@ -371,14 +371,22 @@ def check_content(challenges, flags, expect_challenges=None, expect_categories=N
     n = len(visible)
     if expect_challenges is not None and n != expect_challenges:
         out.append(
-            Result(FAIL, S, "challenges",
-                   "%d visibles au lieu de %d (%d au total dont %d caches)"
-                   % (n, expect_challenges, len(challenges), len(challenges) - n))
+            Result(
+                FAIL,
+                S,
+                "challenges",
+                "%d visibles au lieu de %d (%d au total dont %d caches)"
+                % (n, expect_challenges, len(challenges), len(challenges) - n),
+            )
         )
     elif n == 0:
         out.append(Result(FAIL, S, "challenges", "aucun challenge visible"))
     else:
-        out.append(Result(OK, S, "challenges", "%d visibles (%d au total)" % (n, len(challenges))))
+        out.append(
+            Result(
+                OK, S, "challenges", "%d visibles (%d au total)" % (n, len(challenges))
+            )
+        )
     cats = Counter(c.get("category") for c in visible)
     if expect_categories is not None and len(cats) != expect_categories:
         out.append(
