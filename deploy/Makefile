@@ -193,6 +193,11 @@ wait-nodes: ## Attend l'arena (et, en repli ollama, le noeud IA) avec delai maxi
 	 done; echo " pret."; \
 	 $(AI_SSH) 'nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv'
 
+.PHONY: arena-koth
+arena-koth: ## King of the Hill sur AWS : collines sur l'arena + tunnel frps (ports 28490-28493) + plugin CTFd. STATUS=1 / DOWN=1
+	@FRONT_IP=$(FRONT_IP) FRONT_PRIV=$(FRONT_PRIV) ARENA_IP=$(ARENA_IP) BUCKET=$(BUCKET) SSH_OPTS="$(SSH_OPTS)" \
+	  scripts/arena-koth.sh $(if $(STATUS),--status)$(if $(DOWN),--down)
+
 .PHONY: check-arena
 check-arena: ## Liste les images de challenge reellement presentes sur l'arena
 	@$(ARENA_SSH) 'docker image ls --format "{{.Repository}}:{{.Tag}}" | sort'
@@ -580,23 +585,26 @@ local-up-ai: ## [local] Idem + Ollama (CPU) + passerelle IA ; OLLAMA_MODEL=... p
 local-koth: ## [local] Active le King of the Hill : construit la colline, la lance et branche le plugin sur CTFd
 	@KOTH_SCORER_SECRET="$${KOTH_SCORER_SECRET:-local-dev-koth-scorer}"; \
 	 export KOTH_SCORER_SECRET; \
-	 export KOTH_HILLS='[{"id":"koth-throne","name":"The Throne","url":"http://koth-throne:8080","player_url":"http://localhost:28900","points":5},{"id":"koth-citadel","name":"The Citadel","url":"http://koth-citadel:8081","player_url":"ssh://player@localhost:28901","points":5},{"id":"koth-armory","name":"The Armory","url":"http://koth-armory:8082","player_url":"ssh://player@localhost:28902","points":5}]'; \
+	 export KOTH_HILLS='[{"id":"koth-throne","name":"The Throne","url":"http://koth-throne:8080","player_url":"http://localhost:28900","points":5},{"id":"koth-citadel","name":"The Citadel","url":"http://koth-citadel:8081","player_url":"ssh://player@localhost:28901","points":5},{"id":"koth-armory","name":"The Armory","url":"http://koth-armory:8082","player_url":"ssh://player@localhost:28902","points":5},{"id":"koth-reseau-fortune","name":"Reseau Fortune","url":"http://koth-reseau-fortune:8080","player_url":"http://localhost:28903","points":3}]'; \
 	 docker build -t ctf-koth-throne:latest ../challenges/koth/throne; \
 	 docker build -t ctf-koth-citadel:latest ../challenges/koth/citadel; \
 	 docker build -t ctf-koth-boot2root-base:latest ../challenges/koth/boot2root/base; \
 	 docker build -t ctf-koth-boot2root-armory:latest ../challenges/koth/boot2root/armory; \
-	 $(LOCAL_COMPOSE) --profile koth up -d koth-throne koth-citadel koth-armory; \
+	 docker build -t ctf-koth-reseau-fortune:latest ../challenges/koth/reseau-fortune; \
+	 $(LOCAL_COMPOSE) --profile koth up -d koth-throne koth-citadel koth-armory koth-reseau-fortune; \
 	 $(LOCAL_COMPOSE) up -d ctfd; \
 	 echo; \
-	 echo "King of the Hill actif (tick=$${KOTH_TICK:-15}s) - trois collines :"; \
+	 echo "King of the Hill actif (tick=$${KOTH_TICK:-15}s) - quatre collines :"; \
 	 echo "  - The Throne (HTTP)     : http://localhost:28900"; \
 	 echo "  - The Citadel (SSH)     : ssh player@localhost -p 28901   (mot de passe : player)"; \
 	 echo "  - The Armory (boot2root): ssh player@localhost -p 28902   (mot de passe : player)"; \
+	 echo "  - Reseau Fortune (MLM)  : http://localhost:28903   (POST /api/join {token})"; \
 	 echo "  - CTFd (menu 'King of the Hill') : http://localhost:$${CTFD_PORT:-8000}"; \
 	 echo "  - Recupere ton jeton d'equipe sur la page KotH, puis tiens une colline :"; \
 	 echo "      challenges/koth/throne/solution/solve.sh  http://localhost:28900 <jeton>"; \
 	 echo "      challenges/koth/citadel/solution/solve.sh localhost 28901 <jeton>"; \
-	 echo "      challenges/koth/boot2root/armory/solution/solve.sh localhost 28902 <jeton>  # root=pleins, sinon /home/player/king.txt=moitie"
+	 echo "      challenges/koth/boot2root/armory/solution/solve.sh localhost 28902 <jeton>  # root=pleins, sinon /home/player/king.txt=moitie"; \
+	 echo "      python3 challenges/koth/reseau-fortune/solution/solve.py http://localhost:28903 <jeton>"
 
 .PHONY: local-fix-heapnote
 local-fix-heapnote: ## [local] Recompile le binaire heap-note sur glibc 2.31 (Ubuntu 20.04) puis construit son image

@@ -38,7 +38,12 @@ locals {
     }
   }
 
-  current = local.sizing[var.phase]
+  # Surcharge optionnelle du type d'arena (quota vCPU bas) : var.arena_instance_type_override.
+  current = merge(
+    local.sizing[var.phase],
+    var.arena_instance_type_override != "" && local.sizing[var.phase].arena != null
+    ? { arena = var.arena_instance_type_override } : {}
+  )
 
   front_enabled = local.current.front != null
   arena_enabled = local.current.arena != null

@@ -24,6 +24,11 @@ services:
       - FRPC_ADMIN_PASSWORD=${FRPC_ADMIN_PASSWORD:-}
       - WHALE_PORT_RANGE_START=${WHALE_PORT_RANGE_START:-28000}
       - WHALE_PORT_RANGE_END=${WHALE_PORT_RANGE_END:-28500}
+      # King of the Hill (plugin koth) : collines partagees sur l'arena, exposees
+      # via frps (ports fixes hors plage instancier). Renseignes par `make arena-koth`.
+      - KOTH_SCORER_SECRET=${KOTH_SCORER_SECRET:-}
+      - KOTH_HILLS=${KOTH_HILLS:-}
+      - KOTH_TICK=${KOTH_TICK:-30}
       - WORKERS=${WORKERS:-2}
       - LOG_FOLDER=/var/log/CTFd
       - ACCESS_LOG=-

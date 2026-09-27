@@ -176,3 +176,14 @@ variable "whale_port_range_end" {
   type        = number
   default     = 28500
 }
+
+variable "arena_instance_type_override" {
+  description = <<-EOT
+    Surcharge du type d'instance de l'arena (sinon locals.tf : c6i.4xlarge en
+    preselection, c6i.2xlarge en finale). Utile tant que le quota vCPU
+    "Running On-Demand Standard" (L-1216C47A) reste bas : le front prend 2 vCPU,
+    une c6i.4xlarge en demande 16. Ex. "c6i.2xlarge" (8 vCPU). Vide = defaut.
+  EOT
+  type        = string
+  default     = ""
+}

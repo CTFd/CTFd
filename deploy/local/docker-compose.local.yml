@@ -206,6 +206,20 @@ services:
       - "127.0.0.1:28902:22"
     profiles: ["koth"]
 
+  # Colline economique « Reseau Fortune » (finale) : arene MLM partagee, /king =
+  # le reseau le plus riche. Les joueurs rejoignent avec leur jeton KotH
+  # (POST /api/join). Image ctf-koth-reseau-fortune, scorer sur :8080 (interne).
+  koth-reseau-fortune:
+    build:
+      context: ../../challenges/koth/reseau-fortune
+    image: ctf-koth-reseau-fortune:latest
+    restart: unless-stopped
+    environment:
+      - SCORER_SECRET=${KOTH_SCORER_SECRET:-local-dev-koth-scorer}
+    ports:
+      - "127.0.0.1:28903:8080"
+    profiles: ["koth"]
+
 volumes:
   db_data:
   redis_data:
