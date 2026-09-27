@@ -42,7 +42,7 @@ if [ "${1:-}" = "--missing" ]; then
 fi
 [ $# -gt 0 ] || { echo "rien a construire"; exit 0; }
 
-arena 'mkdir -p /opt/challenge-src'
+arena 'sudo mkdir -p /opt/challenge-src && sudo chown ubuntu:ubuntu /opt/challenge-src'
 fail=0
 for d in "$@"; do
   img=$(image_of "$d"); src="$ROOT/challenges/$d"

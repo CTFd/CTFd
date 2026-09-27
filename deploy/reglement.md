@@ -5,10 +5,7 @@
 26 octobre 00:00** (heure de Lomé, GMT). Finale sur place à **Lomé les 29–30
 octobre**.
 
-> Ce fichier est le règlement tel que la plateforme l'affiche. `make
-reglement-publish URL=… CTFD_TOKEN=…` le pousse dans la page `/tos`, référencée
-> par le formulaire d'inscription. Toute modification ici doit être republiée, et
-> inversement. En vous inscrivant, chaque membre accepte ce règlement au nom de
+> En vous inscrivant, chaque membre accepte ce règlement au nom de
 > son équipe.
 
 ---
