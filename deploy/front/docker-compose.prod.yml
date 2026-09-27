@@ -83,10 +83,12 @@ services:
     profiles:
       - arena
     networks:
-      # UNIQUEMENT internal : republier le socket Docker de l'arena (= root)
-      # ne doit jamais etre joignable depuis le segment `web` expose par nginx.
-      # ctfd joint dockerproxy via `internal`, donc `web` est inutile ici.
+      # `internal` (internal: true, sans sortie) pour etre joint par ctfd sans
+      # jamais etre expose sur le segment `web` de nginx ; `arena` (pont
+      # ordinaire, reserve a ce conteneur) pour que le tunnel ssh SORTE vers le
+      # demon Docker de l'arena. Sans `arena`, ssh echoue en "Network unreachable".
       - internal
+      - arena
 
   # AI admission gateway: single admission point for all AI-challenge model
   # traffic. Only needed during an event (profile arena). Published on the front
@@ -213,3 +215,5 @@ networks:
   web:
   internal:
     internal: true
+  # Sortie reseau du seul dockerproxy (tunnel ssh vers l'arena).
+  arena:
