@@ -30,8 +30,9 @@ image_of() { # image_of cat/slug -> nom d'image
 }
 
 if [ "${1:-}" = "--missing" ]; then
+  shift; extra=("$@")               # les noms passes en plus de --missing sont conserves
   have=$(arena 'docker image ls --format "{{.Repository}}"')
-  set --
+  set -- "${extra[@]}"
   for y in "$ROOT"/challenges/*/*/challenge.yml; do
     grep -q "type: team_instance" "$y" && grep -q "^state: visible" "$y" || continue
     d=${y#"$ROOT"/challenges/}; d=${d%/challenge.yml}
