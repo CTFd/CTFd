@@ -28,12 +28,13 @@ cachelib==0.9.0
     # via flask-caching
 certifi==2025.8.3
     # via requests
-cffi==1.17.1
+cffi==2.1.1
     # via
     #   cmarkgfm
     #   cryptography
     #   ctfd
     #   gevent
+    #   pynacl
 charset-normalizer==3.4.3
     # via requests
 click==8.2.1
@@ -128,11 +129,13 @@ passlib==1.7.4
     # via ctfd
 pillow==12.2.0
     # via ctfd
-pycparser==2.22
+pycparser==2.22 ; implementation_name != 'PyPy'
     # via cffi
 pydantic==1.6.2
     # via ctfd
 pymysql==1.1.1
+    # via ctfd
+pynacl==1.6.2
     # via ctfd
 python-dateutil==2.9.0.post0
     # via
