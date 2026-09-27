@@ -109,24 +109,200 @@ def _public(acc):
     }
 
 
+INDEX_HTML = """<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KékéliCash — Réseau Fortune</title>
+<style>
+  :root{--green:#006a4e;--yellow:#ffce00;--red:#d21034;--ink:#14211d;--pane:#fff;--bg:#f3f6f4;--muted:#5c6b64}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  .sim{background:var(--red);color:#fff;text-align:center;padding:.45rem;font-size:.85rem;font-weight:600}
+  header{background:linear-gradient(135deg,var(--green),#00875f);color:#fff;padding:1.1rem 1rem;position:relative;overflow:hidden}
+  header .tri{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green) 33%,var(--yellow) 33% 66%,var(--red) 66%)}
+  header h1{margin:.2rem 0;font-size:1.5rem}
+  header p{margin:0;opacity:.9;font-size:.9rem}
+  .wrap{max-width:960px;margin:0 auto;padding:1rem}
+  .card{background:var(--pane);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:1rem;margin:.8rem 0}
+  .grid{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  h2{margin:.2rem 0 .6rem;font-size:1.1rem}
+  label{display:block;font-size:.8rem;color:var(--muted);margin:.4rem 0 .15rem}
+  input,select{width:100%;padding:.55rem;border:1px solid #cdd6d1;border-radius:8px;font-size:.95rem}
+  button{background:var(--green);color:#fff;border:0;border-radius:8px;padding:.6rem .9rem;font-weight:600;cursor:pointer;font-size:.9rem}
+  button.ghost{background:#eef2f0;color:var(--ink)}
+  button:hover{filter:brightness(1.05)}
+  .row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:end}
+  .stat{font-size:1.7rem;font-weight:800;color:var(--green)}
+  .muted{color:var(--muted);font-size:.85rem}
+  .prod{border:1px solid #e2e8e4;border-radius:10px;padding:.8rem;text-align:center}
+  .prod .price{font-weight:800;color:var(--red);margin:.3rem 0}
+  .bar{height:12px;background:#e6 ebe8;border-radius:99px;overflow:hidden;background:#e6ebe8}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--yellow),var(--red))}
+  .flag{background:#062;color:#bfffe0;padding:.7rem;border-radius:8px;font-family:ui-monospace,monospace;word-break:break-all}
+  .hidden{display:none}
+  .toast{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.6rem 1rem;border-radius:8px;opacity:0;transition:.25s;font-size:.9rem}
+  .toast.show{opacity:1}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;padding:1.5rem}
+</style>
+</head>
+<body>
+<div class="sim">⚠️ SIMULATION — argent fictif, aucune valeur réelle · aucun SMS n'est jamais envoyé</div>
+<header>
+  <div class="tri"></div>
+  <h1>KékéliCash 💡</h1>
+  <p>Le réseau qui fait fructifier votre argent. Parrainez, activez, encaissez.</p>
+</header>
+<div class="wrap">
+
+  <div id="auth">
+    <div class="grid">
+      <div class="card">
+        <h2>Rejoindre le réseau</h2>
+        <p class="muted">Il vous faut un numéro togolais et le code d'un parrain.</p>
+        <label>Numéro de téléphone</label>
+        <input id="r-phone" placeholder="+228 90 00 00 00">
+        <label>Code de parrainage</label>
+        <input id="r-parrain" value="ROOT">
+        <div style="margin-top:.6rem"><button onclick="register()">Créer mon compte</button></div>
+      </div>
+      <div class="card">
+        <h2>Se connecter</h2>
+        <p class="muted">Votre compte distributeur de démonstration : <b>ROOT</b> (numéro 22890000000).</p>
+        <label>Numéro de téléphone</label>
+        <input id="l-phone" value="22890000000">
+        <div style="margin-top:.6rem"><button onclick="login()">Connexion</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <div class="muted">Solde du portefeuille</div>
+          <div class="stat"><span id="wallet">0</span> FCFA</div>
+        </div>
+        <div style="text-align:right">
+          <div class="muted">Votre code de parrainage</div>
+          <div class="stat" id="mycode" style="color:var(--red)">—</div>
+          <button class="ghost" onclick="logout()">Se déconnecter</button>
+        </div>
+      </div>
+      <div style="margin-top:.8rem">
+        <div class="muted">Objectif Jackpot — <span id="jackpotpct">0</span>%</div>
+        <div class="bar"><i id="jackpotbar" style="width:0%"></i></div>
+        <div style="margin-top:.6rem"><button onclick="claimFlag()">🏆 Réclamer le bonus Jackpot</button>
+          <span id="flagbox"></span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Boutique — activez votre compte, gonflez vos commissions</h2>
+      <div class="grid" id="shop"></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Parrainer un filleul</h2>
+        <p class="muted">Le numéro n'est pas vérifié — invitez qui vous voulez.</p>
+        <label>Numéro du filleul</label>
+        <input id="f-phone" placeholder="228…">
+        <div style="margin-top:.6rem"><button onclick="sponsor()">Ajouter le filleul</button></div>
+        <div id="filleuls" class="muted" style="margin-top:.6rem"></div>
+      </div>
+      <div class="card">
+        <h2>Prime d'activation</h2>
+        <p class="muted">Touchez la prime quand un filleul (activé) rejoint.</p>
+        <label>Code du filleul</label>
+        <input id="b-code" placeholder="M000001">
+        <div style="margin-top:.6rem"><button onclick="bonus()">Encaisser la prime</button></div>
+      </div>
+      <div class="card">
+        <h2>Transfert</h2>
+        <label>Vers le code</label>
+        <input id="t-code" placeholder="M000001">
+        <label>Montant (FCFA)</label>
+        <input id="t-amount" type="number" value="5000">
+        <div style="margin-top:.6rem"><button onclick="transfer()">Envoyer</button></div>
+      </div>
+      <div class="card">
+        <h2>Remboursement</h2>
+        <p class="muted">Annulez une commande (n° affiché à l'achat).</p>
+        <label>N° de commande</label>
+        <input id="ref-order" type="number" placeholder="1">
+        <div style="margin-top:.6rem"><button onclick="refund()">Rembourser</button></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<footer>KékéliCash — plateforme de démonstration NCTF26. Contenu fictif.</footer>
+<div id="toast" class="toast"></div>
+
+<script>
+const PRODUCTS = {starter:{n:"Pack Starter",p:5000,d:"Active votre compte et débloque les commissions."},
+                  vip:{n:"Pack VIP",p:20000,d:"Commissions maximales sur votre lignée."},
+                  booster:{n:"Booster",p:2000,d:"Un coup de pouce à votre visibilité."}};
+let FILLEULS = [];
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+async function api(path, body){
+  const o={method:body?'POST':'GET',headers:{'Content-Type':'application/json'},credentials:'same-origin'};
+  if(body)o.body=JSON.stringify(body);
+  const r=await fetch(path,o); let j={}; try{j=await r.json()}catch(e){}
+  return {ok:r.ok,status:r.status,j};
+}
+function renderShop(){
+  document.getElementById('shop').innerHTML=Object.entries(PRODUCTS).map(([k,v])=>
+    `<div class="prod"><div><b>${v.n}</b></div><div class="price">${v.p.toLocaleString('fr')} FCFA</div>
+     <div class="muted">${v.d}</div><div style="margin-top:.5rem"><button onclick="buy('${k}')">Acheter</button></div></div>`).join('');
+}
+async function refresh(){
+  const {ok,j}=await api('/api/me');
+  if(!ok){show(false);return;}
+  show(true);
+  document.getElementById('wallet').textContent=(j.wallet||0).toLocaleString('fr');
+  document.getElementById('mycode').textContent=j.code;
+  const pct=Math.max(0,Math.min(100,Math.round((j.wallet/1050000)*100)));
+  document.getElementById('jackpotpct').textContent=pct;
+  document.getElementById('jackpotbar').style.width=pct+'%';
+  document.getElementById('filleuls').innerHTML=FILLEULS.length?('Filleuls : '+FILLEULS.map(f=>`<code>${f}</code>`).join(' ')):'';
+}
+function show(logged){document.getElementById('app').classList.toggle('hidden',!logged);
+  document.getElementById('auth').classList.toggle('hidden',logged);}
+async function register(){
+  const {ok,j}=await api('/api/register',{phone:document.getElementById('r-phone').value,parrain_code:document.getElementById('r-parrain').value});
+  toast(ok?('Compte créé : '+j.code):(j.error||'échec'));
+  if(ok){document.getElementById('l-phone').value=document.getElementById('r-phone').value;login();}
+}
+async function login(){
+  const {ok,j}=await api('/api/login',{phone:document.getElementById('l-phone').value});
+  toast(ok?('Connecté : '+j.code):(j.error||'numéro inconnu')); if(ok)refresh();
+}
+async function logout(){await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});FILLEULS=[];show(false);}
+async function buy(k){const {ok,j}=await api('/api/buy',{product:k,qty:1});
+  toast(ok?('Acheté — commande n°'+j.order_id):(j.error||'échec'));refresh();}
+async function sponsor(){const {ok,j}=await api('/api/register',{phone:document.getElementById('f-phone').value,parrain_code:document.getElementById('mycode').textContent});
+  if(ok){FILLEULS.push(j.code);toast('Filleul ajouté : '+j.code);}else toast(j.error||'échec');refresh();}
+async function bonus(){const {ok,j}=await api('/api/bonus/activation',{filleul_code:document.getElementById('b-code').value});
+  toast(ok?('+'+j.prime+' FCFA de prime'):(j.error||'échec'));refresh();}
+async function transfer(){const {ok,j}=await api('/api/transfer',{to_code:document.getElementById('t-code').value,montant:parseInt(document.getElementById('t-amount').value,10)});
+  toast(ok?'Transfert effectué':(j.error||'échec'));refresh();}
+async function refund(){const {ok,j}=await api('/api/refund',{order_id:parseInt(document.getElementById('ref-order').value,10)});
+  toast(ok?('Remboursé : '+j.refunded+' FCFA'):(j.error||'échec'));refresh();}
+async function claimFlag(){const {ok,j}=await api('/flag');
+  document.getElementById('flagbox').innerHTML=ok&&j.flag?(`<div class="flag">${j.flag}</div>`):`<span class="muted"> ${j.error||'pas encore'} (solde ${j.wallet||''}/${j.need||''})</span>`;}
+renderShop();refresh();
+</script>
+</body>
+</html>"""
+
+
 # --- routes -----------------------------------------------------------------
 @app.get("/")
 def index():
-    return (
-        "<!doctype html><html lang=fr><meta charset=utf-8>"
-        "<title>KékéliCash — Réseau Fortune</title>"
-        "<div style='background:#d21034;color:#fff;padding:.5rem;font-family:sans-serif'>"
-        "SIMULATION — argent fictif, aucune valeur, aucun SMS envoyé.</div>"
-        "<h1>KékéliCash 💡 — devenez distributeur</h1>"
-        "<p>Parrainez, activez, encaissez des commissions. Votre compte "
-        "distributeur : <b>ROOT</b> (code de parrainage <b>ROOT</b>).</p>"
-        "<p>API : <code>/api/register</code>, <code>/api/login</code>, "
-        "<code>/api/me</code>, <code>/api/buy</code>, "
-        "<code>/api/bonus/activation</code>, <code>/api/refund</code>, "
-        "<code>/api/transfer</code>. Objectif : dépasser le jackpot et "
-        "récupérer le drapeau sur <code>/flag</code>.</p>"
-        "</html>"
-    )
+    return INDEX_HTML
 
 
 @app.post("/api/register")

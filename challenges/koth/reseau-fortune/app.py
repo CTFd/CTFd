@@ -131,23 +131,132 @@ def _rate_limit():
     return None
 
 
+INDEX_HTML = """<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réseau Fortune — l'arène du plus riche</title>
+<style>
+  :root{--green:#006a4e;--yellow:#ffce00;--red:#d21034;--ink:#14211d;--pane:#fff;--bg:#f3f6f4;--muted:#5c6b64}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  .sim{background:var(--red);color:#fff;text-align:center;padding:.45rem;font-size:.85rem;font-weight:600}
+  header{background:linear-gradient(135deg,#7a1020,var(--red));color:#fff;padding:1.1rem 1rem;position:relative;overflow:hidden}
+  header .tri{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--green) 33%,var(--yellow) 33% 66%,var(--red) 66%)}
+  header h1{margin:.2rem 0;font-size:1.5rem}
+  header p{margin:0;opacity:.92;font-size:.9rem}
+  .wrap{max-width:960px;margin:0 auto;padding:1rem}
+  .card{background:var(--pane);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:1rem;margin:.8rem 0}
+  .grid{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  h2{margin:.2rem 0 .6rem;font-size:1.1rem}
+  label{display:block;font-size:.8rem;color:var(--muted);margin:.4rem 0 .15rem}
+  input,select{width:100%;padding:.55rem;border:1px solid #cdd6d1;border-radius:8px;font-size:.95rem}
+  button{background:var(--red);color:#fff;border:0;border-radius:8px;padding:.6rem .9rem;font-weight:600;cursor:pointer;font-size:.9rem}
+  button.ghost{background:#eef2f0;color:var(--ink)}
+  .stat{font-size:1.7rem;font-weight:800;color:var(--red)}
+  .muted{color:var(--muted);font-size:.85rem}
+  .row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:end;justify-content:space-between}
+  .prod{border:1px solid #e2e8e4;border-radius:10px;padding:.8rem;text-align:center}
+  .prod .price{font-weight:800;color:var(--red);margin:.3rem 0}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{text-align:left;padding:.4rem;border-bottom:1px solid #eef2f0}
+  .crown{color:var(--yellow)}
+  .hidden{display:none}
+  .toast{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.6rem 1rem;border-radius:8px;opacity:0;transition:.25s;font-size:.9rem}
+  .toast.show{opacity:1}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;padding:1.5rem}
+</style>
+</head>
+<body>
+<div class="sim">⚠️ SIMULATION — argent fictif, aucune valeur réelle · aucun SMS n'est jamais envoyé</div>
+<header>
+  <div class="tri"></div>
+  <h1>👑 Réseau Fortune</h1>
+  <p>L'arène partagée : le réseau le plus riche tient la couronne et marque les points.</p>
+</header>
+<div class="wrap">
+
+  <div id="join" class="card">
+    <h2>Entrer dans l'arène</h2>
+    <p class="muted">Collez votre <b>jeton KotH</b> (page « King of the Hill » de la plateforme, 16 caractères hex).</p>
+    <label>Jeton KotH</label>
+    <input id="j-token" placeholder="0123456789abcdef">
+    <div style="margin-top:.6rem"><button onclick="join()">Rejoindre</button></div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="card">
+      <div class="row">
+        <div><div class="muted">Solde du réseau</div><div class="stat"><span id="wallet">0</span> FCFA</div></div>
+        <div style="text-align:right"><div class="muted">Gain net (score)</div>
+          <div class="stat" id="net">0</div>
+          <div class="muted">code : <span id="mycode">—</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏁 Classement — le réseau le plus riche</h2>
+      <table><thead><tr><th>#</th><th>Équipe</th><th>Gain net</th></tr></thead><tbody id="board"></tbody></table>
+    </div>
+
+    <div class="card">
+      <h2>Boutique</h2>
+      <div class="grid" id="shop"></div>
+    </div>
+
+    <div class="grid">
+      <div class="card"><h2>Parrainer</h2><label>Numéro du filleul</label>
+        <input id="f-phone" placeholder="228…"><div style="margin-top:.6rem"><button onclick="sponsor()">Ajouter</button></div>
+        <div id="filleuls" class="muted" style="margin-top:.6rem"></div></div>
+      <div class="card"><h2>Prime d'activation</h2><label>Code du filleul</label>
+        <input id="b-code" placeholder="M000001"><div style="margin-top:.6rem"><button onclick="bonus()">Encaisser</button></div></div>
+      <div class="card"><h2>Transfert</h2><label>Vers</label><input id="t-code" placeholder="M000001">
+        <label>Montant</label><input id="t-amount" type="number" value="5000">
+        <div style="margin-top:.6rem"><button onclick="transfer()">Envoyer</button></div></div>
+      <div class="card"><h2>Remboursement</h2><label>N° commande</label><input id="ref-order" type="number" placeholder="1">
+        <div style="margin-top:.6rem"><button onclick="refund()">Rembourser</button></div></div>
+    </div>
+  </div>
+
+</div>
+<footer>Réseau Fortune — arène de démonstration NCTF26. Contenu fictif.</footer>
+<div id="toast" class="toast"></div>
+<script>
+const PRODUCTS={starter:{n:"Pack Starter",p:5000},vip:{n:"Pack VIP",p:20000},booster:{n:"Booster",p:2000}};
+let FILLEULS=[];
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+async function api(path,body){const o={method:body?'POST':'GET',headers:{'Content-Type':'application/json'},credentials:'same-origin'};
+  if(body)o.body=JSON.stringify(body);const r=await fetch(path,o);let j={};try{j=await r.json()}catch(e){}return{ok:r.ok,status:r.status,j};}
+function renderShop(){document.getElementById('shop').innerHTML=Object.entries(PRODUCTS).map(([k,v])=>
+  `<div class="prod"><b>${v.n}</b><div class="price">${v.p.toLocaleString('fr')} FCFA</div><button onclick="buy('${k}')">Acheter</button></div>`).join('');}
+async function join(){const {ok,j}=await api('/api/join',{token:document.getElementById('j-token').value.trim()});
+  toast(ok?('Dans l\\'arène : '+j.code):(j.error||'jeton invalide'));if(ok){document.getElementById('join').classList.add('hidden');document.getElementById('app').classList.remove('hidden');refresh();}}
+async function refresh(){const {ok,j}=await api('/api/me');if(ok){
+  document.getElementById('wallet').textContent=(j.wallet||0).toLocaleString('fr');
+  document.getElementById('net').textContent=(j.net_gain||0).toLocaleString('fr');
+  document.getElementById('mycode').textContent=j.code;
+  document.getElementById('filleuls').innerHTML=FILLEULS.length?('Filleuls : '+FILLEULS.map(f=>`<code>${f}</code>`).join(' ')):'';}
+  const lb=await api('/api/leaderboard');
+  if(lb.ok)document.getElementById('board').innerHTML=(lb.j||[]).map((r,i)=>
+    `<tr><td>${i==0?'<span class=crown>👑</span>':(i+1)}</td><td>${r.team}</td><td>${(r.net_gain||0).toLocaleString('fr')}</td></tr>`).join('');
+}
+async function buy(k){const {ok,j}=await api('/api/buy',{product:k,qty:1});toast(ok?('Commande n°'+j.order_id):(j.error||'échec'));refresh();}
+async function sponsor(){const {ok,j}=await api('/api/register',{phone:document.getElementById('f-phone').value,parrain_code:document.getElementById('mycode').textContent});
+  if(ok){FILLEULS.push(j.code);toast('Filleul : '+j.code);}else toast(j.error||'échec');refresh();}
+async function bonus(){const {ok,j}=await api('/api/bonus/activation',{filleul_code:document.getElementById('b-code').value});toast(ok?('+'+j.prime+' FCFA'):(j.error||'échec'));refresh();}
+async function transfer(){const {ok,j}=await api('/api/transfer',{to_code:document.getElementById('t-code').value,montant:parseInt(document.getElementById('t-amount').value,10)});toast(ok?'Transfert OK':(j.error||'échec'));refresh();}
+async function refund(){const {ok,j}=await api('/api/refund',{order_id:parseInt(document.getElementById('ref-order').value,10)});toast(ok?('Remboursé '+j.refunded):(j.error||'échec'));refresh();}
+renderShop();setInterval(()=>{if(!document.getElementById('app').classList.contains('hidden'))refresh();},15000);
+</script>
+</body>
+</html>"""
+
+
 # --- routes -----------------------------------------------------------------
 @app.get("/")
 def index():
-    return (
-        "<!doctype html><html lang=fr><meta charset=utf-8>"
-        "<title>Réseau Fortune — arène</title>"
-        "<div style='background:#d21034;color:#fff;padding:.5rem;font-family:sans-serif'>"
-        "SIMULATION — argent fictif, aucune valeur, aucun SMS envoyé.</div>"
-        "<h1>Réseau Fortune 💡 — l'arène du plus riche</h1>"
-        "<p>Rejoignez avec votre <b>jeton KotH</b> (page « King of the Hill »), "
-        "bâtissez le réseau le plus riche, gardez la couronne.</p>"
-        "<p>API : <code>/api/join {token}</code>, <code>/api/register</code>, "
-        "<code>/api/login</code>, <code>/api/me</code>, <code>/api/buy</code>, "
-        "<code>/api/bonus/activation</code>, <code>/api/refund</code>, "
-        "<code>/api/transfer</code>, <code>/api/leaderboard</code>.</p>"
-        "</html>"
-    )
+    return INDEX_HTML
 
 
 @app.post("/api/join")

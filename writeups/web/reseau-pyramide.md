@@ -1,6 +1,6 @@
 # reseau-pyramide
 
-**Catégorie** web · **Points** 400 · **Auteur** dagbanjaphet
+**Catégorie** web · **Points** 400 · **Auteur** Hibris
 
 # reseau-pyramide -- solution
 

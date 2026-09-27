@@ -1,6 +1,6 @@
 # mcp-manifest-audit
 
-**Catégorie** ai · **Points** 250 · **Auteur** dagbanjaphet
+**Catégorie** ai · **Points** 250 · **Auteur** Hibris
 
 # mcp-manifest-audit -- solution
 
