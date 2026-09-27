@@ -30,12 +30,34 @@
 
 			{% with form = Forms.teams.TeamSearchForm(field=field, q=q) %}
 			<form method="GET" class="form-inline">
+				<!-- Field selector -->
 				<div class="form-group col-md-2">
 					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
-				<div class="form-group col-md-8">
+
+				<!-- Search input -->
+				<div class="form-group col-md-7">
 					{{ form.q(class="form-control w-100", placeholder="Search for matching teams") }}
 				</div>
+
+				<!-- Filter by Bracket dropdown -->
+				<div class="form-group col-md-1">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">
+							Filter
+						</button>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="?field={{ field }}&q={{ q }}">All</a>
+							{% for bracket in brackets %}
+							<a class="dropdown-item" href="?field={{ field }}&q={{ q }}&bracket={{ bracket.id }}">{{
+								bracket.name }}</a>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+
+				<!-- Search button -->
 				<div class="form-group col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
 						<i class="fas fa-search" aria-hidden="true"></i>
@@ -52,10 +74,12 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Teams" id="teams-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Teams"
+						id="teams-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Teams" id="teams-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Teams"
+						id="teams-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -70,7 +94,8 @@
 					<tr>
 						<th class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
+								<input type="checkbox" class="form-check-input" autocomplete="off"
+									data-checkbox-all>&nbsp;
 							</div>
 						</th>
 						<th class="sort-col text-center"><b>ID</b></th>
@@ -85,7 +110,8 @@
 					<tr name="{{ team.id }}" data-href="{{ url_for('admin.teams_detail', team_id=team.id) }}">
 						<td class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" value="{{ team.id }}" autocomplete="off" data-team-id="{{ team.id }}">&nbsp;
+								<input type="checkbox" class="form-check-input" value="{{ team.id }}" autocomplete="off"
+									data-team-id="{{ team.id }}">&nbsp;
 							</div>
 						</td>
 						<td class="team-id text-center" value="{{ team.id }}">{{ team.id }}</td>
@@ -94,23 +120,23 @@
 								{{ team.name | truncate(32) }}
 							</a>
 							{% if team.bracket_id %}
-								<span class="badge badge-secondary">{{ team.bracket.name }}</span>
+							<span class="badge badge-secondary">{{ team.bracket.name }}</span>
 							{% endif %}
 							{% if team.oauth_id %}
-								<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-									<span class="badge badge-primary">Official</span>
-								</a>
+							<a href="https://majorleaguecyber.org/t/{{ team.name }}">
+								<span class="badge badge-primary">Official</span>
+							</a>
 							{% endif %}
 							{% if team.website %}
-								<a href="{{ team.website }}" target="_blank" class="badge badge-info" rel="noopener">
-									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
-									   title="{{ team.website }}" aria-hidden="true"></i>
-								</a>
+							<a href="{{ team.website }}" target="_blank" class="badge badge-info" rel="noopener">
+								<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									title="{{ team.website }}" aria-hidden="true"></i>
+							</a>
 							{% endif %}
 							<span class="d-block text-muted">
 								<small>
 									{% if team.affiliation %}
-										{{ team.affiliation | truncate(20) }}
+									{{ team.affiliation | truncate(20) }}
 									{% endif %}
 								</small>
 							</span>
@@ -118,21 +144,19 @@
 						<td class="team-country text-center" value="{{ team.country if team.country is not none }}">
 							<span>
 								{% if team.country %}
-									<i class="flag-{{ team.country.lower() }}"></i>
-									<small>{{ lookup_country_code(team.country) }}</small>
+								<i class="flag-{{ team.country.lower() }}"></i>
+								<small>{{ lookup_country_code(team.country) }}</small>
 								{% endif %}
 							</span>
 						</td>
-
 						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ team.hidden }}">
 							{% if team.hidden %}
-								<span class="badge badge-danger">hidden</span>
+							<span class="badge badge-danger">hidden</span>
 							{% endif %}
 						</td>
-
 						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
 							{% if team.banned %}
-								<span class="badge badge-danger">banned</span>
+							<span class="badge badge-danger">banned</span>
 							{% endif %}
 						</td>
 					</tr>
@@ -140,14 +164,14 @@
 				</tbody>
 			</table>
 			{% if teams.pages > 1 %}
-			<div class="text-center">Page
-				<br>
+			<div class="text-center">
+				Page<br>
 				{% if teams.page != 1 %}
 				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
 				{% endif %}
 				<select class="page-select">
 					{% for page in range(1, teams.pages + 1) %}
-					<option {% if teams.page == page %}selected{% endif %}>{{ page }}</option>
+					<option {% if teams.page==page %}selected{% endif %}>{{ page }}</option>
 					{% endfor %}
 				</select>
 				{% if teams.next_num %}
@@ -164,5 +188,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	{{ Assets.js("assets/js/pages/teams.js", theme="admin") }}
+{{ Assets.js("assets/js/pages/teams.js", theme="admin") }}
 {% endblock %}

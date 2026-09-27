@@ -17,7 +17,6 @@
 </div>
 
 <div class="container">
-
 	<div class="row">
 		<div class="col-md-12">
 			{% if q and field %}
@@ -31,12 +30,34 @@
 
 			{% with form = Forms.users.UserSearchForm(field=field, q=q) %}
 			<form method="GET" class="form-inline">
+				<!-- Field selector (left-most) -->
 				<div class="form-group col-md-2">
 					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
-				<div class="form-group col-md-8">
+
+				<!-- Search input -->
+				<div class="form-group col-md-7">
 					{{ form.q(class="form-control w-100", placeholder="Search for matching users") }}
 				</div>
+
+				<!-- Filter by Bracket dropdown (in between) -->
+				<div class="form-group col-md-1">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">
+							Filter
+						</button>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="?field={{ field }}&q={{ q }}">All</a>
+							{% for bracket in brackets %}
+							<a class="dropdown-item" href="?field={{ field }}&q={{ q }}&bracket={{ bracket.id }}">{{
+								bracket.name }}</a>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+
+				<!-- Search button (right-most) -->
 				<div class="form-group col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
 						<i class="fas fa-search" aria-hidden="true"></i>
@@ -53,16 +74,19 @@
 		<div class="col-md-12">
 			<div class="float-right pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Users" id="users-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Users"
+						id="users-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users" id="users-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Users"
+						id="users-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	<div class="row">
 		<div class="col-md-12 table-responsive">
 			<table id="teamsboard" class="table table-striped border">
@@ -70,7 +94,8 @@
 					<tr>
 						<th class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
+								<input type="checkbox" class="form-check-input" autocomplete="off"
+									data-checkbox-all>&nbsp;
 							</div>
 						</th>
 						<th class="sort-col text-center"><b>ID</b></th>
@@ -88,7 +113,8 @@
 					<tr name="{{ user.id }}" data-href="{{ url_for('admin.users_detail', user_id=user.id) }}">
 						<td class="border-right" data-checkbox>
 							<div class="form-check text-center">
-								<input type="checkbox" class="form-check-input" autocomplete="off" value="{{ user.id }}" data-user-id="{{ user.id }}">&nbsp;
+								<input type="checkbox" class="form-check-input" autocomplete="off" value="{{ user.id }}"
+									data-user-id="{{ user.id }}">&nbsp;
 							</div>
 						</td>
 						<td class="team-id text-center" value="{{ user.id }}">{{ user.id }}</td>
@@ -97,54 +123,55 @@
 								{{ user.name | truncate(32) }}
 							</a>
 							{% if user.bracket_id %}
-								<span class="badge badge-secondary">{{ user.bracket.name }}</span>
+							<span class="badge badge-secondary">{{ user.bracket.name }}</span>
 							{% endif %}
 							{% if user.oauth_id %}
-								<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-									<span class="badge badge-primary">Official</span>
-								</a>
+							<a href="https://majorleaguecyber.org/u/{{ user.name }}">
+								<span class="badge badge-primary">Official</span>
+							</a>
 							{% endif %}
 							{% if user.website %}
-								<a href="{{ user.website }}" target="_blank" class="badge badge-info" rel="noopener">
-									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
-									   title="{{ user.website }}" aria-hidden="true"></i>
-								</a>
+							<a href="{{ user.website }}" target="_blank" class="badge badge-info" rel="noopener">
+								<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+									title="{{ user.website }}" aria-hidden="true"></i>
+							</a>
 							{% endif %}
 							{% if user.affiliation %}
-								<span class="d-block text-muted"><small>{{ user.affiliation | truncate(20) }}</small></span>
+							<span class="d-block text-muted"><small>{{ user.affiliation | truncate(20) }}</small></span>
 							{% endif %}
 						</td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ user.email }}">
 							{% if user.email %}
-								<a href="mailto:{{ user.email }}" target="_blank">{{ user.email | truncate(32) }}</a>
+							<a href="mailto:{{ user.email }}" target="_blank">{{ user.email | truncate(32) }}</a>
 							{% endif %}
 						</td>
 						<td class="team-country text-center" value="{{ user.country if user.country is not none }}">
 							<span>
 								{% if user.country %}
-									<i class="flag-{{ user.country.lower() }}"></i>
-									<small>{{ lookup_country_code(user.country) }}</small>
+								<i class="flag-{{ user.country.lower() }}"></i>
+								<small>{{ lookup_country_code(user.country) }}</small>
 								{% endif %}
 							</span>
 						</td>
 						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
 							{% if user.type == 'admin' %}
-								<span class="badge badge-primary">admin</span>
+							<span class="badge badge-primary">admin</span>
 							{% endif %}
 						</td>
-						<td class="team-verified d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
+						<td class="team-verified d-md-table-cell d-lg-table-cell text-center"
+							value="{{ user.verified }}">
 							{% if user.verified %}
-								<span class="badge badge-success">verified</span>
+							<span class="badge badge-success">verified</span>
 							{% endif %}
 						</td>
 						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ user.hidden }}">
 							{% if user.hidden %}
-								<span class="badge badge-danger">hidden</span>
+							<span class="badge badge-danger">hidden</span>
 							{% endif %}
 						</td>
 						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ user.banned }}">
 							{% if user.banned %}
-								<span class="badge badge-danger">banned</span>
+							<span class="badge badge-danger">banned</span>
 							{% endif %}
 						</td>
 					</tr>
@@ -152,14 +179,14 @@
 				</tbody>
 			</table>
 			{% if users.pages > 1 %}
-			<div class="text-center">Page
-				<br>
+			<div class="text-center">
+				Page<br>
 				{% if users.page != 1 %}
 				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
 				{% endif %}
 				<select class="page-select">
 					{% for page in range(1, users.pages + 1) %}
-					<option {% if users.page == page %}selected{% endif %}>{{ page }}</option>
+					<option {% if users.page==page %}selected{% endif %}>{{ page }}</option>
 					{% endfor %}
 				</select>
 				{% if users.next_num %}
@@ -176,5 +203,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	{{ Assets.js("assets/js/pages/users.js", theme="admin") }}
+{{ Assets.js("assets/js/pages/users.js", theme="admin") }}
 {% endblock %}
