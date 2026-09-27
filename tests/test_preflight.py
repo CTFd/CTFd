@@ -246,7 +246,9 @@ def test_content_counts_flags_and_test_values():
         {"challenge_id": 2, "type": "team_hmac", "content": "pwn-b"},
         {"challenge_id": 3, "type": "static", "content": "NCTF{test-flag}"},
     ]
-    st = statuses(pf.check_content(chals, flags, 3, 2))
+    # check_content compte désormais le set VISIBLE : 2 challenges visibles
+    # (ids 1,2) sur 2 catégories ; le 3e est masqué (compté à part -> hidden).
+    st = statuses(pf.check_content(chals, flags, 2, 2))
     assert st["challenges"] == pf.OK and st["categories"] == pf.OK
     assert st["hidden"] == pf.WARN
     assert st["flags"] == pf.OK
