@@ -414,7 +414,9 @@ def main():
                     if not a.keep:
                         player.destroy(cid)
                     continue
-                wait_http_ready(host, port)  # HTTP: attend une vraie reponse ; TCP brut: retombe apres 20s
+                wait_http_ready(
+                    host, port
+                )  # HTTP: attend une vraie reponse ; TCP brut: retombe apres 20s
                 time.sleep(1)
 
             cmdf = cmd.format(

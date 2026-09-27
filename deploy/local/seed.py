@@ -221,6 +221,7 @@ def patch_dynamic_scoring(s, url):
     On lit extra: du challenge.yml et on PATCH ce qui manque (idempotent). En prod
     ces champs sont deja poses ; ici ca aligne le local sur la prod."""
     import yaml  # PyYAML est une dep de ctfcli, donc dispo dans le venv
+
     by_name = {}
     for y in glob.glob(str(CHALLENGES / "*/*/challenge.yml")):
         try:
@@ -244,8 +245,13 @@ def patch_dynamic_scoring(s, url):
         minimum = extra.get("minimum", max(1, int(initial) // 5))
         decay = extra.get("decay", 30)
         function = extra.get("function", "logarithmic")
-        body = {"value": initial, "initial": initial, "minimum": minimum,
-                "decay": decay, "function": function}
+        body = {
+            "value": initial,
+            "initial": initial,
+            "minimum": minimum,
+            "decay": decay,
+            "function": function,
+        }
         r = s.patch(url + f"/api/v1/challenges/{c['id']}", json=body)
         if r.ok:
             fixed += 1
