@@ -4,6 +4,10 @@ import EasyMDE from "easymde";
 import Vue from "vue";
 import MediaLibrary from "./components/files/MediaLibrary.vue";
 import hljs from "highlight.js";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+
+dayjs.extend(advancedFormat);
 
 export function showMediaLibrary(editor) {
   const mediaModal = Vue.extend(MediaLibrary);
@@ -111,6 +115,16 @@ export function makeSortableTables() {
   }
 }
 
+export function renderScheduleTooltips() {
+  $("[data-schedule-time]").each((i, elem) => {
+    const $elem = $(elem);
+    const time = dayjs($elem.data("schedule-time")).format(
+      "MMMM Do, h:mm:ss A",
+    );
+    $elem.attr("title", $elem.attr("title").replace("{time}", time));
+  });
+}
+
 export default () => {
   // TODO: This is kind of a hack to mimic a React-like state construct.
   // It should be removed once we have a real front-end framework in place.
@@ -182,6 +196,7 @@ export default () => {
 
     bindMarkdownEditors();
     makeSortableTables();
+    renderScheduleTooltips();
     $('[data-toggle="tooltip"]').tooltip();
 
     // Syntax highlighting

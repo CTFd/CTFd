@@ -1,4 +1,5 @@
 {% extends "admin/base.html" %}
+{% from "admin/macros/challenges.html" import challenge_state_badge %}
 
 {% block content %}
 <div id="module-edit-modal" class="modal fade">
@@ -93,7 +94,7 @@
 					<td>{{ c.id }}</td>
 					<td><a href="{{ url_for('admin.challenges_detail', challenge_id=c.id) }}">{{ c.name }}</a></td>
 					<td>{{ c.category }}</td>
-					<td>{{ c.state }}</td>
+					<td>{{ challenge_state_badge(c) }}</td>
 					<td class="text-right">
 						<button class="btn btn-sm btn-outline-danger" data-remove-challenge="{{ c.id }}">Remove</button>
 					</td>
