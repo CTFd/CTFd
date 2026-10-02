@@ -3,9 +3,9 @@ import os
 from io import BytesIO
 
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
-from CTFd.models import Files, Tokens, Users
+from CTFd.models import Files, Teams, Tokens, Users
 from CTFd.utils.security.auth import generate_user_token, lookup_user_token
-from tests.helpers import create_ctfd, destroy_ctfd, gen_token, gen_user
+from tests.helpers import create_ctfd, destroy_ctfd, gen_team, gen_token, gen_user
 
 
 def test_generate_user_token():
@@ -102,4 +102,47 @@ def test_token_api_file_upload():
             with open(filepath) as f:
                 assert f.read() == "test file content"
             os.remove(filepath)
+    destroy_ctfd(app)
+
+
+def test_banned_user_token_access():
+    """Can a banned user still use an API token"""
+    app = create_ctfd()
+    with app.app_context():
+        user = gen_user(app.db, name="user1", email="user1@examplectf.com")
+        token = generate_user_token(user, expiration=None)
+        headers = {"Authorization": "token " + token.value}
+
+        with app.test_client() as client:
+            r = client.get("/api/v1/users/me", headers=headers, json="")
+            assert r.status_code == 200
+
+        Users.query.filter_by(id=user.id).first().banned = True
+        app.db.session.commit()
+
+        with app.test_client() as client:
+            r = client.get("/api/v1/users/me", headers=headers, json="")
+            assert r.status_code == 403
+    destroy_ctfd(app)
+
+
+def test_banned_team_token_access():
+    """Can a member of a banned team still use an API token"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        team = gen_team(app.db, name="team")
+        user = Users.query.filter_by(id=team.captain_id).first()
+        token = generate_user_token(user, expiration=None)
+        headers = {"Authorization": "token " + token.value}
+
+        with app.test_client() as client:
+            r = client.get("/api/v1/users/me", headers=headers, json="")
+            assert r.status_code == 200
+
+        Teams.query.filter_by(id=team.id).first().banned = True
+        app.db.session.commit()
+
+        with app.test_client() as client:
+            r = client.get("/api/v1/users/me", headers=headers, json="")
+            assert r.status_code == 403
     destroy_ctfd(app)
