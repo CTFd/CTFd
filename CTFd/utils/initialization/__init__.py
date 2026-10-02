@@ -362,6 +362,10 @@ def init_request_processors(app):
             except Exception:
                 abort(401, description="Invalid authorization header")
             else:
+                if user.banned:
+                    abort(403, description="You have been banned from this CTF")
+                if user.team and user.team.banned:
+                    abort(403, description="Your team has been banned from this CTF")
                 login_user(user)
 
     @app.before_request
