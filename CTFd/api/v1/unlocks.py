@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource
 
 from CTFd.api.v1.helpers.request import validate_args
@@ -26,7 +26,7 @@ from CTFd.utils.decorators import (
     require_verified_emails,
 )
 from CTFd.utils.helpers.models import build_model_filters
-from CTFd.utils.user import get_current_user
+from CTFd.utils.user import get_current_user, is_admin
 
 unlocks_namespace = Namespace("unlocks", description="Endpoint to retrieve Unlocks")
 
@@ -137,9 +137,6 @@ class UnlockList(Resource):
 
         if not is_admin() and challenge is not None:
             if challenge.state in ("hidden", "locked"):
-                abort(404)
-
-            if not can_access_challenge(challenge, user):
                 abort(404)
 
             if challenge.requirements:
