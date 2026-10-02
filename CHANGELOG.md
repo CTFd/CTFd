@@ -1,3 +1,15 @@
+# 3.8.8 / 2026-10-01
+
+**Security**
+
+- Fix issue where reset password emails could be sent to incorrect email addresses
+- Fix issue where admins could arbitrarily write files to the filesystem when using certain S3 implementations for file uploads
+
+**API**
+
+- Tokens from banned users are no longer accepted
+- Unlocks can no longer be created against inaccessible challenges
+
 # 3.8.7 / 2026-08-19
 
 **Security**
