@@ -69,7 +69,9 @@ class FilesystemUploader(BaseUploader):
         self.base_path = base_path or current_app.config.get("UPLOAD_FOLDER")
 
     def store(self, fileobj, filename):
-        location = os.path.join(self.base_path, filename)
+        location = safe_join(self.base_path, filename)
+        if location is None:
+            raise ValueError("Invalid filename")
         directory = os.path.dirname(location)
 
         if not os.path.exists(directory):
@@ -101,18 +103,29 @@ class FilesystemUploader(BaseUploader):
         return send_file(safe_join(self.base_path, filename), as_attachment=True)
 
     def delete(self, filename):
-        if os.path.exists(os.path.join(self.base_path, filename)):
-            file_path = PurePath(filename).parts[0]
-            rmtree(os.path.join(self.base_path, file_path))
-            return True
-        return False
+        location = safe_join(self.base_path, filename)
+        if location is None or os.path.exists(location) is False:
+            return False
+
+        parts = PurePath(filename).parts
+        if not parts:
+            return False
+
+        top_level = safe_join(self.base_path, parts[0])
+        if top_level is None:
+            return False
+
+        rmtree(top_level)
+        return True
 
     def sync(self):
         pass
 
     def open(self, filename, mode="rb"):
-        path = Path(safe_join(self.base_path, filename))
-        return path.open(mode=mode)
+        path = safe_join(self.base_path, filename)
+        if path is None:
+            raise ValueError("Invalid filename")
+        return Path(path).open(mode=mode)
 
 
 class S3Uploader(BaseUploader):
@@ -232,7 +245,15 @@ class S3Uploader(BaseUploader):
                 local_s3_object = s3_object
                 if self.s3_prefix:
                     local_s3_object = local_s3_object.removeprefix(self.s3_prefix)
-                local_path = os.path.join(local_folder, local_s3_object)
+
+                local_path = safe_join(local_folder, local_s3_object)
+                if local_path is None:
+                    current_app.logger.warning(
+                        "Skipping an invalid object during sync: %r",
+                        s3_object,
+                    )
+                    continue
+
                 directory = os.path.dirname(local_path)
                 if not os.path.exists(directory):
                     os.makedirs(directory)
@@ -241,7 +262,9 @@ class S3Uploader(BaseUploader):
 
     def open(self, filename, mode="rb"):
         local_folder = current_app.config.get("UPLOAD_FOLDER")
-        local_path = os.path.join(local_folder, filename)
+        local_path = safe_join(local_folder, filename)
+        if local_path is None:
+            raise ValueError("Invalid filename")
         directory = os.path.dirname(local_path)
         if not os.path.exists(directory):
             os.makedirs(directory)
