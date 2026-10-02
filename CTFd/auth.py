@@ -220,7 +220,7 @@ def reset_password(data=None):
                     _l("Too many password reset attempts. Please try again later.")
                 ],
             )
-        email.forgot_password(email_address)
+        email.forgot_password(user.email)
 
         return render_template(
             "reset_password.html",
