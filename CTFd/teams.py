@@ -124,7 +124,7 @@ def invite():
 @teams.route("/teams/join", methods=["GET", "POST"])
 @authed_only
 @require_team_mode
-@ratelimit(method="POST", limit=10, interval=5)
+@ratelimit(method="POST", rl_key="RL_JOIN_TEAM")
 def join():
     infos = get_infos()
     errors = get_errors()
