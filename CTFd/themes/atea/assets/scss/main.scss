@@ -1,0 +1,134 @@
+// Atea brand palette (https://design.atea.com/cvi/colours)
+$atea-green: #008a00;
+$atea-grey: #4d575d;
+$atea-light-grey: #edeeee;
+$atea-dark: #2b3134;
+$atea-red: #d62429;
+$atea-yellow: #f6bd18;
+$atea-blue: #0965b1;
+
+@use "bootstrap/scss/bootstrap" as * with (
+  $primary: $atea-green,
+  $secondary: $atea-grey,
+  $success: $atea-green,
+  $info: $atea-blue,
+  $warning: $atea-yellow,
+  $danger: $atea-red,
+  $light: $atea-light-grey,
+  $dark: $atea-dark,
+
+  $font-family-sans-serif: (
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif,
+  ),
+  $headings-font-weight: 600,
+  $btn-font-weight: 500,
+
+  // Light grey page, dark grey text, green links
+  $body-bg: $atea-light-grey,
+  $body-color: $atea-dark,
+  $body-secondary-color: $atea-grey,
+  $link-color: $atea-green,
+  $link-decoration: none,
+  $border-color: #dcdfe0,
+
+  // Dark mode equivalents
+  $body-bg-dark: #1b1f21,
+  $body-color-dark: #e3e5e6,
+  $body-secondary-color-dark: #b4babd,
+  $border-color-dark: #384044,
+  $link-color-dark: #4cc24c,
+
+  // Rounded corners; pill-shaped form fields
+  $border-radius: 0.375rem,
+  $border-radius-lg: 0.5rem,
+  $input-border-radius: 50rem,
+  $input-border-radius-sm: 50rem,
+  $input-border-radius-lg: 50rem,
+
+  // Content surfaces are white, sitting on the grey page
+  $input-bg: var(--atea-surface),
+  $card-bg: var(--atea-surface),
+  $card-border-color: var(--bs-border-color),
+  $card-border-radius: 0.5rem,
+  $modal-content-bg: var(--atea-surface),
+  $modal-content-border-radius: 0.75rem,
+  $dropdown-bg: var(--atea-surface),
+  $table-bg: var(--atea-surface),
+  $pagination-bg: var(--atea-surface),
+  $list-group-bg: var(--atea-surface),
+  $accordion-bg: var(--atea-surface),
+  $nav-tabs-link-active-bg: var(--atea-surface)
+);
+
+@use "includes/components/atea";
+@use "includes/components/table";
+@use "includes/components/jumbotron";
+@use "includes/components/challenge";
+@use "includes/components/sticky-footer";
+@use "includes/components/graphs";
+
+@use "includes/utils/fonts";
+@use "includes/utils/opacity";
+@use "includes/utils/min-height";
+@use "includes/utils/cursors";
+@use "includes/utils/lolight";
+
+@use "includes/icons/award-icons";
+@use "includes/icons/flag-icons";
+
+h1,
+h2 {
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+blockquote {
+  border-left: 4px solid var(--atea-green);
+  padding-left: 15px;
+}
+
+input,
+select {
+  padding: 0.6rem !important;
+  height: auto !important;
+}
+
+// Extra side padding so text doesn't touch the rounded ends of pill fields
+.form-control {
+  padding-left: 1.1rem !important;
+  padding-right: 1.1rem !important;
+}
+
+// Multi-line fields can't be pills, so give them softer corners instead
+textarea.form-control {
+  border-radius: 1rem;
+}
+
+.fa-spin.spinner {
+  text-align: center;
+  opacity: 0.5;
+}
+
+.badge-notification {
+  vertical-align: top;
+  margin-left: -1.5em;
+  font-size: 50%;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+  background-size: 8px 10px;
+  background-position: right 1.1rem center;
+  padding-left: 1.1rem !important;
+  padding-right: 2.5rem !important;
+}

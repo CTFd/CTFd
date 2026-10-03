@@ -1,0 +1,70 @@
+/* Challenge styles
+-------------------------------------------------- */
+
+.challenge-desc {
+  overflow-wrap: anywhere;
+
+  img {
+    max-width: 100%;
+  }
+}
+
+// Category titles get a green accent bar
+.category-header h3 {
+  font-size: 1.25rem;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--atea-green);
+}
+
+// Challenge tiles: white cards that lift and turn green-edged on hover
+.challenge-button.btn {
+  --bs-btn-color: var(--bs-body-color);
+  --bs-btn-bg: var(--atea-surface);
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-hover-color: var(--bs-body-color);
+  --bs-btn-hover-bg: var(--atea-surface);
+  --bs-btn-hover-border-color: var(--atea-green);
+  --bs-btn-active-color: var(--bs-body-color);
+  --bs-btn-active-bg: var(--atea-surface);
+  --bs-btn-active-border-color: var(--atea-green);
+  --bs-btn-focus-shadow-rgb: 0, 138, 0;
+
+  border-radius: 0.5rem;
+  box-shadow: var(--atea-shadow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--atea-shadow-hover);
+  }
+
+  .challenge-inner p {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .challenge-inner span {
+    color: var(--atea-green);
+    font-weight: 600;
+  }
+
+  // Solved challenges are filled with Atea green
+  &.challenge-solved {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #008a00;
+    --bs-btn-border-color: #008a00;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #007000;
+    --bs-btn-hover-border-color: #007000;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #007000;
+    --bs-btn-active-border-color: #007000;
+
+    .challenge-inner span {
+      color: #fff;
+    }
+  }
+}

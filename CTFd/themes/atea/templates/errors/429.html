@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="pt-5 mt-5 text-center">
+				<h1>{% trans %}Too many requests{% endtrans %}</h1>
+				<h1>{% trans %}Please slow down!{% endtrans %}</h1>
+				<hr class="w-50 m-auto">
+				<br/>
+				<h2>{% trans %}429 Too Many Requests{% endtrans %}</h2>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% if can_send_mail() %}
+<div 
+    id="ctfdio-snackbar-email-nudge"
+    x-data 
+    x-show="window.init.userId && !window.init.userVerified && localStorage.getItem('remind_email_verify') != window.init.userId && (!['/team', '/teams/join', '/teams/new'].includes(window.location.pathname) || window.init.teamId != null)"
+    class="alert alert-info alert-dismissible col-md-4 col-10 position-fixed text-center m-0 ctfdio-email-nudge" 
+    style="bottom: 45px; left: 50%; transform: translateX(-50%); z-index: 1040; display: none;" 
+    role="alert"
+>
+  <small>
+    <strong>Email Unconfirmed</strong><br>
+    <span>To confirm your email address please <a href="{{ url_for('auth.confirm', flow='init') }}">click here</a>.</span>
+  </small>
+  <button type="button" class="btn-close" @click="localStorage.setItem('remind_email_verify', window.init.userId); $el.parentElement.style.display = 'none';" aria-label="Close"></button>
+</div>
+{% endif %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container">
+      <h1>
+        {% trans %}Scoreboard{% endtrans %}
+      </h1>
+    </div>
+  </div>
+  <div class="container">
+    {% include "components/errors.html" %}
+
+    <div id="score-graph" class="align-items-center" :class="{'d-flex': show, 'd-none': !show}" x-data="ScoreboardDetail" x-ref="scoregraph" @bracket-change.window="activeBracket=$event.detail; update();">
+      <div class="col-md-12 text-center">
+        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+      </div>
+    </div>
+
+    <div id="scoreboard" class="row" x-data="ScoreboardList">
+      <template x-if="brackets.length && standings.length">
+        <div class="col-md-12 py-3">
+          <nav class="nav nav-pills nav-fill">
+            <button :class="{'nav-link': true, 'active': !activeBracket}" @click="activeBracket=null">{% trans %}All{% endtrans %}</button>
+            <template x-for="bracket in brackets">
+              <button :class="{'nav-link': true, 'active': activeBracket == bracket.id}" x-text="bracket.name" @click="activeBracket=bracket.id"></button>
+            </template>
+          </nav>
+        </div>
+      </template>
+
+      <div class="col-md-12" x-show="standings.length">
+        <table class="table table-striped align-middle">
+          <thead>
+          <tr>
+            <th style="width: 10px">{% trans %}Place{% endtrans %}</th>
+            <th class="text-start ps-3">{{ get_mode_as_word(capitalize=True) }}</th>
+            <th>{% trans %}Score{% endtrans %}</th>
+          </tr>
+          </thead>
+
+          <tbody>
+            <template x-for="(standing, index) in standings.filter(i => activeBracket ? i.bracket_id==activeBracket : true)">
+              <tr>
+                <th scope="row" class="text-center" x-text="index + 1"></th>
+                <td class="text-start">
+                  <a :href="standing.account_url" x-text="standing.name"></a>
+                  <template x-if="standing.bracket_name">
+                    <span class="badge bg-secondary ms-2" x-text="standing.bracket_name"></span>
+                  </template>
+                </td>
+                <td x-text="standing.score"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-12" x-show="! standings.length">
+        <h3 class="text-center text-muted">{% trans %}Scoreboard is empty{% endtrans %}</h3>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/scoreboard.js") }}
+{% endblock %}

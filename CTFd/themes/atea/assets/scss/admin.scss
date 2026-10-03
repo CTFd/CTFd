@@ -1,0 +1,581 @@
+// Atea look for the Admin Panel.
+// Loaded on top of the stock admin theme (Bootstrap 4) by the atea_admin plugin,
+// so every rule here only overrides colours, fonts and shapes.
+
+@use "~/@fontsource/inter/scss/mixins" as Inter;
+
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 400);
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 500);
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 600);
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 700);
+
+// Atea brand palette (https://design.atea.com/cvi/colours)
+$green: #008a00;
+$green-hover: #007000;
+$green-tint: #e5f3e5;
+$grey: #4d575d;
+$dark: #2b3134;
+$light-grey: #edeeee;
+$red: #d62429;
+$red-hover: #b51e22;
+$yellow: #f6bd18;
+$blue: #0965b1;
+$border: #dcdfe0;
+$surface: #ffffff;
+$shadow: 0 1px 2px rgba(43, 49, 52, 0.06);
+$shadow-hover: 0 6px 16px rgba(43, 49, 52, 0.1);
+$focus-ring: 0 0 0 0.2rem rgba(0, 138, 0, 0.25);
+$navbar-height: 4.5rem;
+$font:
+  "Inter",
+  system-ui,
+  -apple-system,
+  "Segoe UI",
+  Roboto,
+  Arial,
+  sans-serif;
+
+/* Base: light grey page, dark grey text, Inter
+-------------------------------------------------- */
+html,
+body,
+.container,
+.form-control,
+.btn {
+  font-family: $font;
+}
+
+body {
+  background-color: $light-grey;
+  color: $dark;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font;
+  font-weight: 600;
+  letter-spacing: normal;
+  color: $dark;
+}
+
+a {
+  color: $green;
+
+  &:hover {
+    color: $green-hover;
+  }
+}
+
+.text-muted {
+  color: $grey !important;
+}
+
+.text-primary,
+.text-success {
+  color: $green !important;
+}
+
+.text-danger {
+  color: $red !important;
+}
+
+.text-info {
+  color: $blue !important;
+}
+
+.bg-primary,
+.bg-success {
+  background-color: $green !important;
+}
+
+.bg-danger {
+  background-color: $red !important;
+}
+
+.bg-warning {
+  background-color: $yellow !important;
+}
+
+blockquote {
+  border-left-color: $green;
+}
+
+hr {
+  border-top-color: $border;
+}
+
+/* Top navigation bar: white with a thin grey line underneath
+-------------------------------------------------- */
+main {
+  padding-top: $navbar-height;
+}
+
+.navbar.bg-dark {
+  min-height: $navbar-height;
+  background-color: $surface !important;
+  border-bottom: 1px solid $border;
+  box-shadow: $shadow;
+}
+
+.navbar-dark {
+  .navbar-brand {
+    color: $dark;
+    font-weight: 700;
+    font-size: 1.35rem;
+
+    &:hover,
+    &:focus {
+      color: $green;
+    }
+  }
+
+  .navbar-nav .nav-link {
+    color: $dark;
+    font-weight: 500;
+
+    &:hover,
+    &:focus {
+      color: $green;
+    }
+  }
+
+  .navbar-nav .active > .nav-link,
+  .navbar-nav .nav-link.active,
+  .navbar-nav .show > .nav-link {
+    color: $green;
+  }
+
+  .navbar-nav .nav-link i {
+    color: $green;
+  }
+
+  .navbar-toggler {
+    border-color: $border;
+  }
+
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2843, 49, 52, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+}
+
+/* Page headers: white card with rounded corners
+-------------------------------------------------- */
+.jumbotron {
+  padding: 1.5rem 0 0;
+  margin-bottom: 1.5rem;
+  background-color: transparent;
+
+  > .container {
+    padding: 1.75rem 2rem;
+    background-color: $surface;
+    border: 1px solid $border;
+    border-radius: 0.5rem;
+    box-shadow: $shadow;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0;
+  }
+
+  h1 + * {
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .jumbotron > .container {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+/* Buttons
+-------------------------------------------------- */
+@mixin atea-button($bg, $hover, $color: #fff) {
+  color: $color;
+  background-color: $bg;
+  border-color: $bg;
+
+  &:hover {
+    color: $color;
+    background-color: $hover;
+    border-color: $hover;
+  }
+
+  &:focus,
+  &.focus,
+  &:not(:disabled):not(.disabled):active:focus {
+    box-shadow: 0 0 0 0.2rem rgba($bg, 0.35);
+  }
+
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active {
+    color: $color;
+    background-color: $hover;
+    border-color: $hover;
+  }
+
+  &.disabled,
+  &:disabled {
+    color: $color;
+    background-color: $bg;
+    border-color: $bg;
+  }
+}
+
+@mixin atea-outline-button($color) {
+  color: $color;
+  border-color: $color;
+
+  &:hover,
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active {
+    color: #fff;
+    background-color: $color;
+    border-color: $color;
+  }
+
+  &:focus,
+  &.focus {
+    box-shadow: 0 0 0 0.2rem rgba($color, 0.35);
+  }
+}
+
+.btn {
+  font-weight: 500;
+}
+
+.btn-primary,
+.btn-success {
+  @include atea-button($green, $green-hover);
+}
+
+.btn-danger {
+  @include atea-button($red, $red-hover);
+}
+
+.btn-warning {
+  @include atea-button($yellow, #dca80f, $dark);
+}
+
+.btn-info {
+  @include atea-button($blue, #07579a);
+}
+
+.btn-secondary {
+  @include atea-button($grey, $dark);
+}
+
+.btn-outline-primary,
+.btn-outline-success {
+  @include atea-outline-button($green);
+}
+
+.btn-outline-danger {
+  @include atea-outline-button($red);
+}
+
+.btn-outline-secondary {
+  @include atea-outline-button($grey);
+}
+
+.btn-outline-info {
+  @include atea-outline-button($blue);
+}
+
+.btn-link {
+  color: $green;
+
+  &:hover {
+    color: $green-hover;
+  }
+}
+
+/* Badges
+-------------------------------------------------- */
+.badge-primary,
+.badge-success {
+  background-color: $green;
+}
+
+.badge-danger {
+  background-color: $red;
+}
+
+.badge-info {
+  background-color: $blue;
+}
+
+.badge-secondary {
+  background-color: $grey;
+}
+
+.badge-warning {
+  background-color: $yellow;
+  color: $dark;
+}
+
+/* Alerts (Atea colours, lightly tinted)
+-------------------------------------------------- */
+.alert {
+  border-radius: 0.5rem;
+}
+
+.alert-success,
+.alert-primary {
+  color: #005c00;
+  background-color: $green-tint;
+  border-color: #b3dcb3;
+}
+
+.alert-danger {
+  color: #8f171b;
+  background-color: #fbe9e9;
+  border-color: #f2bfc0;
+}
+
+.alert-warning {
+  color: #6b5000;
+  background-color: #fef6dc;
+  border-color: #fce6a3;
+}
+
+.alert-info {
+  color: #064277;
+  background-color: #e6f0f8;
+  border-color: #b5d1e8;
+}
+
+/* Form fields: white and pill-shaped
+-------------------------------------------------- */
+.form-control,
+.custom-select {
+  background-color: $surface;
+  border-color: $border;
+  border-radius: 50rem;
+  padding-left: 1.1rem;
+  padding-right: 1.1rem;
+}
+
+.custom-select {
+  padding-right: 2.25rem;
+  background-position: right 1rem center;
+}
+
+textarea.form-control,
+select[multiple].form-control,
+select[size].form-control {
+  border-radius: 1rem;
+}
+
+.form-control:focus,
+.custom-select:focus,
+.input-filled-valid {
+  background-color: $surface !important;
+  border-color: #80c580;
+  box-shadow: $focus-ring;
+}
+
+.input-group > .input-group-prepend > .input-group-text {
+  border-color: $border;
+  border-top-left-radius: 50rem;
+  border-bottom-left-radius: 50rem;
+}
+
+.input-group > .input-group-append > .btn {
+  border-top-right-radius: 50rem;
+  border-bottom-right-radius: 50rem;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: $green;
+  border-color: $green;
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: $focus-ring;
+}
+
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+  border-color: #80c580;
+}
+
+.card-radio:checked + .card {
+  border-color: $green;
+  box-shadow: $focus-ring;
+}
+
+/* Tabs, pills, pagination, dropdowns
+-------------------------------------------------- */
+.nav-tabs {
+  border-bottom-color: $border;
+
+  .nav-link {
+    color: $dark;
+
+    &:hover {
+      color: $green;
+      border-color: transparent transparent $border;
+    }
+  }
+
+  .nav-link.active,
+  .nav-item.show .nav-link {
+    color: $green;
+    font-weight: 500;
+    background-color: $surface;
+    border-color: $border $border $surface;
+  }
+}
+
+.nav-pills {
+  .nav-link {
+    color: $dark;
+    border-radius: 50rem;
+
+    &:hover {
+      color: $green;
+    }
+  }
+
+  .nav-link.active,
+  .show > .nav-link {
+    color: #fff;
+    background-color: $green;
+  }
+}
+
+.page-link {
+  color: $green;
+  border-color: $border;
+
+  &:hover {
+    color: $green-hover;
+  }
+
+  &:focus {
+    box-shadow: $focus-ring;
+  }
+}
+
+.page-item.active .page-link {
+  background-color: $green;
+  border-color: $green;
+}
+
+.dropdown-menu {
+  border-color: $border;
+  border-radius: 0.5rem;
+  box-shadow: $shadow-hover;
+}
+
+.dropdown-item:active,
+.dropdown-item.active {
+  background-color: $green;
+}
+
+.list-group-item.active {
+  background-color: $green;
+  border-color: $green;
+}
+
+.progress-bar {
+  background-color: $green;
+}
+
+/* Cards, modals and tables: white with rounded corners and subtle borders
+-------------------------------------------------- */
+.card {
+  border-color: $border;
+  border-radius: 0.5rem;
+  box-shadow: $shadow;
+}
+
+.modal-content {
+  border-color: $border;
+  border-radius: 0.75rem;
+}
+
+.table:not(#matrix-scoreboard) {
+  background-color: $surface;
+  border: 1px solid $border;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: $shadow;
+
+  thead th {
+    color: $dark;
+    font-weight: 600;
+    border-top: 0;
+    border-bottom: 1px solid $border;
+  }
+
+  td,
+  th {
+    border-top-color: $border;
+  }
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(43, 49, 52, 0.03);
+}
+
+tbody tr:hover {
+  background-color: rgba(0, 138, 0, 0.06) !important;
+}
+
+.challenge-col {
+  background-color: $dark;
+}
+
+.sticky-cell {
+  background-color: $surface !important;
+}
+
+/* Small details
+-------------------------------------------------- */
+
+// Native checkboxes and radio buttons in Atea green
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: $green;
+}
+
+// Config sidebar items are square by default; make them pills like the rest
+#config-sidebar .nav-link {
+  border-radius: 50rem !important;
+  padding-left: 1rem;
+}
+
+// Player progression matrix: its colours are set by the admin script,
+// so match them by value and swap in the Atea palette
+[style*="background-color: #28a745"],
+[style*="background-color:#28a745"],
+[style*="background-color: rgb(40, 167, 69)"] {
+  background-color: $green !important;
+}
+
+[style*="background-color: #ffc107"],
+[style*="background-color:#ffc107"],
+[style*="background-color: rgb(255, 193, 7)"] {
+  background-color: $yellow !important;
+}
+
+[style*="background-color: #17a2b8"],
+[style*="background-color:#17a2b8"],
+[style*="background-color: rgb(23, 162, 184)"] {
+  background-color: $blue !important;
+}
+
+#matrix-scoreboard .thead-dark th {
+  background-color: $dark;
+  border-color: #3d4549;
+}

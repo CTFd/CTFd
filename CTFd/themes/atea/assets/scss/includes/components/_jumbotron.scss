@@ -1,0 +1,51 @@
+/* Jumbotron styles
+-------------------------------------------------- */
+
+// Move down content because we have a fixed navbar
+main {
+  padding-top: var(--atea-navbar-height);
+}
+
+// Page headers are shown as a white card with a left-aligned title
+.jumbotron {
+  padding: 1.5rem 0 0;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  background-color: transparent;
+  color: var(--bs-body-color);
+
+  > .container {
+    padding: 1.75rem 2rem;
+    background-color: var(--atea-surface);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    box-shadow: var(--atea-shadow);
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0;
+  }
+
+  h1 + * {
+    margin-top: 0.75rem;
+  }
+
+  // Profile headers center some details; align them with the title instead
+  .text-center {
+    text-align: left !important;
+  }
+
+  // Icons that were white on the old dark header become green on the white card
+  .text-white {
+    color: var(--atea-green) !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .jumbotron > .container {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+}

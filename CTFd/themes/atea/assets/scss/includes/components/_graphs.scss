@@ -1,0 +1,33 @@
+/* Graph styles
+-------------------------------------------------- */
+
+// Charts sit on white cards
+#score-graph,
+#keys-pie-graph,
+#categories-pie-graph {
+  padding: 1rem;
+  background-color: var(--atea-surface);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  box-shadow: var(--atea-shadow);
+}
+
+#score-graph {
+  min-height: 400px;
+  margin-bottom: 1.5rem;
+}
+
+#solves-graph {
+  display: block;
+  height: 350px;
+}
+
+#keys-pie-graph {
+  min-height: 400px;
+  display: block;
+}
+
+#categories-pie-graph {
+  min-height: 400px;
+  display: block;
+}

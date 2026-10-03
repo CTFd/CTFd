@@ -1,0 +1,12 @@
+@use "~/@fontsource/inter/scss/mixins" as Inter;
+
+// Inter is the Atea brand typeface: regular for body text, semibold/bold for headlines
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 400);
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 500);
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 600);
+@include Inter.fontFace($fontDir: "../webfonts", $weight: 700);
+
+$fa-font-path: "../webfonts";
+@import "~/@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~/@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~/@fortawesome/fontawesome-free/scss/brands.scss";
