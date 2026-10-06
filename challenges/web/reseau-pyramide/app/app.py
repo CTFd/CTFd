@@ -138,7 +138,7 @@ INDEX_HTML = """<!doctype html>
   .muted{color:var(--muted);font-size:.85rem}
   .prod{border:1px solid #e2e8e4;border-radius:10px;padding:.8rem;text-align:center}
   .prod .price{font-weight:800;color:var(--red);margin:.3rem 0}
-  .bar{height:12px;background:#e6 ebe8;border-radius:99px;overflow:hidden;background:#e6ebe8}
+  .bar{height:12px;background:#e6ebe8;border-radius:99px;overflow:hidden}
   .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--yellow),var(--red))}
   .flag{background:#062;color:#bfffe0;padding:.7rem;border-radius:8px;font-family:ui-monospace,monospace;word-break:break-all}
   .hidden{display:none}
@@ -162,7 +162,7 @@ INDEX_HTML = """<!doctype html>
         <h2>Rejoindre le réseau</h2>
         <p class="muted">Il vous faut un numéro togolais et le code d'un parrain.</p>
         <label>Numéro de téléphone</label>
-        <input id="r-phone" placeholder="+228 90 00 00 00">
+        <input id="r-phone" placeholder="+22890000000">
         <label>Code de parrainage</label>
         <input id="r-parrain" value="ROOT">
         <div style="margin-top:.6rem"><button onclick="register()">Créer mon compte</button></div>
@@ -280,7 +280,7 @@ async function login(){
   const {ok,j}=await api('/api/login',{phone:document.getElementById('l-phone').value});
   toast(ok?('Connecté : '+j.code):(j.error||'numéro inconnu')); if(ok)refresh();
 }
-async function logout(){await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});FILLEULS=[];show(false);}
+async function logout(){await fetch('/api/logout',{method:'POST'});FILLEULS=[];show(false);}
 async function buy(k){const {ok,j}=await api('/api/buy',{product:k,qty:1});
   toast(ok?('Acheté — commande n°'+j.order_id):(j.error||'échec'));refresh();}
 async function sponsor(){const {ok,j}=await api('/api/register',{phone:document.getElementById('f-phone').value,parrain_code:document.getElementById('mycode').textContent});
@@ -331,6 +331,12 @@ def login():
         return jsonify(error="numéro inconnu"), 404
     session["code"] = code
     return jsonify(ok=True, code=code)
+
+
+@app.post("/api/logout")
+def logout():
+    session.clear()
+    return jsonify(ok=True)
 
 
 @app.get("/api/me")

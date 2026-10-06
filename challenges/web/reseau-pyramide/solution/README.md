@@ -68,6 +68,5 @@ Verified end-to-end **offline** (no Docker needed) against the shipped Flask app
 - Bug B independently verified: +4 000 FCFA per `vip` cycle (commission not
   clawed back).
 
-Docker/Lot-5 arena rehearsal still pending (Docker unavailable in the authoring
-environment) — flip `state: visible` after `deploy/scripts/lot5.sh --only
-web/reseau-pyramide` passes.
+Docker/Lot-5 arena rehearsal passed on 2026-09-26 (CI: build + solver -> flag
+OK); the challenge is `state: visible`.
