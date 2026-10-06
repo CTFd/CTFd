@@ -53,14 +53,17 @@ if [ -n "$DOMAIN" ] && $COMPOSE exec -T nginx test -f "/etc/letsencrypt/live/$DO
   echo ">> nginx : synchro de active.conf avec tls.conf.template"
   new=$(sed "s|__CTF_DOMAIN__|$DOMAIN|g" deploy/front/nginx/tls.conf.template)
   if [ "$new" != "$(cat deploy/front/nginx/active.conf)" ]; then
-    cp deploy/front/nginx/active.conf /tmp/active.conf.bak
+    # mktemp : un /tmp/active.conf.bak laisse par un autre utilisateur
+    # (cloudflare-origin-tls.sh, sudo) n'est pas reinscriptible.
+    bak=$(mktemp)
+    cp deploy/front/nginx/active.conf "$bak"
     printf '%s\n' "$new" > deploy/front/nginx/active.conf
     if $COMPOSE exec -T nginx nginx -t 2>&1 | grep -v proxy_headers_hash \
        && $COMPOSE exec -T nginx nginx -s reload; then
       echo "   active.conf mise a jour et rechargee"
     else
       echo "ERREUR nginx : retour a la config precedente"
-      cat /tmp/active.conf.bak > deploy/front/nginx/active.conf
+      cat "$bak" > deploy/front/nginx/active.conf
       $COMPOSE exec -T nginx nginx -s reload || true
       exit 1
     fi

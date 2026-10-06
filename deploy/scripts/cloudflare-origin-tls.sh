@@ -66,10 +66,10 @@ echo ">> nginx : tls.conf + vraies IP clients (CF-Connecting-IP)"
 # le fichier meme si un montage precedent etait deja perime.
 $SSH "set -euo pipefail; cd /opt/ctfd/CTFd; \
   C='docker compose -f deploy/front/docker-compose.prod.yml --env-file deploy/front/.env'; \
-  cp deploy/front/nginx/active.conf /tmp/active.conf.bak 2>/dev/null || true; \
+  bak=\$(mktemp); cp deploy/front/nginx/active.conf \$bak 2>/dev/null || true; \
   sed 's|__CTF_DOMAIN__|$DOMAIN|g' deploy/front/nginx/tls.conf.template > deploy/front/nginx/active.conf; \
   rollback() { echo 'ERREUR nginx : retour a la config precedente'; \
-     cat /tmp/active.conf.bak > deploy/front/nginx/active.conf; \$C up -d --force-recreate nginx >/dev/null; exit 1; }; \
+     cat \$bak > deploy/front/nginx/active.conf; \$C up -d --force-recreate nginx >/dev/null; exit 1; }; \
   \$C up -d --force-recreate nginx >/dev/null; sleep 2; \
   \$C exec -T nginx nginx -t 2>&1 | grep -v proxy_headers_hash || rollback; \
   code=\$(curl -sk -o /dev/null -w '%{http_code}' --resolve arena.$DOMAIN:443:127.0.0.1 https://arena.$DOMAIN/healthcheck || true); \
