@@ -7,6 +7,18 @@
 >
 > **Toutes les commandes se lancent depuis `deploy/`.**
 
+## Domaines (depuis le 2026-10-06)
+
+| Hôte | Rôle | Servi par |
+|---|---|---|
+| `ctf.tg` (apex) | vitrine statique (`deploy/front/vitrine/`) | nginx, `root /usr/share/nginx/vitrine` |
+| `arena.ctf.tg` | plateforme CTFd (joueurs, admin, API `/api/v1`, `/healthcheck`) | nginx → `ctfd` |
+| `www.ctf.tg` | redirection 301 vers l'apex | règle Cloudflare + nginx |
+| `challenge.ctf.tg` | ancien nom de la plateforme : redirection 301 vers `arena.ctf.tg` | règle Cloudflare (`cloudflare-zone-hardening.sh`) ; l'enregistrement DNS doit exister et être proxifié |
+
+Toute commande qui parle à l'API CTFd (`URL=`, `CTF_URL`, `ctf init`, `curl …/api/v1`) vise
+**`https://arena.<domaine>`** : l'apex sert la vitrine et répond 404/405 sur ces chemins.
+
 ## Contexte
 
 - Repo : `hi3ris/CTFd`, branche `claude/ctf-platform-free-ptiggj`.
@@ -142,7 +154,7 @@ make local-playtest     # spawn -> solveur de référence -> soumission, sans FA
 make phase-setup        # front seul, ~0,02 USD/h
 make wait-front
 # DNS : pointer CTF_DOMAIN vers l'IP publique du front (make phase-setup l'affiche)
-make deploy && make tls-init
+make deploy && make tls-cloudflare   # CF_API_TOKEN=… ; tls-init seulement sans proxy Cloudflare
 ```
 
 ## 6. Bascule présélection (J-7 / le 23)
@@ -151,7 +163,7 @@ make deploy && make tls-init
 make phase-preselection        # bedrock (défaut) : arena sans nœud IA, ~0,85 USD/h ; repli ollama : + nœud GPU = ~1,46 USD/h
 make wait-front && make wait-arena     # bedrock : aucun nœud IA à attendre (sauté) ; repli ollama : télécharge le modèle
 make link                      # relie front<->arena<->IA ; écrit les vars auto de front/.env (dont AI_BACKEND / AI_BEDROCK_*)
-make deploy && make tls-init   # si le front a été recréé
+make deploy && make tls-cloudflare   # si le front a été recréé
 make check-arena               # images de challenge présentes sur l'arena
 make push-images               # si check-arena signale des images manquantes
 CTFD_TOKEN=<jeton_admin> make preflight PHASE=preselection   # DOIT être vert : 0 FAIL
@@ -165,7 +177,7 @@ de chaque type).
 Fenêtre de présélection (ven 23 19:00 → lun 26 00:00) :
 
 ```bash
-make presel-window APPLY=1 URL=https://<domaine> CTFD_TOKEN=<jeton>
+make presel-window APPLY=1 URL=https://arena.<domaine> CTFD_TOKEN=<jeton>
 ```
 
 ## 7. Pendant l'épreuve (cadence)
@@ -176,7 +188,7 @@ make logs              # 2e terminal : pas de 5xx en rafale
 make gpu               # bedrock (défaut) : compteurs du pool (/metrics) ; repli ollama : file non saturée
 make cost              # au moindre doute : ce qui est facturé
 make backup            # dump vérifié manuel AVANT toute manipulation
-# page admin Ops : https://<domaine>/plugins/ops/admin (DB, Redis, dump, reaper, collines, 5xx)
+# page admin Ops : https://arena.<domaine>/plugins/ops/admin (DB, Redis, dump, reaper, collines, 5xx)
 ```
 
 Le 24 au soir → `make season-down`.
@@ -186,19 +198,19 @@ Le 24 au soir → `make season-down`.
 ```bash
 make phase-final        # taille réduite (~50 joueurs)
 make wait-front && make wait-arena && make link
-make deploy && make tls-init && make check-arena
+make deploy && make tls-cloudflare && make check-arena
 CTFD_TOKEN=<jeton> make preflight PHASE=finale
 ```
 
-Écran salle : ouvrir `https://<domaine>/scoreboard?big=1` (touche `f` = plein
+Écran salle : ouvrir `https://arena.<domaine>/scoreboard?big=1` (touche `f` = plein
 écran).
 
 ## 9. Clôture & archives
 
 ```bash
-make writeups-prepare URL=https://<domaine> TOKEN=<jeton>   # brouillon avant clôture
-make writeups-publish URL=https://<domaine> TOKEN=<jeton>   # à la clôture (refusé tant que 'end' pas passé)
-make anticheat-report URL=https://<domaine> CTFD_TOKEN=<jeton>   # AVANT season-down (lit la base vivante)
+make writeups-prepare URL=https://arena.<domaine> TOKEN=<jeton>   # brouillon avant clôture
+make writeups-publish URL=https://arena.<domaine> TOKEN=<jeton>   # à la clôture (refusé tant que 'end' pas passé)
+make anticheat-report URL=https://arena.<domaine> CTFD_TOKEN=<jeton>   # AVANT season-down (lit la base vivante)
 make archive            # scoreboards figés + writeups -> S3 (site statique)
 make season-down        # sauvegarde + archive + DÉTRUIT tout l'EC2
 ```
@@ -229,7 +241,7 @@ make season-down        # sauvegarde + archive + DÉTRUIT tout l'EC2
 | `make request-gpu-quota`                    | demande de quota GPU (repli `ollama`)             |
 | `make phase-setup / -preselection / -final` | leviers de coût / dimensionnement                 |
 | `make wait-front / wait-arena`              | attente provisionnement                           |
-| `make deploy / tls-init / link`             | déploiement CTFd / HTTPS / liaison                |
+| `make deploy / tls-cloudflare / link`        | déploiement CTFd / HTTPS / liaison                |
 | `make check-arena / push-images`            | images de challenge sur l'arena                   |
 | `make preflight PHASE=...`                  | check-list de mise en prod (gate)                 |
 | `make backup / restore FILE=... / archive`  | sauvegarde / restauration / archive S3            |

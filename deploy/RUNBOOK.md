@@ -12,6 +12,18 @@ Toutes les commandes se lancent **depuis `deploy/`** sauf mention contraire.
 
 ---
 
+## Domaines (depuis le 2026-10-06)
+
+| Hôte | Rôle | Servi par |
+|---|---|---|
+| `ctf.tg` (apex) | vitrine statique (`deploy/front/vitrine/`) | nginx, `root /usr/share/nginx/vitrine` |
+| `arena.ctf.tg` | plateforme CTFd (joueurs, admin, API `/api/v1`, `/healthcheck`) | nginx → `ctfd` |
+| `www.ctf.tg` | redirection 301 vers l'apex | règle Cloudflare + nginx |
+| `challenge.ctf.tg` | ancien nom de la plateforme : redirection 301 vers `arena.ctf.tg` | règle Cloudflare (`cloudflare-zone-hardening.sh`) ; l'enregistrement DNS doit exister et être proxifié |
+
+Toute commande qui parle à l'API CTFd (`URL=`, `CTF_URL`, `ctf init`, `curl …/api/v1`) vise
+**`https://arena.<domaine>`** : l'apex sert la vitrine et répond 404/405 sur ces chemins.
+
 ## 0. Prérequis opérateur (une seule fois)
 
 > **Raccourci** : `cd deploy && make menu` (ou `./nctf`) ouvre un **lanceur
@@ -96,7 +108,7 @@ make wait-front          # attend la fin du cloud-init
 Puis DNS + TLS :
 
 - [ ] 🧑 Pointer `CTF_DOMAIN` vers l'IP publique du front (`make phase-setup` affiche l'action DNS requise ; automatique si Route53).
-- [ ] `make deploy` puis `make tls-init` ; vérifier `https://$CTF_DOMAIN/` répond.
+- [ ] `make deploy` puis `CF_API_TOKEN=… make tls-cloudflare` (`make tls-init` seulement sans proxy Cloudflare) ; vérifier `https://$CTF_DOMAIN/` (vitrine) et `https://arena.$CTF_DOMAIN/` (CTFd) répondent.
 
 ### Import des challenges (ctfcli) 🤖
 
@@ -107,7 +119,7 @@ make ssh-front
 cd /opt/ctfd/CTFd
 python3 -m pip install --user ctfcli
 export CTFCLI_TOKEN=<token admin CTFd>          # Admin > Settings > Access Tokens
-export CTF_URL=https://$CTF_DOMAIN
+export CTF_URL=https://arena.$CTF_DOMAIN
 ctf init --url "$CTF_URL" --api-key "$CTFCLI_TOKEN"
 for d in challenges/*/*/; do ctf challenge install "$d" || echo "ECHEC: $d"; done
 ```
@@ -150,7 +162,7 @@ for d in challenges/*/*/; do ctf challenge install "$d" || echo "ECHEC: $d"; don
       glitch léger, sans marque CTFd ; pied de page « Organisé par CERT.tg » + « Powered by
       Hibris · ramses.dagban.tg »). Il est présent dans `CTFd/themes/hibris/`. L'activer une
       fois, au choix : - UI : _Admin → Config → Theme_ → sélectionner `hibris` ; - ou API : `curl -H "Authorization: Token <admin>" -H 'Content-Type: application/json' \`
-      `-X PATCH https://$CTF_DOMAIN/api/v1/configs -d '{"ctf_theme":"hibris"}'`.
+      `-X PATCH https://arena.$CTF_DOMAIN/api/v1/configs -d '{"ctf_theme":"hibris"}'`.
       CTFd 3.7 avertit sur les thèmes custom (SSTI via éditeur admin) : on l'installe par le
       système de fichiers (voie sûre), pas via l'éditeur. Vérifier le rendu (accueil, board,
       scoreboard, login, **pages d'erreur 404/403/429/500/502**) à la phase `setup` — cf. la
@@ -173,7 +185,7 @@ make phase-preselection      # crée l'arena ; aucun nœud IA en bedrock (IA à 
 make wait-front              # front prêt
 make wait-arena             # arena prête (le nœud IA absent est sauté en bedrock)
 make link                   # relie tout, vérifie l'arena ; écrit AI_BACKEND / AI_BEDROCK_*
-make deploy && make tls-init # si le front a été recréé
+make deploy && make tls-cloudflare # si le front a été recréé (CF_API_TOKEN=…)
 make check-arena            # images de challenge présentes
 make arena-build-images MISSING=1 PUSH=1   # construit SUR l'arena les images des servis `visible` absentes, les publie dans S3
 make arena-koth             # King of the Hill : 4 collines sur l'arena + tunnel frps (28490-28495) + plugin CTFd ; STATUS=1 / DOWN=1
@@ -235,7 +247,7 @@ Diagnostic d'abord : `make cost` (qu'est-ce qui tourne ?), `make logs`, `make ss
 1. `make ssh-front` → `cd /opt/ctfd/CTFd && docker compose ps`.
 2. Conteneur ctfd down → `docker compose up -d` ; logs → `docker compose logs ctfd`.
 3. cloud-init pas fini → attendre / `make wait-front`.
-4. Nginx/TLS cassé → revérifier `make tls-init` (DNS doit résoudre vers l'IP du front).
+4. Nginx/TLS cassé → relancer `CF_API_TOKEN=… make tls-cloudflare` (sonde `https://arena.<domaine>/healthcheck`, rollback automatique si KO).
 
 **CTFd ne joint pas le Docker de l'arena** (instancier KO — **risque #1**)
 
@@ -318,7 +330,7 @@ importable par Admin → Backup → Import si la base elle-même est irrécupér
 ```
 make phase-final            # taille réduite (~50 joueurs) ; aucun nœud IA en bedrock
 make wait-front && make wait-arena && make link   # wait-arena saute le nœud IA en bedrock
-make deploy && make tls-init
+make deploy && make tls-cloudflare   # CF_API_TOKEN=…
 make check-arena
 make check-bedrock          # pool Bedrock : chaque modèle + quotas (repli ollama : voir §3)
 CTFD_TOKEN=… make preflight PHASE=finale         # fenêtre 24 h, inscriptions fermées
@@ -327,7 +339,7 @@ CTFD_TOKEN=… make preflight PHASE=finale         # fenêtre 24 h, inscriptions
 - [ ] 🧑 `make preflight PHASE=finale` vert après `finale-window.sh --apply` (fenêtre 24 h,
       `registration_visibility=private`, KotH finale à `points=5`).
 - [ ] 🧑 Si sur site : réseau contrôlé, egress liste blanche, machines/VLAN, téléphones en caisse.
-- [ ] 🧑 **Écran de la salle** : ouvrir `https://<domaine>/scoreboard?big=1` dans un navigateur dédié (aucun compte connecté), touche `f` pour le plein écran. Top 14 en gros, peloton agrégé, bandeau first bloods, feux de départ, podium et confettis à l'arrivée ; rafraîchi toutes les 12 s, aucune interaction requise. Les joueurs, eux, voient leur propre kart surligné « toi » (ou épinglé sous le peloton s'ils sont hors du top 12) sur `/scoreboard`. Captures : `deploy/docs/scoreboard/` (`race-player-pinned.png`, `race-player-top.png`, `race-big-screen.png`, `race-mobile-400.png`).
+- [ ] 🧑 **Écran de la salle** : ouvrir `https://arena.<domaine>/scoreboard?big=1` dans un navigateur dédié (aucun compte connecté), touche `f` pour le plein écran. Top 14 en gros, peloton agrégé, bandeau first bloods, feux de départ, podium et confettis à l'arrivée ; rafraîchi toutes les 12 s, aucune interaction requise. Les joueurs, eux, voient leur propre kart surligné « toi » (ou épinglé sous le peloton s'ils sont hors du top 12) sur `/scoreboard`. Captures : `deploy/docs/scoreboard/` (`race-player-pinned.png`, `race-player-top.png`, `race-big-screen.png`, `race-mobile-400.png`).
 - [ ] 🧑 **Classement repart de zéro** (présélection à 0 %).
 - [ ] 🧑 Défense devant jury (poids additif faible ≤ 10 %, jamais un gate).
 - [ ] 🧑 `make backup` régulier ; `make season-down` le 30 au soir.
@@ -358,7 +370,7 @@ make season-down            # si pas déjà détruit
 | `make check-gpu-quota`                                             | quota GPU — repli ollama uniquement (refusé pour NCTF26)                       |
 | `make phase-setup / -preselection / -final / season-down`          | leviers de coût                                                                |
 | `make wait-front / wait-arena`                                     | attente provisionnement (wait-arena saute le nœud IA en bedrock)               |
-| `make deploy / tls-init / link`                                    | déploiement CTFd / HTTPS / liaison front↔arena↔IA (link écrit AI*BEDROCK*\*) |
+| `make deploy / tls-cloudflare (tls-init) / link`                   | déploiement CTFd / HTTPS / liaison front↔arena↔IA (link écrit AI*BEDROCK*\*) |
 | `make check-arena / push-images`                                   | images de challenge sur l'arena                                                |
 | `make backup / restore FILE=... / archive`                         | sauvegarde vérifiée / restauration / archive S3                                |
 | `make writeups-prepare / writeups-publish URL=... TOKEN=...`       | writeups en brouillon / publiés à la clôture                                   |

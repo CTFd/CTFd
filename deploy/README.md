@@ -104,8 +104,12 @@ Le front demarre en HTTP seul, le temps que le domaine pointe vers lui. Une
 fois le DNS propage :
 
 ```bash
-make tls-init
+make tls-init                         # domaine en DNS only (pointe directement sur le front)
+CF_API_TOKEN=... make tls-cloudflare  # domaine proxifie par Cloudflare (cas de ctf.tg)
 ```
+
+L'apex sert la vitrine statique, la plateforme CTFd est sur `arena.<domaine>` :
+toute commande qui parle a l'API CTFd vise `https://arena.<domaine>`.
 
 La commande verifie d'abord que le domaine resout bien vers ce front — sinon
 Let's Encrypt echouerait et consommerait un essai du quota horaire —, emet le

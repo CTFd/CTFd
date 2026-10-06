@@ -48,7 +48,19 @@ présélection**.
    mode SSL _Full (strict)_, TLS ≥ 1.2, vraies IP clients via `CF-Connecting-IP`), puis
    réserver 80/443 aux plages Cloudflare : `web_cidrs` dans `terraform.tfvars`
    (`scripts/cloudflare-ips.sh --tfvars`) + `terraform apply`. Détails :
-   `deploy/scripts/cloudflare-origin-tls.sh`. Ancien mode : `make tls-init`. Vérifier `https://ctf.tg/` en 200, certificat valide.
+   `deploy/scripts/cloudflare-origin-tls.sh`. Ancien mode (DNS only, sans Cloudflare) : `make tls-init`. Vérifier `https://ctf.tg/` (vitrine) et `https://arena.ctf.tg/` (CTFd) en 200, certificat valide.
+
+   #### Domaines (depuis le 2026-10-06)
+
+   | Hôte | Rôle | Servi par |
+   |---|---|---|
+   | `ctf.tg` (apex) | vitrine statique (`deploy/front/vitrine/`) | nginx, `root /usr/share/nginx/vitrine` |
+   | `arena.ctf.tg` | plateforme CTFd (joueurs, admin, API `/api/v1`, `/healthcheck`) | nginx → `ctfd` |
+   | `www.ctf.tg` | redirection 301 vers l'apex | règle Cloudflare + nginx |
+   | `challenge.ctf.tg` | ancien nom de la plateforme : redirection 301 vers `arena.ctf.tg` | règle Cloudflare (`cloudflare-zone-hardening.sh`) ; l'enregistrement DNS doit exister et être proxifié |
+
+   Toute commande qui parle à l'API CTFd (`URL=`, `CTF_URL`, `ctf init`, `curl …/api/v1`) vise
+   **`https://arena.<domaine>`** : l'apex sert la vitrine et répond 404/405 sur ces chemins.
 
    **Durcissement de la zone (plan Free) — `scripts/cloudflare-zone-hardening.sh`**
    (relançable ; `--check` = lecture seule ; jeton via
@@ -120,7 +132,7 @@ jeton API pour la suite scriptée :
 
 1. Générer le mot de passe admin : `openssl rand -base64 24` (le **conserver** dans
    ton gestionnaire de secrets).
-2. Ouvrir `https://ctf.tg/setup` (ou HTTP tant que le TLS n'est pas prêt) et
+2. Ouvrir `https://arena.ctf.tg/setup` (ou HTTP tant que le TLS n'est pas prêt) et
    renseigner :
    - **CTF name** : `NCTF26`
    - **Admin** : login d'équipe CERT.tg + le mot de passe fort ci-dessus (jamais
@@ -144,7 +156,7 @@ jeton API pour la suite scriptée :
    L'exporter pour les commandes suivantes (jamais en argument CLI en clair) :
    ```
    export CTFD_TOKEN=<jeton>
-   export URL=https://ctf.tg
+   export URL=https://arena.ctf.tg
    ```
 
 ## 2bis. E-mail (SMTP) — confirmations d'inscription + reset de mot de passe
@@ -328,7 +340,7 @@ images doivent exister : `make check-arena` / `make push-images`.
       changement.
 - [ ] **Mot de passe admin fort** confirmé (aucun `admin`/`admin`, aucun compte
       `playtest` en prod).
-- [ ] **HTTPS** actif (`https://ctf.tg`), redirection HTTP→HTTPS.
+- [ ] **HTTPS** actif (`https://ctf.tg` vitrine, `https://arena.ctf.tg` CTFd), redirection HTTP→HTTPS, `challenge.ctf.tg` → `arena.ctf.tg`.
 - [ ] **Sauvegardes** : timer `ctfd-backup` armé (`make backup-status` < 15 min) ;
       un `make backup` manuel avant toute grosse manip.
 - [ ] **IMDSv2**, pas de port arène/IA ouvert sur Internet (déjà en Terraform).
@@ -384,5 +396,5 @@ nœud IA, aucune dépendance GPU**. La passerelle `ai-gateway` tourne sur le
 _Maintenant (test, HTTP sur l'IP, inscriptions fermées)_ : `/setup` admin fort
 (teams, hibris) → jeton API → `reglement-publish` + hero + université → import
 ctfcli → **Lot-5** (`make lot5 FLIP=1`) → calibrer + `make preflight`.
-_Avant la présélection_ : DNS `ctf.tg` → `make tls-init` → `make preflight` 0 FAIL
+_Avant la présélection_ : DNS `ctf.tg` (+ `arena`, `www`, `challenge`) → `make tls-cloudflare` → `make preflight` 0 FAIL
 → resserrer `admin_cidrs` → `presel-window` → ouvrir les inscriptions.
