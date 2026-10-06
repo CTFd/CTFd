@@ -46,14 +46,19 @@ $COMPOSE up -d --build ctfd db cache nginx certbot
 echo ">> sante"
 # Depuis tls.conf, nginx ferme (444) toute requete dont le Host n'est pas le
 # domaine : on sonde donc avec le vrai nom (SNI + Host) resolu sur 127.0.0.1.
+# CTFd est servi sur arena.<domaine> (l'apex sert la vitrine statique, ou
+# /healthcheck repond 404) ; l'apex reste sonde pour un active.conf plus ancien.
 # Les sondes sans nom restent pour bootstrap.conf (avant le certificat).
 DOMAIN=$(grep -E '^CTF_DOMAIN=' deploy/front/.env | cut -d= -f2- | tr -d '[:space:]' || true)
 ok=0
 for _ in $(seq 1 60); do
   if [ -n "$DOMAIN" ]; then
-    code=$(curl -sk -o /dev/null -w '%{http_code}' --max-time 10 \
-      --resolve "$DOMAIN:443:127.0.0.1" "https://$DOMAIN/healthcheck" || true)
-    [ "$code" = 200 ] && { ok=1; break; }
+    for host in "arena.$DOMAIN" "$DOMAIN"; do
+      code=$(curl -sk -o /dev/null -w '%{http_code}' --max-time 10 \
+        --resolve "$host:443:127.0.0.1" "https://$host/healthcheck" || true)
+      [ "$code" = 200 ] && { ok=1; break; }
+    done
+    [ "$ok" -eq 1 ] && break
   fi
   code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 http://127.0.0.1/healthcheck || true)
   [ "$code" = 200 ] && { ok=1; break; }
