@@ -34,7 +34,16 @@ app = Flask(__name__)
 # ---------------------------------------------------------------------------
 # The key used to sign tokens. Random per instance; brute forcing it is not
 # the intended path (and is not feasible), and it never touches the flag.
-SIGNING_KEY = os.environ.get("SIGNING_KEY", "demo-instance-signing-key").encode()
+# The instancer only injects FLAG / CHALLENGE_SECRET, so when SIGNING_KEY is
+# absent derive a per-instance key from them (stable across gunicorn workers,
+# one-way: it reveals nothing about the flag).
+_KEY_SEED = (
+    os.environ.get("SIGNING_KEY")
+    or os.environ.get("CHALLENGE_SECRET")
+    or os.environ.get("FLAG")
+    or "demo-instance-signing-key"
+)
+SIGNING_KEY = hashlib.sha256(b"jwt-cousin-signing:" + _KEY_SEED.encode()).digest()
 
 CHALLENGE_ID = "web-jwt-cousin"
 
@@ -199,7 +208,7 @@ INDEX = """<!doctype html>
     <h2>Roles</h2>
     <ul>
       <li><code>guest</code> &mdash; read-only</li>
-      <li><code>staff</code> &mdash; can view reports</li>
+      <li><code>staff</code> &mdash; staff account (no admin rights)</li>
       <li><code>admin</code> &mdash; can rotate the console (returns the ops flag)</li>
     </ul>
     <p class="h" style="margin-top:12px">Tokens are <code>&lt;payload&gt;.&lt;sig&gt;</code>

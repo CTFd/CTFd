@@ -80,7 +80,7 @@ tags:
 # challenge-id (for HMAC / requirements wiring): web-jwt-cousin
 # No prerequisites; standalone.
 
-connection_info: http://{host}:8080/
+connection_info: "http://{host}:{port}/  (per-team instance; use the 'launch' button)"
 
 state: visible
 version: "0.1"

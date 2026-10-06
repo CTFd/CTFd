@@ -6,7 +6,7 @@
 #             -e TEAM_SECRET="<per-team-secret>" \
 #             ctf-jwt-cousin:latest
 #
-# Both SIGNING_KEY and TEAM_SECRET are injected at instance-creation time.
+# SIGNING_KEY is optional: when absent the app derives it from CHALLENGE_SECRET/FLAG.
 # No secret is baked into the image.
 FROM python:3.12-slim
 
