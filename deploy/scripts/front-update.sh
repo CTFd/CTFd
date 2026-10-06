@@ -43,13 +43,38 @@ sudo CTFD_REPO="$REPO" deploy/scripts/install-backup-timer.sh
 echo ">> conteneurs"
 $COMPOSE up -d --build ctfd db cache nginx certbot
 
+# active.conf est un bind-mount de FICHIER : `up -d` ne recree pas nginx quand
+# seul son contenu change. Si le front est deja en TLS (certificat present),
+# on regenere donc active.conf depuis tls.conf.template a chaque deploiement,
+# EN PLACE (meme inode, jamais mv), puis nginx -t + reload ; retour a
+# l'ancienne config si le test echoue. En bootstrap (pas de certificat), rien.
+DOMAIN=$(grep -E '^CTF_DOMAIN=' deploy/front/.env | cut -d= -f2- | tr -d '[:space:]' || true)
+if [ -n "$DOMAIN" ] && $COMPOSE exec -T nginx test -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" 2>/dev/null; then
+  echo ">> nginx : synchro de active.conf avec tls.conf.template"
+  new=$(sed "s|__CTF_DOMAIN__|$DOMAIN|g" deploy/front/nginx/tls.conf.template)
+  if [ "$new" != "$(cat deploy/front/nginx/active.conf)" ]; then
+    cp deploy/front/nginx/active.conf /tmp/active.conf.bak
+    printf '%s\n' "$new" > deploy/front/nginx/active.conf
+    if $COMPOSE exec -T nginx nginx -t 2>&1 | grep -v proxy_headers_hash \
+       && $COMPOSE exec -T nginx nginx -s reload; then
+      echo "   active.conf mise a jour et rechargee"
+    else
+      echo "ERREUR nginx : retour a la config precedente"
+      cat /tmp/active.conf.bak > deploy/front/nginx/active.conf
+      $COMPOSE exec -T nginx nginx -s reload || true
+      exit 1
+    fi
+  else
+    echo "   active.conf deja a jour"
+  fi
+fi
+
 echo ">> sante"
 # Depuis tls.conf, nginx ferme (444) toute requete dont le Host n'est pas le
 # domaine : on sonde donc avec le vrai nom (SNI + Host) resolu sur 127.0.0.1.
 # CTFd est servi sur arena.<domaine> (l'apex sert la vitrine statique, ou
 # /healthcheck repond 404) ; l'apex reste sonde pour un active.conf plus ancien.
 # Les sondes sans nom restent pour bootstrap.conf (avant le certificat).
-DOMAIN=$(grep -E '^CTF_DOMAIN=' deploy/front/.env | cut -d= -f2- | tr -d '[:space:]' || true)
 ok=0
 for _ in $(seq 1 60); do
   if [ -n "$DOMAIN" ]; then

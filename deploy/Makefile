@@ -237,7 +237,7 @@ deploy: ## Deploie/met a jour CTFd sur le front (envoie front/.env au premier de
 	$(FRONT_SSH) 'cd /opt/ctfd/CTFd && BACKUP_BUCKET=$(BUCKET) deploy/scripts/front-update.sh $(REPO_BRANCH)'
 
 .PHONY: tls-init
-tls-init: ## Emet le certificat Let's Encrypt et bascule nginx en HTTPS
+tls-init: ## Emet le certificat Let's Encrypt (DNS-only, SANS proxy Cloudflare) et bascule nginx en HTTPS. Derriere Cloudflare : make tls-cloudflare
 	@echo ">> Verification que le domaine pointe bien sur ce front"
 	@$(FRONT_SSH) 'set -euo pipefail; cd /opt/ctfd/CTFd; \
 	  set -a; . deploy/front/.env; set +a; \
@@ -253,7 +253,7 @@ tls-init: ## Emet le certificat Let's Encrypt et bascule nginx en HTTPS
 	  set -a; . deploy/front/.env; set +a; \
 	  $(COMPOSE) run --rm --entrypoint certbot certbot certonly \
 	    --webroot -w /var/www/certbot \
-	    -d "$$CTF_DOMAIN" --email "$$CERTBOT_EMAIL" \
+	    -d "$$CTF_DOMAIN" -d "arena.$$CTF_DOMAIN" -d "www.$$CTF_DOMAIN" --email "$$CERTBOT_EMAIL" \
 	    --agree-tos --no-eff-email --non-interactive'
 	@echo ">> Bascule de nginx en HTTPS"
 	@$(FRONT_SSH) 'set -euo pipefail; cd /opt/ctfd/CTFd; \
@@ -401,11 +401,11 @@ archive: ## Fige le scoreboard de la phase dans S3, en page autonome
 	@echo ">> Recuperation des donnees du scoreboard"
 	@PREFIX=$(PHASE)-$$(date +%Y%m%d); \
 	 mkdir -p /tmp/ctf-archive; \
-	 $(FRONT_SSH) 'curl -sf http://localhost/api/v1/scoreboard' > /tmp/ctf-archive/scoreboard.json \
+	 $(FRONT_SSH) '. /opt/ctfd/CTFd/deploy/front/.env; curl -sfk --resolve arena.$$CTF_DOMAIN:443:127.0.0.1 https://arena.$$CTF_DOMAIN/api/v1/scoreboard' > /tmp/ctf-archive/scoreboard.json \
 	   || { echo "ECHEC : l'API scoreboard ne repond pas"; exit 1; }; \
 	 test -s /tmp/ctf-archive/scoreboard.json \
 	   || { echo "ECHEC : scoreboard vide"; exit 1; }; \
-	 $(FRONT_SSH) 'curl -sf http://localhost/api/v1/challenges' > /tmp/ctf-archive/challenges.json || true; \
+	 $(FRONT_SSH) '. /opt/ctfd/CTFd/deploy/front/.env; curl -sfk --resolve arena.$$CTF_DOMAIN:443:127.0.0.1 https://arena.$$CTF_DOMAIN/api/v1/challenges' > /tmp/ctf-archive/challenges.json || true; \
 	 if [ "$${WRITEUPS:-1}" = "1" ]; then \
 	   $(LOCAL_PY) scripts/publish_writeups.py --static /tmp/ctf-archive/writeups \
 	     || { echo "ECHEC du rendu des writeups (WRITEUPS=0 pour archiver sans)"; exit 1; }; \
@@ -479,7 +479,7 @@ push-images: ## Envoie les images de challenge dans S3 (lues depuis l'arena au p
 .PHONY: preflight
 preflight: ## Check-list de prod sur le front : PHASE=preselection|finale, CTFD_TOKEN=<jeton admin>. Doit etre vert avant make phase-*
 	@test -n "$$CTFD_TOKEN" || { echo "CTFD_TOKEN manquant (jeton API admin : Settings > Access Tokens)"; exit 2; }
-	@URL="$${URL:-https://$$($(FRONT_SSH) 'cd /opt/ctfd/CTFd && . deploy/front/.env && echo $$CTF_DOMAIN')}"; \
+	@URL="$${URL:-https://arena.$$($(FRONT_SSH) 'cd /opt/ctfd/CTFd && . deploy/front/.env && echo $$CTF_DOMAIN')}"; \
 	 $(FRONT_SSH) 'cd /opt/ctfd/CTFd && $(COMPOSE) exec -T ctfd printenv' | \
 	 CTFD_URL="$$URL" $(LOCAL_PY) scripts/preflight.py $(PREFLIGHT_ARGS)
 

@@ -72,8 +72,8 @@ $SSH "set -euo pipefail; cd /opt/ctfd/CTFd; \
      cat /tmp/active.conf.bak > deploy/front/nginx/active.conf; \$C up -d --force-recreate nginx >/dev/null; exit 1; }; \
   \$C up -d --force-recreate nginx >/dev/null; sleep 2; \
   \$C exec -T nginx nginx -t 2>&1 | grep -v proxy_headers_hash || rollback; \
-  code=\$(curl -sk -o /dev/null -w '%{http_code}' --resolve $DOMAIN:443:127.0.0.1 https://$DOMAIN/healthcheck || true); \
-  echo \"   origine https://$DOMAIN/healthcheck -> \$code\"; test \"\$code\" = 200 || rollback"
+  code=\$(curl -sk -o /dev/null -w '%{http_code}' --resolve arena.$DOMAIN:443:127.0.0.1 https://arena.$DOMAIN/healthcheck || true); \
+  echo \"   origine https://arena.$DOMAIN/healthcheck -> \$code\"; test \"\$code\" = 200 || rollback"
 
 echo ">> Cloudflare : SSL Full (strict), TLS minimum 1.2, HTTPS force, niveau de securite medium"
 # security_level=high defie (JS challenge) les IP a mauvaise reputation : les
@@ -91,6 +91,7 @@ cf "$API/zones/$ZONE/rulesets/phases/http_request_firewall_custom/entrypoint" \
 
 echo ">> verification a travers Cloudflare"
 sleep 3
-curl -fsS -o /dev/null -w "   https://$DOMAIN/ -> %{http_code} (%{ssl_verify_result})\n" "https://$DOMAIN/"
+curl -fsS -o /dev/null -w "   https://$DOMAIN/ (vitrine) -> %{http_code} (%{ssl_verify_result})\n" "https://$DOMAIN/"
+curl -fsS -o /dev/null -w "   https://arena.$DOMAIN/ (CTFd) -> %{http_code} (%{ssl_verify_result})\n" "https://arena.$DOMAIN/"
 curl -sS -o /dev/null -w "   http://$DOMAIN/ -> %{http_code} vers %{redirect_url}\n" "http://$DOMAIN/"
 echo "TLS actif derriere Cloudflare. Pensez a reserver 80/443 aux plages Cloudflare : web_cidrs (terraform.tfvars) + terraform apply."

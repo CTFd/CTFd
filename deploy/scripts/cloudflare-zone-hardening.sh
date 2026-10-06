@@ -79,9 +79,11 @@ echo ">> Rate limiting (1 règle Free : block, fenêtre 10 s)"
 put_phase "Auth 30 POST/10 s/IP" http_ratelimit "NCTF26 rate limit" \
   '[{"action":"block","expression":"(http.request.method eq \"POST\" and http.request.uri.path in {\"/login\" \"/register\" \"/reset_password\" \"/confirm\"})","description":"Auth endpoints : max 30 POST / 10 s / IP","enabled":true,"ratelimit":{"characteristics":["ip.src","cf.colo.id"],"period":10,"requests_per_period":30,"mitigation_timeout":10}}]'
 
-echo ">> Redirection www -> apex à la bordure"
-put_phase "www -> $CTF_DOMAIN" http_request_dynamic_redirect "NCTF26 redirects" \
-  "[{\"action\":\"redirect\",\"expression\":\"(http.host eq \\\"www.$CTF_DOMAIN\\\")\",\"description\":\"www -> apex\",\"enabled\":true,\"action_parameters\":{\"from_value\":{\"status_code\":301,\"preserve_query_string\":true,\"target_url\":{\"expression\":\"concat(\\\"https://$CTF_DOMAIN\\\", http.request.uri.path)\"}}}}]"
+echo ">> Redirections à la bordure : www -> apex, challenge (ancien nom de la plateforme) -> arena"
+# challenge.$CTF_DOMAIN doit exister en DNS et être proxifié (nuage orange) pour
+# que la règle s'applique ; sinon les anciens liens tombent en 520/NXDOMAIN.
+put_phase "www -> $CTF_DOMAIN, challenge -> arena" http_request_dynamic_redirect "NCTF26 redirects" \
+  "[{\"action\":\"redirect\",\"expression\":\"(http.host eq \\\"www.$CTF_DOMAIN\\\")\",\"description\":\"www -> apex\",\"enabled\":true,\"action_parameters\":{\"from_value\":{\"status_code\":301,\"preserve_query_string\":true,\"target_url\":{\"expression\":\"concat(\\\"https://$CTF_DOMAIN\\\", http.request.uri.path)\"}}}},{\"action\":\"redirect\",\"expression\":\"(http.host eq \\\"challenge.$CTF_DOMAIN\\\")\",\"description\":\"challenge -> arena\",\"enabled\":true,\"action_parameters\":{\"from_value\":{\"status_code\":301,\"preserve_query_string\":true,\"target_url\":{\"expression\":\"concat(\\\"https://arena.$CTF_DOMAIN\\\", http.request.uri.path)\"}}}}]"
 
 echo ">> DNSSEC"
 if [ $CHECK = 0 ]; then cf PATCH "/zones/$CF_ZONE_ID/dnssec" '{"status":"active"}' >/dev/null; fi
