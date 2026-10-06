@@ -757,3 +757,14 @@ a {
   margin-top: 40px;
   user-select: all;
 }
+
+/* Règlement complet (contenu de arena.ctf.tg/tos) injecté dans #regles */
+.reglement { margin-top: 2rem; line-height: 1.65; max-width: 70ch; }
+.reglement h3 { margin: 1.8rem 0 .6rem; font-size: 1.05rem; letter-spacing: .02em; opacity: .95; }
+.reglement p { margin: .6rem 0; opacity: .85; }
+.reglement ul { margin: .4rem 0 .8rem 1.2rem; padding: 0; }
+.reglement li { margin: .35rem 0; opacity: .85; }
+.reglement strong { opacity: 1; }
+.reglement blockquote { margin: 1rem 0; padding: .6rem 1rem; border-left: 3px solid currentColor; opacity: .9; font-style: italic; }
+.reglement code { padding: .1em .35em; border-radius: 4px; background: rgba(127,127,127,.18); font-size: .9em; }
+.rules-full { margin-top: 1.5rem; font-weight: 600; }
