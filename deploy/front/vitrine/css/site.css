@@ -759,12 +759,43 @@ a {
 }
 
 /* Règlement complet (contenu de arena.ctf.tg/tos) injecté dans #regles */
-.reglement { margin-top: 2rem; line-height: 1.65; max-width: 70ch; }
-.reglement h3 { margin: 1.8rem 0 .6rem; font-size: 1.05rem; letter-spacing: .02em; opacity: .95; }
-.reglement p { margin: .6rem 0; opacity: .85; }
-.reglement ul { margin: .4rem 0 .8rem 1.2rem; padding: 0; }
-.reglement li { margin: .35rem 0; opacity: .85; }
-.reglement strong { opacity: 1; }
-.reglement blockquote { margin: 1rem 0; padding: .6rem 1rem; border-left: 3px solid currentColor; opacity: .9; font-style: italic; }
-.reglement code { padding: .1em .35em; border-radius: 4px; background: rgba(127,127,127,.18); font-size: .9em; }
-.rules-full { margin-top: 1.5rem; font-weight: 600; }
+.reglement { margin-top: 44px; max-width: 74ch; }
+.reglement h3 {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  letter-spacing: 0.01em;
+  color: var(--paper);
+  margin: 0 0 12px;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: 1px solid var(--line);
+}
+.reglement > p:first-child, .reglement h3:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+.reglement p { color: var(--soft); margin: 10px 0; line-height: 1.7; }
+.reglement ul { list-style: none; margin: 12px 0 4px; padding: 0; }
+.reglement li {
+  position: relative;
+  color: var(--muted);
+  padding: 7px 0 7px 22px;
+  line-height: 1.6;
+  border-bottom: 1px solid var(--line);
+}
+.reglement li:last-child { border-bottom: 0; }
+.reglement li::before { content: "—"; position: absolute; left: 0; color: var(--green); font-family: var(--mono); }
+.reglement strong { color: var(--paper); font-weight: 650; }
+.reglement blockquote {
+  margin: 18px 0;
+  padding: 12px 18px;
+  border-left: 2px solid var(--green);
+  color: var(--soft);
+  font-style: italic;
+}
+.reglement code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.12em 0.4em;
+  border-radius: var(--radius);
+}
+.rules-full { margin-top: 10px; font-family: var(--mono); font-size: 0.9rem; color: var(--muted); }
+.rules-full a { color: var(--green); }
