@@ -348,8 +348,10 @@ def network():
         return jsonify(error="non connecté"), 401
     with _LOCK:
         members = [
-            {**_public(a), "orders": [
-                {"order_id": oid, **o} for oid, o in a["orders"].items()]}
+            {
+                **_public(a),
+                "orders": [{"order_id": oid, **o} for oid, o in a["orders"].items()],
+            }
             for a in _ACCOUNTS.values()
             if a["root"] == acc["root"]
         ]
