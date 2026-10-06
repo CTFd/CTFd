@@ -52,11 +52,11 @@ présélection**.
 
    #### Domaines (depuis le 2026-10-06)
 
-   | Hôte | Rôle | Servi par |
-   |---|---|---|
-   | `ctf.tg` (apex) | vitrine statique (`deploy/front/vitrine/`) | nginx, `root /usr/share/nginx/vitrine` |
-   | `arena.ctf.tg` | plateforme CTFd (joueurs, admin, API `/api/v1`, `/healthcheck`) | nginx → `ctfd` |
-   | `www.ctf.tg` | redirection 301 vers l'apex | règle Cloudflare + nginx |
+   | Hôte               | Rôle                                                              | Servi par                                                                                              |
+   | ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+   | `ctf.tg` (apex)    | vitrine statique (`deploy/front/vitrine/`)                        | nginx, `root /usr/share/nginx/vitrine`                                                                 |
+   | `arena.ctf.tg`     | plateforme CTFd (joueurs, admin, API `/api/v1`, `/healthcheck`)   | nginx → `ctfd`                                                                                         |
+   | `www.ctf.tg`       | redirection 301 vers l'apex                                       | règle Cloudflare + nginx                                                                               |
    | `challenge.ctf.tg` | ancien nom de la plateforme : redirection 301 vers `arena.ctf.tg` | règle Cloudflare (`cloudflare-zone-hardening.sh`) ; l'enregistrement DNS doit exister et être proxifié |
 
    Toute commande qui parle à l'API CTFd (`URL=`, `CTF_URL`, `ctf init`, `curl …/api/v1`) vise

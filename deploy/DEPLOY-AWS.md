@@ -9,11 +9,11 @@
 
 ## Domaines (depuis le 2026-10-06)
 
-| Hôte | Rôle | Servi par |
-|---|---|---|
-| `ctf.tg` (apex) | vitrine statique (`deploy/front/vitrine/`) | nginx, `root /usr/share/nginx/vitrine` |
-| `arena.ctf.tg` | plateforme CTFd (joueurs, admin, API `/api/v1`, `/healthcheck`) | nginx → `ctfd` |
-| `www.ctf.tg` | redirection 301 vers l'apex | règle Cloudflare + nginx |
+| Hôte               | Rôle                                                              | Servi par                                                                                              |
+| ------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `ctf.tg` (apex)    | vitrine statique (`deploy/front/vitrine/`)                        | nginx, `root /usr/share/nginx/vitrine`                                                                 |
+| `arena.ctf.tg`     | plateforme CTFd (joueurs, admin, API `/api/v1`, `/healthcheck`)   | nginx → `ctfd`                                                                                         |
+| `www.ctf.tg`       | redirection 301 vers l'apex                                       | règle Cloudflare + nginx                                                                               |
 | `challenge.ctf.tg` | ancien nom de la plateforme : redirection 301 vers `arena.ctf.tg` | règle Cloudflare (`cloudflare-zone-hardening.sh`) ; l'enregistrement DNS doit exister et être proxifié |
 
 Toute commande qui parle à l'API CTFd (`URL=`, `CTF_URL`, `ctf init`, `curl …/api/v1`) vise
@@ -241,7 +241,7 @@ make season-down        # sauvegarde + archive + DÉTRUIT tout l'EC2
 | `make request-gpu-quota`                    | demande de quota GPU (repli `ollama`)             |
 | `make phase-setup / -preselection / -final` | leviers de coût / dimensionnement                 |
 | `make wait-front / wait-arena`              | attente provisionnement                           |
-| `make deploy / tls-cloudflare / link`        | déploiement CTFd / HTTPS / liaison                |
+| `make deploy / tls-cloudflare / link`       | déploiement CTFd / HTTPS / liaison                |
 | `make check-arena / push-images`            | images de challenge sur l'arena                   |
 | `make preflight PHASE=...`                  | check-list de mise en prod (gate)                 |
 | `make backup / restore FILE=... / archive`  | sauvegarde / restauration / archive S3            |
