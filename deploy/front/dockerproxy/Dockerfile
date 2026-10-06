@@ -9,14 +9,16 @@
 # distant en TCP sur le reseau interne du compose. CTFd s'y connecte avec
 # DOCKER_HOST=tcp://dockerproxy:2375, sans avoir besoin de ssh.
 #
-# Ce port n'est jamais publie vers l'exterieur et le service n'est attache
-# QU'au reseau `internal` du compose (jamais `web`) : y acceder vaut root sur
-# l'arena, donc seul ctfd (sur `internal`) doit pouvoir le joindre.
+# Le socket Docker distant n'est expose qu'en local (127.0.0.1:2381) ; seul
+# broker.py (filtrant) ecoute sur 2375, attache QU'au reseau `internal` du
+# compose (jamais `web`). Y acceder ne vaut plus root sur l'arena : le broker
+# n'autorise que les operations de l'instancier et valide le corps de `create`.
 FROM alpine:3.20
 
-RUN apk add --no-cache openssh-client socat
+RUN apk add --no-cache openssh-client socat python3
 
 COPY entrypoint.sh /entrypoint.sh
+COPY broker.py /broker.py
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 2375 7400
