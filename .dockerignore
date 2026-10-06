@@ -17,3 +17,24 @@ CTFd/uploads/**/*
 **/__pycache__
 .venv*
 venv*
+
+# --- Secrets : NE JAMAIS les cuire dans l'image ---------------------------------
+# Le build prod a pour contexte la racine du depot (docker-compose.prod.yml) et
+# fait `COPY . /opt/CTFd`. Sans ces exclusions, le `.env` de prod (secret maitre
+# des flags, mots de passe) et la cle SSH root de l'arene (deploy/front/ssh/)
+# seraient copies dans l'image web exposee a Internet. (C1 du pentest.)
+deploy/front/.env
+deploy/front/ssh/
+deploy/.env
+deploy/**/.env
+deploy/terraform/terraform.tfvars
+deploy/terraform/*.tfstate
+deploy/terraform/*.tfstate.*
+deploy/terraform/backend.hcl
+deploy/terraform/.terraform
+**/id_ed25519
+**/id_ed25519.pub
+**/id_rsa
+**/known_hosts
+**/*.pem
+**/*.key
