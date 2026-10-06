@@ -137,6 +137,7 @@ services:
       # Le fichier actif est choisi par `make tls-init` : bootstrap.conf avant
       # l'emission du certificat, tls.conf ensuite.
       - ./nginx/active.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./vitrine:/usr/share/nginx/vitrine:ro
       - ./nginx/proxy-headers.inc:/etc/nginx/conf.d/proxy-headers.inc:ro
       - ./nginx/cloudflare-realip.inc:/etc/nginx/conf.d/cloudflare-realip.inc:ro
       - certbot_conf:/etc/letsencrypt:ro

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>National CTF — Togo</title>
+  <meta name="description" content="Le National CTF est la compétition nationale de cybersécurité du Togo, organisée par le CERT.tg : des épreuves Capture The Flag en équipes, en ligne puis sur site.">
+  <meta name="theme-color" content="#0b0e0c">
+  <meta property="og:title" content="National CTF — Togo">
+  <meta property="og:description" content="La compétition nationale de cybersécurité du Togo, organisée par le CERT.tg.">
+  <meta property="og:image" content="/images/logoctf.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="/images/favicon.ico">
+  <link rel="preload" href="/fonts/Tourney.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <a class="skip" href="#contenu">Aller au contenu</a>
+  <div class="tricolore" aria-hidden="true"></div>
+
+  <header class="site-head">
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="National CTF, accueil">
+        <img src="/images/logoctf2.png" alt="" width="34" height="34">
+        National CTF
+      </a>
+      <nav class="nav" aria-label="Navigation principale">
+        <a class="section-link" href="#principe">Principe</a>
+        <a class="section-link" href="#deroule">Déroulé</a>
+        <a class="section-link" href="#regles">Règles</a>
+        <a class="section-link" href="#palmares">Palmarès</a>
+        <a class="section-link" href="https://challenge.ctf.tg/scoreboard">Classement</a>
+        <a class="cta-sm" href="https://challenge.ctf.tg/login">Plateforme</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+
+    <!-- ============================================================ hero -->
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">Compétition nationale de cybersécurité</p>
+          <h1><span>National</span> <span class="accent">CTF</span></h1>
+          <p class="lead">
+            Le Capture The Flag national du Togo, organisé par le CERT.tg.
+            Des équipes s'affrontent sur des épreuves concrètes de sécurité
+            informatique&nbsp;: comprendre, attaquer, défendre — dans un cadre
+            légal et encadré.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://challenge.ctf.tg/register">S'inscrire <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="https://challenge.ctf.tg/login">Accéder à la plateforme</a>
+          </div>
+        </div>
+        <div class="hero-mark">
+          <img src="/images/logoctf2.png" alt="Emblème du National CTF" width="400" height="400">
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================= principe -->
+    <section class="section" id="principe">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-num">01 — Principe</p>
+            <h2>Capturer<br>le drapeau</h2>
+          </div>
+          <p>
+            Chaque épreuve cache un <em>flag</em>&nbsp;: une chaîne secrète qu'on
+            n'obtient qu'en résolvant un vrai problème de sécurité. Le soumettre
+            sur la plateforme rapporte des points à son équipe. Les systèmes sont
+            conçus pour être attaqués&nbsp;: c'est la manière la plus directe — et
+            la plus sûre — d'apprendre par la pratique.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <span class="tag">Analyser</span>
+            <h3>Comprendre un système</h3>
+            <p>Lire du code, rétro-concevoir un binaire, disséquer un trafic réseau ou un fichier suspect.</p>
+          </article>
+          <article class="card">
+            <span class="tag">Exploiter</span>
+            <h3>Trouver la faille</h3>
+            <p>Repérer la vulnérabilité, construire l'exploitation, aller jusqu'à la preuve.</p>
+          </article>
+          <article class="card">
+            <span class="tag">Défendre</span>
+            <h3>Tenir la position</h3>
+            <p>Durcir, surveiller et garder le contrôle d'un service face aux autres équipes.</p>
+          </article>
+          <article class="card">
+            <span class="tag">Coopérer</span>
+            <h3>Jouer en équipe</h3>
+            <p>Répartir les spécialités, partager les pistes, décider vite sous la pression du temps.</p>
+          </article>
+        </div>
+
+        <ul class="cats" aria-label="Catégories d'épreuves">
+          <li>Web</li><li>Cryptographie</li><li>Exploitation (pwn)</li><li>Rétro-ingénierie</li>
+          <li>Forensique</li><li>OSINT</li><li>Stéganographie</li><li>Réseau</li>
+          <li>Cloud</li><li>Intelligence artificielle</li><li>Blockchain</li><li>Mobile</li>
+          <li>Matériel</li><li>Divers</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================================================== déroulé -->
+    <section class="section" id="deroule">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-num">02 — Déroulé</p>
+            <h2>Deux temps</h2>
+          </div>
+          <p>
+            Une présélection ouverte en ligne, puis une finale sur site réservée
+            aux meilleures équipes. Les dates de chaque édition sont annoncées sur
+            la plateforme et sur le serveur Discord de la communauté.
+          </p>
+        </div>
+
+        <div class="phases">
+          <article class="phase">
+            <span class="step">Étape 1</span>
+            <h3>Présélection</h3>
+            <p>
+              Une compétition en ligne au format <em>Jeopardy</em>&nbsp;: un
+              tableau d'épreuves de toutes catégories et de difficulté croissante,
+              à résoudre dans un temps limité.
+            </p>
+            <dl>
+              <dt>Format</dt><dd>Jeopardy, en ligne</dd>
+              <dt>Participation</dt><dd>En équipes, sur inscription</dd>
+              <dt>Enjeu</dt><dd>Se qualifier pour la finale</dd>
+            </dl>
+          </article>
+          <article class="phase">
+            <span class="step">Étape 2</span>
+            <h3>Finale</h3>
+            <p>
+              Les équipes qualifiées se retrouvent sur site, à Lomé, pour une
+              épreuve où il faut à la fois prendre le contrôle des cibles et le
+              conserver face aux autres équipes.
+            </p>
+            <dl>
+              <dt>Format</dt><dd>Sur site, épreuves offensives et défensives</dd>
+              <dt>Participation</dt><dd>Équipes qualifiées</dd>
+              <dt>Enjeu</dt><dd>Le titre national</dd>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= règles -->
+    <section class="section" id="regles">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-num">03 — Règles</p>
+            <h2>Jouer<br>loyalement</h2>
+          </div>
+          <p>
+            Le CTF est un terrain d'entraînement légal. Il le reste parce que chacun
+            respecte quelques règles simples&nbsp;; leur non-respect entraîne la
+            disqualification.
+          </p>
+        </div>
+
+        <ol class="rules">
+          <li><div><strong>Jouer en équipe, par ses propres moyens</strong><span>Chaque équipe résout les épreuves seule, avec ses propres connaissances. Un seul compte par personne, une seule équipe par personne.</span></div></li>
+          <li><div><strong>Ne pas partager de flags</strong><span>Partager flags, solutions ou indices entre équipes entraîne la disqualification. Les journaux font foi.</span></div></li>
+          <li><div><strong>Rester dans le périmètre</strong><span>On n'attaque que les épreuves. La plateforme de scoring, l'infrastructure, les comptes et les autres participants sont hors jeu.</span></div></li>
+          <li><div><strong>Pas de déni de service</strong><span>Aucune action visant à saturer ou rendre indisponible une épreuve partagée ou l'infrastructure.</span></div></li>
+          <li><div><strong>Pas de bruteforce de flags</strong><span>Les soumissions automatisées en masse sur le formulaire de flag sont interdites ; la plateforme limite le rythme.</span></div></li>
+          <li><div><strong>Indices, King of the Hill, instances</strong><span>Les indices coûtent des points ; les collines KotH et les épreuves à instance par équipe suivent les mêmes règles de fair-play.</span></div></li>
+          <li><div><strong>Jury et write-ups</strong><span>Les décisions du jury sont définitives pour le classement. Les write-ups sont publiés après la clôture. En vous inscrivant, vous acceptez le règlement au nom de votre équipe.</span></div></li>
+        </ol>
+        <p class="rules-full">Règlement officiel complet : <a href="https://arena.ctf.tg/tos">arena.ctf.tg/tos</a></p>
+      </div>
+    </section>
+
+    <!-- ===================================================== palmarès -->
+    <!--
+      Wall of fame. Pour ajouter une édition, ajouter un objet au bloc JSON
+      ci-dessous (l'ordre n'importe pas, le plus récent s'affiche en premier) :
+        { "annee": 2026, "format": "Équipes", "podium": [
+            { "rang": 1, "equipe": "Nom d'équipe", "points": 12345, "membres": ["Prénom Nom"] },
+            { "rang": 2, "equipe": "..." },
+            { "rang": 3, "equipe": "..." } ],
+          "mentions": [ "Prix spécial ... : Prénom Nom" ] }
+      « format », « points », « membres » et « mentions » sont facultatifs.
+      Une édition au podium vide n'est pas affichée.
+      Sources des éditions 2023-2025 : communiqués officiels de l'ANCy (ancy.gouv.tg).
+    -->
+    <section class="section" id="palmares" hidden>
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-num">04 — Palmarès</p>
+            <h2>Wall of fame</h2>
+          </div>
+          <p>
+            Les podiums de chaque édition du National CTF, depuis la première
+            en 2023. Leurs noms restent ici, d'une édition à l'autre.
+          </p>
+        </div>
+        <div class="fame" id="fame"></div>
+      </div>
+    </section>
+
+    <script type="application/json" id="palmares-data">
+    [
+      { "annee": 2025, "format": "Équipes", "podium": [
+          { "rang": 1, "equipe": "1NTRUD3R5", "points": 13921 },
+          { "rang": 2, "equipe": "FireTeam", "points": 11514 },
+          { "rang": 3, "equipe": "APT17", "points": 7077 } ],
+        "mentions": [ "Prix spécial de la participation féminine : Trinity-Wonder Bodjona" ] },
+      { "annee": 2024, "format": "Équipes", "podium": [
+          { "rang": 1, "equipe": "n0_m3rcy_f0r_7h3m!!", "points": 5751 },
+          { "rang": 2, "equipe": "Bl4ck_Kn1Gh7", "points": 3851 },
+          { "rang": 3, "equipe": "Cyb3rKn1ght5", "points": 901 } ] },
+      { "annee": 2023, "format": "Individuel", "podium": [
+          { "rang": 1, "equipe": "Sergio Komi Hognaglo" },
+          { "rang": 2, "equipe": "Kodjo Boaz Agnigbagno" },
+          { "rang": 3, "equipe": "Arafat Ouro-Djobo" } ] }
+    ]
+    </script>
+    <script>
+      (function () {
+        var raw = document.getElementById("palmares-data");
+        var host = document.getElementById("fame");
+        var section = document.getElementById("palmares");
+        var data;
+        try { data = JSON.parse(raw.textContent); } catch (e) { return; }
+        var labels = { 1: "Vainqueur", 2: "2e place", 3: "3e place" };
+        var shown = 0;
+        data
+          .filter(function (ed) { return ed && ed.podium && ed.podium.length; })
+          .sort(function (a, b) { return b.annee - a.annee; })
+          .forEach(function (ed) {
+            var card = document.createElement("article");
+            card.className = "edition";
+            var year = document.createElement("p");
+            year.className = "edition-year";
+            year.textContent = ed.annee;
+            card.appendChild(year);
+            if (ed.format) {
+              var fmt = document.createElement("p");
+              fmt.className = "edition-format";
+              fmt.textContent = ed.format;
+              card.appendChild(fmt);
+            }
+            var list = document.createElement("ol");
+            list.className = "podium";
+            ed.podium.slice().sort(function (a, b) { return a.rang - b.rang; }).forEach(function (p) {
+              var li = document.createElement("li");
+              li.className = "rank-" + p.rang;
+              var lab = document.createElement("span");
+              lab.className = "rank-label";
+              lab.textContent = labels[p.rang] || (p.rang + "e place");
+              var team = document.createElement("strong");
+              team.textContent = p.equipe;
+              li.appendChild(lab);
+              li.appendChild(team);
+              if (p.points) {
+                var pts = document.createElement("span");
+                pts.className = "points";
+                pts.textContent = p.points.toLocaleString("fr-FR") + " pts";
+                li.appendChild(pts);
+              }
+              if (p.membres && p.membres.length) {
+                var m = document.createElement("span");
+                m.className = "members";
+                m.textContent = p.membres.join(" · ");
+                li.appendChild(m);
+              }
+              list.appendChild(li);
+            });
+            card.appendChild(list);
+            (ed.mentions || []).forEach(function (t) {
+              var m = document.createElement("p");
+              m.className = "mention";
+              m.textContent = t;
+              card.appendChild(m);
+            });
+            host.appendChild(card);
+            shown++;
+          });
+        if (shown) section.hidden = false;
+      })();
+    </script>
+
+    <!-- ===================================================== communauté -->
+    <section class="section">
+      <div class="wrap">
+        <div class="community">
+          <div>
+            <h2>Rejoindre la communauté</h2>
+            <p>
+              Annonces des prochaines éditions, entraide, échanges entre passionnés
+              de sécurité&nbsp;: tout se passe sur le serveur Discord.
+            </p>
+          </div>
+          <a class="btn btn-primary" href="https://discord.gg/QU6W794CRx">Rejoindre le Discord <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== partenaires -->
+    <section class="section" id="partenaires">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="section-num">05 — Organisation</p>
+            <h2>Partenaires</h2>
+          </div>
+          <p>
+            Le National CTF est organisé par le CERT.tg, l'équipe nationale de
+            réponse aux incidents de sécurité informatique du Togo, avec le
+            soutien de ses partenaires institutionnels.
+          </p>
+        </div>
+
+        <div class="partners">
+          <figure>
+            <a href="https://cert.tg/"><img class="mono" src="/images/cert.png" alt="CERT.tg" height="44"></a>
+            <figcaption>Organisateur</figcaption>
+          </figure>
+          <figure>
+            <a href="https://www.cda.tg/"><img src="/images/cda2.png" alt="Cyber Defense Africa" height="44"></a>
+            <figcaption>Partenaire</figcaption>
+          </figure>
+          <figure>
+            <a href="https://ancy.gouv.tg/"><img class="mono" src="/images/ancy.png" alt="Agence Nationale de la Cybersécurité" height="44"></a>
+            <figcaption>Partenaire</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>National CTF — une compétition du CERT.tg, Togo.</span>
+      <nav aria-label="Liens utiles">
+        <a href="https://challenge.ctf.tg/register">Inscription</a>
+        <a href="https://challenge.ctf.tg/scoreboard">Classement</a>
+        <a href="https://discord.gg/QU6W794CRx">Discord</a>
+        <a href="https://cert.tg/">CERT.tg</a>
+      </nav>
+    </div>
+    <div class="wrap signature">
+      <a href="https://ramses.dagban.tg/" target="_blank" rel="noopener">Powered by <strong>Hibris</strong> · ramses.dagban.tg</a>
+    </div>
+  </footer>
+</body>
+</html>
