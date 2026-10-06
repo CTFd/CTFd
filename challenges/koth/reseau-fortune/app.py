@@ -29,11 +29,13 @@ app = Flask(__name__)
 app.secret_key = os.urandom(16)
 
 SCORER_SECRET = os.environ.get("SCORER_SECRET", "")
-# Shared arena: a light per-IP rate limit on /api/* protects every team from one
-# team flooding the box. Generous by default (does not hinder legit exploitation);
-# lower RATE_PER_MIN in ops if needed. Also put a rate limit at the front proxy.
+# Shared arena: a light per-team rate limit on /api/* protects every team from
+# one team flooding the box. Keyed on the team's root account (session), NOT on
+# the IP: behind the frp tunnel every team shares the same source address, and
+# X-Forwarded-For is player-controlled. Generous by default (does not hinder
+# legit exploitation); lower RATE_PER_MIN in ops if needed.
 RATE_PER_MIN = int(os.environ.get("RATE_PER_MIN", "1200"))
-_RATE = {}  # ip -> [window_start_min, count]
+_RATE = {}  # team root code (or "anon") -> [window_start_min, count]
 
 # --- economy constants (FCFA, integers) ------------------------------------
 SEED = 50_000
@@ -45,7 +47,7 @@ TOKEN_RE = re.compile(r"^[0-9a-f]{16}$")  # KotH token shape (16 hex)
 
 _LOCK = threading.Lock()
 _ACCOUNTS = {}  # code -> account
-_BY_PHONE = {}  # phone -> code
+_BY_PHONE = {}  # (team root code, phone) -> code : phones are per team
 _ROOT_BY_TOKEN = {}  # koth token -> root code
 _SEQ = [0]
 
@@ -55,9 +57,10 @@ def _new_code(prefix="M"):
     return f"{prefix}{_SEQ[0]:06d}"
 
 
-def _mk(code, phone, sponsor, wallet=0, token=None):
+def _mk(code, phone, sponsor, wallet=0, token=None, root=None):
     acc = {
         "code": code,
+        "root": root or code,  # team root this account belongs to
         "phone": phone,
         "sponsor": sponsor,
         "wallet": wallet,
@@ -69,13 +72,17 @@ def _mk(code, phone, sponsor, wallet=0, token=None):
     }
     _ACCOUNTS[code] = acc
     if phone:
-        _BY_PHONE[phone] = code
+        _BY_PHONE[(acc["root"], phone)] = code
     return acc
 
 
 def _me():
     code = session.get("code")
-    return _ACCOUNTS.get(code) if code else None
+    acc = _ACCOUNTS.get(code) if code else None
+    # an account is only usable from its own team's session
+    if acc and acc["root"] != session.get("root"):
+        return None
+    return acc
 
 
 def _pay_commissions(buyer, cost):
@@ -99,6 +106,7 @@ def _net_gain(acc):
 def _public(acc):
     return {
         "code": acc["code"],
+        "root": acc["root"],
         "phone": acc["phone"],
         "sponsor": acc["sponsor"],
         "wallet": acc["wallet"],
@@ -113,17 +121,13 @@ def _rate_limit():
     # Only throttle player API calls; leave "/", "/king" and static alone.
     if not request.path.startswith("/api/"):
         return None
-    ip = (
-        (request.headers.get("X-Forwarded-For", request.remote_addr or "?"))
-        .split(",")[0]
-        .strip()
-    )
+    key = session.get("root") or "anon"
     window = int(time.time() // 60)
     with _LOCK:
-        slot = _RATE.get(ip)
+        slot = _RATE.get(key)
         if not slot or slot[0] != window:
-            _RATE[ip] = [window, 0]
-            slot = _RATE[ip]
+            _RATE[key] = [window, 0]
+            slot = _RATE[key]
         slot[1] += 1
         over = slot[1] > RATE_PER_MIN
     if over:
@@ -188,10 +192,16 @@ INDEX_HTML = """<!doctype html>
   <div id="app" class="hidden">
     <div class="card">
       <div class="row">
-        <div><div class="muted">Solde du réseau</div><div class="stat"><span id="wallet">0</span> FCFA</div></div>
+        <div><div class="muted">Solde du compte</div><div class="stat"><span id="wallet">0</span> FCFA</div>
+          <div class="muted">compte actif : <span id="who">—</span></div></div>
         <div style="text-align:right"><div class="muted">Gain net (score)</div>
           <div class="stat" id="net">0</div>
-          <div class="muted">code : <span id="mycode">—</span></div></div>
+          <div class="muted">code : <span id="mycode">—</span> · réseau : <span id="myroot">—</span></div></div>
+      </div>
+      <div class="row" style="margin-top:.6rem;justify-content:flex-start">
+        <input id="l-phone" placeholder="22890000001" style="max-width:220px">
+        <button class="ghost" onclick="login()">Se connecter (numéro d'un filleul)</button>
+        <button class="ghost" onclick="toRoot()">Revenir à mon compte racine</button>
       </div>
     </div>
 
@@ -207,8 +217,7 @@ INDEX_HTML = """<!doctype html>
 
     <div class="grid">
       <div class="card"><h2>Parrainer</h2><label>Numéro du filleul</label>
-        <input id="f-phone" placeholder="228…"><div style="margin-top:.6rem"><button onclick="sponsor()">Ajouter</button></div>
-        <div id="filleuls" class="muted" style="margin-top:.6rem"></div></div>
+        <input id="f-phone" placeholder="22890000001"><div style="margin-top:.6rem"><button onclick="sponsor()">Ajouter</button></div></div>
       <div class="card"><h2>Prime d'activation</h2><label>Code du filleul</label>
         <input id="b-code" placeholder="M000001"><div style="margin-top:.6rem"><button onclick="bonus()">Encaisser</button></div></div>
       <div class="card"><h2>Transfert</h2><label>Vers</label><input id="t-code" placeholder="M000001">
@@ -217,6 +226,11 @@ INDEX_HTML = """<!doctype html>
       <div class="card"><h2>Remboursement</h2><label>N° commande</label><input id="ref-order" type="number" placeholder="1">
         <div style="margin-top:.6rem"><button onclick="refund()">Rembourser</button></div></div>
     </div>
+
+    <div class="card">
+      <h2>Mon réseau</h2>
+      <table><thead><tr><th>Code</th><th>Numéro</th><th>Parrain</th><th>Solde</th><th>Commandes</th></tr></thead><tbody id="net-members"></tbody></table>
+    </div>
   </div>
 
 </div>
@@ -224,30 +238,37 @@ INDEX_HTML = """<!doctype html>
 <div id="toast" class="toast"></div>
 <script>
 const PRODUCTS={starter:{n:"Pack Starter",p:5000},vip:{n:"Pack VIP",p:20000},booster:{n:"Booster",p:2000}};
-let FILLEULS=[];
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 async function api(path,body){const o={method:body?'POST':'GET',headers:{'Content-Type':'application/json'},credentials:'same-origin'};
   if(body)o.body=JSON.stringify(body);const r=await fetch(path,o);let j={};try{j=await r.json()}catch(e){}return{ok:r.ok,status:r.status,j};}
 function renderShop(){document.getElementById('shop').innerHTML=Object.entries(PRODUCTS).map(([k,v])=>
   `<div class="prod"><b>${v.n}</b><div class="price">${v.p.toLocaleString('fr')} FCFA</div><button onclick="buy('${k}')">Acheter</button></div>`).join('');}
 async function join(){const {ok,j}=await api('/api/join',{token:document.getElementById('j-token').value.trim()});
-  toast(ok?('Dans l\\'arène : '+j.code):(j.error||'jeton invalide'));if(ok){document.getElementById('join').classList.add('hidden');document.getElementById('app').classList.remove('hidden');refresh();}}
+  toast(ok?('Dans l\\'arène : '+j.code):(j.error||'jeton invalide'));if(ok)show();}
+function show(){document.getElementById('join').classList.add('hidden');document.getElementById('app').classList.remove('hidden');refresh();}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function login(){const {ok,j}=await api('/api/login',{phone:document.getElementById('l-phone').value.trim()});toast(ok?('Connecté : '+j.code):(j.error||'échec'));refresh();}
+async function toRoot(){const {ok,j}=await api('/api/root',{});toast(ok?('Compte racine : '+j.code):(j.error||'échec'));refresh();}
 async function refresh(){const {ok,j}=await api('/api/me');if(ok){
   document.getElementById('wallet').textContent=(j.wallet||0).toLocaleString('fr');
   document.getElementById('net').textContent=(j.net_gain||0).toLocaleString('fr');
   document.getElementById('mycode').textContent=j.code;
-  document.getElementById('filleuls').innerHTML=FILLEULS.length?('Filleuls : '+FILLEULS.map(f=>`<code>${f}</code>`).join(' ')):'';}
+  document.getElementById('myroot').textContent=j.root;
+  document.getElementById('who').textContent=j.code===j.root?'racine':('filleul '+(j.phone||''));
+  const n=await api('/api/network');
+  if(n.ok)document.getElementById('net-members').innerHTML=(n.j.members||[]).map(m=>
+    `<tr><td><code>${esc(m.code)}</code></td><td>${esc(m.phone||'—')}</td><td>${esc(m.sponsor||'—')}</td><td>${(m.wallet||0).toLocaleString('fr')}</td><td>${(m.orders||[]).map(o=>'n°'+o.order_id+' '+esc(o.product)+(o.refunded?' (remb.)':'')).join(', ')||'—'}</td></tr>`).join('');}
   const lb=await api('/api/leaderboard');
   if(lb.ok)document.getElementById('board').innerHTML=(lb.j||[]).map((r,i)=>
-    `<tr><td>${i==0?'<span class=crown>👑</span>':(i+1)}</td><td>${r.team}</td><td>${(r.net_gain||0).toLocaleString('fr')}</td></tr>`).join('');
+    `<tr><td>${i==0&&r.net_gain>0?'<span class=crown>👑</span>':(i+1)}</td><td>${esc(r.team)}</td><td>${(r.net_gain||0).toLocaleString('fr')}</td></tr>`).join('');
 }
 async function buy(k){const {ok,j}=await api('/api/buy',{product:k,qty:1});toast(ok?('Commande n°'+j.order_id):(j.error||'échec'));refresh();}
 async function sponsor(){const {ok,j}=await api('/api/register',{phone:document.getElementById('f-phone').value,parrain_code:document.getElementById('mycode').textContent});
-  if(ok){FILLEULS.push(j.code);toast('Filleul : '+j.code);}else toast(j.error||'échec');refresh();}
+  toast(ok?('Filleul : '+j.code):(j.error||'échec'));refresh();}
 async function bonus(){const {ok,j}=await api('/api/bonus/activation',{filleul_code:document.getElementById('b-code').value});toast(ok?('+'+j.prime+' FCFA'):(j.error||'échec'));refresh();}
 async function transfer(){const {ok,j}=await api('/api/transfer',{to_code:document.getElementById('t-code').value,montant:parseInt(document.getElementById('t-amount').value,10)});toast(ok?'Transfert OK':(j.error||'échec'));refresh();}
 async function refund(){const {ok,j}=await api('/api/refund',{order_id:parseInt(document.getElementById('ref-order').value,10)});toast(ok?('Remboursé '+j.refunded):(j.error||'échec'));refresh();}
-renderShop();setInterval(()=>{if(!document.getElementById('app').classList.contains('hidden'))refresh();},15000);
+renderShop();api('/api/me').then(r=>{if(r.ok)show();});setInterval(()=>{if(!document.getElementById('app').classList.contains('hidden'))refresh();},15000);
 </script>
 </body>
 </html>"""
@@ -273,6 +294,7 @@ def join():
             acc["activated"] = True
             _ROOT_BY_TOKEN[token] = code
     session["code"] = code
+    session["root"] = code
     return jsonify(ok=True, code=code, referral_code=code)
 
 
@@ -281,14 +303,18 @@ def register():
     data = request.get_json(silent=True) or request.form
     phone = (data.get("phone") or "").strip()
     parrain = (data.get("parrain_code") or "").strip() or None
+    root = session.get("root")
+    if not root:
+        return jsonify(error="rejoins d'abord l'arène avec ton jeton KotH"), 401
     if not PHONE_RE.match(phone):  # never verified: no OTP, no SMS
         return jsonify(error="numéro invalide (format +228XXXXXXXX)"), 400
     with _LOCK:
-        if phone in _BY_PHONE:
+        if (root, phone) in _BY_PHONE:
             return jsonify(error="numéro déjà inscrit"), 409
-        if parrain and parrain not in _ACCOUNTS:
+        # a filleul can only be attached inside your own network
+        if parrain and _ACCOUNTS.get(parrain, {}).get("root") != root:
             return jsonify(error="code de parrainage inconnu"), 400
-        acc = _mk(_new_code(), phone, parrain)
+        acc = _mk(_new_code(), phone, parrain, root=root)
     return jsonify(ok=True, code=acc["code"], parrain=parrain)
 
 
@@ -296,11 +322,38 @@ def register():
 def login():
     data = request.get_json(silent=True) or request.form
     phone = (data.get("phone") or "").strip()
-    code = _BY_PHONE.get(phone)
+    root = session.get("root")
+    if not root:
+        return jsonify(error="rejoins d'abord l'arène avec ton jeton KotH"), 401
+    code = _BY_PHONE.get((root, phone))  # only accounts of your own network
     if not code:
-        return jsonify(error="numéro inconnu"), 404
+        return jsonify(error="numéro inconnu dans ton réseau"), 404
     session["code"] = code
     return jsonify(ok=True, code=code)
+
+
+@app.post("/api/root")
+def back_to_root():
+    root = session.get("root")
+    if not root:
+        return jsonify(error="non connecté"), 401
+    session["code"] = root
+    return jsonify(ok=True, code=root)
+
+
+@app.get("/api/network")
+def network():
+    acc = _me()
+    if not acc:
+        return jsonify(error="non connecté"), 401
+    with _LOCK:
+        members = [
+            {**_public(a), "orders": [
+                {"order_id": oid, **o} for oid, o in a["orders"].items()]}
+            for a in _ACCOUNTS.values()
+            if a["root"] == acc["root"]
+        ]
+    return jsonify(root=acc["root"], members=members)
 
 
 @app.get("/api/me")

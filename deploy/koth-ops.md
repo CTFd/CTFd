@@ -130,14 +130,18 @@ fois la faille trouvée :
 {
   "id": "koth-reseau-fortune",
   "name": "Réseau Fortune",
-  "url": "http://koth-reseau-fortune:8080",
-  "player_url": "https://ctf.exemple.tg/koth-reseau-fortune",
+  "url": "http://<FRONT_PRIV>:28493",
+  "player_url": "http://<FRONT_IP>:28493",
   "points": 3
 }
 ```
 
-Griefing borné (on n'aide que le code de parrainage qu'on nomme, on ne débite que
-ses propres comptes). Poser un **rate-limit au front** sur `/api/*` pour que le
+Griefing borné : les comptes sont rattachés au réseau de l'équipe qui les crée
+(numéros de téléphone propres à chaque équipe, connexion limitée à son propre
+réseau), on n'aide que le code de parrainage qu'on nomme et on ne débite que ses
+propres comptes. Le rate-limit applicatif est par équipe (pas par IP : derrière
+frp toutes les équipes partagent la même adresse source). L'interface est servie
+à la racine (`/api/...` en chemins absolus) : ne pas la publier sous un préfixe. Poser un **rate-limit au front** sur `/api/*` pour que le
 gagnant soit la meilleure automatisation, pas le plus gros débit. Leviers de
 durcissement (TOCTOU, cycle de parrainage) : voir `solution/README.md`. Finale
 uniquement (à 300 en présélection, préférer la version jeopardy isolée

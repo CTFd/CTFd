@@ -1,6 +1,6 @@
 # Shared KotH hill service "Réseau Fortune". ONE container for the whole event
 # (not per team). Reached by players through the front reverse proxy / FRP, and
-# by CTFd internally on the compose network as http://koth-reseau-fortune:8080.
+# by CTFd through frp at http://<FRONT_PRIV>:28493 (see deploy/scripts/arena-koth.sh).
 #
 #   SCORER_SECRET must equal the CTFd plugin's KOTH_SCORER_SECRET.
 services:
