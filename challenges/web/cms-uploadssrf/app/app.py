@@ -81,8 +81,7 @@ INDEX_HTML = """<!doctype html>
   <div class="card">
     <h2>Téléverser un document</h2>
     <p class="h">Seules les images <span class="badge">.png</span> sont acceptées.
-       Le document est rendu côté serveur&nbsp;; une directive
-       <code>render:&lt;url&gt;</code> dans le contenu déclenche un aperçu distant.</p>
+       Le document est rendu côté serveur pour générer son aperçu.</p>
     <label>Nom du fichier</label>
     <input id="fn" value="rapport.png">
     <label>Contenu</label>

@@ -154,7 +154,7 @@ INDEX_HTML = """<!doctype html>
   </div>
   <div class="card">
     <h2>Clé publique</h2>
-    <p class="h">Le vérificateur maison lit l'entête <code>alg</code> du jeton.</p>
+    <p class="h">Les jetons sont signés par le serveur&nbsp;; sa clé publique est consultable.</p>
     <pre id="pk" class="muted">(cliquez « Voir /pubkey »)</pre>
   </div>
 </main>

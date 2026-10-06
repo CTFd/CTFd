@@ -44,5 +44,5 @@ so it rewards understanding the API rather than pattern-matching one payload.
 Implemented. Verified end-to-end locally (Flask app + reference solver over
 HTTP): fresh guest sees `role=user` and `flag=<admin only>`; IDOR reads the admin
 account; after the mass-assignment promotion `viewer { flag }` returns the exact
-per-team flag. **Docker/Lot-5 rehearsal is the remaining gate before
+per-team flag. **Docker/Lot-5 rehearsal passed on 2026-09-23; the challenge is
 `state: visible`.**

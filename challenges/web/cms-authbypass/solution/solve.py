@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reference solver for web-forum-authbypass.
+"""Reference solver for web-cms-authbypass.
 
 Register -> the admin update API trusts a client X-Account-Role header (broken
 access control) -> mass-assign role=admin on our own uid -> /flag.
