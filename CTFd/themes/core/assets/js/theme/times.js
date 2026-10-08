@@ -4,13 +4,31 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 // TODO: CTFd 4.0 consider removing dayjs advancedFormat
 dayjs.extend(advancedFormat);
 
-export const intl = new Intl.DateTimeFormat(
-  localStorage.getItem("language") || navigator.language,
-  {
-    dateStyle: "long",
-    timeStyle: "short",
-  },
-);
+const dateTimeOptions = {
+  dateStyle: "long",
+  timeStyle: "short",
+};
+
+function createIntl() {
+  // CTFd's server-side locale identifiers use underscores, while Intl uses
+  // BCP47 language tags with hyphens (for example, zh_CN -> zh-CN).
+  const storedLanguage = localStorage.getItem("language");
+  const language = storedLanguage?.replace(/_/g, "-");
+
+  try {
+    return new Intl.DateTimeFormat(language || navigator.language, dateTimeOptions);
+  } catch (error) {
+    if (!(error instanceof RangeError)) {
+      throw error;
+    }
+
+    // A stale or otherwise invalid localStorage value must not stop the core
+    // theme from initializing. Let Intl use the browser's default locale.
+    return new Intl.DateTimeFormat(undefined, dateTimeOptions);
+  }
+}
+
+export const intl = createIntl();
 
 export default () => {
   document.querySelectorAll("[data-time]").forEach($el => {
