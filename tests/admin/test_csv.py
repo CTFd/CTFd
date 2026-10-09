@@ -152,6 +152,52 @@ challenge1,category1,description1,100,"[{""type"": ""static"", ""content"": ""fl
     destroy_ctfd(app)
 
 
+def test_import_challenge_csv_blank_type_and_unknown_column():
+    CHALLENGES_CSV = b"name,category,description,value,type,notes\nc1,cat,d,10,,x\n"
+
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                "csv_type": "challenges",
+                "csv_file": (io.BytesIO(CHALLENGES_CSV), "challenges.csv"),
+                "nonce": sess.get("nonce"),
+            }
+
+        client.post("/admin/import/csv", data=data, content_type="multipart/form-data")
+        assert Challenges.query.count() == 1
+        assert Challenges.query.first().type == "standard"
+
+    destroy_ctfd(app)
+
+
+def test_import_challenge_csv_bad_type_and_type_data_reported():
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        for csv_data in (
+            b"name,category,description,value,type\nc1,cat,d,10,nope\n",
+            b"name,category,description,value,type_data\nc1,cat,d,10,{bad\n",
+        ):
+            with client.session_transaction() as sess:
+                data = {
+                    "csv_type": "challenges",
+                    "csv_file": (io.BytesIO(csv_data), "challenges.csv"),
+                    "nonce": sess.get("nonce"),
+                }
+            r = client.post(
+                "/admin/import/csv", data=data, content_type="multipart/form-data"
+            )
+            assert r.status_code == 500
+            assert r.get_json()[0][0] == 1
+        assert Challenges.query.count() == 0
+
+    destroy_ctfd(app)
+
+
 def test_export_scoreboard_frozen_csv():
     app = create_ctfd()
     with app.app_context():
