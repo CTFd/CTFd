@@ -226,7 +226,7 @@ def test_export_scoreboard_frozen_csv_without_freeze():
 
 
 def test_export_users_teams_csv_rows_match_header_length():
-    """Users without a team export the same number of cells as the header"""
+    """Test that users without a team export the same number of cells as the header"""
     app = create_ctfd(user_mode="teams")
     with app.app_context():
         gen_field(app.db, name="user_field", type="user")
@@ -239,7 +239,8 @@ def test_export_users_teams_csv_rows_match_header_length():
             "/admin/export/csv?table=users%2Bteams%2Bfields"
         ).get_data(as_text=True)
 
-        rows = list(csv.reader(io.StringIO(csv_data)))
+        reader = csv.reader(io.StringIO(csv_data))
+        rows = list(reader)
 
         assert len(rows) > 2
         assert {len(row) for row in rows} == {len(rows[0])}
