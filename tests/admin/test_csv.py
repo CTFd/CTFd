@@ -103,6 +103,7 @@ challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint
 
 
 def test_import_challenge_csv_with_json():
+
     CHALLENGES_CSV = b'''name,category,description,value,flags,tags,hints
 challenge1,category1,description1,100,"[{""type"": ""static"", ""content"": ""flag1"", ""data"": ""case_insensitive""}, {""type"": ""regex"", ""content"": ""(.*)"", ""data"": ""case_insensitive""}, {""type"": ""static"", ""content"": ""flag3""}]","tag1,tag2,tag3","[{""content"": ""hint1"", ""cost"": 10}, {""content"": ""hint2"", ""cost"": 20}, {""content"": ""hint3"", ""cost"": 30}]"'''
 
