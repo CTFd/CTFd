@@ -4,11 +4,14 @@ import io
 from CTFd.models import Challenges, Flags, Hints, Teams, Users
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
+from CTFd.utils.csv import dump_users_teams_csv
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
     gen_challenge,
+    gen_field,
     gen_solve,
+    gen_team,
     gen_user,
     login_as_user,
 )
@@ -219,5 +222,22 @@ def test_export_scoreboard_frozen_csv_without_freeze():
         # header + 1 data row
         assert len(rows) == 2
         assert rows[1][4] == "100"  # score column in users mode
+
+    destroy_ctfd(app)
+
+
+def test_export_users_teams_csv_rows_match_header_length():
+    """Users without a team export the same number of cells as the header"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        gen_field(app.db, name="user_field", type="user")
+        gen_field(app.db, name="team_field", type="team")
+        gen_user(app.db, name="teamless", email="teamless@examplectf.com")
+        gen_team(app.db, member_count=1)
+
+        rows = list(csv.reader(io.StringIO(dump_users_teams_csv().getvalue().decode())))
+
+        assert len(rows) > 2
+        assert {len(row) for row in rows} == {len(rows[0])}
 
     destroy_ctfd(app)
