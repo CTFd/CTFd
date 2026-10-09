@@ -10,7 +10,7 @@ from CTFd.models import Users
 from CTFd.utils.countries import lookup_country_code
 from CTFd.utils.user import get_current_user, is_admin
 
-EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
+EMAIL_REGEX = r"^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[^@\s]+\.[^@\s]+$"
 MAX_URL_LENGTH = 2048
 
 
@@ -68,7 +68,27 @@ def validate_email(email):
     # https://github.com/django/django/blob/bc9b6251e0b54c3b5520e3c66578041cc17e4a28/django/core/validators.py#L257
     if not email or "@" not in email or len(email) > 320:
         return False
-    return bool(re.match(EMAIL_REGEX, email))
+    if re.fullmatch(EMAIL_REGEX, email) is None:
+        return False
+
+    local, domain = email.rsplit("@", 1)
+    if len(local) > 64 or len(domain) > 255:
+        return False
+    if local.startswith(".") or local.endswith(".") or ".." in local:
+        return False
+
+    labels = domain.split(".")
+    for label in labels:
+        if (
+            not label
+            or len(label) > 63
+            or label.startswith("-")
+            or label.endswith("-")
+            or re.match(r"^[A-Za-z0-9-]+$", label) is None
+        ):
+            return False
+
+    return True
 
 
 def unique_email(email, model=Users):
