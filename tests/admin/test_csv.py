@@ -4,7 +4,6 @@ import io
 from CTFd.models import Challenges, Flags, Hints, Teams, Users
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.csv import dump_users_teams_csv
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -235,7 +234,12 @@ def test_export_users_teams_csv_rows_match_header_length():
         gen_user(app.db, name="teamless", email="teamless@examplectf.com")
         gen_team(app.db, member_count=1)
 
-        rows = list(csv.reader(io.StringIO(dump_users_teams_csv().getvalue().decode())))
+        client = login_as_user(app, name="admin", password="password")
+        csv_data = client.get(
+            "/admin/export/csv?table=users%2Bteams%2Bfields"
+        ).get_data(as_text=True)
+
+        rows = list(csv.reader(io.StringIO(csv_data)))
 
         assert len(rows) > 2
         assert {len(row) for row in rows} == {len(rows[0])}
