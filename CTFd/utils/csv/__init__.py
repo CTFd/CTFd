@@ -481,14 +481,10 @@ def load_challenges_csv(dict_reader):
     errors = []
 
     for i, line in enumerate(dict_reader):
-        # Throw away fields that we can't trust if provided
-        _ = line.pop("id", None)
-        _ = line.pop("requirements", None)
-
         flags = line.pop("flags", None)
         tags = line.pop("tags", None)
         hints = line.pop("hints", None)
-        challenge_type = line.pop("type", None) or "standard"
+        challenge_type = (line.pop("type", None) or "standard").strip()
 
         try:
             ChallengeClass = get_chal_class(challenge_type)
@@ -499,10 +495,17 @@ def load_challenges_csv(dict_reader):
         # Load in custom type_data
         try:
             type_data = json.loads(line.pop("type_data", "{}") or "{}")
+            if not isinstance(type_data, dict):
+                raise ValueError("type_data must be a JSON object")
             line.update(type_data)
         except (TypeError, ValueError):
             errors.append((i + 1, {"type_data": ["Invalid type_data"]}))
             continue
+
+        # Throw away fields that we can't trust if provided
+        _ = line.pop("id", None)
+        _ = line.pop("requirements", None)
+        _ = line.pop("type", None)
 
         response = schema.load(line)
         if response.errors:

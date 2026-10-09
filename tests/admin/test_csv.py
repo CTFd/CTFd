@@ -103,7 +103,6 @@ challenge1,category1,description1,100,"flag1,flag2,flag3","tag1,tag2,tag3","hint
 
 
 def test_import_challenge_csv_with_json():
-
     CHALLENGES_CSV = b'''name,category,description,value,flags,tags,hints
 challenge1,category1,description1,100,"[{""type"": ""static"", ""content"": ""flag1"", ""data"": ""case_insensitive""}, {""type"": ""regex"", ""content"": ""(.*)"", ""data"": ""case_insensitive""}, {""type"": ""static"", ""content"": ""flag3""}]","tag1,tag2,tag3","[{""content"": ""hint1"", ""cost"": 10}, {""content"": ""hint2"", ""cost"": 20}, {""content"": ""hint3"", ""cost"": 30}]"'''
 
@@ -181,6 +180,8 @@ def test_import_challenge_csv_bad_type_and_type_data_reported():
         for csv_data in (
             b"name,category,description,value,type\nc1,cat,d,10,nope\n",
             b"name,category,description,value,type_data\nc1,cat,d,10,{bad\n",
+            b"name,category,description,value,type_data\nc1,cat,d,10,null\n",
+            b'name,category,description,value,type_data\nc1,cat,d,10,"[[""value"", 1]]"\n',
         ):
             with client.session_transaction() as sess:
                 data = {
@@ -194,6 +195,31 @@ def test_import_challenge_csv_bad_type_and_type_data_reported():
             assert r.status_code == 500
             assert r.get_json()[0][0] == 1
         assert Challenges.query.count() == 0
+
+    destroy_ctfd(app)
+
+
+def test_import_challenge_csv_type_data_cannot_set_untrusted_fields():
+    CHALLENGES_CSV = (
+        b"name,category,description,value,type,type_data\n"
+        b'c1,cat,d,10, standard ,"{""id"": 99, ""requirements"": {""prerequisites"": [5]}}"\n'
+    )
+
+    app = create_ctfd()
+    with app.app_context():
+        client = login_as_user(app, name="admin", password="password")
+
+        with client.session_transaction() as sess:
+            data = {
+                "csv_type": "challenges",
+                "csv_file": (io.BytesIO(CHALLENGES_CSV), "challenges.csv"),
+                "nonce": sess.get("nonce"),
+            }
+
+        client.post("/admin/import/csv", data=data, content_type="multipart/form-data")
+        chal = Challenges.query.one()
+        assert chal.id != 99
+        assert chal.requirements is None
 
     destroy_ctfd(app)
 
