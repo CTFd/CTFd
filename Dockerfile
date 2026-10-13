@@ -1,8 +1,16 @@
-FROM python:3.11-slim-bookworm AS build
+FROM busybox AS plugin-reqs
+COPY CTFd/plugins/ /tmp/all-plugins/
+RUN mkdir -p /tmp/plugins && \
+    for d in /tmp/all-plugins/*; do \
+        if [ -f "$d/requirements.txt" ]; then \
+            mkdir -p "/tmp/plugins/$(basename "$d")" && \
+            cp "$d/requirements.txt" "/tmp/plugins/$(basename "$d")/"; \
+        fi; \
+    done
 
+FROM python:3.11-slim-bookworm AS build
 WORKDIR /opt/CTFd
 
-# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
@@ -15,20 +23,19 @@ RUN apt-get update \
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY . /opt/CTFd
+COPY requirements.txt /opt/CTFd/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt \
-    && for d in CTFd/plugins/*; do \
+COPY --from=plugin-reqs /tmp/plugins/ /tmp/plugins/
+RUN for d in /tmp/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
-            pip install --no-cache-dir -r "$d/requirements.txt";\
+            pip install --no-cache-dir -r "$d/requirements.txt"; \
         fi; \
-    done;
-
+    done
 
 FROM python:3.11-slim-bookworm AS release
 WORKDIR /opt/CTFd
 
-# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libffi8 \
