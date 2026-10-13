@@ -106,6 +106,57 @@ def test_import_ctf():
     destroy_ctfd(app)
 
 
+def test_import_ctf_preserves_dynamic_challenge_parameters():
+    app = create_ctfd(enable_plugins=True)
+    if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
+        with app.app_context():
+            from CTFd.plugins.dynamic_challenges import DynamicChallenge
+
+            chal = DynamicChallenge(
+                name="dynamic",
+                description="description",
+                value=500,
+                initial=500,
+                minimum=100,
+                decay=20,
+                function="linear",
+                category="category",
+                state="visible",
+            )
+            app.db.session.add(chal)
+            app.db.session.commit()
+
+            backup = export_ctf()
+            with open(
+                "export.test_import_ctf_preserves_dynamic_challenge_parameters.zip",
+                "wb",
+            ) as f:
+                f.write(backup.read())
+    destroy_ctfd(app)
+
+    app = create_ctfd(enable_plugins=True)
+    if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("sqlite"):
+        with app.app_context():
+            from CTFd.plugins.dynamic_challenges import DynamicChallenge
+
+            import_ctf(
+                "export.test_import_ctf_preserves_dynamic_challenge_parameters.zip"
+            )
+
+            if not app.config.get("SQLALCHEMY_DATABASE_URI").startswith("postgres"):
+                chal = DynamicChallenge.query.filter_by(name="dynamic").first()
+                assert chal is not None
+                assert chal.initial == 500
+                assert chal.minimum == 100
+                assert chal.decay == 20
+                assert chal.function == "linear"
+    destroy_ctfd(app)
+    if os.path.exists(
+        "export.test_import_ctf_preserves_dynamic_challenge_parameters.zip"
+    ):
+        os.remove("export.test_import_ctf_preserves_dynamic_challenge_parameters.zip")
+
+
 def test_import_ctf_restores_installed_theme():
     """Test that import_ctf restores the theme from backup if it is installed"""
     app = create_ctfd(ctf_theme="core-deprecated")
