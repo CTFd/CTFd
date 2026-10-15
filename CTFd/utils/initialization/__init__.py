@@ -46,6 +46,7 @@ from CTFd.utils.user import (
     get_current_user_recent_ips,
     get_ip,
     get_locale,
+    get_user_agent,
     is_admin,
 )
 
@@ -255,22 +256,33 @@ def init_request_processors(app):
         if authed():
             user_ips = get_current_user_recent_ips()
             ip = get_ip()
+            user_agent = get_user_agent()
 
             track = None
-            if ip not in user_ips or request.method in (
+            if (ip, user_agent) not in user_ips or request.method in (
                 "POST",
                 "PATCH",
                 "PUT",
                 "DELETE",
             ):
-                track = Tracking.query.filter_by(
-                    ip=get_ip(), user_id=session["id"]
-                ).first()
+                # Some database collations (e.g. MySQL's utf8mb4_unicode_ci) match user agents
+                # differing in case/accents/trailing spaces so pick the exact match in Python
+                # to stay consistent with the recent IPs cache
+                tracks = Tracking.query.filter_by(
+                    ip=ip,
+                    user_agent=user_agent,
+                    user_id=session["id"],
+                ).all()
+                track = next((t for t in tracks if t.user_agent == user_agent), None)
 
                 if track:
                     track.date = datetime.datetime.utcnow()
                 else:
-                    track = Tracking(ip=get_ip(), user_id=session["id"])
+                    track = Tracking(
+                        ip=ip,
+                        user_agent=user_agent,
+                        user_id=session["id"],
+                    )
                     db.session.add(track)
 
             if track:

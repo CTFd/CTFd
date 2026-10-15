@@ -246,6 +246,18 @@ def get_ip(req=None):
     return remote_addr
 
 
+def get_user_agent(req=None):
+    """Returns the User-Agent of the currently in scope request truncated to 256 characters"""
+    if req is None:
+        req = request
+
+    user_agent = req.headers.get("User-Agent")
+    if not user_agent:
+        return None
+
+    return user_agent[:256]
+
+
 def get_locale():
     # Use the user's preferred language
     if authed():
@@ -276,11 +288,11 @@ def get_current_user_recent_ips():
 def get_user_recent_ips(user_id):
     hour_ago = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
     addrs = (
-        Tracking.query.with_entities(Tracking.ip.distinct())
+        Tracking.query.with_entities(Tracking.ip, Tracking.user_agent)
         .filter(Tracking.user_id == user_id, Tracking.date >= hour_ago)
         .all()
     )
-    return {ip for (ip,) in addrs}
+    return {(ip, user_agent) for (ip, user_agent) in addrs}
 
 
 def get_wrong_submissions_per_minute(account_id, return_objects=False):

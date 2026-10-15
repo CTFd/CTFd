@@ -74,6 +74,7 @@ from CTFd.utils.user import (
     get_current_user,
     get_current_user_attrs,
     get_ip,
+    get_user_agent,
     is_admin,
 )
 
@@ -598,6 +599,7 @@ class Challenge(Resource):
         ):
             track = Tracking(
                 ip=get_ip(),
+                user_agent=get_user_agent(),
                 user_id=session["id"],
                 type="challenges.open",
                 target=challenge_id,
