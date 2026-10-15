@@ -7,7 +7,7 @@ from flask import abort, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
-from CTFd.cache import clear_user_recent_ips
+from CTFd.cache import clear_user_recent_ips, clear_user_recent_tracking
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.exceptions.email import UserResetPasswordTokenInvalidException
 from CTFd.models import Tracking, db
@@ -43,9 +43,10 @@ from CTFd.utils.user import (
     authed,
     get_current_team_attrs,
     get_current_user_attrs,
-    get_current_user_recent_ips,
+    get_current_user_recent_tracking,
     get_ip,
     get_locale,
+    get_user_agent,
     is_admin,
 )
 
@@ -253,24 +254,36 @@ def init_request_processors(app):
                 return "Import currently in progress", 403
 
         if authed():
-            user_ips = get_current_user_recent_ips()
+            user_tracking = get_current_user_recent_tracking()
             ip = get_ip()
+            user_agent = get_user_agent()
 
             track = None
-            if ip not in user_ips or request.method in (
+            if (ip, user_agent) not in user_tracking or request.method in (
                 "POST",
                 "PATCH",
                 "PUT",
                 "DELETE",
             ):
-                track = Tracking.query.filter_by(
-                    ip=get_ip(), user_id=session["id"]
-                ).first()
+                # Some database collations (e.g. MySQL's utf8mb4_unicode_ci) match user agents
+                # differing in case/accents/trailing spaces so pick the exact match in Python
+                # to stay consistent with the recent tracking cache
+                tracks = Tracking.query.filter_by(
+                    type=None,
+                    ip=ip,
+                    user_agent=user_agent,
+                    user_id=session["id"],
+                ).all()
+                track = next((t for t in tracks if t.user_agent == user_agent), None)
 
                 if track:
                     track.date = datetime.datetime.utcnow()
                 else:
-                    track = Tracking(ip=get_ip(), user_id=session["id"])
+                    track = Tracking(
+                        ip=ip,
+                        user_agent=user_agent,
+                        user_id=session["id"],
+                    )
                     db.session.add(track)
 
             if track:
@@ -282,6 +295,7 @@ def init_request_processors(app):
                     logout_user()
                 else:
                     clear_user_recent_ips(user_id=session["id"])
+                    clear_user_recent_tracking(user_id=session["id"])
 
     @app.before_request
     def banned():

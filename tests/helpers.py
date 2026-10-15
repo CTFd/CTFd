@@ -515,8 +515,14 @@ def gen_fail(
     return fail
 
 
-def gen_tracking(db, user_id=None, ip="127.0.0.1", **kwargs):
-    tracking = Tracking(ip=ip, user_id=user_id, **kwargs)
+def gen_tracking(
+    db,
+    user_id=None,
+    ip="127.0.0.1",
+    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
+    **kwargs,
+):
+    tracking = Tracking(ip=ip, user_agent=user_agent, user_id=user_id, **kwargs)
     db.session.add(tracking)
     db.session.commit()
     return tracking
