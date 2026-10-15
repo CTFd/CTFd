@@ -44,9 +44,7 @@ def test_tracking_new_user_agent_creates_new_entry():
         assert (
             Tracking.query.filter_by(user_id=2, user_agent="Browser/2.0").count() == 1
         )
-        assert (
-            Tracking.query.filter_by(user_id=2, user_agent="A" * 256).count() == 1
-        )
+        assert Tracking.query.filter_by(user_id=2, user_agent="A" * 256).count() == 1
     destroy_ctfd(app)
 
 
