@@ -288,11 +288,29 @@ def get_current_user_recent_ips():
 def get_user_recent_ips(user_id):
     hour_ago = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
     addrs = (
+        Tracking.query.with_entities(Tracking.ip.distinct())
+        .filter(Tracking.user_id == user_id, Tracking.date >= hour_ago)
+        .all()
+    )
+    return {ip for (ip,) in addrs}
+
+
+def get_current_user_recent_tracking():
+    if authed():
+        return get_user_recent_tracking(user_id=session["id"])
+    else:
+        return None
+
+
+@cache.memoize(timeout=300)
+def get_user_recent_tracking(user_id):
+    hour_ago = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    entries = (
         Tracking.query.with_entities(Tracking.ip, Tracking.user_agent)
         .filter(Tracking.user_id == user_id, Tracking.date >= hour_ago)
         .all()
     )
-    return {(ip, user_agent) for (ip, user_agent) in addrs}
+    return {(ip, user_agent) for (ip, user_agent) in entries}
 
 
 def get_wrong_submissions_per_minute(account_id, return_objects=False):

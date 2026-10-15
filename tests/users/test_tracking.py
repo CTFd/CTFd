@@ -23,41 +23,30 @@ def test_tracking_records_user_agent():
 
 
 def test_tracking_new_user_agent_creates_new_entry():
-    """Test that the same IP with a different user agent is tracked separately"""
+    """Test that the same IP with a different user agent is tracked separately and user agents are truncated to 256 characters"""
     app = create_ctfd()
     with app.app_context():
         register_user(app)
+        long_user_agent = "A" * 1000
         with login_as_user(app) as client:
             client.get("/challenges", headers={"User-Agent": "Browser/1.0"})
             client.get("/challenges", headers={"User-Agent": "Browser/1.0"})
             client.get("/challenges", headers={"User-Agent": "Browser/2.0"})
+            client.get("/challenges", headers={"User-Agent": long_user_agent})
 
         user_agents = {
             t.user_agent for t in Tracking.query.filter_by(user_id=2, type=None)
         }
-        assert {"Browser/1.0", "Browser/2.0"} <= user_agents
+        assert {"Browser/1.0", "Browser/2.0", "A" * 256} <= user_agents
         assert (
             Tracking.query.filter_by(user_id=2, user_agent="Browser/1.0").count() == 1
         )
         assert (
             Tracking.query.filter_by(user_id=2, user_agent="Browser/2.0").count() == 1
         )
-    destroy_ctfd(app)
-
-
-def test_tracking_user_agent_truncated():
-    """Test that user agents are truncated to 256 characters"""
-    app = create_ctfd()
-    with app.app_context():
-        register_user(app)
-        long_user_agent = "A" * 1000
-        with login_as_user(app) as client:
-            client.get("/challenges", headers={"User-Agent": long_user_agent})
-
-        track = Tracking.query.filter(
-            Tracking.user_id == 2, Tracking.user_agent.like("AAAA%")
-        ).first()
-        assert track.user_agent == "A" * 256
+        assert (
+            Tracking.query.filter_by(user_id=2, user_agent="A" * 256).count() == 1
+        )
     destroy_ctfd(app)
 
 
