@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if request.path == request.script_root + '/' %}
+    {% include "components/hero.html" %}
+  {% endif %}
+  <div class="container">
+    {{ content | safe }}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/page.js") }}
+{% endblock %}

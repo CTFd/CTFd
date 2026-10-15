@@ -1,0 +1,17 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container">
+    <h1 id="hero-title">Your First <span>Flag</span> <br>Starts Here.</h1>
+    <p>Cyverdarian CTF</p>
+    <div class="hero-actions">
+      {% if authed() %}
+        <a class="btn btn-primary" href="{{ url_for('challenges.listing') }}">Start playing</a>
+      {% elif registration_visible() %}
+        <a class="btn btn-primary" href="{{ url_for('auth.register') }}">Start playing</a>
+      {% else %}
+        <a class="btn btn-primary" href="{{ url_for('auth.login') }}">Start playing</a>
+      {% endif %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('challenges.listing') }}">View challenges</a>
+    </div>
+    <!-- <img class="hero-mascot" src="{{ url_for('views.themes_beta', theme='cyverdarian', path='img/cyverdarian.png') }}" alt="Cyverdarian hooded knight and anchor" width="1100" height="1022" fetchpriority="high"> -->
+  </div>
+</section>

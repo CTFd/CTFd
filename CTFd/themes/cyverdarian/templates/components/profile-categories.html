@@ -1,0 +1,12 @@
+{% if solves %}
+<section class="profile-categories" aria-labelledby="category-title">
+  <h3 id="category-title">Solves by category</h3>
+  {% for category, items in solves | groupby('challenge.category') %}
+    <div class="category-progress">
+      <span class="category-label" data-category="{{ category | lower }}">{{ category }}</span>
+      <small>{{ items | length }} / {{ solves | length }} solves</small>
+      <div class="progress" role="progressbar" aria-label="{{ category }} share of solves" aria-valuenow="{{ (items | length / solves | length * 100) | round | int }}" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width: {{ items | length / solves | length * 100 }}%"></div></div>
+    </div>
+  {% endfor %}
+</section>
+{% endif %}

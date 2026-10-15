@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container challenge-board" x-data="ChallengeBoard" @load-challenges.window="loadChallenges()" @load-challenge.window="loadChallenge($event.detail)">
+  <header class="page-heading">
+    <div><h1>{% trans %}Challenges{% endtrans %}</h1><p x-show="loaded" x-cloak><span x-text="solvedCount"></span> of <span x-text="challenges.length"></span> solved</p></div>
+    <div class="board-progress" x-show="loaded" x-cloak><div><span>PROGRESS</span><span x-text="`${progress}%`"></span></div><div class="progress" role="progressbar" aria-label="Challenges solved" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" :style="{width: `${progress}%`}"></div></div></div>
+  </header>
+  {% include "components/errors.html" %}
+  <div x-ref="challengeWindow" id="challenge-window" class="modal fade" tabindex="-1" role="dialog" aria-label="Challenge details" x-data="" x-html="$store.challenge.data.view"></div>
+  <div x-show="!loaded" class="board-loading" role="status"><i class="fas fa-circle-notch fa-spin spinner" aria-hidden="true"></i> Loading challenges…</div>
+  <div x-show="loaded" x-cloak>
+    <div class="challenge-toolbar">
+      <div class="category-filters" role="group" aria-label="Filter by category">
+        <button class="filter-pill" :class="{'active': categoryFilter === null}" :aria-pressed="categoryFilter === null" @click="categoryFilter = null">All <span x-text="challenges.length"></span></button>
+        <template x-for="category in getCategories()" :key="category"><button class="filter-pill" :class="{'active': categoryFilter === category}" :aria-pressed="categoryFilter === category" @click="categoryFilter = category"><span x-text="category"></span> <span x-text="challenges.filter(c => c.category === category).length"></span></button></template>
+      </div>
+      <label class="challenge-search"><span class="visually-hidden">Search challenges</span><input type="search" class="form-control" placeholder="Search challenges" x-model.debounce.150ms="search"></label>
+    </div>
+    <div class="challenge-grid">
+      <template x-for="c in visibleChallenges" :key="c.id">
+        <button class="challenge-button" :class="[c.solved_by_me ? 'challenge-solved' : '', ...c.tags.map(tag => `tag-${tag.value.replace(/ /g, '-')}`)]" :value="c.id" @click="loadChallenge(c.id)" :aria-label="`${c.name}, ${c.value} points${c.solved_by_me ? ', solved' : ''}`">
+          <span class="challenge-card-top"><span class="category-label" :data-category="c.category.toLowerCase()" x-text="c.category"></span><span class="challenge-points" x-text="`${c.value} pts`"></span></span>
+          <span class="challenge-card-name" x-text="c.name"></span>
+          <span class="challenge-card-bottom"><span x-text="`${c.solves ?? 0} solves`"></span><span class="solved-label" x-show="c.solved_by_me">✓ SOLVED</span></span>
+        </button>
+      </template>
+    </div>
+    <p class="empty-state" x-show="visibleChallenges.length === 0">No challenges match your filters.</p>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}{{ Assets.js("assets/js/challenges.js") }}{% endblock %}

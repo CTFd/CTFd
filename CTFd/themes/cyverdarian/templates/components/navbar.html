@@ -1,0 +1,56 @@
+{% macro nav_link(endpoint, label) -%}
+<li class="nav-item"><a class="nav-link" href="{{ url_for(endpoint) }}">{{ label }}</a></li>
+{%- endmacro %}
+<nav class="navbar navbar-expand-lg navbar-dark" aria-label="Main navigation">
+  <div class="container">
+    <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand">
+      {% if Configs.ctf_logo %}
+        <img class="ctf_logo" src="{{ url_for('views.files', path=Configs.ctf_logo) }}" alt="{{ Configs.ctf_name }}" height="32">
+      {% else %}
+        <img class="brand-mascot" src="{{ url_for('views.themes_beta', theme='cyverdarian', path='img/brand.png') }}" alt="" width="44" height="40">
+        <span class="brand-wordmark">CYVER<span>DARIAN</span><small>CTF</small></span>
+      {% endif %}
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#base-navbars" aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="base-navbars">
+      <ul class="navbar-nav mx-lg-auto">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('views.static_html', route='/') }}">Home</a></li>
+        {{ nav_link('challenges.listing', _('Challenges')) }}
+        {% if Configs.account_visibility != 'admins' and Configs.score_visibility != 'admins' %}{{ nav_link('scoreboard.listing', _('Scoreboard')) }}{% endif %}
+        {% if Configs.account_visibility != 'admins' %}
+          {% if Configs.user_mode == 'teams' %}{{ nav_link('teams.listing', _('Teams')) }}{% endif %}
+          {{ nav_link('users.listing', _('Users')) }}
+        {% endif %}
+        {% for page in Plugins.user_menu_pages %}
+          <li class="nav-item"><a class="nav-link" href="{{ page.route }}" {% if page.link_target %}target="{{ page.link_target }}" rel="noopener"{% endif %}>{{ page.title }}</a></li>
+        {% endfor %}
+      </ul>
+      <ul class="navbar-nav nav-auth">
+        {% if authed() %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('views.notifications') }}" aria-label="Notifications"><i class="fas fa-bell" aria-hidden="true"></i><span x-data x-show="$store.unread_count > 0" x-text="$store.unread_count" class="badge rounded-pill bg-danger ms-1"></span></a></li>
+          <li class="nav-item dropdown">
+            <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{% trans %}Account{% endtrans %}</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{{ url_for('users.private') }}">{% trans %}Profile{% endtrans %}</a></li>
+              {% if Configs.user_mode == 'teams' %}<li><a class="dropdown-item" href="{{ url_for('teams.private') }}">{% trans %}Team{% endtrans %}</a></li>{% endif %}
+              <li><a class="dropdown-item" href="{{ url_for('views.settings') }}">{% trans %}Settings{% endtrans %}</a></li>
+              {% if is_admin() %}<li><a class="dropdown-item" href="{{ url_for('admin.view') }}">{% trans %}Admin Panel{% endtrans %}</a></li>{% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">{% trans %}Logout{% endtrans %}</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link nav-login" href="{{ url_for('auth.login') }}">{% trans %}Login{% endtrans %}</a></li>
+          {% if registration_visible() %}<li class="nav-item"><a class="nav-link nav-register" href="{{ url_for('auth.register') }}">{% trans %}Register{% endtrans %}</a></li>{% endif %}
+        {% endif %}
+        <li class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Change language"><i class="fas fa-language" aria-hidden="true"></i></button>
+          <form x-data="LanguageForm"><ul class="dropdown-menu dropdown-menu-end">
+            {% set curr_lang = get_locale() %}
+            {% for lang in Languages.names.items() %}<li><button type="button" class="dropdown-item {{ 'active' if curr_lang == lang[0] }}" @click="set" value="{{ lang[0] }}">{{ lang[1] }}</button></li>{% endfor %}
+          </ul></form>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

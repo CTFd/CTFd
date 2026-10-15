@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% from "macros/forms.html" import render_extra_fields %}
+
+{% block content %}
+  <div class="jumbotron">
+    <div class="container">
+      <h1>
+        {% trans %}Settings{% endtrans %}
+      </h1>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-3 offset-md-1 mb-3 mb-md-0">
+        <div class="nav flex-column nav-pills" role="tablist">
+          <button
+              class="nav-link active" id="settings-profile-tab" data-bs-toggle="pill"
+              data-bs-target="#profile" role="tab"
+          >{% trans %}Profile{% endtrans %}
+          </button>
+          <button
+              class="nav-link" id="settings-tokens-tab" data-bs-toggle="pill" data-bs-target="#tokens"
+              role="tab"
+          >{% trans %}Access Tokens{% endtrans %}
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="tab-content" id="v-pills-tabContent">
+          <div class="tab-pane fade show active" id="profile" role="tabpanel">
+            {% include "components/errors.html" %}
+
+            {% with form = Forms.self.SettingsForm(language=language, country=country) %}
+              <form
+                  method="post" accept-charset="utf-8" autocomplete="off" role="form"
+                  x-data="SettingsForm"
+                  @submit.prevent="updateProfile()"
+                  class="form-horizontal"
+              >
+
+                <div class="mb-3">
+                  <b>{{ form.name.label(class="form-label") }}</b>
+                  {{ form.name(class="form-control", value=name) }}
+                </div>
+
+                <div class="mb-3">
+                  <b>{{ form.email.label(class="form-label") }}</b>
+                  {{ form.email(class="form-control", value=email) }}
+                </div>
+
+                <div class="mb-3">
+                  <b>{{ form.language.label(class="form-label") }}</b>
+                  {{ form.language(class="form-select", value=language) }}
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                  <b>{{ form.confirm.label(class="form-label") }}</b>
+                  {{ form.confirm(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                  <b>{{ form.password.label(class="form-label") }}</b>
+                  {{ form.password(class="form-control") }}
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                  <b>{{ form.affiliation.label(class="form-label") }}</b>
+                  {{ form.affiliation(class="form-control", value=affiliation or "") }}
+                </div>
+                <div class="mb-3">
+                  <b>{{ form.website.label(class="form-label") }}</b>
+                  {{ form.website(class="form-control", value=website or "") }}
+                </div>
+                <div class="mb-3">
+                  <b>{{ form.country.label(class="form-label") }}</b>
+                  {{ form.country(class="form-select", value=country) }}
+                </div>
+
+                <hr>
+
+                {{ render_extra_fields(form.extra) }}
+
+                <div id="results" class="mb-3">
+                  <div
+                      class="alert alert-success alert-dismissible submit-row" role="alert"
+                      x-cloak="success" x-show="success"
+                  >
+                    <strong>Success!</strong>
+                    {% trans %}Your profile has been updated{% endtrans %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    </button>
+                  </div>
+
+
+                  <template x-for="(msg, idx) in errors" :key="idx">
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                      <span class="sr-only">{% trans %}Error:{% endtrans %}</span>
+                      <span x-text="msg"></span>
+                      <button
+                          type="button" class="btn-close" data-bs-dismiss="alert"
+                          aria-label="Close"
+                      >
+                      </button>
+                    </div>
+                  </template>
+                </div>
+
+                <div class="mb-3">
+                  {{ form.submit(class="btn btn-primary float-end px-4") }}
+                </div>
+              </form>
+            {% endwith %}
+          </div>
+
+          <div class="tab-pane fade" id="tokens" role="tabpanel">
+
+            {% with form = Forms.self.TokensForm() %}
+              <form method="POST" x-data="TokensForm" @submit.prevent="generateToken()" class="mb-3">
+                <div class="modal fade" tabindex="-1" x-ref="tokenModal">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">{% trans %}API Key Generated{% endtrans %}</h5>
+                        <button
+                            type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                      </div>
+
+                      <div class="modal-body">
+                        <p>{% trans %}Please copy your API Key, it won't be shown again!{% endtrans %}</p>
+
+                        <div class="input-group mb-3">
+                          <input
+                              type="text" class="form-control bg-white" x-ref="token"
+                              x-model="token" readonly
+                          >
+                          <button
+                              class="btn btn-outline-secondary px-3" type="button"
+                              @click="copyToken()"
+                          >
+                            <i class="fas fa-clipboard"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                          Got it!
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <b>{{ form.expiration.label(class="form-label") }}</b>
+                  {{ form.expiration(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                  <b>{{ form.description.label(class="form-label") }}</b>
+                  {{ form.description(class="form-control", rows="3") }}
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                    {{ form.submit(class="btn btn-block btn-primary float-end px-4") }}
+                  </div>
+                </div>
+              </form>
+            {% endwith %}
+
+            {% if tokens %}
+              <hr>
+
+              <h4 class="text-center mt-3">{% trans %}Active Tokens{% endtrans %}</h4>
+
+              {# This has to be wrapping the table modal, because div with modal will get pushed out
+                 of the table and alpine ref will not work #}
+              <div x-data="Tokens">
+                <div
+                    class="modal fade" x-ref="confirmModal" tabindex="-1" role="dialog"
+                    aria-modal="true"
+                >
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">{% trans %}Delete Token{% endtrans %}</h5>
+                        <button
+                            type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"
+                        >
+                        </button>
+                      </div>
+
+                      <div class="modal-body">
+                        <p>{% trans %}Are you sure you want to delete this token?{% endtrans %}</p>
+                      </div>
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                          No
+                        </button>
+                        <button
+                            type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                            @click="deleteSelectedToken()"
+                        >Yes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <table class="table table-striped align-middle">
+                  <thead>
+                  <tr>
+                    <th class="text-center">{% trans %}Created{% endtrans %}</th>
+                    <th>{% trans %}Expiration{% endtrans %}</th>
+                    <th>{% trans %}Description{% endtrans %}</th>
+                    <th>{% trans %}Delete{% endtrans %}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for token in tokens %}
+                    <tr x-ref="token-{{ token.id }}">
+                      <td class="text-center">
+                        <span data-time="{{ token.created | isoformat }}"></span>
+                      </td>
+                      <td>
+                        <span data-time="{{ token.expiration | isoformat }}"></span>
+                      </td>
+                      <td>
+                        <span>{{ token.description | default('', true) }}</span>
+                      </td>
+                      <td class="text-center">
+                        <span
+                            class="delete-token" role="button"
+                            @click="deleteTokenModal({{ token.id }})">
+                            <i class="cursor-pointer fas fa-times"></i>
+                        </span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+
+                  </tbody>
+                </table>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ Assets.js("assets/js/settings.js") }}
+{% endblock %}
