@@ -2,6 +2,8 @@ import csv
 import json
 from io import BytesIO, StringIO
 
+from sqlalchemy import inspect
+
 from CTFd.models import (
     Flags,
     Hints,
@@ -479,25 +481,40 @@ def load_challenges_csv(dict_reader):
     errors = []
 
     for i, line in enumerate(dict_reader):
-        # Throw away fields that we can't trust if provided
-        _ = line.pop("id", None)
-        _ = line.pop("requirements", None)
-
         flags = line.pop("flags", None)
         tags = line.pop("tags", None)
         hints = line.pop("hints", None)
-        challenge_type = line.pop("type", "standard")
+        challenge_type = (line.pop("type", None) or "standard").strip()
+
+        try:
+            ChallengeClass = get_chal_class(challenge_type)
+        except KeyError:
+            errors.append((i + 1, {"type": ["Unknown challenge type"]}))
+            continue
 
         # Load in custom type_data
-        type_data = json.loads(line.pop("type_data", "{}") or "{}")
-        line.update(type_data)
+        try:
+            type_data = json.loads(line.pop("type_data", "{}") or "{}")
+            if not isinstance(type_data, dict):
+                raise ValueError("type_data must be a JSON object")
+            line.update(type_data)
+        except (TypeError, ValueError):
+            errors.append((i + 1, {"type_data": ["Invalid type_data"]}))
+            continue
+
+        # Throw away fields that we can't trust if provided
+        _ = line.pop("id", None)
+        _ = line.pop("requirements", None)
+        _ = line.pop("type", None)
 
         response = schema.load(line)
         if response.errors:
             errors.append((i + 1, response.errors))
             continue
 
-        ChallengeClass = get_chal_class(challenge_type)
+        # Ignore columns that are not attributes of the challenge model
+        columns = inspect(ChallengeClass.challenge_model).column_attrs.keys()
+        line = {k: v for k, v in line.items() if k in columns}
         challenge = ChallengeClass.challenge_model(**line)
         db.session.add(challenge)
         db.session.commit()
