@@ -587,6 +587,7 @@ class Challenge(Resource):
             max_attempts=chal.max_attempts,
             attempts=attempts,
             challenge=chal,
+            challenge_data=response,
         )
 
         if (
