@@ -4,13 +4,24 @@ import advancedFormat from "dayjs/plugin/advancedFormat";
 // TODO: CTFd 4.0 consider removing dayjs advancedFormat
 dayjs.extend(advancedFormat);
 
-export const intl = new Intl.DateTimeFormat(
-  localStorage.getItem("language") || navigator.language,
-  {
+function getIntl() {
+  // According to BCP47 underscores are not supported
+  const lang =
+    localStorage.getItem("language")?.replace(/_/g, "-") || navigator.language;
+  const options = {
     dateStyle: "long",
     timeStyle: "short",
-  },
-);
+  };
+  try {
+    return new Intl.DateTimeFormat(lang, options);
+  } catch (error) {
+    if (error instanceof RangeError) {
+      return new Intl.DateTimeFormat(undefined, options);
+    }
+    throw error;
+  }
+}
+export const intl = getIntl();
 
 export default () => {
   document.querySelectorAll("[data-time]").forEach($el => {
