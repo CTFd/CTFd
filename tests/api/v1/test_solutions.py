@@ -9,7 +9,6 @@ from tests.helpers import (
     destroy_ctfd,
     gen_challenge,
     gen_flag,
-    gen_hint,
     gen_solution,
     gen_solve,
     gen_user,
