@@ -338,6 +338,14 @@ class UserSchema(ma.ModelSchema):
         removed_field_ids = []
         fields = UserFields.query.all()
 
+        if isinstance(self.view, string_types) is False or self.view not in self.views:
+            # TODO: CTFd 4.0 Passing a list of fields to UserSchema as the view will be removed
+            # TODO: CTFd 3.9 or higher this should throw an exception instead of soft deprecation
+            print(
+                "CTFd 4.0 To access custom fields while passing a view list create a custom UserSchema subclass"
+            )
+            data.pop("fields", None)
+
         # Select fields for removal based on current view and properties of the field
         for field in fields:
             if self.view == "user":
@@ -408,6 +416,10 @@ class UserSchema(ma.ModelSchema):
             if isinstance(view, string_types):
                 kwargs["only"] = self.views[view]
             elif isinstance(view, list):
+                # TODO: CTFd 4.0 Passing a list of fields to UserSchema as the view will be removed
+                print(
+                    "Passing a list of fields to UserSchema will be removed in CTFd 4.0. Please pass a view name instead."
+                )
                 kwargs["only"] = view
         self.view = view
 

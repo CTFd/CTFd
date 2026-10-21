@@ -4,6 +4,7 @@
 			<thead>
 				<tr>
 					<td class="text-center"><b>IP Address</b></td>
+					<td class="text-center"><b>User Agent</b></td>
 					<td class="text-center"><b>Last Seen</b></td>
 					<td class="text-center"><b>City</b></td>
 					<td class="text-center"><b>Country</b></td>
@@ -16,6 +17,9 @@
 						<a href="{{ url_for('admin.users_listing', field='ip', q=addr.ip) }}">
 							{{ addr.ip }}
 						</a>
+					</td>
+					<td class="text-center text-break">
+						{% if addr.user_agent %}{{ addr.user_agent }}{% endif %}
 					</td>
 					<td class="text-center solve-time">
 						<span data-time="{{ addr.date | isoformat }}"></span>

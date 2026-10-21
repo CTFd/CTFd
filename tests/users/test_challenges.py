@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import threading
 from datetime import datetime, timedelta
 
+import pytest
 from freezegun import freeze_time
+from redis.exceptions import ConnectionError
 
+from CTFd.config import TestingConfig
 from CTFd.models import Challenges, Fails, Ratelimiteds, Solves
 from CTFd.utils import set_config, text_type
 from tests.helpers import (
@@ -271,6 +275,75 @@ def test_challenges_with_max_attempts():
 
         solves = Solves.query.count()
         assert solves == 0
+    destroy_ctfd(app)
+
+
+def test_challenges_with_max_attempts_one_race():
+    class RedisConfig(TestingConfig):
+        REDIS_URL = "redis://localhost:6379/1"
+        CACHE_REDIS_URL = "redis://localhost:6379/1"
+        CACHE_TYPE = "redis"
+
+    try:
+        app = create_ctfd(config=RedisConfig)
+    except ConnectionError:
+        print("Failed to connect to redis. Skipping test.")
+        return
+
+    if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
+        destroy_ctfd(app)
+        pytest.skip(
+            "Race requires a concurrent database backend (TESTING_DATABASE_URL)"
+        )
+    with app.app_context():
+        register_user(app)
+        client = login_as_user(app)
+        chal = gen_challenge(app.db)
+        chal = Challenges.query.filter_by(id=chal.id).first()
+        chal_id = chal.id
+        chal.max_attempts = 1
+        app.db.session.commit()
+
+        gen_flag(app.db, challenge_id=chal_id, content="flag")
+
+        session_cookie = next(
+            cookie.value for cookie in client.cookie_jar if cookie.name == "session"
+        )
+
+        # Every submission is wrong so the outcome doesn't depend on which
+        # thread wins the race, only on how many submissions get evaluated
+        wrong_attempts = 10
+        release = threading.Barrier(wrong_attempts)
+        statuses = []
+        lock = threading.Lock()
+
+        def worker():
+            with app.app_context(), app.test_client() as tclient:
+                tclient.set_cookie("localhost", "session", session_cookie)
+                release.wait(timeout=10)
+                r = tclient.post(
+                    "/api/v1/challenges/attempt",
+                    json={"submission": "notflag", "challenge_id": chal_id},
+                )
+                with lock:
+                    statuses.append(r.get_json()["data"]["status"])
+
+        threads = [threading.Thread(target=worker) for _ in range(wrong_attempts)]
+
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=30)
+
+        assert not any(thread.is_alive() for thread in threads)
+
+        # max_attempts == 1 must be enforced regardless of concurrency, so
+        # exactly one submission is evaluated and the rest are ratelimited
+        assert len(statuses) == wrong_attempts
+        assert statuses.count("incorrect") == 1
+        assert statuses.count("ratelimited") == wrong_attempts - 1
+        assert Fails.query.count() == 1
+        assert Solves.query.count() == 0
     destroy_ctfd(app)
 
 

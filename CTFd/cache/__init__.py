@@ -215,11 +215,18 @@ def clear_user_recent_ips(user_id):
     cache.delete_memoized(get_user_recent_ips, user_id=user_id)
 
 
+def clear_user_recent_tracking(user_id):
+    from CTFd.utils.user import get_user_recent_tracking
+
+    cache.delete_memoized(get_user_recent_tracking, user_id=user_id)
+
+
 def clear_user_session(user_id):
     from CTFd.utils.user import (  # noqa: I001
         get_user_attrs,
         get_user_place,
         get_user_recent_ips,
+        get_user_recent_tracking,
         get_user_schema,
         get_user_score,
     )
@@ -228,6 +235,7 @@ def clear_user_session(user_id):
     cache.delete_memoized(get_user_place, user_id=user_id)
     cache.delete_memoized(get_user_score, user_id=user_id)
     cache.delete_memoized(get_user_recent_ips, user_id=user_id)
+    cache.delete_memoized(get_user_recent_tracking, user_id=user_id)
     cache.delete_memoized(get_user_schema, user_id=user_id, user_type="user")
     cache.delete_memoized(get_user_schema, user_id=user_id, user_type="admin")
 
@@ -237,6 +245,7 @@ def clear_all_user_sessions():
         get_user_attrs,
         get_user_place,
         get_user_recent_ips,
+        get_user_recent_tracking,
         get_user_schema,
         get_user_score,
     )
@@ -245,6 +254,7 @@ def clear_all_user_sessions():
     cache.delete_memoized(get_user_place)
     cache.delete_memoized(get_user_score)
     cache.delete_memoized(get_user_recent_ips)
+    cache.delete_memoized(get_user_recent_tracking)
     cache.delete_memoized(get_user_schema)
 
 

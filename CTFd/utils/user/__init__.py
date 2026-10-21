@@ -246,6 +246,18 @@ def get_ip(req=None):
     return remote_addr
 
 
+def get_user_agent(req=None):
+    """Returns the User-Agent of the currently in scope request truncated to 256 characters"""
+    if req is None:
+        req = request
+
+    user_agent = req.headers.get("User-Agent")
+    if not user_agent:
+        return None
+
+    return user_agent[:256]
+
+
 def get_locale():
     # Use the user's preferred language
     if authed():
@@ -281,6 +293,24 @@ def get_user_recent_ips(user_id):
         .all()
     )
     return {ip for (ip,) in addrs}
+
+
+def get_current_user_recent_tracking():
+    if authed():
+        return get_user_recent_tracking(user_id=session["id"])
+    else:
+        return None
+
+
+@cache.memoize(timeout=300)
+def get_user_recent_tracking(user_id):
+    hour_ago = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    entries = (
+        Tracking.query.with_entities(Tracking.ip, Tracking.user_agent)
+        .filter(Tracking.user_id == user_id, Tracking.date >= hour_ago)
+        .all()
+    )
+    return {(ip, user_agent) for (ip, user_agent) in entries}
 
 
 def get_wrong_submissions_per_minute(account_id, return_objects=False):
