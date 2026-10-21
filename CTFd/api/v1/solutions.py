@@ -17,6 +17,7 @@ from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
 )
+from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modules import can_access_challenge
 from CTFd.utils.uploads import delete_file
@@ -147,6 +148,7 @@ class SolutionList(Resource):
 @solutions_namespace.param("solution_id", "A Solution ID")
 class Solution(Resource):
     @during_ctf_time_only
+    @check_challenge_visibility
     @require_verified_emails
     @authed_only
     @solutions_namespace.doc(

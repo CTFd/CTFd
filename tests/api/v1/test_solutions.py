@@ -9,6 +9,7 @@ from tests.helpers import (
     destroy_ctfd,
     gen_challenge,
     gen_flag,
+    gen_hint,
     gen_solution,
     gen_solve,
     gen_user,
@@ -1144,4 +1145,72 @@ def test_api_solutions_scheduled_at_blocked():
             r = admin.get(f"/api/v1/solutions/{solution_id}")
             assert r.status_code == 200
 
+    destroy_ctfd(app)
+
+
+def test_api_solutions_respect_admins_only_challenge_visibility():
+    """Admins Only challenge visibility must also cover solutions"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        solution_id = gen_solution(
+            app.db, challenge_id=1, content="SENSITIVE", state="visible"
+        ).id
+        register_user(app)
+        set_config("challenge_visibility", "admins")
+
+        with login_as_user(app) as client:
+            assert client.get("/api/v1/challenges/1", json="").status_code == 403
+
+            r = client.get(f"/api/v1/solutions/{solution_id}", json="")
+            assert r.status_code == 403, r.get_json()
+
+            r = client.post(
+                "/api/v1/unlocks",
+                json={"target": solution_id, "type": "solutions"},
+            )
+            assert r.status_code == 403, r.get_json()
+            assert Unlocks.query.count() == 0
+
+            unlock = SolutionUnlocks(user_id=2, target=solution_id)
+            app.db.session.add(unlock)
+            app.db.session.commit()
+            r = client.get(f"/api/v1/solutions/{solution_id}", json="")
+            assert r.status_code == 403
+            assert b"SENSITIVE" not in r.data
+
+        with login_as_user(app, name="admin", password="password") as client:
+            r = client.get(f"/api/v1/solutions/{solution_id}", json="")
+            assert r.status_code == 200
+            assert r.get_json()["data"]["content"] == "SENSITIVE"
+    destroy_ctfd(app)
+
+
+def test_api_solutions_unlock_flow_still_works_under_normal_visibility():
+    """The usual unlock-then-read flow must be untouched for private visibility"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        solution_id = gen_solution(
+            app.db, challenge_id=1, content="SENSITIVE", state="visible"
+        ).id
+        register_user(app)
+        set_config("challenge_visibility", "private")
+
+        with login_as_user(app) as client:
+            assert client.get("/api/v1/challenges/1", json="").status_code == 200
+
+            r = client.get(f"/api/v1/solutions/{solution_id}", json="")
+            assert r.status_code == 200
+            assert "content" not in r.get_json()["data"]
+
+            r = client.post(
+                "/api/v1/unlocks",
+                json={"target": solution_id, "type": "solutions"},
+            )
+            assert r.status_code == 200, r.get_json()
+
+            r = client.get(f"/api/v1/solutions/{solution_id}", json="")
+            assert r.status_code == 200
+            assert r.get_json()["data"]["content"] == "SENSITIVE"
     destroy_ctfd(app)

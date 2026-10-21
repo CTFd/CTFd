@@ -25,6 +25,7 @@ from CTFd.utils.decorators import (
     during_ctf_time_only,
     require_verified_emails,
 )
+from CTFd.utils.decorators.visibility import check_challenge_visibility
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.modules import can_access_challenge
 from CTFd.utils.user import get_current_user, get_ip, is_admin
@@ -97,6 +98,7 @@ class UnlockList(Resource):
         return {"success": True, "data": response.data}
 
     @during_ctf_time_only
+    @check_challenge_visibility
     @require_verified_emails
     @authed_only
     @unlocks_namespace.doc(
