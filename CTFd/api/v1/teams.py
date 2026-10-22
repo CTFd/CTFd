@@ -499,6 +499,7 @@ class TeamMembers(Resource):
             Unlocks.query.filter_by(user_id=user.id).delete()
 
             db.session.commit()
+            clear_user_session(user_id=user.id)
         else:
             return (
                 {"success": False, "errors": {"id": ["User is not part of this team"]}},
