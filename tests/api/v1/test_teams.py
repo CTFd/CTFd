@@ -6,6 +6,7 @@ from freezegun import freeze_time
 from CTFd.models import Awards, Fails, Solves, Teams, Users
 from CTFd.utils import set_config
 from CTFd.utils.crypto import verify_password
+from CTFd.utils.user import get_user_attrs
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -286,6 +287,48 @@ def test_api_team_delete_admin():
 
         for user in Users.query.all():
             assert user.team_id is None
+    destroy_ctfd(app)
+
+
+def test_api_team_removed_member_can_create_team():
+    """A member removed by an admin can immediately create a new team"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        team = gen_team(app.db, member_count=2)
+        team_id = team.id
+        member = team.members[1]
+        user_id = member.id
+        client = login_as_user(app, name=member.name)
+
+        # Cache the user's original team membership before the admin removes it.
+        assert get_user_attrs(user_id=user_id).team_id == team_id
+
+        with login_as_user(app, "admin") as admin:
+            r = admin.delete(
+                f"/api/v1/teams/{team_id}/members", json={"user_id": user_id}
+            )
+            assert r.status_code == 200
+            assert r.get_json()["success"] is True
+            assert user_id not in r.get_json()["data"]
+
+        assert Users.query.filter_by(id=user_id).first().team_id is None
+        assert get_user_attrs(user_id=user_id).team_id is None
+
+        r = client.get("/teams/new")
+        assert r.status_code == 200
+        assert "You are already in a team" not in r.get_data(as_text=True)
+
+        with client.session_transaction() as sess:
+            data = {
+                "name": "new_team",
+                "password": "password",
+                "nonce": sess.get("nonce"),
+            }
+        r = client.post("/teams/new", data=data)
+        assert r.status_code == 302
+        new_team = Teams.query.filter_by(name="new_team").first()
+        assert new_team is not None
+        assert Users.query.filter_by(id=user_id).first().team_id == new_team.id
     destroy_ctfd(app)
 
 
