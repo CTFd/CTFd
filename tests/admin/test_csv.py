@@ -8,7 +8,9 @@ from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
     gen_challenge,
+    gen_field,
     gen_solve,
+    gen_team,
     gen_user,
     login_as_user,
 )
@@ -219,5 +221,28 @@ def test_export_scoreboard_frozen_csv_without_freeze():
         # header + 1 data row
         assert len(rows) == 2
         assert rows[1][4] == "100"  # score column in users mode
+
+    destroy_ctfd(app)
+
+
+def test_export_users_teams_csv_rows_match_header_length():
+    """Test that users without a team export the same number of cells as the header"""
+    app = create_ctfd(user_mode="teams")
+    with app.app_context():
+        gen_field(app.db, name="user_field", type="user")
+        gen_field(app.db, name="team_field", type="team")
+        gen_user(app.db, name="teamless", email="teamless@examplectf.com")
+        gen_team(app.db, member_count=1)
+
+        client = login_as_user(app, name="admin", password="password")
+        csv_data = client.get(
+            "/admin/export/csv?table=users%2Bteams%2Bfields"
+        ).get_data(as_text=True)
+
+        reader = csv.reader(io.StringIO(csv_data))
+        rows = list(reader)
+
+        assert len(rows) > 2
+        assert {len(row) for row in rows} == {len(rows[0])}
 
     destroy_ctfd(app)
