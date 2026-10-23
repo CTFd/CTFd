@@ -915,6 +915,48 @@ def test_api_challenge_patch_admin():
     destroy_ctfd(app)
 
 
+def test_api_challenge_max_attempts_rejects_null_and_negative():
+    """Challenges cannot be created or updated with a null or negative max_attempts (0 means unlimited)"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        with login_as_user(app, "admin") as client:
+            r = client.post(
+                "/api/v1/challenges",
+                json={
+                    "name": "chal",
+                    "category": "cate",
+                    "description": "desc",
+                    "value": "100",
+                    "state": "hidden",
+                    "type": "standard",
+                    "max_attempts": None,
+                },
+            )
+            assert r.status_code == 400
+            assert "max_attempts" in r.get_json()["errors"]
+            assert Challenges.query.count() == 1
+
+            r = client.patch("/api/v1/challenges/1", json={"max_attempts": None})
+            assert r.status_code == 400
+            assert "max_attempts" in r.get_json()["errors"]
+            assert Challenges.query.filter_by(id=1).first().max_attempts == 0
+
+            r = client.patch("/api/v1/challenges/1", json={"max_attempts": -1})
+            assert r.status_code == 400
+            assert "max_attempts" in r.get_json()["errors"]
+            assert Challenges.query.filter_by(id=1).first().max_attempts == 0
+
+            r = client.patch("/api/v1/challenges/1", json={"max_attempts": 0})
+            assert r.status_code == 200
+            assert r.get_json()["data"]["max_attempts"] == 0
+
+            r = client.patch("/api/v1/challenges/1", json={"max_attempts": 5})
+            assert r.status_code == 200
+            assert r.get_json()["data"]["max_attempts"] == 5
+    destroy_ctfd(app)
+
+
 def test_api_challenge_delete_non_admin():
     """Can a user delete /api/v1/challenges/<challenge_id> if not admin"""
     app = create_ctfd()
