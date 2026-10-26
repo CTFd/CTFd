@@ -127,7 +127,7 @@ packaging==25.0
     # via gunicorn
 passlib==1.7.4
     # via ctfd
-pillow==12.2.0
+pillow==13.0.0
     # via ctfd
 pycparser==2.22 ; implementation_name != 'PyPy'
     # via cffi
