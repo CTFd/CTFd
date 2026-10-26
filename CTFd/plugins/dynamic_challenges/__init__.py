@@ -9,6 +9,7 @@ from CTFd.plugins import register_plugin_assets_directory
 from CTFd.plugins.challenges import CHALLENGE_CLASSES, BaseChallenge
 from CTFd.plugins.dynamic_challenges.decay import DECAY_FUNCTIONS, logarithmic
 from CTFd.plugins.migrations import upgrade
+from CTFd.utils.dates import parse_iso_datetime
 
 
 class DynamicChallenge(Challenges):
@@ -124,7 +125,12 @@ class DynamicValueChallenge(BaseChallenge):
         :param request:
         :return:
         """
-        data = request.form or request.get_json()
+        data = dict(request.form or request.get_json() or {})
+        if "scheduled_at" in data:
+            try:
+                data["scheduled_at"] = parse_iso_datetime(data["scheduled_at"])
+            except ValueError:
+                raise ChallengeUpdateException("Invalid input for 'scheduled_at'")
 
         for attr, value in data.items():
             # We need to set these to floats so that the next operations don't operate on strings

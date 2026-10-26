@@ -20,77 +20,37 @@ dayjs.extend(advancedFormat);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const datetimeLocalFormat = "YYYY-MM-DDTHH:mm:ss";
+const previewFormat = "dddd, MMMM Do YYYY, h:mm:ss a z (zzz)";
+
 function loadTimestamp(place, timestamp) {
   if (typeof timestamp == "string") {
-    timestamp = parseInt(timestamp, 10) * 1000;
+    timestamp = parseInt(timestamp, 10);
   }
-  const d = dayjs(timestamp);
-  $("#" + place + "-month").val(d.month() + 1); // Months are zero indexed (https://day.js.org/docs/en/get-set/month)
-  $("#" + place + "-day").val(d.date());
-  $("#" + place + "-year").val(d.year());
-  $("#" + place + "-hour").val(d.hour());
-  $("#" + place + "-minute").val(d.minute());
+
+  const d = dayjs.unix(timestamp);
+  if (d.isValid()) {
+    $("#" + place + "-datetime").val(d.format(datetimeLocalFormat));
+  }
   loadDateValues(place);
 }
 
 function loadDateValues(place) {
-  const month = $("#" + place + "-month").val();
-  const day = $("#" + place + "-day").val();
-  const year = $("#" + place + "-year").val();
-  const hour = $("#" + place + "-hour").val();
-  const minute = $("#" + place + "-minute").val();
-  const timezone_string = $("#" + place + "-timezone").val();
+  const dateString = $("#" + place + "-datetime").val();
+  const timezoneString = $("#" + place + "-timezone").val() || dayjs.tz.guess();
+  const local = dayjs(dateString);
 
-  const utc = convertDateToMoment(month, day, year, hour, minute);
-  if (utc.unix() && month && day && year && hour && minute) {
-    $("#" + place).val(utc.unix());
-    $("#" + place + "-local").val(
-      utc.format("dddd, MMMM Do YYYY, h:mm:ss a z (zzz)"),
-    );
+  if (dateString && local.isValid()) {
+    $("#" + place).val(local.unix());
+    $("#" + place + "-local").val(local.format(previewFormat));
     $("#" + place + "-zonetime").val(
-      utc.tz(timezone_string).format("dddd, MMMM Do YYYY, h:mm:ss a z (zzz)"),
+      local.tz(timezoneString).format(previewFormat),
     );
   } else {
     $("#" + place).val("");
     $("#" + place + "-local").val("");
     $("#" + place + "-zonetime").val("");
   }
-}
-
-function convertDateToMoment(month, day, year, hour, minute) {
-  let month_num = month.toString();
-  if (month_num.length == 1) {
-    month_num = "0" + month_num;
-  }
-
-  let day_str = day.toString();
-  if (day_str.length == 1) {
-    day_str = "0" + day_str;
-  }
-
-  let hour_str = hour.toString();
-  if (hour_str.length == 1) {
-    hour_str = "0" + hour_str;
-  }
-
-  let min_str = minute.toString();
-  if (min_str.length == 1) {
-    min_str = "0" + min_str;
-  }
-
-  // 2013-02-08 24:00
-  const date_string =
-    year.toString() +
-    "-" +
-    month_num +
-    "-" +
-    day_str +
-    " " +
-    hour_str +
-    ":" +
-    min_str +
-    ":00";
-  return dayjs(date_string);
 }
 
 function updateConfigs(event) {
@@ -502,13 +462,13 @@ $(() => {
     theme_header_editor.getDoc().setValue(new_css);
   });
 
-  $(".start-date").change(function () {
+  $(".start-date").on("input change", function () {
     loadDateValues("start");
   });
-  $(".end-date").change(function () {
+  $(".end-date").on("input change", function () {
     loadDateValues("end");
   });
-  $(".freeze-date").change(function () {
+  $(".freeze-date").on("input change", function () {
     loadDateValues("freeze");
   });
 
@@ -518,12 +478,18 @@ $(() => {
 
   if (start) {
     loadTimestamp("start", start);
+  } else {
+    loadDateValues("start");
   }
   if (end) {
     loadTimestamp("end", end);
+  } else {
+    loadDateValues("end");
   }
   if (freeze) {
     loadTimestamp("freeze", freeze);
+  } else {
+    loadDateValues("freeze");
   }
 
   // Toggle username and password based on stored value

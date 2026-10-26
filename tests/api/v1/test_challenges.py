@@ -1669,6 +1669,102 @@ def test_api_challenges_scheduled_at_tz_aware_normalized_to_utc():
     destroy_ctfd(app)
 
 
+def test_api_challenges_scheduled_at_update_for_every_challenge_type():
+    """Every registered challenge type parses scheduled_at on update"""
+    app = create_ctfd(enable_plugins=True)
+    with app.app_context():
+        from CTFd.plugins.challenges import CHALLENGE_CLASSES
+
+        challenge_types = list(CHALLENGE_CLASSES)
+        assert "standard" in challenge_types
+        assert "dynamic" in challenge_types
+
+        with login_as_user(app, "admin") as admin:
+            for challenge_type in challenge_types:
+                r = admin.post(
+                    "/api/v1/challenges",
+                    json={
+                        "name": challenge_type,
+                        "category": "category",
+                        "description": "description",
+                        "value": 100,
+                        "initial": 100,
+                        "decay": 20,
+                        "minimum": 1,
+                        "state": "visible",
+                        "type": challenge_type,
+                    },
+                )
+                assert r.status_code == 200
+                chal_id = r.get_json()["data"]["id"]
+
+                r = admin.patch(
+                    f"/api/v1/challenges/{chal_id}",
+                    json={"scheduled_at": "2031-06-15T12:00:00.000Z"},
+                )
+                assert r.status_code == 200
+
+                chal = Challenges.query.filter_by(id=chal_id).first()
+                assert chal.scheduled_at == datetime.datetime(2031, 6, 15, 12, 0, 0)
+                assert chal.scheduled_at.tzinfo is None
+
+                r = admin.patch(
+                    f"/api/v1/challenges/{chal_id}",
+                    json={"scheduled_at": "2031-06-15T14:00:00+02:00"},
+                )
+                assert r.status_code == 200
+
+                chal = Challenges.query.filter_by(id=chal_id).first()
+                assert chal.scheduled_at == datetime.datetime(2031, 6, 15, 12, 0, 0)
+
+                r = admin.patch(
+                    f"/api/v1/challenges/{chal_id}",
+                    json={"scheduled_at": None},
+                )
+                assert r.status_code == 200
+
+                chal = Challenges.query.filter_by(id=chal_id).first()
+                assert chal.scheduled_at is None
+    destroy_ctfd(app)
+
+
+def test_api_challenges_scheduled_at_invalid_for_every_challenge_type():
+    """Every registered challenge type rejects an unparseable scheduled_at"""
+    app = create_ctfd(enable_plugins=True)
+    with app.app_context():
+        from CTFd.plugins.challenges import CHALLENGE_CLASSES
+
+        with login_as_user(app, "admin") as admin:
+            for challenge_type in CHALLENGE_CLASSES:
+                r = admin.post(
+                    "/api/v1/challenges",
+                    json={
+                        "name": challenge_type,
+                        "category": "category",
+                        "description": "description",
+                        "value": 100,
+                        "initial": 100,
+                        "decay": 20,
+                        "minimum": 1,
+                        "state": "visible",
+                        "type": challenge_type,
+                    },
+                )
+                assert r.status_code == 200
+                chal_id = r.get_json()["data"]["id"]
+
+                r = admin.patch(
+                    f"/api/v1/challenges/{chal_id}",
+                    json={"scheduled_at": "not a datetime"},
+                )
+                assert r.status_code in (400, 500)
+
+                app.db.session.rollback()
+                chal = Challenges.query.filter_by(id=chal_id).first()
+                assert chal.scheduled_at is None
+    destroy_ctfd(app)
+
+
 def test_api_challenges_scheduled_at_solves_endpoint_blocked():
     """Non-admins get 404 on the solves endpoint for future-scheduled challenges"""
     app = create_ctfd()

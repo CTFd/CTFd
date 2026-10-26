@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from CTFd.models import Challenges, SolutionFiles, Solutions, SolutionUnlocks
+from CTFd.models import Challenges, SolutionFiles, Solutions, SolutionUnlocks, Unlocks
 from CTFd.utils import set_config
 from tests.helpers import (
     create_ctfd,
@@ -209,6 +209,29 @@ def test_api_solutions_get_detail_non_admin_unlocked():
             assert "state" in data["data"]
             assert "content" in data["data"]
             assert "html" in data["data"]
+    destroy_ctfd(app)
+
+
+def test_api_solution_unlock_stores_ip():
+    """Test that unlocking a solution stores the request IP address"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        solution = gen_solution(app.db, challenge_id=1, state="visible")
+        solution_id = solution.id
+        register_user(app)
+
+        with login_as_user(app) as client:
+            r = client.post(
+                "/api/v1/unlocks",
+                json={"target": solution_id, "type": "solutions"},
+                environ_base={"REMOTE_ADDR": "203.0.113.11"},
+            )
+            assert r.status_code == 200
+
+            unlock = Unlocks.query.first()
+            assert unlock.ip == "203.0.113.11"
+            assert r.get_json()["data"]["ip"] == "203.0.113.11"
     destroy_ctfd(app)
 
 
@@ -1026,29 +1049,21 @@ def test_api_complete_solution_unlock_flow():
             assert r.status_code == 404
 
             # Step 16: Other user attempts to unlock the solution
-            # Should succeed in creating the unlock record
+            # Should fail because they haven't solved the challenge
             r = other_client.post(
                 "/api/v1/unlocks",
                 json={"target": solution_id, "type": "solutions"},
             )
-            assert r.status_code == 200
-            unlock_data = r.get_json()
-            assert unlock_data["success"] is True
-            assert unlock_data["data"]["target"] == solution_id
-            assert unlock_data["data"]["type"] == "solutions"
-            assert unlock_data["data"]["user_id"] == other_user_id
+            assert r.status_code == 403
 
-            # Step 17: Verify the unlock was recorded for the other user
+            # Step 17: Verify no unlock was recorded for the other user
             other_unlock = SolutionUnlocks.query.filter_by(
                 user_id=other_user_id, target=solution_id
             ).first()
-            assert other_unlock is not None
-            assert other_unlock.user_id == other_user_id
-            assert other_unlock.target == solution_id
+            assert other_unlock is None
 
-            # Step 18: Other user tries to view the solution AGAIN after unlocking
+            # Step 18: Other user tries to view the solution again
             # Should STILL return 404 because they haven't solved the challenge
-            # (unlock without solve should not grant access to "solved" state solutions)
             r = other_client.get(f"/api/v1/solutions/{solution_id}")
             assert r.status_code == 404
 
@@ -1082,8 +1097,20 @@ def test_api_complete_solution_unlock_flow():
             assert data["success"] is True
             assert data["data"]["solution_id"] == solution_id  # Now visible!
 
+            # Other user can now unlock the solution
+            r = other_client.post(
+                "/api/v1/unlocks",
+                json={"target": solution_id, "type": "solutions"},
+            )
+            assert r.status_code == 200
+            unlock_data = r.get_json()
+            assert unlock_data["success"] is True
+            assert unlock_data["data"]["target"] == solution_id
+            assert unlock_data["data"]["type"] == "solutions"
+            assert unlock_data["data"]["user_id"] == other_user_id
+
             # Step 21: Other user can now view the solution with full content
-            # (because they both solved AND already unlocked it)
+            # (because they both solved AND unlocked it)
             r = other_client.get(f"/api/v1/solutions/{solution_id}")
             assert r.status_code == 200
             data = r.get_json()

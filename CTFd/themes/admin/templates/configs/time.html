@@ -1,5 +1,53 @@
+{% macro render_time_config(place, description, timestamp) %}
+	<div class="row" id="{{ place }}-date-fields">
+		<div class="col-md-12">
+			<p>{{ description }}</p>
+		</div>
+
+		<div class="form-group col-md-12">
+			<label for="{{ place }}-datetime">Date and Time:</label>
+			<input class="form-control {{ place }}-date" id="{{ place }}-datetime" type="datetime-local" step="1">
+			<small class="form-text text-muted">
+				This value is interpreted using your browser's local timezone.
+			</small>
+		</div>
+
+		{{ caller() }}
+
+		<div class="form-group col-md-12">
+			<label for="{{ place }}-local">Local Time:</label>
+			<input class="form-control" id="{{ place }}-local" type="text" readonly>
+		</div>
+
+		<div class="form-group col-md-12">
+			<label for="{{ place }}-timezone">Timezone:</label>
+			<select class="form-control custom-select {{ place }}-date" id="{{ place }}-timezone">
+			</select>
+			<small class="form-text text-muted">
+				Changing this only updates the preview below.
+			</small>
+		</div>
+
+		<div class="form-group col-md-12">
+			<label for="{{ place }}-zonetime">Timezone Preview:</label>
+			<input class="form-control" id="{{ place }}-zonetime" type="text" readonly>
+		</div>
+
+		<div class="form-group col-md-12">
+			<label for="{{ place }}">UTC Timestamp:</label>
+			<input class="form-control" id="{{ place }}" name="{{ place }}" type="number"
+				{% if timestamp is defined and timestamp != None %}value="{{ timestamp }}"{% endif %} readonly>
+		</div>
+	</div>
+{% endmacro %}
+
 <div role="tabpanel" class="tab-pane config-section" id="ctftime">
 	<form method="POST" autocomplete="off" class="w-100">
+		<p>
+			Enter timings using your browser's local timezone. Use the Timezone dropdown to preview
+			the selected time in another timezone.
+		</p>
+
 		<ul class="nav nav-tabs mb-3">
 			<li class="nav-item">
 				<a class="nav-link active" href="#start-date" aria-controls="start-date" role="tab" data-toggle="tab">
@@ -20,105 +68,12 @@
 
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="start-date">
-				<div class="row" id="start-date">
-					<div class="col-md-12">
-						<p>This is the time when the competition will begin. Challenges will automatically
-							unlock and users will be able to submit answers.</p>
-						<sub class="text-muted text-right mb-3">* All time fields required</sub>
-					</div>
-
-					<!-- TODO: these time fields should probably be required, but needs movement of <form> -->
-					<div class="form-group col-md-2">
-						<label for="start-month">Month:</label>
-						<input class="form-control start-date" id='start-month' min="0" max="12" type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="start-day">Day:</label>
-						<input class="form-control start-date" id='start-day' min="0" max="31" type='number'>
-					</div>
-
-					<div class="form-group col-md-3">
-						<label for="start-year">Year:</label>
-						<input class="form-control start-date" id='start-year' type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="start-hour">Hour:</label>
-						<input class="form-control start-date" id='start-hour' min="0" max="23" type='number'>
-					</div>
-
-					<div class="form-group col-md-3">
-						<label for="start-minute">Minute:</label>
-						<input class="form-control start-date" id='start-minute' min="0" max="59" type='number'>
-					</div>
-
-					<!-- TODO: Better Timezone options (e.g. with UTC offset info like "UTC+1")-->
-					<div class="form-group col-md-12">
-						<label for="start-timezone">Timezone:</label>
-						<select class="form-control custom-select start-date" id="start-timezone">
-						</select>
-					</div>
-
-					<!-- TODO: Clarify via UI that user cannot touch these fields -->
-					<div class="form-group col-md-12">
-						<label for="start-local">Local Time:</label>
-						<input class="form-control" id='start-local' type='text' readonly>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label for="start-zonetime">Timezone Time:</label>
-						<input class="form-control" id='start-zonetime' type='text' readonly>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label>UTC Timestamp:</label>
-						<input class="form-control" id='start' name='start' type='number'
-							{% if start is defined and start != None %}value="{{ start }}"{% endif %} readonly>
-					</div>
-				</div>
+				{% call render_time_config("start", "This is the time when the competition will begin. Challenges will automatically unlock and users will be able to submit answers.", start) %}
+				{% endcall %}
 			</div>
+
 			<div role="tabpanel" class="tab-pane" id="end-date">
-				<div class="row" id="end-date">
-					<div class="col-md-12">
-						<p>This is the time when the competition will end. Challenges will automatically
-							close and users won't be able to submit answers.</p>
-						<sub class="text-muted text-right mb-3">* All time fields required</sub>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="end-month">Month:</label>
-						<input class="form-control end-date" id='end-month' min="0" max="12" type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="end-day">Day:</label>
-						<input class="form-control end-date" id='end-day' min="0" max="31" type='number'>
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="end-year">Year:</label>
-						<input class="form-control end-date" id='end-year' type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="end-hour">Hour:</label>
-						<input class="form-control end-date" id='end-hour' min="0" max="23" type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="end-minute">Minute:</label>
-						<input class="form-control end-date" id='end-minute' min="0" max="59" type='number'>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label for="end-timezone">Timezone:</label>
-						<select class="form-control custom-select end-date" id="end-timezone">
-						</select>
-					</div>
-
-					<br>
-
+				{% call render_time_config("end", "This is the time when the competition will end. Challenges will automatically close and users won't be able to submit answers.", end) %}
 					<div class="form-group col-md-12">
 						<div class="form-check pl-0">
 							<label>
@@ -131,82 +86,12 @@
 							</label>
 						</div>
 					</div>
-
-					<div class="form-group col-md-12">
-						<label for="end-local">Local Time:</label>
-						<input class="form-control" id='end-local' type='text' readonly>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label for="end-zonetime">Timezone Time:</label>
-						<input class="form-control" id='end-zonetime' type='text' readonly>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label for="end">UTC Timestamp:</label>
-						<input class="form-control" id='end' name='end' type='number'
-							{% if end is defined and end != None %}value="{{ end }}"{% endif %} readonly>
-					</div>
-				</div>
+				{% endcall %}
 			</div>
+
 			<div role="tabpanel" class="tab-pane" id="freeze-date">
-				<div class="row" id="freeze-date">
-					<div class="col-md-12">
-						<!-- TODO: Rephrase -->
-						<p>Freeze time specifies the timestamp that the competition will be frozen to.
-							All solves before the freeze time will be shown, but new solves won't be shown to
-							users. </p>
-						<sub class="text-muted text-right mb-3">* All time fields required</sub>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="freeze-month">Month:</label>
-						<input class="form-control freeze-date" id='freeze-month' min="0" max="12" type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="freeze-day">Day:</label>
-						<input class="form-control freeze-date" id='freeze-day' min="0" max="31" type='number'>
-					</div>
-
-					<div class="form-group col-md-4">
-						<label for="freeze-year">Year:</label>
-						<input class="form-control freeze-date" id='freeze-year' type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="freeze-hour">Hour:</label>
-						<input class="form-control freeze-date" id='freeze-hour' min="0" max="23" type='number'>
-					</div>
-
-					<div class="form-group col-md-2">
-						<label for="freeze-minute">Minute:</label>
-						<input class="form-control freeze-date" id='freeze-minute' min="0" max="59" type='number'>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label for="freeze-timezone">CTF Timezone:</label>
-						<select class="form-control custom-select freeze-date" id="freeze-timezone">
-						</select>
-					</div>
-
-					<!-- TODO: Clarify -->
-					<div class="form-group col-md-12">
-						<label for="freeze-local">Local Time:</label>
-						<input class="form-control" id='freeze-local' type='text' readonly>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label for="freeze-zonetime">Timezone Time:</label>
-						<input class="form-control" id='freeze-zonetime' type='text' readonly>
-					</div>
-
-					<div class="form-group col-md-12">
-						<label for="freeze">UTC Timestamp:</label>
-						<input class="form-control" id='freeze' name='freeze' type='number'
-							{% if freeze is defined and freeze != None %}value="{{ freeze }}"{% endif %} readonly>
-					</div>
-				</div>
+				{% call render_time_config("freeze", "Freeze time specifies the timestamp that the competition will be frozen to. All solves before the freeze time will be shown, but new solves won't be shown to users.", freeze) %}
+				{% endcall %}
 			</div>
 		</div>
 
