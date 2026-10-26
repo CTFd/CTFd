@@ -7,6 +7,24 @@ import CTFd from "./index";
 window.Alpine = Alpine;
 
 Alpine.data("SetupForm", () => ({
+  git: {
+    providers: window.GIT_PROVIDERS || {},
+    selecting: null,
+    provider: null,
+    user: null,
+    device: null,
+    pat: "",
+    repos: [],
+    selectedRepo: "",
+    mode: "select",
+    newRepoName: "",
+    newRepoPrivate: true,
+    repo: null,
+    busy: false,
+    error: null,
+  },
+  devicePollTimer: null,
+
   init() {
     // Bind Enter on any input to clicking the Next button
     this.$root.querySelectorAll("input").forEach(i => {
@@ -24,18 +42,161 @@ Alpine.data("SetupForm", () => ({
         }
       });
     });
+  },
 
-    // Register storage listener for MLC integration
-    window.addEventListener("storage", function (event) {
-      if (event.key == "integrations" && event.newValue) {
-        let integration = JSON.parse(event.newValue);
-        if (integration["name"] == "mlc") {
-          $("#integration-mlc").text("Already Configured").attr("disabled", true);
-          window.focus();
-          localStorage.removeItem("integrations");
+  async gitRequest(method, url, body) {
+    const options = { method };
+    if (body !== undefined) {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await CTFd.fetch(url, options);
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (_e) {
+      // fallthrough to the generic error below
+    }
+
+    if (!response.ok || data.success === false) {
+      throw new Error(
+        (data.errors && data.errors[0]) || "Request failed, please try again",
+      );
+    }
+
+    return data.data;
+  },
+
+  selectGitProvider(provider) {
+    this.git.selecting = provider;
+    this.git.error = null;
+    this.git.pat = "";
+  },
+
+  cancelGitConnect() {
+    clearTimeout(this.devicePollTimer);
+    this.git.selecting = null;
+    this.git.device = null;
+    this.git.error = null;
+    this.git.pat = "";
+  },
+
+  async startDeviceLogin(provider) {
+    this.git.error = null;
+    this.git.busy = true;
+    try {
+      const data = await this.gitRequest("POST", `/setup/git/${provider}/device`);
+      this.git.device = data;
+      this.pollDeviceLogin(provider, (data.interval || 5) * 1000);
+    } catch (e) {
+      this.git.error = e.message;
+    } finally {
+      this.git.busy = false;
+    }
+  },
+
+  pollDeviceLogin(provider, interval) {
+    this.devicePollTimer = setTimeout(async () => {
+      try {
+        const data = await this.gitRequest(
+          "POST",
+          `/setup/git/${provider}/device/token`,
+        );
+        if (data.status === "ok") {
+          this.git.device = null;
+          await this.gitConnected(provider, data.user);
+        } else {
+          this.pollDeviceLogin(provider, interval);
         }
+      } catch (e) {
+        this.git.device = null;
+        this.git.error = e.message;
       }
+    }, interval);
+  },
+
+  async tokenLogin(provider) {
+    this.git.error = null;
+    this.git.busy = true;
+    try {
+      const data = await this.gitRequest("POST", `/setup/git/${provider}/token`, {
+        token: this.git.pat,
+      });
+      await this.gitConnected(provider, data.user);
+    } catch (e) {
+      this.git.error = e.message;
+    } finally {
+      this.git.busy = false;
+    }
+  },
+
+  async gitConnected(provider, user) {
+    this.git.selecting = null;
+    this.git.provider = provider;
+    this.git.user = user;
+    this.git.pat = "";
+    try {
+      this.git.repos = await this.gitRequest(
+        "GET",
+        `/setup/git/${provider}/repositories`,
+      );
+    } catch (e) {
+      this.git.error = e.message;
+    }
+  },
+
+  async submitRepository(body) {
+    this.git.error = null;
+    this.git.busy = true;
+    try {
+      const data = await this.gitRequest(
+        "POST",
+        `/setup/git/${this.git.provider}/repositories`,
+        body,
+      );
+      this.git.repo = data.repository;
+    } catch (e) {
+      this.git.error = e.message;
+    } finally {
+      this.git.busy = false;
+    }
+  },
+
+  async linkRepository() {
+    const repo = this.git.repos.find(
+      r => String(r.id) === String(this.git.selectedRepo),
+    );
+    if (repo) {
+      await this.submitRepository({ action: "select", repository: repo });
+    }
+  },
+
+  async createRepository() {
+    await this.submitRepository({
+      action: "create",
+      name: this.git.newRepoName,
+      private: this.git.newRepoPrivate,
     });
+  },
+
+  unlinkRepository() {
+    this.git.repo = null;
+  },
+
+  async disconnectGit() {
+    clearTimeout(this.devicePollTimer);
+    try {
+      await this.gitRequest("DELETE", "/setup/git");
+    } catch (_e) {
+      // Clearing a session that does not exist is fine
+    }
+    this.git.provider = null;
+    this.git.user = null;
+    this.git.repos = [];
+    this.git.selectedRepo = "";
+    this.git.repo = null;
+    this.git.device = null;
+    this.git.error = null;
   },
 
   validateFileSize(e, limit) {
@@ -99,32 +260,6 @@ Alpine.data("SetupForm", () => ({
         document.querySelector(`#${datetime}-preview`).value = unix_time;
       }
     };
-  },
-
-  mlcSetup() {
-    let r = CTFd.config.urlRoot;
-    let params = {
-      name: document.querySelector("#ctf_name").value,
-      type: "jeopardy",
-      description: document.querySelector("#ctf_description").value,
-      user_mode: document.querySelector("[name=user_mode]:checked").value,
-      event_url: window.location.origin + r,
-      redirect_url: window.location.origin + r + "/redirect",
-      integration_setup_url: window.location.origin + r + "/setup/integrations",
-      start: document.querySelector("#start-preview").value,
-      end: document.querySelector("#end-preview").value,
-      platform: "CTFd",
-      state: window.STATE,
-    };
-
-    const ret = [];
-    for (let p in params) {
-      ret.push(encodeURIComponent(p) + "=" + encodeURIComponent(params[p]));
-    }
-    window.open(
-      "https://www.majorleaguecyber.org/events/new?" + ret.join("&"),
-      "_blank",
-    );
   },
 
   submitSetup(e) {
