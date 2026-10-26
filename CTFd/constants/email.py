@@ -1,3 +1,4 @@
+DEFAULT_USER_EMAIL_SUBJECT = "Message from {ctf_name}"
 DEFAULT_VERIFICATION_EMAIL_SUBJECT = "Confirm your account for {ctf_name}"
 DEFAULT_VERIFICATION_EMAIL_BODY = (
     "Welcome to {ctf_name}!\n\n"
