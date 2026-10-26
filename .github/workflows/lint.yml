@@ -15,6 +15,10 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+
+      - name: Check uv.lock is up to date
+        run: uv lock --check
+
       - name: Setup node
         uses: actions/setup-node@v6
         with:
