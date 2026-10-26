@@ -517,7 +517,7 @@ class UserEmails(Resource):
     @ratelimit(method="POST", limit=10, interval=60)
     def post(self, user_id):
         req = request.get_json()
-        subject = req.get("subject", "").strip()
+        subject = (req.get("subject") or "").strip()
         text = req.get("text", "").strip()
         user = Users.query.filter_by(id=user_id).first_or_404()
 
