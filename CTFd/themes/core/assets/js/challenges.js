@@ -156,6 +156,7 @@ Alpine.data("Challenge", () => ({
     CTFd._functions.challenge.displaySolution = solution => {
       this.solution = solution.html;
       new Tab(this.$el).show();
+      this.$nextTick(() => highlight());
     };
     await CTFd.pages.challenge.displaySolution(solution_id);
   },
