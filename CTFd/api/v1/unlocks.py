@@ -6,7 +6,7 @@ from flask_restx import Namespace, Resource
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.api.v1.helpers.schemas import sqlalchemy_to_pydantic
 from CTFd.api.v1.schemas import APIDetailedSuccessResponse, APIListSuccessResponse
-from CTFd.cache import clear_standings
+from CTFd.cache import cache, clear_standings
 from CTFd.constants import RawEnum
 from CTFd.models import (
     Challenges,
@@ -19,6 +19,7 @@ from CTFd.models import (
 from CTFd.schemas.awards import AwardSchema
 from CTFd.schemas.unlocks import UnlockSchema
 from CTFd.utils.challenges import get_solve_ids_for_user_id
+from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators import (
     admins_only,
     authed_only,
@@ -124,6 +125,10 @@ class UnlockList(Resource):
 
         user = get_current_user()
 
+        # TODO: Convert this into a re-useable decorator
+        if is_teams_mode() and user.team_id is None:
+            abort(403)
+
         target_type = req["type"]
 
         req["user_id"] = user.id
@@ -157,128 +162,152 @@ class UnlockList(Resource):
                 if not get_solve_ids_for_user_id(user_id=user.id) >= prereqs:
                     abort(403)
 
-        if target_type == "hints":
-            if not is_admin() and target.prerequisites:
-                unlock_ids = {
-                    u.target
-                    for u in HintUnlocks.query.filter_by(
-                        account_id=user.account_id
-                    ).all()
-                }
-                all_hint_ids = {h.id for h in Hints.query.with_entities(Hints.id).all()}
-                prereqs = set(target.prerequisites).intersection(all_hint_ids)
-                if not unlock_ids >= prereqs:
-                    abort(403)
-
-            # We should use the team's score if in teams mode
-            # user.account gives the appropriate account based on team mode
-            # Use get_score with admin to get the account's full score value
-            if target.cost > user.account.get_score(admin=True):
-                return (
-                    {
-                        "success": False,
-                        "errors": {
-                            "score": "You do not have enough points to unlock this hint"
-                        },
-                    },
-                    400,
-                )
-
-            schema = UnlockSchema()
-            response = schema.load(req, session=db.session)
-
-            if response.errors:
-                return {"success": False, "errors": response.errors}, 400
-
-            response.data.ip = get_ip(req=request)
-
-            # Search for an existing unlock that matches the target and type
-            # And matches either the requesting user id or the requesting team id
-            existing = Unlocks.query.filter(
-                Unlocks.target == req["target"],
-                Unlocks.type == req["type"],
-                Unlocks.account_id == user.account_id,
-            ).first()
-            if existing:
-                return (
-                    {
-                        "success": False,
-                        "errors": {"target": "You've already unlocked this target"},
-                    },
-                    400,
-                )
-
-            db.session.add(response.data)
-
-            award_schema = AwardSchema()
-            award = {
-                "user_id": user.id,
-                "team_id": user.team_id,
-                "name": target.name,
-                "description": target.description,
-                "value": (-target.cost),
-                "category": target.category,
-            }
-
-            award = award_schema.load(award)
-            db.session.add(award.data)
-            db.session.commit()
-            clear_standings()
-
-            response = schema.dump(response.data)
-
-            return {"success": True, "data": response.data}
-        elif target_type == "solutions":
-            if not is_admin():
-                if target.state == "visible":
-                    pass
-                elif target.state == "solved":
-                    if (
-                        challenge is None
-                        or challenge.id
-                        not in get_solve_ids_for_user_id(user_id=user.id)
-                    ):
-                        # We return 403 here because technically the unlock is not allowed
-                        # because the user hasn't solved the challenge not because the challenge doesn't exist
-                        abort(403)
-                else:
-                    abort(404)
-
-            schema = UnlockSchema()
-            response = schema.load(req, session=db.session)
-
-            if response.errors:
-                return {"success": False, "errors": response.errors}, 400
-
-            response.data.ip = get_ip(req=request)
-
-            # Search for an existing unlock that matches the target and type
-            # And matches either the requesting user id or the requesting team id
-            existing = Unlocks.query.filter(
-                Unlocks.target == req["target"],
-                Unlocks.type == req["type"],
-                Unlocks.account_id == user.account_id,
-            ).first()
-            if existing:
-                return (
-                    {
-                        "success": False,
-                        "errors": {"target": "You've already unlocked this target"},
-                    },
-                    400,
-                )
-
-            db.session.add(response.data)
-            db.session.commit()
-
-            response = schema.dump(response.data)
-
-            return {"success": True, "data": response.data}
-        else:
+        # TODO CTFd 4.0 We should implement this with Redlock instead of SETNX
+        # Lock unlocks per account so only one unlock is processed at a time
+        # cache.add is SETNX, it only succeeds when the key is absent
+        # The lock can be released by timeout or by the finally block
+        lock_key = f"unlock_lock_{user.account_id}"
+        if not cache.add(lock_key, 1, timeout=30):
             return (
                 {
                     "success": False,
-                    "errors": {"type": "Unknown target type"},
+                    "errors": {
+                        "target": "Another unlock is already being processed. Try again shortly."
+                    },
                 },
-                400,
+                403,
             )
+
+        try:
+            # End the current transaction so the checks below see unlocks and awards previously committed
+            db.session.commit()
+
+            if target_type == "hints":
+                if not is_admin() and target.prerequisites:
+                    unlock_ids = {
+                        u.target
+                        for u in HintUnlocks.query.filter_by(
+                            account_id=user.account_id
+                        ).all()
+                    }
+                    all_hint_ids = {
+                        h.id for h in Hints.query.with_entities(Hints.id).all()
+                    }
+                    prereqs = set(target.prerequisites).intersection(all_hint_ids)
+                    if not unlock_ids >= prereqs:
+                        abort(403)
+
+                # We should use the team's score if in teams mode
+                # user.account gives the appropriate account based on team mode
+                # Use get_score with admin to get the account's full score value
+                if target.cost > user.account.get_score(admin=True):
+                    return (
+                        {
+                            "success": False,
+                            "errors": {
+                                "score": "You do not have enough points to unlock this hint"
+                            },
+                        },
+                        400,
+                    )
+
+                schema = UnlockSchema()
+                response = schema.load(req, session=db.session)
+
+                if response.errors:
+                    return {"success": False, "errors": response.errors}, 400
+
+                response.data.ip = get_ip(req=request)
+
+                # Search for an existing unlock that matches the target and type
+                # And matches either the requesting user id or the requesting team id
+                existing = Unlocks.query.filter(
+                    Unlocks.target == req["target"],
+                    Unlocks.type == req["type"],
+                    Unlocks.account_id == user.account_id,
+                ).first()
+                if existing:
+                    return (
+                        {
+                            "success": False,
+                            "errors": {"target": "You've already unlocked this target"},
+                        },
+                        400,
+                    )
+
+                db.session.add(response.data)
+
+                award_schema = AwardSchema()
+                award = {
+                    "user_id": user.id,
+                    "team_id": user.team_id,
+                    "name": target.name,
+                    "description": target.description,
+                    "value": (-target.cost),
+                    "category": target.category,
+                }
+
+                award = award_schema.load(award)
+                db.session.add(award.data)
+                db.session.commit()
+                clear_standings()
+
+                response = schema.dump(response.data)
+
+                return {"success": True, "data": response.data}
+            elif target_type == "solutions":
+                if not is_admin():
+                    if target.state == "visible":
+                        pass
+                    elif target.state == "solved":
+                        if (
+                            challenge is None
+                            or challenge.id
+                            not in get_solve_ids_for_user_id(user_id=user.id)
+                        ):
+                            # We return 403 here because technically the unlock is not allowed
+                            # because the user hasn't solved the challenge not because the challenge doesn't exist
+                            abort(403)
+                    else:
+                        abort(404)
+
+                schema = UnlockSchema()
+                response = schema.load(req, session=db.session)
+
+                if response.errors:
+                    return {"success": False, "errors": response.errors}, 400
+
+                response.data.ip = get_ip(req=request)
+
+                # Search for an existing unlock that matches the target and type
+                # And matches either the requesting user id or the requesting team id
+                existing = Unlocks.query.filter(
+                    Unlocks.target == req["target"],
+                    Unlocks.type == req["type"],
+                    Unlocks.account_id == user.account_id,
+                ).first()
+                if existing:
+                    return (
+                        {
+                            "success": False,
+                            "errors": {"target": "You've already unlocked this target"},
+                        },
+                        400,
+                    )
+
+                db.session.add(response.data)
+                db.session.commit()
+
+                response = schema.dump(response.data)
+
+                return {"success": True, "data": response.data}
+            else:
+                return (
+                    {
+                        "success": False,
+                        "errors": {"type": "Unknown target type"},
+                    },
+                    400,
+                )
+        finally:
+            cache.delete(lock_key)
