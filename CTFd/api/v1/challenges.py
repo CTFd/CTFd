@@ -490,12 +490,8 @@ class Challenge(Resource):
             user_solves = []
 
         solves_count = get_solve_counts_for_challenges(challenge_id=chal.id)
-        if solves_count:
-            challenge_id = chal.id
-            solve_count = solves_count.get(chal.id)
-            solved_by_user = challenge_id in user_solves
-        else:
-            solve_count, solved_by_user = 0, False
+        solve_count = solves_count.get(chal.id, 0)
+        solved_by_user = chal.id in user_solves
 
         # Hide solve counts if we are hiding solves/accounts
         if scores_visible() is False or accounts_visible() is False:
