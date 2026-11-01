@@ -78,6 +78,7 @@ Alpine.data("Challenge", () => ({
   selectedRating: 0,
   ratingReview: "",
   ratingSubmitted: false,
+  solved_by_me: false,
 
   async init() {
     highlight();
@@ -227,6 +228,10 @@ Alpine.data("Challenge", () => ({
   async renderSubmissionResponse() {
     if (this.response.data.status === "correct") {
       this.submission = "";
+    }
+
+    if (["correct", "already_solved"].includes(this.response.data.status)) {
+      this.solved_by_me = true;
     }
 
     // Decide whether to check for the solution
