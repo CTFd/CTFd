@@ -226,11 +226,12 @@ Alpine.data("Challenge", () => ({
   },
 
   async renderSubmissionResponse() {
-    if (this.response.data.status === "correct") {
-      this.submission = "";
-    }
+    const status = this.response.data.status;
 
-    if (["correct", "already_solved"].includes(this.response.data.status)) {
+    if (status === "correct") {
+      this.submission = "";
+      this.solved_by_me = true;
+    } else if (status === "already_solved") {
       this.solved_by_me = true;
     }
 
