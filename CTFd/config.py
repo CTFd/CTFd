@@ -7,6 +7,7 @@ from typing import Union
 from sqlalchemy.engine.url import URL
 
 _FORCED_EXTRA_CONFIG_TYPES = {}
+_MISSING = object()
 
 
 class EnvInterpolation(configparser.BasicInterpolation):
@@ -19,6 +20,42 @@ class EnvInterpolation(configparser.BasicInterpolation):
             return process_string_var(envvar, key=option)
         else:
             return value
+
+
+class EnvSectionProxy(configparser.SectionProxy):
+    """Read omitted bracket-indexed options like empty options in the INI file."""
+
+    def __getitem__(self, key):
+        if self._parser.has_option(self._name, key):
+            return super().__getitem__(key)
+        value = self._parser.get(self._name, key, fallback="")
+        return process_string_var(value, key=key) if value else value
+
+
+class EnvConfigParser(configparser.ConfigParser):
+    """Keep environment fallbacks available for omitted options and typed getters."""
+
+    def __getitem__(self, key):
+        if key == self.default_section:
+            return super().__getitem__(key)
+        if not self.has_section(key):
+            raise KeyError(key)
+        return EnvSectionProxy(self, key)
+
+    def get(self, section, option, *, raw=False, vars=None, fallback=_MISSING):
+        try:
+            return super().get(section, option, raw=raw, vars=vars)
+        except configparser.NoSectionError:
+            if fallback is _MISSING:
+                raise
+            return fallback
+        except configparser.NoOptionError:
+            value = os.getenv(option)
+            if value:
+                return value
+            if fallback is _MISSING:
+                raise
+            return fallback
 
 
 def process_string_var(value, key=None):
@@ -88,8 +125,23 @@ def gen_secret_key():
     return key
 
 
-config_ini = configparser.ConfigParser(interpolation=EnvInterpolation())
+config_ini = EnvConfigParser(interpolation=EnvInterpolation())
 config_ini.optionxform = str  # Makes the key value case-insensitive
+config_ini.read_dict(
+    {
+        section: {}
+        for section in (
+            "server",
+            "security",
+            "email",
+            "uploads",
+            "logs",
+            "optional",
+            "oauth",
+            "extra",
+        )
+    }
+)
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.ini")
 config_ini.read(path)
 
