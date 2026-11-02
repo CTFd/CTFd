@@ -14,7 +14,7 @@ exports_namespace = Namespace("exports", description="Endpoint to retrieve Expor
 @exports_namespace.route("/raw")
 class ExportList(Resource):
     @admins_only
-    @ratelimit(method="POST", limit=10, interval=60)
+    @ratelimit(method="POST", rl_key="RL_EXPORT")
     def post(self):
         req = request.get_json()
         export_type = req.get("type", "_")
