@@ -92,3 +92,24 @@ def validate_language(language):
         return
     if LANGUAGE_NAMES.get(language) is None:
         raise ValidationError("Invalid Language")
+
+
+# Matches CSS color values that are safe to interpolate into a <style> block:
+# hex colors, rgb()/rgba()/hsl()/hsla() functions, and plain color keywords.
+# Anything else (e.g. input containing </style>, <script>, braces or quotes)
+# is rejected so it cannot break out of the style context.
+THEME_COLOR_REGEX = re.compile(
+    r"""^(
+        \#[0-9a-fA-F]{3,4}
+        | \#[0-9a-fA-F]{6}
+        | \#[0-9a-fA-F]{8}
+        | (?:rgb|rgba|hsl|hsla)\(\s*[0-9.,%\s/]+\)
+        | [a-zA-Z]+
+    )$""",
+    re.VERBOSE,
+)
+
+
+def validate_theme_color(theme_color):
+    """Return True if theme_color is a CSS color value safe to embed in CSS."""
+    return bool(THEME_COLOR_REGEX.match(theme_color))
