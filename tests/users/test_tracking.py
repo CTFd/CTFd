@@ -1,4 +1,8 @@
-from CTFd.models import Tracking
+from unittest.mock import patch
+
+from sqlalchemy.exc import OperationalError
+
+from CTFd.models import Challenges, Tracking, db
 from tests.helpers import (
     create_ctfd,
     destroy_ctfd,
@@ -85,4 +89,44 @@ def test_tracking_user_agent_exact_match():
                 if t.user_agent == user_agent
             ]
             assert len(tracks) == 1
+    destroy_ctfd(app)
+
+
+def test_tracking_concurrent_update_does_not_fail_request():
+    """Test that a Tracking row updated by a concurrent request doesn't fail the request or log the user out"""
+    app = create_ctfd()
+    with app.app_context():
+        gen_challenge(app.db)
+        with login_as_user(app, "admin") as client:
+            # Create the Tracking row so the DELETE below updates it
+            client.get("/admin/challenges")
+            commit = db.session.commit
+            raised = []
+
+            # Simulate MariaDB's innodb_snapshot_isolation rejecting the tracker's update
+            def concurrent_commit():
+                if not raised and any(
+                    isinstance(o, Tracking) for o in db.session.dirty
+                ):
+                    raised.append(True)
+                    raise OperationalError(
+                        "UPDATE tracking SET date=%(date)s WHERE tracking.id = %(tracking_id)s",
+                        {},
+                        Exception(
+                            1020,
+                            "Record has changed since last read in table 'tracking'",
+                        ),
+                    )
+                return commit()
+
+            with patch.object(db.session, "commit", side_effect=concurrent_commit):
+                r = client.delete("/api/v1/challenges/1", json="")
+            assert raised
+            assert r.status_code == 200
+            assert r.get_json()["success"] is True
+
+            with client.session_transaction() as sess:
+                assert sess["id"] == 1
+
+        assert Challenges.query.count() == 0
     destroy_ctfd(app)
