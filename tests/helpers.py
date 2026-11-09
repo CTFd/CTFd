@@ -152,6 +152,9 @@ def create_ctfd(
     if url.database:
         url = url.set(database=str(uuid.uuid4()))
     config.SQLALCHEMY_DATABASE_URI = str(url)
+    # when tests are running in parallel, ensure that each CTFd instance
+    # will get a distinct Redis prefix, otherwise they will interfere with each other
+    config.CACHE_KEY_PREFIX = f"{uuid.uuid4()}_"
 
     app = create_app(config)
     app.test_client_class = CTFdTestClient
