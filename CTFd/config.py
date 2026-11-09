@@ -66,18 +66,10 @@ def empty_str_cast(value, default=None):
     return value
 
 
-def int_tuple_cast(value: str, num_ints: int = 2):
-    values: list[str] = value.split(",")
-    ints: list[int] = []
-    try:
-        for i in range(len(values)):
-            ints.append(int(values[i].strip()))
-    except ValueError:
-        return None
-
-    if len(ints) != num_ints:
-        return None
-
+def int_tuple_cast(value, num_ints=None):
+    ints = tuple(int(v) for v in str(value).split(","))
+    if num_ints is not None and len(ints) != num_ints:
+        raise ValueError(f"Expected {num_ints} integers, got {len(ints)}: {value}")
     return ints
 
 
@@ -201,17 +193,27 @@ class ServerConfig(object):
     ]
 
     # === RATELIMIT ===
-    RL_DISABLE_COMPLETELY = process_boolean_str(config_ini["ratelimits"].get("RL_DISABLE_COMPLETELY", "false")) if config_ini.has_section("ratelimits") else False
-    RL_DEFAULT = int_tuple_cast(config_ini["ratelimits"].get("RL_DEFAULT", "50,300")) if config_ini.has_section("ratelimits") else (50,300)
-    RL_CONFIRM = int_tuple_cast(config_ini["ratelimits"].get("RL_CONFIRM", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_RESET_PASSWORD = int_tuple_cast(config_ini["ratelimits"].get("RL_RESET_PASSWORD", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_REGISTER = int_tuple_cast(config_ini["ratelimits"].get("RL_REGISTER", "10,5")) if config_ini.has_section("ratelimits") else (10,5)
-    RL_LOGIN = int_tuple_cast(config_ini["ratelimits"].get("RL_LOGIN", "10,5")) if config_ini.has_section("ratelimits") else (10,5)
-    RL_OAUTH_REDIRECT = int_tuple_cast(config_ini["ratelimits"].get("RL_OAUTH_REDIRECT", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_JOIN_TEAM = int_tuple_cast(config_ini["ratelimits"].get("RL_JOIN_TEAM", "10,5")) if config_ini.has_section("ratelimits") else (10,5)
-    RL_EXPORT = int_tuple_cast(config_ini["ratelimits"].get("RL_EXPORT", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_EMAIL_USER = int_tuple_cast(config_ini["ratelimits"].get("RL_EMAIL_USER", "10,60")) if config_ini.has_section("ratelimits") else (10,60)
-    RL_EVENTS = int_tuple_cast(config_ini["ratelimits"].get("RL_EVENTS", "150,60")) if config_ini.has_section("ratelimits") else (150,60)
+    RATELIMIT_DISABLE: bool = process_boolean_str(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_DISABLE"), default=False))
+
+    RATELIMIT_DEFAULT: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_DEFAULT")) or "50,300", num_ints=2)
+
+    RATELIMIT_CONFIRM: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_CONFIRM")) or "10,60", num_ints=2)
+
+    RATELIMIT_RESET_PASSWORD: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_RESET_PASSWORD")) or "10,60", num_ints=2)
+
+    RATELIMIT_REGISTER: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_REGISTER")) or "10,5", num_ints=2)
+
+    RATELIMIT_LOGIN: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_LOGIN")) or "10,5", num_ints=2)
+
+    RATELIMIT_OAUTH_REDIRECT: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_OAUTH_REDIRECT")) or "10,60", num_ints=2)
+
+    RATELIMIT_JOIN_TEAM: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_JOIN_TEAM")) or "10,5", num_ints=2)
+
+    RATELIMIT_EXPORT: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_EXPORT")) or "10,60", num_ints=2)
+
+    RATELIMIT_EMAIL_USER: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_EMAIL_USER")) or "10,60", num_ints=2)
+
+    RATELIMIT_EVENTS: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_EVENTS")) or "150,60", num_ints=2)
 
     # === EMAIL ===
     MAILFROM_ADDR: str = config_ini["email"]["MAILFROM_ADDR"] \
