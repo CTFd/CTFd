@@ -43,7 +43,7 @@ cmarkgfm==2024.11.20
     # via ctfd
 colorama==0.4.6 ; sys_platform == 'win32'
     # via click
-cryptography==45.0.6
+cryptography==50.0.2
     # via pymysql
 dataset==1.6.2
     # via ctfd
@@ -83,7 +83,7 @@ greenlet==3.2.4 ; platform_machine == 'AMD64' or platform_machine == 'WIN32' or 
     #   sqlalchemy
 gunicorn==23.0.0
     # via ctfd
-idna==3.10
+idna==3.20
     # via requests
 importlib-resources==6.5.2
     # via flask-restx
@@ -155,7 +155,7 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4
+requests==2.34.2
     # via ctfd
 rpds-py==0.27.0
     # via
@@ -188,7 +188,7 @@ typing-extensions==4.14.1
     # via
     #   alembic
     #   referencing
-urllib3==2.6.0
+urllib3==2.8.0
     # via
     #   botocore
     #   ctfd
