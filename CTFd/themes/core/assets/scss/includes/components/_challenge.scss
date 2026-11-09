@@ -1,11 +1,32 @@
 /* Challenge styles
 -------------------------------------------------- */
 
-.challenge-desc {
+.challenge-desc,
+.challenge-solution-content {
   overflow-wrap: anywhere;
 
   img {
     max-width: 100%;
+  }
+
+  table {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid gray;
+  }
+
+  th,
+  td {
+    padding: 0.25rem 0.5rem;
+    overflow-wrap: normal;
   }
 }
 

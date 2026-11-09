@@ -1,3 +1,10 @@
+# 3.8.9 / 2026-10-21
+
+**Security**
+
+- Update pip version to 26.2.2 to remove insecure root CA
+- Update certifi version to 2026.10.19 to remove insecure root CA
+
 # 3.8.8 / 2026-10-02
 
 **Security**

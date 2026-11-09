@@ -126,6 +126,19 @@ class AudienceMemberList(Resource):
                 "errors": {"": ["Either user_id or team_id is required"]},
             }, 400
 
+        member = AudienceMembers.query.filter_by(
+            audience_id=audience_id,
+            user_id=req.get("user_id"),
+            team_id=req.get("team_id"),
+        ).first()
+        if member:
+            return {
+                "success": False,
+                "errors": {
+                    "": ["This user or team is already a member of this audience"]
+                },
+            }, 400
+
         schema = AudienceMemberSchema()
         response = schema.load(req, session=db.session)
         if response.errors:
