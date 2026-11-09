@@ -5,7 +5,7 @@ from CTFd.exceptions import TeamTokenExpiredException, TeamTokenInvalidException
 from CTFd.models import Brackets, TeamFieldEntries, TeamFields, Teams, db
 from CTFd.utils import config, get_config, validators
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.decorators import authed_only, ratelimit, registered_only
+from CTFd.utils.decorators import authed_only, ratelimit_from_config, registered_only
 from CTFd.utils.decorators.modes import require_team_mode
 from CTFd.utils.decorators.visibility import (
     check_account_visibility,
@@ -124,7 +124,7 @@ def invite():
 @teams.route("/teams/join", methods=["GET", "POST"])
 @authed_only
 @require_team_mode
-@ratelimit(method="POST", rl_key="RL_JOIN_TEAM")
+@ratelimit_from_config(method="POST", config_key="RATELIMIT_JOIN_TEAM")
 def join():
     infos = get_infos()
     errors = get_errors()

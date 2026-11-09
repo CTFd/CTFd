@@ -15,7 +15,7 @@ from CTFd.utils.config import can_send_mail, is_teams_mode
 from CTFd.utils.config.integrations import mlc_registration
 from CTFd.utils.config.visibility import registration_visible
 from CTFd.utils.crypto import verify_password
-from CTFd.utils.decorators import ratelimit
+from CTFd.utils.decorators import ratelimit_from_config
 from CTFd.utils.decorators.visibility import check_registration_visibility
 from CTFd.utils.helpers import error_for, get_errors, markup
 from CTFd.utils.logging import log
@@ -34,7 +34,7 @@ auth = Blueprint("auth", __name__)
 
 @auth.route("/confirm", methods=["POST", "GET"])
 @auth.route("/confirm/<data>", methods=["POST", "GET"])
-@ratelimit(method="POST", rl_key="RL_CONFIRM")
+@ratelimit_from_config(method="POST", config_key="RATELIMIT_CONFIRM")
 def confirm(data=None):
     # If we can't send mails our behavior depends on verify_emails
     if not can_send_mail():
@@ -116,7 +116,7 @@ def confirm(data=None):
 
 @auth.route("/reset_password", methods=["POST", "GET"])
 @auth.route("/reset_password/<data>", methods=["POST", "GET"])
-@ratelimit(method="POST", rl_key="RL_RESET_PASSWORD")
+@ratelimit_from_config(method="POST", config_key="RATELIMIT_RESET_PASSWORD")
 def reset_password(data=None):
     if config.can_send_mail() is False and data is None:
         return render_template(
@@ -233,7 +233,7 @@ def reset_password(data=None):
 
 @auth.route("/register", methods=["POST", "GET"])
 @check_registration_visibility
-@ratelimit(method="POST", rl_key="RL_REGISTER")
+@ratelimit_from_config(method="POST", config_key="RATELIMIT_REGISTER")
 def register():
     errors = get_errors()
     if current_user.authed():
@@ -438,7 +438,7 @@ def register():
 
 
 @auth.route("/login", methods=["POST", "GET"])
-@ratelimit(method="POST", rl_key="RL_LOGIN")
+@ratelimit_from_config(method="POST", config_key="RATELIMIT_LOGIN")
 def login():
     errors = get_errors()
     if request.method == "POST":
@@ -543,7 +543,7 @@ def oauth_login():
 
 
 @auth.route("/redirect", methods=["GET"])
-@ratelimit(method="GET", rl_key="RL_OAUTH_REDIRECT")
+@ratelimit_from_config(method="GET", config_key="RATELIMIT_OAUTH_REDIRECT")
 def oauth_redirect():
     oauth_code = request.args.get("code")
     state = request.args.get("state")
