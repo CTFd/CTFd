@@ -79,6 +79,21 @@ class ChallengeSchema(ma.ModelSchema):
         ],
     )
 
+    max_attempts = field_for(
+        Challenges,
+        "max_attempts",
+        allow_none=False,
+        error_messages={
+            "null": "Challenge could not be saved. Max attempts cannot be null, use 0 for unlimited attempts"
+        },
+        validate=[
+            validate.Range(
+                min=0,
+                error="Challenge could not be saved. Max attempts cannot be negative, use 0 for unlimited attempts",
+            )
+        ],
+    )
+
     requirements = field_for(
         Challenges,
         "requirements",
