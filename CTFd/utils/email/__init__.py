@@ -9,6 +9,7 @@ from CTFd.constants.email import (
     DEFAULT_SUCCESSFUL_REGISTRATION_EMAIL_SUBJECT,
     DEFAULT_USER_CREATION_EMAIL_BODY,
     DEFAULT_USER_CREATION_EMAIL_SUBJECT,
+    DEFAULT_USER_EMAIL_SUBJECT,
     DEFAULT_VERIFICATION_EMAIL_BODY,
     DEFAULT_VERIFICATION_EMAIL_SUBJECT,
 )
@@ -25,7 +26,7 @@ from CTFd.utils.security.email import (
 PROVIDERS = {"smtp": SMTPEmailProvider, "mailgun": MailgunEmailProvider}
 
 
-def sendmail(addr, text, subject="Message from {ctf_name}"):
+def sendmail(addr, text, subject=DEFAULT_USER_EMAIL_SUBJECT):
     subject = safe_format(subject, ctf_name=get_config("ctf_name"))
     provider = get_mail_provider()
     EmailProvider = PROVIDERS.get(provider)

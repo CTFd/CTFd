@@ -17,7 +17,7 @@ dependencies = [
     "SQLAlchemy-Utils==0.41.1",
     "passlib==1.7.4",
     "bcrypt==4.0.1",
-    "requests==2.32.4",
+    "requests==2.34.2",
     "PyMySQL[rsa]==1.1.1",
     "gunicorn==23.0.0",
     "dataset==1.6.2",
@@ -38,10 +38,11 @@ dependencies = [
     "nh3==0.3.0",
     "freezegun==1.5.5",
     "Flask-Babel==2.0.0",
-    "Pillow==12.2.0",
-    "cffi==1.17.1",
+    "Pillow==13.0.0",
+    "cffi==2.1.1",
     "six==1.17.0",
-    "urllib3==2.6.0",
+    "urllib3==2.8.0",
+    "pynacl==1.6.2",
 ]
 
 [dependency-groups]

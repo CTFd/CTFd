@@ -78,6 +78,7 @@ Alpine.data("Challenge", () => ({
   selectedRating: 0,
   ratingReview: "",
   ratingSubmitted: false,
+  solved_by_me: false,
 
   async init() {
     highlight();
@@ -156,6 +157,7 @@ Alpine.data("Challenge", () => ({
     CTFd._functions.challenge.displaySolution = solution => {
       this.solution = solution.html;
       new Tab(this.$el).show();
+      this.$nextTick(() => highlight());
     };
     await CTFd.pages.challenge.displaySolution(solution_id);
   },
@@ -224,8 +226,13 @@ Alpine.data("Challenge", () => ({
   },
 
   async renderSubmissionResponse() {
-    if (this.response.data.status === "correct") {
+    const status = this.response.data.status;
+
+    if (status === "correct") {
       this.submission = "";
+      this.solved_by_me = true;
+    } else if (status === "already_solved") {
+      this.solved_by_me = true;
     }
 
     // Decide whether to check for the solution

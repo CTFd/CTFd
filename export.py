@@ -6,7 +6,6 @@ import datetime
 import sys
 import shutil
 
-
 app = create_app()
 with app.app_context():
     print(

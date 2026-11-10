@@ -164,7 +164,7 @@
 			<small class="form-text text-muted">Maximum amount of attempts users receive. Leave at 0 for unlimited.</small>
 		</label>
 
-		<input type="number" class="form-control chal-attempts" name="max_attempts" value="{{ challenge.max_attempts }}">
+		<input type="number" class="form-control chal-attempts" min="0" name="max_attempts" value="{{ challenge.max_attempts }}">
 	</div>
 	{% endblock %}
 
