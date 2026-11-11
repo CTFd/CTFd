@@ -66,6 +66,13 @@ def empty_str_cast(value, default=None):
     return value
 
 
+def int_tuple_cast(value, num_ints=None):
+    ints = tuple(int(v) for v in str(value).split(","))
+    if num_ints is not None and len(ints) != num_ints:
+        raise ValueError(f"Expected {num_ints} integers, got {len(ints)}: {value}")
+    return ints
+
+
 def gen_secret_key():
     # Attempt to read the secret from the secret file
     # This will fail if the secret has not been written
@@ -184,6 +191,29 @@ class ServerConfig(object):
         r"^172\.(1[6-9]|2[0-9]|3[0-1])\.",
         r"^192\.168\.",
     ]
+
+    # === RATELIMIT ===
+    RATELIMIT_DISABLE: bool = process_boolean_str(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_DISABLE"), default=False))
+
+    RATELIMIT_DEFAULT: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_DEFAULT")) or "50,300", num_ints=2)
+
+    RATELIMIT_CONFIRM: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_CONFIRM")) or "10,60", num_ints=2)
+
+    RATELIMIT_RESET_PASSWORD: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_RESET_PASSWORD")) or "10,60", num_ints=2)
+
+    RATELIMIT_REGISTER: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_REGISTER")) or "10,5", num_ints=2)
+
+    RATELIMIT_LOGIN: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_LOGIN")) or "10,5", num_ints=2)
+
+    RATELIMIT_OAUTH_REDIRECT: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_OAUTH_REDIRECT")) or "10,60", num_ints=2)
+
+    RATELIMIT_JOIN_TEAM: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_JOIN_TEAM")) or "10,5", num_ints=2)
+
+    RATELIMIT_EXPORT: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_EXPORT")) or "10,60", num_ints=2)
+
+    RATELIMIT_EMAIL_USER: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_EMAIL_USER")) or "10,60", num_ints=2)
+
+    RATELIMIT_EVENTS: tuple = int_tuple_cast(empty_str_cast(config_ini["ratelimits"].get("RATELIMIT_EVENTS")) or "150,60", num_ints=2)
 
     # === EMAIL ===
     MAILFROM_ADDR: str = config_ini["email"]["MAILFROM_ADDR"] \
