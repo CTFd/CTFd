@@ -131,7 +131,11 @@ def setup():
             set_config("ctf_theme", theme)
             theme_color = request.form.get("theme_color")
             theme_header = get_config("theme_header")
-            if theme_color and bool(theme_header) is False:
+            if (
+                theme_color
+                and validators.validate_theme_color(theme_color)
+                and bool(theme_header) is False
+            ):
                 # Uses {{ and }} to insert curly braces while using the format method
                 css = (
                     '<style id="theme-color">\n'
