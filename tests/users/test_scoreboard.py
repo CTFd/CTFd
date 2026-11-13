@@ -213,9 +213,8 @@ def test_scoring_logic():
 
         # user1 solves chal1
         with freeze_time("2017-10-3 03:21:34"):
-            with client1.session_transaction():
-                data = {"submission": "flag", "challenge_id": chal1_id}
-                client1.post("/api/v1/challenges/attempt", json=data)
+            data = {"submission": "flag", "challenge_id": chal1_id}
+            client1.post("/api/v1/challenges/attempt", json=data)
 
         # user1 is now on top
         scores = get_scores(admin)
@@ -223,13 +222,12 @@ def test_scoring_logic():
 
         # user2 solves chal1 and chal2
         with freeze_time("2017-10-4 03:30:34"):
-            with client2.session_transaction():
-                # solve chal1
-                data = {"submission": "flag", "challenge_id": chal1_id}
-                client2.post("/api/v1/challenges/attempt", json=data)
-                # solve chal2
-                data = {"submission": "flag", "challenge_id": chal2_id}
-                client2.post("/api/v1/challenges/attempt", json=data)
+            # solve chal1
+            data = {"submission": "flag", "challenge_id": chal1_id}
+            client2.post("/api/v1/challenges/attempt", json=data)
+            # solve chal2
+            data = {"submission": "flag", "challenge_id": chal2_id}
+            client2.post("/api/v1/challenges/attempt", json=data)
 
         # user2 is now on top
         scores = get_scores(admin)
@@ -237,9 +235,8 @@ def test_scoring_logic():
 
         # user1 solves chal2
         with freeze_time("2017-10-5 03:50:34"):
-            with client1.session_transaction():
-                data = {"submission": "flag", "challenge_id": chal2_id}
-                client1.post("/api/v1/challenges/attempt", json=data)
+            data = {"submission": "flag", "challenge_id": chal2_id}
+            client1.post("/api/v1/challenges/attempt", json=data)
 
         # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
@@ -277,9 +274,8 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user1 solves chal1
         with freeze_time("2017-10-3 03:21:34"):
-            with client1.session_transaction():
-                data = {"submission": "flag", "challenge_id": chal1_id}
-                client1.post("/api/v1/challenges/attempt", json=data)
+            data = {"submission": "flag", "challenge_id": chal1_id}
+            client1.post("/api/v1/challenges/attempt", json=data)
 
         # user1 is now on top
         scores = get_scores(admin)
@@ -287,13 +283,12 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user2 solves chal1 and chal2
         with freeze_time("2017-10-4 03:30:34"):
-            with client2.session_transaction():
-                # solve chal1
-                data = {"submission": "flag", "challenge_id": chal1_id}
-                client2.post("/api/v1/challenges/attempt", json=data)
-                # solve chal2
-                data = {"submission": "flag", "challenge_id": chal2_id}
-                client2.post("/api/v1/challenges/attempt", json=data)
+            # solve chal1
+            data = {"submission": "flag", "challenge_id": chal1_id}
+            client2.post("/api/v1/challenges/attempt", json=data)
+            # solve chal2
+            data = {"submission": "flag", "challenge_id": chal2_id}
+            client2.post("/api/v1/challenges/attempt", json=data)
 
         # user2 is now on top
         scores = get_scores(admin)
@@ -301,9 +296,8 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user1 solves chal2
         with freeze_time("2017-10-5 03:50:34"):
-            with client1.session_transaction():
-                data = {"submission": "flag", "challenge_id": chal2_id}
-                client1.post("/api/v1/challenges/attempt", json=data)
+            data = {"submission": "flag", "challenge_id": chal2_id}
+            client1.post("/api/v1/challenges/attempt", json=data)
 
         # user2 should still be on top because they solved chal2 first
         scores = get_scores(admin)
@@ -311,9 +305,8 @@ def test_scoring_logic_with_zero_point_challenges():
 
         # user2 solves a 0 point challenge
         with freeze_time("2017-10-5 03:55:34"):
-            with client2.session_transaction():
-                data = {"submission": "flag", "challenge_id": chal0_id}
-                client2.post("/api/v1/challenges/attempt", json=data)
+            data = {"submission": "flag", "challenge_id": chal0_id}
+            client2.post("/api/v1/challenges/attempt", json=data)
 
         # user2 should still be on top because 0 point challenges should not tie break
         scores = get_scores(admin)

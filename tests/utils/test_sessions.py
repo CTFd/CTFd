@@ -28,7 +28,8 @@ def test_session_invalidation_on_admin_password_change():
     app = create_ctfd()
     with app.app_context():
         register_user(app)
-        with login_as_user(app, name="admin") as admin, login_as_user(app) as user:
+        admin = login_as_user(app, name="admin")
+        with login_as_user(app) as user:
             r = user.get("/settings")
             assert r.status_code == 200
 
