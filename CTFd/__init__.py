@@ -2,6 +2,7 @@ import datetime
 import os
 import sys
 import time
+import types
 import weakref
 from distutils.version import StrictVersion
 
@@ -101,6 +102,13 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
             options["finalize"] = lambda x: x if x is not None else ""
         SandboxedEnvironment.__init__(self, **options)
         self.app = app
+
+    def is_safe_attribute(self, obj, attr, value):
+        if isinstance(value, types.ModuleType) and not value.__name__.startswith(
+            "CTFd"
+        ):
+            return False
+        return super().is_safe_attribute(obj, attr, value)
 
     def _load_template(self, name, globals):
         if self.loader is None:

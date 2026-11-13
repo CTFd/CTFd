@@ -34,11 +34,10 @@ def test_user_cannot_unlock_hint():
 
             client = login_as_user(app, name="user1", password="password")
 
-            with client.session_transaction():
-                r = client.get("/api/v1/hints/{}".format(hint_id))
-                resp = r.get_json()
-                assert resp["data"].get("content") is None
-                assert resp["data"].get("cost") == 10
+            r = client.get("/api/v1/hints/{}".format(hint_id))
+            resp = r.get_json()
+            assert resp["data"].get("content") is None
+            assert resp["data"].get("cost") == 10
     destroy_ctfd(app)
 
 
@@ -64,23 +63,22 @@ def test_user_can_unlock_hint():
             user = Users.query.filter_by(name="user1").first()
             assert user.score == 15
 
-            with client.session_transaction():
-                r = client.get("/api/v1/hints/{}".format(hint_id))
-                resp = r.get_json()
-                assert resp["data"].get("content") is None
+            r = client.get("/api/v1/hints/{}".format(hint_id))
+            resp = r.get_json()
+            assert resp["data"].get("content") is None
 
-                params = {"target": hint_id, "type": "hints"}
+            params = {"target": hint_id, "type": "hints"}
 
-                r = client.post("/api/v1/unlocks", json=params)
-                resp = r.get_json()
-                assert resp["success"] is True
+            r = client.post("/api/v1/unlocks", json=params)
+            resp = r.get_json()
+            assert resp["success"] is True
 
-                r = client.get("/api/v1/hints/{}".format(hint_id))
-                resp = r.get_json()
-                assert resp["data"].get("content") == "This is a hint"
+            r = client.get("/api/v1/hints/{}".format(hint_id))
+            resp = r.get_json()
+            assert resp["data"].get("content") == "This is a hint"
 
-                user = Users.query.filter_by(name="user1").first()
-                assert user.score == 5
+            user = Users.query.filter_by(name="user1").first()
+            assert user.score == 5
     destroy_ctfd(app)
 
 

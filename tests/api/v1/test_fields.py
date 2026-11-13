@@ -173,7 +173,8 @@ def test_api_self_fields_permissions():
             with client.session_transaction() as sess:
                 assert sess["id"]
 
-        with login_as_user(app) as user, login_as_user(app, name="admin") as admin:
+        admin = login_as_user(app, name="admin")
+        with login_as_user(app) as user:
             r = user.get("/api/v1/users/me")
             resp = r.get_json()
             assert resp["data"]["fields"] == [
@@ -281,7 +282,8 @@ def test_api_team_self_fields_permissions():
 
         assert len(team.field_entries) == 2
 
-        with login_as_user(app) as user, login_as_user(app, name="admin") as admin:
+        admin = login_as_user(app, name="admin")
+        with login_as_user(app) as user:
             r = user.get("/api/v1/teams/me")
             resp = r.get_json()
             assert resp["data"]["fields"] == [
