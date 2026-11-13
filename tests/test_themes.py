@@ -69,7 +69,6 @@ def test_themes_integrations():
     destroy_ctfd(app)
 
 
-
 def test_themes_escape_html():
     """Themes should escape XSS properly"""
     app = create_ctfd()
