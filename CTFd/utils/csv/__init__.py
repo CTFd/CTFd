@@ -343,7 +343,7 @@ def dump_users_teams_csv():
                 is_captain,
             ] + team_field_values
         else:
-            team_data = ["", "", "", ""] + [""] * len(team_field_names)
+            team_data = ["", "", "", "", ""] + [""] * len(team_field_names)
 
         writer.writerow(user_data + team_data)
 
