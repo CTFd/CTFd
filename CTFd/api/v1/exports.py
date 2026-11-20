@@ -5,7 +5,7 @@ from flask_restx import Namespace, Resource
 
 from CTFd.utils.config import ctf_name
 from CTFd.utils.csv import dump_csv
-from CTFd.utils.decorators import admins_only, ratelimit
+from CTFd.utils.decorators import admins_only, ratelimit_from_config
 from CTFd.utils.exports import export_ctf as export_ctf_util
 
 exports_namespace = Namespace("exports", description="Endpoint to retrieve Exports")
@@ -14,7 +14,7 @@ exports_namespace = Namespace("exports", description="Endpoint to retrieve Expor
 @exports_namespace.route("/raw")
 class ExportList(Resource):
     @admins_only
-    @ratelimit(method="POST", limit=10, interval=60)
+    @ratelimit_from_config(method="POST", config_key="RATELIMIT_EXPORT")
     def post(self):
         req = request.get_json()
         export_type = req.get("type", "_")

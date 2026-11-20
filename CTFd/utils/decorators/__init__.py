@@ -1,6 +1,6 @@
 import functools
 
-from flask import abort, jsonify, redirect, request, url_for
+from flask import abort, current_app, jsonify, redirect, request, url_for
 from flask_babel import gettext
 
 from CTFd.cache import cache
@@ -163,6 +163,9 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
     def ratelimit_decorator(f):
         @functools.wraps(f)
         def ratelimit_function(*args, **kwargs):
+            if current_app.config.get("RATELIMIT_DISABLE"):
+                return f(*args, **kwargs)
+
             ip_address = current_user.get_ip()
             key = "{}:{}:{}".format(key_prefix, ip_address, request.endpoint)
             current = cache.get(key)
@@ -190,6 +193,26 @@ def ratelimit(method="POST", limit=50, interval=300, key_prefix="rl"):
         return ratelimit_function
 
     return ratelimit_decorator
+
+
+def ratelimit_from_config(
+    method="POST", config_key="RATELIMIT_DEFAULT", key_prefix="rl"
+):
+    def ratelimit_from_config_decorator(f):
+        @functools.wraps(f)
+        def ratelimit_from_config_function(*args, **kwargs):
+            limit, interval = (
+                current_app.config.get(config_key)
+                or current_app.config.get("RATELIMIT_DEFAULT")
+                or (50, 300)
+            )
+            return ratelimit(
+                method=method, limit=limit, interval=interval, key_prefix=key_prefix
+            )(f)(*args, **kwargs)
+
+        return ratelimit_from_config_function
+
+    return ratelimit_from_config_decorator
 
 
 def require_complete_profile(f):
