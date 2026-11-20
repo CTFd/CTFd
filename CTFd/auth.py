@@ -370,56 +370,55 @@ def register():
                 password=request.form["password"],
             )
         else:
-            with app.app_context():
-                user = Users(
-                    name=name,
-                    email=email_address,
-                    password=password,
-                    bracket_id=bracket_id,
+            user = Users(
+                name=name,
+                email=email_address,
+                password=password,
+                bracket_id=bracket_id,
+            )
+
+            if website:
+                user.website = website
+            if affiliation:
+                user.affiliation = affiliation
+            if country:
+                user.country = country
+
+            db.session.add(user)
+            db.session.commit()
+            db.session.flush()
+
+            for field_id, value in entries.items():
+                entry = UserFieldEntries(
+                    field_id=field_id, value=value, user_id=user.id
                 )
+                db.session.add(entry)
+            db.session.commit()
 
-                if website:
-                    user.website = website
-                if affiliation:
-                    user.affiliation = affiliation
-                if country:
-                    user.country = country
+            login_user(user)
 
-                db.session.add(user)
-                db.session.commit()
-                db.session.flush()
+            if request.args.get("next") and validators.is_safe_url(
+                request.args.get("next")
+            ):
+                return redirect(request.args.get("next"))
 
-                for field_id, value in entries.items():
-                    entry = UserFieldEntries(
-                        field_id=field_id, value=value, user_id=user.id
-                    )
-                    db.session.add(entry)
-                db.session.commit()
-
-                login_user(user)
-
-                if request.args.get("next") and validators.is_safe_url(
-                    request.args.get("next")
-                ):
-                    return redirect(request.args.get("next"))
-
-                if config.can_send_mail() and get_config(
-                    "verify_emails"
-                ):  # Confirming users is enabled and we can send email.
-                    log(
-                        "registrations",
-                        format="[{date}] {ip} - {name} registered (UNCONFIRMED) with {email}",
-                        name=user.name,
-                        email=user.email,
-                    )
-                    email.verify_email_address(user.email)
-                    db.session.close()
-                    return redirect(url_for("auth.confirm"))
-                else:  # Don't care about confirming users
-                    if (
-                        config.can_send_mail()
-                    ):  # We want to notify the user that they have registered.
-                        email.successful_registration_notification(user.email)
+            if config.can_send_mail() and get_config(
+                "verify_emails"
+            ):  # Confirming users is enabled and we can send email.
+                log(
+                    "registrations",
+                    format="[{date}] {ip} - {name} registered (UNCONFIRMED) with {email}",
+                    name=user.name,
+                    email=user.email,
+                )
+                email.verify_email_address(user.email)
+                db.session.close()
+                return redirect(url_for("auth.confirm"))
+            else:  # Don't care about confirming users
+                if (
+                    config.can_send_mail()
+                ):  # We want to notify the user that they have registered.
+                    email.successful_registration_notification(user.email)
 
         log(
             "registrations",
