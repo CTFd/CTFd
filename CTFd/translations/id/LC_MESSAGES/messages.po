@@ -3,14 +3,14 @@ msgstr ""
 "Project-Id-Version: CTFd\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2025-04-02 07:37-0400\n"
-"PO-Revision-Date: 2026-05-11 22:27\n"
-"Last-Translator: Nama Anda\n"
+"PO-Revision-Date: 2026-05-11 23:33\n"
+"Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: CTFd\n"
 "X-Crowdin-Project-ID: 659064\n"
 "X-Crowdin-Language: id\n"
@@ -46,7 +46,7 @@ msgstr "Nama Pengguna"
 #: CTFd/forms/auth.py:23 CTFd/forms/auth.py:60 CTFd/forms/self.py:22
 #: CTFd/forms/teams.py:230
 msgid "Email"
-msgstr "Email"
+msgstr ""
 
 #: CTFd/forms/auth.py:24 CTFd/forms/auth.py:50 CTFd/forms/auth.py:67
 #: CTFd/forms/self.py:24 CTFd/forms/teams.py:231
@@ -128,12 +128,8 @@ msgid "Team Mode"
 msgstr "Mode Tim"
 
 #: CTFd/forms/setup.py:39
-msgid ""
-"Controls whether users join together in teams to play (Team Mode) or play as"
-" themselves (User Mode)"
-msgstr ""
-"Mengontrol apakah pengguna bergabung dalam tim untuk bermain (Mode Tim) atau"
-" bermain secara individu (Mode Pengguna)"
+msgid "Controls whether users join together in teams to play (Team Mode) or play as themselves (User Mode)"
+msgstr "Mengontrol apakah pengguna bergabung dalam tim untuk bermain (Mode Tim) atau bermain secara individu (Mode Pengguna)"
 
 #: CTFd/forms/setup.py:45
 msgid "Admin Username"
@@ -161,19 +157,15 @@ msgstr "Kata sandi Anda untuk akun administrasi"
 
 #: CTFd/forms/setup.py:61
 msgid "Logo"
-msgstr "Logo"
+msgstr ""
 
 #: CTFd/forms/setup.py:63
-msgid ""
-"Logo to use for the website instead of a CTF name. Used as the home page "
-"button. Optional."
-msgstr ""
-"Logo yang digunakan untuk situs web alih-alih nama CTF. Digunakan sebagai "
-"tombol halaman utama. Opsional."
+msgid "Logo to use for the website instead of a CTF name. Used as the home page button. Optional."
+msgstr "Logo yang digunakan untuk situs web alih-alih nama CTF. Digunakan sebagai tombol halaman utama. Opsional."
 
 #: CTFd/forms/setup.py:67
 msgid "Banner"
-msgstr "Banner"
+msgstr ""
 
 #: CTFd/forms/setup.py:67
 msgid "Banner to use for the homepage. Optional."
@@ -184,12 +176,8 @@ msgid "Small Icon"
 msgstr "Ikon Kecil"
 
 #: CTFd/forms/setup.py:72
-msgid ""
-"favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. "
-"Optional."
-msgstr ""
-"Favicon yang digunakan di browser pengguna. Hanya menerima format PNG. Harus"
-" berukuran 32x32px. Opsional."
+msgid "favicon used in user's browsers. Only PNGs accepted. Must be 32x32px. Optional."
+msgstr "Favicon yang digunakan di browser pengguna. Hanya menerima format PNG. Harus berukuran 32x32px. Opsional."
 
 #: CTFd/forms/setup.py:76
 msgid "Theme"
@@ -204,11 +192,8 @@ msgid "Theme Color"
 msgstr "Warna Tema"
 
 #: CTFd/forms/setup.py:86
-msgid ""
-"Color used by theme to control aesthetics. Requires theme support. Optional."
-msgstr ""
-"Warna yang digunakan oleh tema untuk mengontrol estetika. Membutuhkan "
-"dukungan tema. Opsional."
+msgid "Color used by theme to control aesthetics. Requires theme support. Optional."
+msgstr "Warna yang digunakan oleh tema untuk mengontrol estetika. Membutuhkan dukungan tema. Opsional."
 
 #: CTFd/forms/setup.py:91
 msgid "Verify Emails"
@@ -268,12 +253,8 @@ msgid "Confirm Current Team Password"
 msgstr "Konfirmasi Kata Sandi Tim Saat Ini"
 
 #: CTFd/forms/teams.py:136
-msgid ""
-"Provide your current team password (or your password) to update your team's "
-"password"
-msgstr ""
-"Masukkan kata sandi tim Anda saat ini (atau kata sandi Anda) untuk "
-"memperbarui kata sandi tim"
+msgid "Provide your current team password (or your password) to update your team's password"
+msgstr "Masukkan kata sandi tim Anda saat ini (atau kata sandi Anda) untuk memperbarui kata sandi tim"
 
 #: CTFd/forms/teams.py:142
 msgid "Your team's affiliation publicly shown to other competitors"
@@ -302,7 +283,7 @@ msgstr "Nama"
 
 #: CTFd/forms/teams.py:224 CTFd/forms/users.py:171
 msgid "Parameter"
-msgstr "Parameter"
+msgstr ""
 
 #: CTFd/forms/teams.py:225 CTFd/forms/users.py:175
 msgid "Search"
@@ -322,7 +303,7 @@ msgstr "Tautan Undangan"
 
 #: CTFd/forms/users.py:133
 msgid "Bracket"
-msgstr "Bracket"
+msgstr ""
 
 #: CTFd/forms/users.py:134
 msgid "Competition bracket for your user"
@@ -395,12 +376,8 @@ msgid "Please click the link in that email to confirm your account."
 msgstr "Silakan klik tautan di email tersebut untuk mengonfirmasi akun Anda."
 
 #: CTFd/themes/core-beta/templates/confirm.html:30
-msgid ""
-"If the email doesn’t arrive, check your spam folder or contact an "
-"administrator to manually verify your account."
-msgstr ""
-"Jika email tidak tiba, periksa folder spam Anda atau hubungi administrator "
-"untuk memverifikasi akun Anda secara manual."
+msgid "If the email doesn’t arrive, check your spam folder or contact an administrator to manually verify your account."
+msgstr "Jika email tidak tiba, periksa folder spam Anda atau hubungi administrator untuk memverifikasi akun Anda secara manual."
 
 #: CTFd/themes/core-beta/templates/confirm.html:43
 msgid "Change Email Address"
@@ -446,31 +423,20 @@ msgstr "Kata sandi digunakan untuk masuk ke akun Anda"
 
 #: CTFd/themes/core-beta/templates/register.html:69
 #, python-format
-msgid ""
-"By registering, you agree to the <a href=\"%(privacy_link)s\" "
-"target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" "
-"target=\"_blank\">terms of service</a>"
-msgstr ""
-"Dengan mendaftar, Anda menyetujui <a href=\"%(privacy_link)s\" "
-"target=\"_blank\">kebijakan privasi</a> dan <a href=\"%(tos_link)s\" "
-"target=\"_blank\">syarat layanan</a>"
+msgid "By registering, you agree to the <a href=\"%(privacy_link)s\" target=\"_blank\">privacy policy</a> and <a href=\"%(tos_link)s\" target=\"_blank\">terms of service</a>"
+msgstr "Dengan mendaftar, Anda menyetujui <a href=\"%(privacy_link)s\" target=\"_blank\">kebijakan privasi</a> dan <a href=\"%(tos_link)s\" target=\"_blank\">syarat layanan</a>"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:7
 msgid "Reset Password"
 msgstr "Atur Ulang Kata Sandi"
 
 #: CTFd/themes/core-beta/templates/reset_password.html:21
-msgid ""
-"You can now reset the password for your account and log in. Please enter in "
-"a new password below."
-msgstr ""
-"Anda sekarang dapat mengatur ulang kata sandi untuk akun Anda dan masuk. "
-"Silakan masukkan kata sandi baru di bawah ini."
+msgid "You can now reset the password for your account and log in. Please enter in a new password below."
+msgstr "Anda sekarang dapat mengatur ulang kata sandi untuk akun Anda dan masuk. Silakan masukkan kata sandi baru di bawah ini."
 
 #: CTFd/themes/core-beta/templates/reset_password.html:44
 msgid "Please provide the email address associated with your account below."
-msgstr ""
-"Silakan masukkan alamat email yang terkait dengan akun Anda di bawah ini."
+msgstr "Silakan masukkan alamat email yang terkait dengan akun Anda di bawah ini."
 
 #: CTFd/themes/core-beta/templates/components/navbar.html:52
 #: CTFd/themes/core-beta/templates/scoreboard.html:7
@@ -564,7 +530,7 @@ msgstr "Umum"
 
 #: CTFd/themes/core-beta/templates/setup.html:47
 msgid "Mode"
-msgstr "Mode"
+msgstr ""
 
 #: CTFd/themes/core-beta/templates/setup.html:53
 msgid "Administration"
@@ -632,8 +598,7 @@ msgid "Control the visibility of different sections of CTFd"
 msgstr "Kontrol visibilitas berbagai bagian dari CTFd"
 
 #: CTFd/themes/core-beta/templates/setup.html:232
-msgid ""
-"Subscribe email address to the CTFd LLC Newsletter for news and updates"
+msgid "Subscribe email address to the CTFd LLC Newsletter for news and updates"
 msgstr "Berlangganan buletin CTFd LLC untuk berita dan pembaruan"
 
 #: CTFd/themes/core-beta/templates/setup.html:309
@@ -761,14 +726,11 @@ msgstr "Undang Pengguna"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:171
 msgid "Share this link with your team members for them to join your team"
-msgstr ""
-"Bagikan tautan ini kepada anggota tim Anda agar mereka dapat bergabung "
-"dengan tim Anda"
+msgstr "Bagikan tautan ini kepada anggota tim Anda agar mereka dapat bergabung dengan tim Anda"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:174
 msgid "Invite links can be re-used and expire after 1 day"
-msgstr ""
-"Tautan undangan dapat digunakan kembali dan akan kedaluwarsa setelah 1 hari"
+msgstr "Tautan undangan dapat digunakan kembali dan akan kedaluwarsa setelah 1 hari"
 
 #: CTFd/themes/core-beta/templates/teams/private.html:188
 msgid "Disband Team"
@@ -869,12 +831,8 @@ msgstr "Halaman"
 
 #: CTFd/themes/core-beta/templates/users/users.html:14
 #, python-format
-msgid ""
-"Searching for users with <strong>%(field)s</strong> matching "
-"<strong>%(q)s</strong>"
-msgstr ""
-"Mencari pengguna dengan <strong>%(field)s</strong> yang cocok dengan "
-"<strong>%(q)s</strong>"
+msgid "Searching for users with <strong>%(field)s</strong> matching <strong>%(q)s</strong>"
+msgstr "Mencari pengguna dengan <strong>%(field)s</strong> yang cocok dengan <strong>%(q)s</strong>"
 
 #: CTFd/themes/core-beta/templates/users/users.html:17
 #, python-format
@@ -894,3 +852,4 @@ msgstr[0] "pengguna"
 msgid "team"
 msgid_plural "teams"
 msgstr[0] "tim"
+
