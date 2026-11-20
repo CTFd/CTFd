@@ -22,10 +22,12 @@ RUN python -m pip install --no-cache-dir "pip @ https://files.pythonhosted.org/p
 
 COPY . /opt/CTFd
 
-RUN pip install --no-cache-dir -r requirements.txt \
+# hadolint ignore=DL3013
+RUN pip install --no-cache-dir uv \
+    && uv pip install --no-cache-dir -r requirements.txt \
     && for d in CTFd/plugins/*; do \
         if [ -f "$d/requirements.txt" ]; then \
-            pip install --no-cache-dir -r "$d/requirements.txt";\
+            uv pip install --no-cache-dir -r "$d/requirements.txt";\
         fi; \
     done;
 
