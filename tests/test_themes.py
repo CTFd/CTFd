@@ -10,6 +10,7 @@ from jinja2.exceptions import TemplateNotFound
 from jinja2.sandbox import SecurityError
 from werkzeug.test import Client
 
+import CTFd.utils.config
 from CTFd.config import TestingConfig
 from CTFd.utils import get_config, set_config
 from tests.helpers import create_ctfd, destroy_ctfd, gen_user, login_as_user
@@ -39,6 +40,32 @@ def test_themes_cant_access_configpy_attributes():
             app.jinja_env.from_string("{{ get_config('SECRET_KEY') }}").render()
             != app.config["SECRET_KEY"]
         )
+    destroy_ctfd(app)
+
+
+def test_themes_attribute_access():
+    app = create_ctfd()
+    with app.app_context():
+        env = app.jinja_env
+        assert env.is_safe_attribute(object(), "attr", os) is False
+        assert env.is_safe_attribute(object(), "attr", CTFd.utils.config) is True
+    destroy_ctfd(app)
+
+
+def test_themes_config():
+    app = create_ctfd()
+    with app.app_context():
+        assert "config" not in app.jinja_env.globals
+        assert app.jinja_env.from_string("{{ config }}").render() == ""
+    destroy_ctfd(app)
+
+
+def test_themes_integrations():
+    app = create_ctfd()
+    with app.app_context():
+        integrations = app.jinja_env.globals["integrations"]
+        public = {a for a in dir(integrations) if not a.startswith("_")}
+        assert public == {"mlc", "mlc_registration"}, public
     destroy_ctfd(app)
 
 

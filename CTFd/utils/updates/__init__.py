@@ -46,7 +46,7 @@ def update_check(force=False):
                 "current": app.VERSION,
                 "python_version_raw": sys.hexversion,
                 "python_version": python_version(),
-                "db_driver": db.session.bind.dialect.name,
+                "db_driver": db.engine.dialect.name,
                 "challenge_count": Challenges.query.count(),
                 "user_mode": get_config("user_mode"),
                 "user_count": Users.query.count(),
