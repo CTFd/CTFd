@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: ctfd-claim0
+  name: ctfd-claim00
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: longhorn
+  volumeMode: Filesystem
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 100Mi
