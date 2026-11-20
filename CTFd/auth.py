@@ -1,6 +1,5 @@
 import requests
 from flask import Blueprint, abort, redirect, render_template, request, session, url_for
-from flask import current_app as app
 from flask_babel import lazy_gettext as _l
 
 from CTFd.cache import cache, clear_team_session, clear_user_session
