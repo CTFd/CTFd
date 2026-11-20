@@ -31,7 +31,7 @@ dependencies = [
     "marshmallow==2.21.0",
     "pydantic==1.10.26",
     "WTForms==2.3.3",
-    "python-geoacumen-city==2023.4.15",
+    "python-geoacumen-city==2026.11.20",
     "maxminddb==1.5.4",
     "tenacity==9.1.4",
     "nh3==0.3.7",

@@ -392,7 +392,7 @@ requires-dist = [
     { name = "pymysql", extras = ["rsa"], specifier = "==1.1.1" },
     { name = "pynacl", specifier = "==1.6.2" },
     { name = "python-dotenv", specifier = "==0.21.1" },
-    { name = "python-geoacumen-city", specifier = "==2023.4.15" },
+    { name = "python-geoacumen-city", specifier = "==2026.11.20" },
     { name = "redis", specifier = "==4.6.0" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "six", specifier = "==1.17.0" },
@@ -1104,14 +1104,14 @@ wheels = [
 
 [[package]]
 name = "python-geoacumen-city"
-version = "2023.4.15"
+version = "2026.11.20"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "maxminddb" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/08/d3/8b446b53e0f305f380850e2c8f7100ea5bbacdf6a250e82d0a78bbb1d05e/python-geoacumen-city-2023.4.15.tar.gz", hash = "sha256:7be290b86d12884fb2c65a359fde499e7a9ec9fdcb7e988321ae4fac5c6a0b54", size = 48508378, upload-time = "2023-04-15T04:20:20.838Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/df/e9/14e7f5f647defe8924aeab32908031573a9e7a63e74524ea4c71e643798c/python_geoacumen_city-2026.11.20.tar.gz", hash = "sha256:377f232f84abe108cc0be771b2370a2b9485fafeab179b9cc2771dd1f1471313", size = 60201490, upload-time = "2026-11-20T21:18:54.616Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f5/b8/829cd8219ca85be2396907e843d968bcbfb7082b6865eabef509adbf9baf/python_geoacumen_city-2023.4.15-py3-none-any.whl", hash = "sha256:3b7ecd4072b97a9a3d68ac8eff2ac855aa3d8188f89892b01df8c6bf572a4a73", size = 48810736, upload-time = "2023-04-15T04:20:15.121Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/1c/44b05ad7d6bc0b3a0dfefb65c0fa8c443552727ad1c3c64f94dfa3a47c3c/python_geoacumen_city-2026.11.20-py3-none-any.whl", hash = "sha256:ca9525d46ed33c1e23cf5a0c5a120428bd1392ec887632a8ca24a5bd85e5f50c", size = 60481263, upload-time = "2026-11-20T21:18:41.336Z" },
 ]
 
 [[package]]

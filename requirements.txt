@@ -140,7 +140,7 @@ python-dateutil==2.9.0.post0
     #   freezegun
 python-dotenv==0.21.1
     # via ctfd
-python-geoacumen-city==2023.4.15
+python-geoacumen-city==2026.11.20
     # via ctfd
 pytz==2025.2
     # via flask-babel
