@@ -136,7 +136,10 @@ def export_ctf():
     day = datetime.datetime.now().strftime("%Y-%m-%d_%T")
     full_name = "{}.{}.zip".format(ctf_name, day)
     return send_file(
-        backup, cache_timeout=-1, as_attachment=True, attachment_filename=full_name
+        backup,
+        max_age=-1,
+        as_attachment=True,
+        download_name=full_name,
     )
 
 
