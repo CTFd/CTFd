@@ -176,7 +176,7 @@ sqlalchemy==1.4.54
     #   flask-sqlalchemy
     #   marshmallow-sqlalchemy
     #   sqlalchemy-utils
-sqlalchemy-utils==0.42.1
+sqlalchemy-utils==0.41.1
     # via ctfd
 tenacity==9.1.4
     # via ctfd

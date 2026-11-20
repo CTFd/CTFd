@@ -13,7 +13,7 @@ dependencies = [
     "Flask-Caching==2.4.0",
     "Flask-Migrate==4.0.7",
     "SQLAlchemy==1.4.54",
-    "SQLAlchemy-Utils==0.42.1",
+    "SQLAlchemy-Utils==0.41.1",
     "passlib==1.7.4",
     "bcrypt==4.0.1",
     "requests==2.34.2",
