@@ -19,7 +19,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-multimodal": "~1.0.4",
     "dayjs": "^1.11.0",
-    "echarts": "^5.3.2",
+    "echarts": "^6.1.0",
     "lolight": "^1.4.0",
     "vue": "^3.2.25"
   },
