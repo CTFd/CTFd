@@ -11,7 +11,7 @@ from CTFd.cache import clear_user_recent_ips, clear_user_recent_tracking
 from CTFd.exceptions import UserNotFoundException, UserTokenExpiredException
 from CTFd.exceptions.email import UserResetPasswordTokenInvalidException
 from CTFd.models import Tracking, db
-from CTFd.utils import config, get_app_config, get_config, import_in_progress, markdown
+from CTFd.utils import get_app_config, get_config, import_in_progress, markdown
 from CTFd.utils.config import (
     can_send_mail,
     ctf_logo,
@@ -87,7 +87,7 @@ def init_template_globals(app):
     from CTFd.utils.countries import get_countries, lookup_country_code
     from CTFd.utils.countries.geoip import lookup_ip_address, lookup_ip_address_city
 
-    app.jinja_env.globals.update(config=config)
+    app.jinja_env.globals.pop("config", None)
     app.jinja_env.globals.update(get_pages=get_pages)
     app.jinja_env.globals.update(can_send_mail=can_send_mail)
     app.jinja_env.globals.update(get_ctf_name=ctf_name)
