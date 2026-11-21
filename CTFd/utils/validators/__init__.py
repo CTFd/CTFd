@@ -92,3 +92,11 @@ def validate_language(language):
         return
     if LANGUAGE_NAMES.get(language) is None:
         raise ValidationError("Invalid Language")
+
+
+THEME_COLOR_REGEX = re.compile(r"^#[0-9a-fA-F]{6}$")
+
+
+def validate_theme_color(theme_color):
+    """Return True if theme_color is a CSS color value safe to embed in CSS (prevent XSS)."""
+    return bool(THEME_COLOR_REGEX.match(theme_color))
