@@ -215,51 +215,48 @@ def register_user(
     bracket_id=None,
     raise_for_error=True,
 ):
-    with app.app_context():
-        with app.test_client() as client:
-            client.get("/register")
+    with app.test_client() as client:
+        client.get("/register")
+        with client.session_transaction() as sess:
+            data = {
+                "name": name,
+                "email": email,
+                "password": password,
+                "nonce": sess.get("nonce"),
+            }
+        if bracket_id:
+            data["bracket_id"] = bracket_id
+        client.post("/register", data=data)
+        if raise_for_error:
             with client.session_transaction() as sess:
-                data = {
-                    "name": name,
-                    "email": email,
-                    "password": password,
-                    "nonce": sess.get("nonce"),
-                }
-            if bracket_id:
-                data["bracket_id"] = bracket_id
-            client.post("/register", data=data)
-            if raise_for_error:
-                with client.session_transaction() as sess:
-                    assert sess["id"]
-                    assert sess["nonce"]
-                    assert sess["hash"]
+                assert sess["id"]
+                assert sess["nonce"]
+                assert sess["hash"]
 
 
 def register_team(app, name="team", password="password", raise_for_error=True):
-    with app.app_context():
-        with app.test_client() as client:
-            client.get("/team")
-            with client.session_transaction() as sess:
-                data = {"name": name, "password": password, "nonce": sess.get("nonce")}
-            r = client.post("/teams/new", data=data)
-            if raise_for_error:
-                assert r.status_code == 302
-            return client
+    with app.test_client() as client:
+        client.get("/team")
+        with client.session_transaction() as sess:
+            data = {"name": name, "password": password, "nonce": sess.get("nonce")}
+        r = client.post("/teams/new", data=data)
+        if raise_for_error:
+            assert r.status_code == 302
+        return client
 
 
 def login_as_user(app, name="user", password="password", raise_for_error=True):
-    with app.app_context():
-        with app.test_client() as client:
-            client.get("/login")
-            with client.session_transaction() as sess:
-                data = {"name": name, "password": password, "nonce": sess.get("nonce")}
-            client.post("/login", data=data)
-            if raise_for_error:
-                with client.session_transaction() as sess:
-                    assert sess["id"]
-                    assert sess["nonce"]
-                    assert sess["hash"]
-            return client
+    client = app.test_client()
+    client.get("/login")
+    with client.session_transaction() as sess:
+        data = {"name": name, "password": password, "nonce": sess.get("nonce")}
+    client.post("/login", data=data)
+    if raise_for_error:
+        with client.session_transaction() as sess:
+            assert sess["id"]
+            assert sess["nonce"]
+            assert sess["hash"]
+    return client
 
 
 def login_with_mlc(

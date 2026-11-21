@@ -40,7 +40,7 @@ class ExportList(Resource):
             full_name = f"{ctf_name()}.{day}.zip"
             return send_file(
                 backup,
-                cache_timeout=-1,
+                max_age=-1,
                 as_attachment=True,
-                attachment_filename=full_name,
+                download_name=full_name,
             )

@@ -40,7 +40,8 @@ def env_asset_url_default(endpoint, values):
         static_asset = path.endswith(".js") or path.endswith(".css")
         direct_access = ".dev" in path or ".min" in path
         if static_asset and not direct_access:
-            env = values.get("env", current_app.env)
+            # TODO: CTFd 3.10 or CTFd 4.0 Flask 2.3 removes ENV
+            env = values.get("env") or current_app.config.get("ENV", "production")
             mode = ".dev" if env == "development" else ".min"
             base, ext = os.path.splitext(path)
             values["path"] = base + mode + ext

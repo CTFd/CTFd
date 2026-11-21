@@ -308,6 +308,9 @@ class ServerConfig(object):
             "max_overflow": int(empty_str_cast(config_ini["optional"]["SQLALCHEMY_MAX_OVERFLOW"], default=20)),  # noqa: E131
             "pool_pre_ping": empty_str_cast(config_ini["optional"]["SQLALCHEMY_POOL_PRE_PING"], default=True),  # noqa: E131
         }
+        # TODO: CTFd 4.0 Flask-SQLAlchemy 2.x defaulted pool_size to 10 for MySQL; 3.x leaves SQLAlchemy's default of 5
+        if DATABASE_URL.startswith("mysql"):
+            SQLALCHEMY_ENGINE_OPTIONS["pool_size"] = int(empty_str_cast(config_ini["optional"].get("SQLALCHEMY_POOL_SIZE", ""), default=10))  # noqa: E131
 
     # === OAUTH ===
     OAUTH_CLIENT_ID: str = empty_str_cast(config_ini["oauth"]["OAUTH_CLIENT_ID"])
