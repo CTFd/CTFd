@@ -16,5 +16,6 @@ CTFd/uploads/**/*
 **/node_modules
 **/*.pyc
 **/__pycache__
+**/.ruff_cache
 .venv*
 venv*

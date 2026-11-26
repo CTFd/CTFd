@@ -200,8 +200,8 @@ def test_api_unlock_hints_race(same_hint, points):
     """Test that concurrent unlocks cannot unlock more hints than the account can pay for"""
 
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379/1"
-        CACHE_REDIS_URL = "redis://localhost:6379/1"
+        REDIS_URL = "redis://localhost:6379/6"
+        CACHE_REDIS_URL = "redis://localhost:6379/6"
         CACHE_TYPE = "redis"
 
     try:
