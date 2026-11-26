@@ -280,8 +280,8 @@ def test_challenges_with_max_attempts():
 
 def test_challenges_with_max_attempts_one_race():
     class RedisConfig(TestingConfig):
-        REDIS_URL = "redis://localhost:6379/1"
-        CACHE_REDIS_URL = "redis://localhost:6379/1"
+        REDIS_URL = "redis://localhost:6379/5"
+        CACHE_REDIS_URL = "redis://localhost:6379/5"
         CACHE_TYPE = "redis"
 
     try:
