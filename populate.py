@@ -31,22 +31,45 @@ from faker import Faker
 
 fake = Faker()
 
+
+def non_negative_int(value):
+    ivalue = int(value)
+    if ivalue < 0:
+        raise argparse.ArgumentTypeError(f"{value} must be a non-negative integer")
+    return ivalue
+
+
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--mode", help="Set user mode", default="teams")
-parser.add_argument("--users", help="Amount of users to generate", default=50, type=int)
-parser.add_argument("--teams", help="Amount of teams to generate", default=10, type=int)
 parser.add_argument(
-    "--challenges", help="Amount of challenges to generate", default=20, type=int
+    "--mode", help="Set user mode", default="teams", choices=["users", "teams"]
 )
 parser.add_argument(
-    "--awards", help="Amount of awards to generate", default=5, type=int
+    "--users", help="Amount of users to generate", default=50, type=non_negative_int
 )
 parser.add_argument(
-    "--brackets", help="Amount of brackets to generate", default=5, type=int
+    "--teams", help="Amount of teams to generate", default=10, type=non_negative_int
 )
 parser.add_argument(
-    "--fields", help="Amount of custom fields to generate", default=3, type=int
+    "--challenges",
+    help="Amount of challenges to generate",
+    default=20,
+    type=non_negative_int,
+)
+parser.add_argument(
+    "--awards", help="Amount of awards to generate", default=5, type=non_negative_int
+)
+parser.add_argument(
+    "--brackets",
+    help="Amount of brackets to generate",
+    default=5,
+    type=non_negative_int,
+)
+parser.add_argument(
+    "--fields",
+    help="Amount of custom fields to generate",
+    default=3,
+    type=non_negative_int,
 )
 
 args = parser.parse_args()
@@ -150,6 +173,21 @@ def gen_field_value(field_type, required=False):
     if field_type == "boolean":
         return True if required else random_chance()
     return gen_word()
+
+
+def gen_unique_field_name(used, max_attempts=20):
+    for _ in range(max_attempts):
+        name = gen_word().capitalize()
+        if name not in used:
+            used.add(name)
+            return name
+    suffix = len(used) + 1
+    while True:
+        name = f"{gen_word().capitalize()}_{suffix}"
+        if name not in used:
+            used.add(name)
+            return name
+        suffix += 1
 
 
 def random_date(start, end):
@@ -327,26 +365,22 @@ if __name__ == "__main__":
         if mode == "teams":
             field_models.append(TeamFields)
 
-        used = []
+        used = set()
         created_fields = {}
         for field_model in field_models:
             created_fields[field_model] = []
-            count = 0
-            while count < FIELDS_AMOUNT:
-                name = gen_word().capitalize()
-                if name not in used:
-                    used.append(name)
-                    field = field_model(
-                        name=name,
-                        field_type=gen_field_type(),
-                        description=gen_sentence(),
-                        required=random_chance(),
-                        public=random_chance(),
-                        editable=random_chance(),
-                    )
-                    db.session.add(field)
-                    created_fields[field_model].append(field)
-                    count += 1
+            for _ in range(FIELDS_AMOUNT):
+                name = gen_unique_field_name(used)
+                field = field_model(
+                    name=name,
+                    field_type=gen_field_type(),
+                    description=gen_sentence(),
+                    required=random_chance(),
+                    public=random_chance(),
+                    editable=random_chance(),
+                )
+                db.session.add(field)
+                created_fields[field_model].append(field)
 
         db.session.commit()
 
