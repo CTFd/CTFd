@@ -79,7 +79,7 @@
 						<th class="sort-col text-center"><b>ID</b></th>
 						<th class="sort-col"><b>Name</b></th>
 						<th class="sort-col"><b>Category</b></th>
-						<th class="sort-col"><b>Module</b></th>
+						<th class="sort-col"><b>Modules</b></th>
 						<th class="sort-col text-center"><b>Value</b></th>
 						<th class="sort-col text-center"><b>Type</b></th>
 						<th class="sort-col text-center"><b>State</b></th>
@@ -98,8 +98,10 @@
 							<td><a href="{{ url_for('admin.challenges_detail', challenge_id=challenge.id) }}">{{ challenge.name }}</a></td>
 							<td>{{ challenge.category }}</td>
 							<td>
-								{% if challenge.module %}
-									<a href="{{ url_for('admin.modules_detail', module_id=challenge.module.id) }}">{{ challenge.module.name }}</a>
+								{% if challenge.modules %}
+									{% for m in challenge.modules %}
+										<a href="{{ url_for('admin.modules_detail', module_id=m.id) }}">{{ m.name }}</a>{% if not loop.last %},{% endif %}
+									{% endfor %}
 								{% else %}
 									<span class="text-muted">-</span>
 								{% endif %}

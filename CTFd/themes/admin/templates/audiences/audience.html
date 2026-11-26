@@ -54,7 +54,7 @@
 				{% for m in linked_modules %}
 				<li class="list-group-item d-flex justify-content-between align-items-center">
 					<a href="{{ url_for('admin.modules_detail', module_id=m.id) }}">{{ m.name }}</a>
-					<button class="btn btn-sm btn-outline-danger" data-unlink-module="{{ m.id }}">Unlink</button>
+					<button class="btn btn-sm btn-outline-danger py-0" data-unlink-module="{{ m.id }}">Unlink</button>
 				</li>
 				{% else %}
 				<li class="list-group-item text-muted">No linked modules.</li>

@@ -4,7 +4,13 @@ from flask_restx import Namespace, Resource
 from CTFd.api.v1.helpers.request import validate_args
 from CTFd.cache import clear_accessible_module_ids, clear_challenges
 from CTFd.constants import RawEnum
-from CTFd.models import Challenges, ModuleAudienceAccess, Modules, db
+from CTFd.models import (
+    Challenges,
+    ModuleAudienceAccess,
+    ModuleChallenges,
+    Modules,
+    db,
+)
 from CTFd.schemas.modules import (
     ModuleAudienceAccessSchema,
     ModuleChallengeSchema,
@@ -106,7 +112,9 @@ class ModuleChallengeList(Resource):
     @admins_only
     def get(self, module_id):
         Modules.query.filter_by(id=module_id).first_or_404()
-        challenges = Challenges.query.filter_by(module_id=module_id).all()
+        challenges = Challenges.query.filter(
+            Challenges.modules.any(Modules.id == module_id)
+        ).all()
         schema = ModuleChallengeSchema(many=True)
         response = schema.dump(challenges)
         if response.errors:
@@ -125,14 +133,34 @@ class ModuleChallengeList(Resource):
             }, 400
 
         challenge = Challenges.query.filter_by(id=challenge_id).first_or_404()
-        challenge.module_id = module_id
-        db.session.commit()
+        link = ModuleChallenges.query.filter_by(
+            module_id=module_id, challenge_id=challenge.id
+        ).first()
+        if link is None:
+            db.session.add(
+                ModuleChallenges(module_id=module_id, challenge_id=challenge.id)
+            )
+            db.session.commit()
         clear_challenges()
 
         schema = ModuleChallengeSchema()
         response = schema.dump(challenge)
         db.session.close()
         return {"success": True, "data": response.data}
+
+
+@modules_namespace.route("/<int:module_id>/challenges/<int:challenge_id>")
+class ModuleChallengeItem(Resource):
+    @admins_only
+    def delete(self, module_id, challenge_id):
+        link = ModuleChallenges.query.filter_by(
+            module_id=module_id, challenge_id=challenge_id
+        ).first_or_404()
+        db.session.delete(link)
+        db.session.commit()
+        clear_challenges()
+        db.session.close()
+        return {"success": True}
 
 
 @modules_namespace.route("/<int:module_id>/audiences")

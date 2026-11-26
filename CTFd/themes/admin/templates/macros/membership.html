@@ -1,0 +1,55 @@
+{% macro membership_checkbox(group, id, checked, member_id=None, classes="") -%}
+<input type="checkbox" class="{{ classes }}" autocomplete="off"
+       data-membership="{{ group }}"
+       data-id="{{ id }}"
+       data-initial="{{ 1 if checked else 0 }}"
+       {% if member_id %}data-member-id="{{ member_id }}"{% endif %}
+       {% if checked %}checked{% endif %}>
+{%- endmacro %}
+
+{% macro membership_toolbar(group, placeholder, in_label, out_label) -%}
+<div class="form-row align-items-center mb-2">
+	<div class="col">
+		<input type="search" class="form-control" data-membership-search="{{ group }}" placeholder="{{ placeholder }}" autocomplete="off">
+	</div>
+	<div class="col-auto">
+		<div class="btn-group btn-group-toggle" data-toggle="buttons">
+			<label class="btn btn-outline-secondary active">
+				<input type="radio" name="{{ group }}-filter" data-membership-filter="{{ group }}" value="all" autocomplete="off" checked> All
+			</label>
+			<label class="btn btn-outline-secondary">
+				<input type="radio" name="{{ group }}-filter" data-membership-filter="{{ group }}" value="in" autocomplete="off"> {{ in_label }}
+			</label>
+			<label class="btn btn-outline-secondary">
+				<input type="radio" name="{{ group }}-filter" data-membership-filter="{{ group }}" value="out" autocomplete="off"> {{ out_label }}
+			</label>
+		</div>
+	</div>
+</div>
+{%- endmacro %}
+
+{% macro membership_select_all(group) -%}
+<th class="text-center" style="width: 3rem">
+	<input type="checkbox" data-membership-select-all="{{ group }}" autocomplete="off" title="Toggle all shown">
+</th>
+{%- endmacro %}
+
+{% macro membership_empty_row(colspan, has_rows, empty_text) -%}
+<tr data-membership-empty {% if has_rows %}style="display: none"{% endif %}>
+	<td colspan="{{ colspan }}" class="text-muted text-center">
+		{% if has_rows %}Nothing matches.{% else %}{{ empty_text }}{% endif %}
+	</td>
+</tr>
+{%- endmacro %}
+
+{% macro membership_save_bar() -%}
+<div id="membership-save-bar" class="fixed-bottom bg-light border-top py-2" style="display: none">
+	<div class="container d-flex justify-content-between align-items-center">
+		<span id="membership-summary"></span>
+		<div>
+			<button type="button" class="btn btn-outline-secondary btn-sm mr-2" id="membership-discard">Discard</button>
+			<button type="button" class="btn btn-primary btn-sm" id="membership-save">Save changes</button>
+		</div>
+	</div>
+</div>
+{%- endmacro %}

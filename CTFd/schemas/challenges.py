@@ -1,8 +1,8 @@
-from marshmallow import validate
+from marshmallow import fields, validate, validates
 from marshmallow.exceptions import ValidationError
 from marshmallow_sqlalchemy import field_for
 
-from CTFd.models import Challenges, ma
+from CTFd.models import Challenges, Modules, ma
 
 
 class ChallengeRequirementsValidator(validate.Validator):
@@ -99,3 +99,21 @@ class ChallengeSchema(ma.ModelSchema):
         "requirements",
         validate=[ChallengeRequirementsValidator()],
     )
+
+    module_ids = fields.List(fields.Integer(), allow_none=True)
+
+    @validates("module_ids")
+    def validate_module_ids(self, value):
+        ids = {i for i in (value or []) if isinstance(i, int)}
+        if not ids:
+            return
+
+        found = {
+            m.id
+            for m in Modules.query.with_entities(Modules.id).filter(Modules.id.in_(ids))
+        }
+        missing = sorted(ids - found)
+        if missing:
+            raise ValidationError(
+                "Invalid module id(s): {}".format(", ".join(map(str, missing)))
+            )

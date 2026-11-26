@@ -127,13 +127,12 @@ class Challenges(db.Model):
     position = db.Column(db.Integer, nullable=False, default=0)
     function = db.Column(db.String(32), default="static")
     scheduled_at = db.Column(db.DateTime, nullable=True)
-    module_id = db.Column(
-        db.Integer, db.ForeignKey("modules.id", ondelete="SET NULL"), nullable=True
-    )
 
     requirements = db.Column(db.JSON)
 
-    module = db.relationship("Modules", foreign_keys=[module_id], lazy="select")
+    modules = db.relationship(
+        "Modules", secondary="module_challenges", order_by="Modules.id", lazy="select"
+    )
     files = db.relationship("ChallengeFiles", backref="challenge")
     tags = db.relationship("Tags", backref="challenge")
     hints = db.relationship("Hints", backref="challenge")
@@ -185,6 +184,17 @@ class Challenges(db.Model):
         from CTFd.plugins.challenges import get_chal_class
 
         return get_chal_class(self.type)
+
+    @property
+    def module_ids(self):
+        return [m.id for m in self.modules]
+
+    @module_ids.setter
+    def module_ids(self, ids):
+        if not ids:
+            self.modules = []
+            return
+        self.modules = Modules.query.filter(Modules.id.in_(set(ids))).all()
 
     def __init__(self, *args, **kwargs):
         super(Challenges, self).__init__(**kwargs)
@@ -1259,6 +1269,21 @@ class ModuleAudienceAccess(db.Model):
 
     __table_args__ = (
         db.UniqueConstraint("module_id", "audience_id", name="uq_module_audience"),
+    )
+
+
+class ModuleChallenges(db.Model):
+    __tablename__ = "module_challenges"
+    id = db.Column(db.Integer, primary_key=True)
+    module_id = db.Column(
+        db.Integer, db.ForeignKey("modules.id", ondelete="CASCADE"), nullable=False
+    )
+    challenge_id = db.Column(
+        db.Integer, db.ForeignKey("challenges.id", ondelete="CASCADE"), nullable=False
+    )
+
+    __table_args__ = (
+        db.UniqueConstraint("module_id", "challenge_id", name="uq_module_challenge"),
     )
 
 

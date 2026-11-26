@@ -1,8 +1,16 @@
 from flask import render_template, request
-from sqlalchemy import or_
+from sqlalchemy import func
+from sqlalchemy.orm import selectinload
 
 from CTFd.admin import admin
-from CTFd.models import Audiences, Challenges, ModuleAudienceAccess, Modules
+from CTFd.models import (
+    AudienceMembers,
+    Audiences,
+    Challenges,
+    ModuleAudienceAccess,
+    Modules,
+    db,
+)
 from CTFd.utils.decorators import admins_only
 
 
@@ -31,34 +39,32 @@ def modules_new():
 @admins_only
 def modules_detail(module_id):
     module = Modules.query.filter_by(id=module_id).first_or_404()
-    linked_audiences = (
-        Audiences.query.join(
-            ModuleAudienceAccess, ModuleAudienceAccess.audience_id == Audiences.id
-        )
-        .filter(ModuleAudienceAccess.module_id == module_id)
+
+    audiences = Audiences.query.order_by(Audiences.name.asc()).all()
+    member_counts = dict(
+        db.session.query(AudienceMembers.audience_id, func.count(AudienceMembers.id))
+        .group_by(AudienceMembers.audience_id)
         .all()
     )
-    linked_audience_ids = {c.id for c in linked_audiences}
-    all_audiences = Audiences.query.order_by(Audiences.name.asc()).all()
+    linked_audience_ids = {
+        link.audience_id
+        for link in ModuleAudienceAccess.query.filter_by(module_id=module_id)
+    }
+
     challenges = (
-        Challenges.query.filter_by(module_id=module_id)
-        .order_by(Challenges.id.asc())
-        .all()
-    )
-    # Candidate challenges to add: not in this module (either ungrouped or assigned elsewhere).
-    addable_challenges = (
-        Challenges.query.filter(
-            or_(Challenges.module_id.is_(None), Challenges.module_id != module_id)
-        )
+        Challenges.query.options(selectinload(Challenges.modules))
         .order_by(Challenges.category.asc(), Challenges.name.asc())
         .all()
     )
+    linked_challenge_ids = {c.id for c in challenges if module_id in c.module_ids}
+    challenges.sort(key=lambda c: c.id not in linked_challenge_ids)
+
     return render_template(
         "admin/modules/module.html",
         module=module,
-        linked_audiences=linked_audiences,
+        audiences=audiences,
+        member_counts=member_counts,
         linked_audience_ids=linked_audience_ids,
-        all_audiences=all_audiences,
         challenges=challenges,
-        addable_challenges=addable_challenges,
+        linked_challenge_ids=linked_challenge_ids,
     )

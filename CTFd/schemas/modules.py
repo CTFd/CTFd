@@ -11,7 +11,7 @@ class ModuleSchema(ma.ModelSchema):
 class ModuleChallengeSchema(ma.ModelSchema):
     class Meta:
         model = Challenges
-        fields = ("id", "name", "category", "module_id")
+        fields = ("id", "name", "category")
         dump_only = ("id",)
 
 

@@ -2,6 +2,7 @@ import datetime
 from collections import namedtuple
 
 from sqlalchemy import func as sa_func
+from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import and_, false, or_, true
 
 from CTFd.cache import cache
@@ -23,7 +24,7 @@ ChallengeFields = [
     "tags",
     "requirements",
     "position",
-    "module_id",
+    "module_ids",
 ]
 Challenge = namedtuple(
     "Challenge",
@@ -37,7 +38,7 @@ Rating = namedtuple("Rating", ["up", "down", "count"])
 @cache.memoize(timeout=60)
 def get_all_challenges(admin=False, field=None, q=None, **query_args):
     filters = build_model_filters(model=Challenges, query=q, field=field)
-    chal_q = Challenges.query
+    chal_q = Challenges.query.options(selectinload(Challenges.modules))
     # Admins can see hidden and locked challenges in the admin view
     if admin is False:
         chal_q = chal_q.filter(
@@ -72,7 +73,7 @@ def get_all_challenges(admin=False, field=None, q=None, **query_args):
             tags=tag_schema.dump(c.tags).data,
             requirements=c.requirements,
             position=c.position,
-            module_id=c.module_id,
+            module_ids=c.module_ids,
         )
         results.append(ct)
     return results
@@ -103,7 +104,7 @@ def get_solves_for_challenge_id(challenge_id, freeze=False):
     results = []
 
     for solve in solves:
-        # Seperate out the account name and the Solve object from the SQLAlchemy tuple
+        # Separate out the account name and the Solve object from the SQLAlchemy tuple
         solve, account_name = solve
         results.append(
             {

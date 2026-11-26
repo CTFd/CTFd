@@ -65,7 +65,11 @@ from CTFd.utils.decorators.visibility import (
 )
 from CTFd.utils.humanize.words import pluralize
 from CTFd.utils.logging import log
-from CTFd.utils.modules import can_access_challenge, get_accessible_module_ids
+from CTFd.utils.modules import (
+    can_access_challenge,
+    get_accessible_module_ids,
+    is_module_accessible,
+)
 from CTFd.utils.security.signing import serialize
 from CTFd.utils.user import (
     authed,
@@ -188,13 +192,13 @@ class ChallengeList(Resource):
         chal_q = get_all_challenges(admin=admin_view, field=field, q=q, **query_args)
 
         # Filter out challenges in modules the current account can't access.
-        # Ungrouped challenges (module_id is None) remain visible to everyone.
+        # Ungrouped challenges (no modules) remain visible to everyone.
         if not admin_view:
             accessible_modules = get_accessible_module_ids(user)
             chal_q = [
                 c
                 for c in chal_q
-                if c.module_id is None or c.module_id in accessible_modules
+                if is_module_accessible(c.module_ids, accessible_modules)
             ]
 
         # Iterate through the list of challenges, adding to the object which
@@ -266,7 +270,7 @@ class ChallengeList(Resource):
                     "solves": solve_counts.get(challenge.id, solve_count_dfl),
                     "solved_by_me": challenge.id in user_solves,
                     "category": challenge.category,
-                    "module_id": challenge.module_id,
+                    "module_ids": challenge.module_ids,
                     "tags": challenge.tags,
                     "template": challenge_type.templates["view"],
                     "script": challenge_type.scripts["view"],
@@ -534,7 +538,7 @@ class Challenge(Resource):
         response["files"] = files
         response["tags"] = tags
         response["hints"] = hints
-        response["module_id"] = chal.module_id
+        response["module_ids"] = chal.module_ids
 
         # If we didn't disable ratings then we should allow the user to see their own challenge rating
         if get_config("challenge_ratings", default="public") != "disabled":
