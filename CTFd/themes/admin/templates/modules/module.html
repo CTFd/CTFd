@@ -1,5 +1,6 @@
 {% extends "admin/base.html" %}
 {% from "admin/macros/challenges.html" import challenge_state_badge %}
+{% from "admin/macros/membership.html" import membership_checkbox, membership_toolbar, membership_select_all, membership_empty_row, membership_save_bar %}
 
 {% block content %}
 <div id="module-edit-modal" class="modal fade">
@@ -46,106 +47,72 @@
 	</div>
 </div>
 
-<div class="container">
+<div class="container pb-5">
 	<div class="row">
 		<div class="col-md-12">
-			<h3>Linked Audiences</h3>
-			<p class="text-muted">Members of these audiences can access this module's challenges.</p>
-			<ul class="list-group mb-3">
-				{% for c in linked_audiences %}
-				<li class="list-group-item d-flex justify-content-between align-items-center">
-					<a href="{{ url_for('admin.audiences_detail', audience_id=c.id) }}">{{ c.name }}</a>
-					<button class="btn btn-sm btn-outline-danger py-0" data-unlink-audience="{{ c.id }}">Unlink</button>
-				</li>
-				{% else %}
-				<li class="list-group-item text-muted">No linked audiences (module is invisible to non-admins).</li>
+			<h3>Audiences</h3>
+			<p class="text-muted">Members of checked audiences can access this module's challenges.</p>
+			{% if audiences %}
+			<div class="list-group mb-4">
+				{% for a in audiences %}
+				{% set count = member_counts.get(a.id, 0) %}
+				<label class="list-group-item d-flex align-items-center mb-0" style="cursor:pointer">
+					{{ membership_checkbox("audiences", a.id, a.id in linked_audience_ids, classes="mr-3") }}
+					<span class="flex-grow-1">{{ a.name }}</span>
+					<small class="text-muted mr-3">{{ count }} member{{ '' if count == 1 else 's' }}</small>
+					<a href="{{ url_for('admin.audiences_detail', audience_id=a.id) }}" class="text-muted" title="Open audience">
+						<i class="fas fa-external-link-alt"></i>
+					</a>
+				</label>
 				{% endfor %}
-			</ul>
-			<form id="link-audience-form">
-				<div class="input-group">
-					<select class="form-control custom-select" name="audience_id" required>
-						<option value="" disabled selected>Select a audience&hellip;</option>
-						{% for c in all_audiences %}
-							{% if c.id not in linked_audience_ids %}
-								<option value="{{ c.id }}">{{ c.name }}</option>
-							{% endif %}
-						{% endfor %}
-					</select>
-					<div class="input-group-append">
-						<button type="submit" class="btn btn-secondary">Link audience</button>
-					</div>
-				</div>
-			</form>
+			</div>
+			{% else %}
+			<p class="text-muted">No audiences yet. <a href="{{ url_for('admin.audiences_new') }}">Create one</a>.</p>
+			{% endif %}
 		</div>
 	</div>
 
-	<hr>
-
 	<div class="row">
 		<div class="col-md-12">
-			<div class="d-flex justify-content-between align-items-center mb-2">
-				<h3 class="mb-0">Linked Challenges</h3>
-				<button type="button" class="btn btn-outline-danger btn-sm" id="remove-challenges-button" disabled>Remove selected</button>
-			</div>
-			<table class="table table-striped border">
+			<h3>
+				Challenges
+				<small class="text-muted"><span data-membership-count="challenges">{{ linked_challenge_ids | length }}</span> of {{ challenges | length }} in this module</small>
+			</h3>
+			{{ membership_toolbar("challenges", "Search by name or category…", "In module", "Not in module") }}
+			<table class="table table-striped border" data-membership-table="challenges">
 				<thead>
 				<tr>
-					<td class="d-block border-right border-bottom text-center" data-checkbox>
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
-						</div>
-					</td>
-					<th>ID</th><th>Name</th><th>Category</th><th>State</th><th class="text-right"></th>
+					{{ membership_select_all("challenges") }}
+					<th>Name</th>
+					<th>Category</th>
+					<th>State</th>
+					<th>Other modules</th>
 				</tr>
 				</thead>
 				<tbody>
 				{% for c in challenges %}
-				<tr>
-					<td class="d-block border-right text-center" data-checkbox>
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" value="{{ c.id }}" autocomplete="off" data-module-challenge-id="{{ c.id }}">&nbsp;
-						</div>
-					</td>
-					<td>{{ c.id }}</td>
+				<tr data-membership-row data-search="{{ (c.name ~ ' ' ~ (c.category or '')) | lower }}" style="cursor:pointer">
+					<td class="text-center">{{ membership_checkbox("challenges", c.id, c.id in linked_challenge_ids) }}</td>
 					<td><a href="{{ url_for('admin.challenges_detail', challenge_id=c.id) }}">{{ c.name }}</a></td>
 					<td>{{ c.category }}</td>
 					<td>{{ challenge_state_badge(c) }}</td>
-					<td class="text-right">
-						<button class="btn btn-sm btn-outline-danger" data-remove-challenge="{{ c.id }}">Remove</button>
+					<td>
+						{% for m in c.modules | rejectattr("id", "equalto", module.id) %}
+							<a href="{{ url_for('admin.modules_detail', module_id=m.id) }}">{{ m.name }}</a>{% if not loop.last %},{% endif %}
+						{% else %}
+							<span class="text-muted">-</span>
+						{% endfor %}
 					</td>
 				</tr>
-				{% else %}
-				<tr><td colspan="6" class="text-muted text-center">No challenges in this module.</td></tr>
 				{% endfor %}
+				{{ membership_empty_row(5, challenges, "No challenges yet.") }}
 				</tbody>
 			</table>
-
-			<h5 class="mt-4">Add challenges</h5>
-			<p class="text-muted">Pick one or more challenges to add to this module. Challenges can belong to several modules.</p>
-			<form id="add-challenges-form">
-				<div class="form-group">
-					<select class="form-control" id="add-challenges-select" name="challenge_ids" multiple size="10">
-						{% set ns = namespace(prev_cat=None) %}
-						{% for c in addable_challenges %}
-							{% if c.category != ns.prev_cat %}
-								{% if ns.prev_cat is not none %}</optgroup>{% endif %}
-								<optgroup label="{{ c.category or 'Uncategorized' }}">
-								{% set ns.prev_cat = c.category %}
-							{% endif %}
-							<option value="{{ c.id }}">
-								{{ c.name }}
-								{%- if c.modules %} - also in: {{ c.modules | map(attribute="name") | join(", ") }}{% endif -%}
-							</option>
-						{% endfor %}
-						{% if ns.prev_cat is not none %}</optgroup>{% endif %}
-					</select>
-					<small class="form-text text-muted">Ctrl/Cmd-click to select multiple.</small>
-				</div>
-				<button type="submit" class="btn btn-primary" id="add-challenges-submit" disabled>Add selected to this module</button>
-			</form>
 		</div>
 	</div>
 </div>
+
+{{ membership_save_bar() }}
 {% endblock %}
 
 {% block scripts %}
