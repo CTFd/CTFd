@@ -4,7 +4,7 @@ import os
 import sys
 
 from flask import abort, redirect, render_template, request, session, url_for
-from sqlalchemy.exc import IntegrityError, InvalidRequestError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError, OperationalError
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from CTFd.cache import clear_user_recent_ips, clear_user_recent_tracking
@@ -300,6 +300,11 @@ def init_request_processors(app):
                     db.session.rollback()
                     db.session.close()
                     logout_user()
+                except OperationalError:
+                    # A concurrent request from the same user updated this Tracking row first
+                    # (e.g. MariaDB's innodb_snapshot_isolation raises "Record has changed since last read")
+                    # That request already recorded this IP and user agent so the request can continue
+                    db.session.rollback()
                 else:
                     clear_user_recent_ips(user_id=session["id"])
                     clear_user_recent_tracking(user_id=session["id"])
