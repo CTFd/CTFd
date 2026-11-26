@@ -22,6 +22,10 @@ from CTFd.models import (
     Brackets,
     Solutions,
     Ratings,
+    UserFields,
+    TeamFields,
+    UserFieldEntries,
+    TeamFieldEntries,
 )
 from faker import Faker
 
@@ -41,6 +45,9 @@ parser.add_argument(
 parser.add_argument(
     "--brackets", help="Amount of brackets to generate", default=5, type=int
 )
+parser.add_argument(
+    "--fields", help="Amount of custom fields to generate", default=3, type=int
+)
 
 args = parser.parse_args()
 
@@ -52,6 +59,7 @@ TEAM_AMOUNT = args.teams if args.mode == "teams" else 0
 CHAL_AMOUNT = args.challenges
 AWARDS_AMOUNT = args.awards
 BRACKETS_AMOUNT = args.brackets
+FIELDS_AMOUNT = args.fields
 
 categories = [
     "Exploitation",
@@ -75,6 +83,7 @@ icons = [
     "cowboy",
     "angry",
 ]
+field_types = ["text", "boolean"]
 
 
 def gen_text():
@@ -131,6 +140,16 @@ def gen_ip():
 
 def gen_rating():
     return random.choice((-1, 1))
+
+
+def gen_field_type():
+    return random.choice(field_types)
+
+
+def gen_field_value(field_type, required=False):
+    if field_type == "boolean":
+        return True if required else random_chance()
+    return gen_word()
 
 
 def random_date(start, end):
@@ -301,6 +320,68 @@ if __name__ == "__main__":
                 if captain:
                     team.captain_id = captain.id
             db.session.commit()
+
+        # Generating Custom Fields
+        print("GENERATING CUSTOM FIELDS")
+        field_models = [UserFields]
+        if mode == "teams":
+            field_models.append(TeamFields)
+
+        used = []
+        created_fields = {}
+        for field_model in field_models:
+            created_fields[field_model] = []
+            count = 0
+            while count < FIELDS_AMOUNT:
+                name = gen_word().capitalize()
+                if name not in used:
+                    used.append(name)
+                    field = field_model(
+                        name=name,
+                        field_type=gen_field_type(),
+                        description=gen_sentence(),
+                        required=random_chance(),
+                        public=random_chance(),
+                        editable=random_chance(),
+                    )
+                    db.session.add(field)
+                    created_fields[field_model].append(field)
+                    count += 1
+
+        db.session.commit()
+
+        # Generating Custom Field Entries
+        print("GENERATING CUSTOM FIELD ENTRIES")
+        entry_targets = [
+            (
+                Users.query.all(),
+                created_fields[UserFields],
+                UserFieldEntries,
+                "user_id",
+            )
+        ]
+        if mode == "teams":
+            entry_targets.append(
+                (
+                    Teams.query.all(),
+                    created_fields[TeamFields],
+                    TeamFieldEntries,
+                    "team_id",
+                )
+            )
+
+        for accounts, fields, entry_model, fk_name in entry_targets:
+            for account in accounts:
+                for field in fields:
+                    if field.required or random_chance():
+                        entry = entry_model(
+                            field_id=field.id,
+                            value=gen_field_value(field.field_type, field.required),
+                            **{fk_name: account.id},
+                        )
+                        db.session.add(entry)
+
+        db.session.commit()
 
         # Generating Challenge Open Tracking Events
         print("GENERATING CHALLENGE TRACKING EVENTS")
