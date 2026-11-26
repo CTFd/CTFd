@@ -143,14 +143,14 @@ function addChallenges(event) {
 
   $("#add-challenges-submit").prop("disabled", true);
   const reqs = ids.map((id) =>
-    CTFd.fetch("/api/v1/challenges/" + id, {
-      method: "PATCH",
+    CTFd.fetch("/api/v1/modules/" + window.MODULE_ID + "/challenges", {
+      method: "POST",
       credentials: "same-origin",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ module_id: window.MODULE_ID }),
+      body: JSON.stringify({ challenge_id: id }),
     })
       .then((response) => response.json())
       .catch(() => ({ success: false })),
@@ -161,7 +161,7 @@ function addChallenges(event) {
     if (failed.length) {
       ezAlert({
         title: "Error",
-        body: `${failed.length} of ${ids.length} could not be assigned.`,
+        body: `${failed.length} of ${ids.length} could not be added.`,
         button: "OK",
         success: function () {
           window.location.reload();
@@ -177,25 +177,64 @@ function removeChallenge(event) {
   const challengeId = $(event.currentTarget).data("remove-challenge");
   ezQuery({
     title: "Remove Challenge",
-    body: "Are you sure you want to remove this challenge from the module? It will become ungrouped.",
+    body: "Remove this challenge from this module? It stays in any other modules it belongs to.",
     success: function () {
-      CTFd.fetch("/api/v1/challenges/" + challengeId, {
-        method: "PATCH",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+      CTFd.fetch(
+        "/api/v1/modules/" + window.MODULE_ID + "/challenges/" + challengeId,
+        {
+          method: "DELETE",
+          credentials: "same-origin",
+          headers: { Accept: "application/json" },
         },
-        body: JSON.stringify({ module_id: null }),
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          if (response.success) {
-            window.location.reload();
-          } else {
-            showErrors(response.errors);
-          }
-        });
+      ).then((response) => {
+        if (response.ok) window.location.reload();
+      });
+    },
+  });
+}
+
+function selectedChallengeIds() {
+  return $("input[data-module-challenge-id]:checked")
+    .map(function () {
+      return $(this).data("module-challenge-id");
+    })
+    .get();
+}
+
+function removeSelectedChallenges(_event) {
+  const ids = selectedChallengeIds();
+  if (!ids.length) return;
+  const target = ids.length === 1 ? "challenge" : "challenges";
+
+  ezQuery({
+    title: "Remove Challenges",
+    body: `Remove ${ids.length} ${target} from this module? They stay in any other modules they belong to.`,
+    success: function () {
+      const reqs = ids.map((id) =>
+        CTFd.fetch(
+          "/api/v1/modules/" + window.MODULE_ID + "/challenges/" + id,
+          {
+            method: "DELETE",
+            credentials: "same-origin",
+            headers: { Accept: "application/json" },
+          },
+        ).catch(() => ({ ok: false })),
+      );
+      Promise.all(reqs).then((responses) => {
+        const failed = responses.filter((r) => !r.ok).length;
+        if (failed) {
+          ezAlert({
+            title: "Error",
+            body: `${failed} of ${ids.length} could not be removed.`,
+            button: "OK",
+            success: function () {
+              window.location.reload();
+            },
+          });
+        } else {
+          window.location.reload();
+        }
+      });
     },
   });
 }
@@ -214,6 +253,16 @@ $(() => {
   $("[data-unlink-audience]").click(unlinkAudience);
   $("#add-challenges-form").submit(addChallenges);
   $("[data-remove-challenge]").click(removeChallenge);
+  $("#remove-challenges-button").click(removeSelectedChallenges);
+  $("input[data-module-challenge-id], input[data-checkbox-all]").on(
+    "change",
+    function () {
+      $("#remove-challenges-button").prop(
+        "disabled",
+        selectedChallengeIds().length === 0,
+      );
+    },
+  );
 
   const addSelect = $("#add-challenges-select");
   if (addSelect.length) {

@@ -1,5 +1,5 @@
 from flask import render_template, request
-from sqlalchemy import or_
+from sqlalchemy.orm import selectinload
 
 from CTFd.admin import admin
 from CTFd.models import Audiences, Challenges, ModuleAudienceAccess, Modules
@@ -40,16 +40,12 @@ def modules_detail(module_id):
     )
     linked_audience_ids = {c.id for c in linked_audiences}
     all_audiences = Audiences.query.order_by(Audiences.name.asc()).all()
-    challenges = (
-        Challenges.query.filter_by(module_id=module_id)
-        .order_by(Challenges.id.asc())
-        .all()
-    )
-    # Candidate challenges to add: not in this module (either ungrouped or assigned elsewhere).
+    in_module = Challenges.modules.any(Modules.id == module_id)
+    challenges = Challenges.query.filter(in_module).order_by(Challenges.id.asc()).all()
+    # Candidate challenges to add: not yet in this module (ungrouped or in other modules).
     addable_challenges = (
-        Challenges.query.filter(
-            or_(Challenges.module_id.is_(None), Challenges.module_id != module_id)
-        )
+        Challenges.query.filter(~in_module)
+        .options(selectinload(Challenges.modules))
         .order_by(Challenges.category.asc(), Challenges.name.asc())
         .all()
     )

@@ -169,10 +169,33 @@ def test_admin_module_detail_shows_scheduled_badge():
             name="later",
             state="visible",
             scheduled_at=_future(),
-            module_id=module_id,
+            module_ids=[module_id],
         )
         with login_as_user(app, "admin") as admin:
             html = admin.get(f"/admin/modules/{module_id}").get_data(as_text=True)
             assert "badge-warning" in html
             assert "Becomes visible to users at" in html
+    destroy_ctfd(app)
+
+
+def test_admin_pages_show_multiple_modules():
+    app = create_ctfd()
+    with app.app_context():
+        a = gen_module(app.db, name="Week 1").id
+        b = gen_module(app.db, name="Week 2").id
+        c = gen_module(app.db, name="Week 3").id
+        chal_id = gen_challenge(app.db, name="sharedchal", module_ids=[a, b]).id
+        with login_as_user(app, "admin") as admin:
+            html = admin.get("/admin/challenges").get_data(as_text=True)
+            assert "Week 1" in html and "Week 2" in html
+
+            html = admin.get(f"/admin/modules/{b}").get_data(as_text=True)
+            assert "sharedchal" in html.split("Linked Challenges")[1]
+            assert f'data-module-challenge-id="{chal_id}"' in html
+            assert 'id="remove-challenges-button"' in html
+            html = admin.get(f"/admin/modules/{c}").get_data(as_text=True)
+            assert "also in: Week 1, Week 2" in html
+
+            html = admin.get(f"/admin/challenges/{chal_id}").get_data(as_text=True)
+            assert f"const current = [{a}, {b}];" in html
     destroy_ctfd(app)

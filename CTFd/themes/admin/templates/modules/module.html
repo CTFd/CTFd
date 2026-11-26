@@ -53,9 +53,9 @@
 			<p class="text-muted">Members of these audiences can access this module's challenges.</p>
 			<ul class="list-group mb-3">
 				{% for c in linked_audiences %}
-				<li class="list-group-item d-flex justify-content-between">
+				<li class="list-group-item d-flex justify-content-between align-items-center">
 					<a href="{{ url_for('admin.audiences_detail', audience_id=c.id) }}">{{ c.name }}</a>
-					<button class="btn btn-sm btn-outline-danger" data-unlink-audience="{{ c.id }}">Unlink</button>
+					<button class="btn btn-sm btn-outline-danger py-0" data-unlink-audience="{{ c.id }}">Unlink</button>
 				</li>
 				{% else %}
 				<li class="list-group-item text-muted">No linked audiences (module is invisible to non-admins).</li>
@@ -83,14 +83,29 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<h3>Linked Challenges</h3>
+			<div class="d-flex justify-content-between align-items-center mb-2">
+				<h3 class="mb-0">Linked Challenges</h3>
+				<button type="button" class="btn btn-outline-danger btn-sm" id="remove-challenges-button" disabled>Remove selected</button>
+			</div>
 			<table class="table table-striped border">
 				<thead>
-				<tr><th>ID</th><th>Name</th><th>Category</th><th>State</th><th class="text-right"></th></tr>
+				<tr>
+					<td class="d-block border-right border-bottom text-center" data-checkbox>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" autocomplete="off" data-checkbox-all>&nbsp;
+						</div>
+					</td>
+					<th>ID</th><th>Name</th><th>Category</th><th>State</th><th class="text-right"></th>
+				</tr>
 				</thead>
 				<tbody>
 				{% for c in challenges %}
 				<tr>
+					<td class="d-block border-right text-center" data-checkbox>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" value="{{ c.id }}" autocomplete="off" data-module-challenge-id="{{ c.id }}">&nbsp;
+						</div>
+					</td>
 					<td>{{ c.id }}</td>
 					<td><a href="{{ url_for('admin.challenges_detail', challenge_id=c.id) }}">{{ c.name }}</a></td>
 					<td>{{ c.category }}</td>
@@ -100,13 +115,13 @@
 					</td>
 				</tr>
 				{% else %}
-				<tr><td colspan="5" class="text-muted text-center">No challenges in this module.</td></tr>
+				<tr><td colspan="6" class="text-muted text-center">No challenges in this module.</td></tr>
 				{% endfor %}
 				</tbody>
 			</table>
 
 			<h5 class="mt-4">Add challenges</h5>
-			<p class="text-muted">Pick one or more challenges to assign to this module. Challenges already in another module will be reassigned.</p>
+			<p class="text-muted">Pick one or more challenges to add to this module. Challenges can belong to several modules.</p>
 			<form id="add-challenges-form">
 				<div class="form-group">
 					<select class="form-control" id="add-challenges-select" name="challenge_ids" multiple size="10">
@@ -119,7 +134,7 @@
 							{% endif %}
 							<option value="{{ c.id }}">
 								{{ c.name }}
-								{%- if c.module_id %} - currently in module #{{ c.module_id }}{% endif -%}
+								{%- if c.modules %} - also in: {{ c.modules | map(attribute="name") | join(", ") }}{% endif -%}
 							</option>
 						{% endfor %}
 						{% if ns.prev_cat is not none %}</optgroup>{% endif %}

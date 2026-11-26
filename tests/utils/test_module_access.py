@@ -37,7 +37,7 @@ def test_module_without_audience_link_invisible_to_users():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="locked").id
-        hidden_id = gen_challenge(app.db, name="hidden", module_id=module_id).id
+        hidden_id = gen_challenge(app.db, name="hidden", module_ids=[module_id]).id
         register_user(app)
         with login_as_user(app) as client:
             ids = _challenge_ids_for(client)
@@ -54,7 +54,7 @@ def test_user_in_audience_sees_linked_module():
         module_id = gen_module(app.db, name="owasp").id
         audience_id = gen_audience(app.db, name="seceng").id
         gen_module_audience_access(app.db, module_id=module_id, audience_id=audience_id)
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
 
         register_user(app)
         gen_audience_member(app.db, audience_id=audience_id, user_id=2)
@@ -71,7 +71,7 @@ def test_submission_to_inaccessible_challenge_is_404():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         gen_flag(app.db, challenge_id=chal_id, content="flag")
         register_user(app)
         with login_as_user(app) as client:
@@ -87,7 +87,7 @@ def test_detail_view_for_inaccessible_challenge_is_404():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         register_user(app)
         with login_as_user(app) as client:
             r = client.get("/api/v1/challenges/{}".format(chal_id))
@@ -99,7 +99,7 @@ def test_solution_endpoints_for_inaccessible_challenge_are_404():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         solution_id = gen_solution(
             app.db,
             challenge_id=chal_id,
@@ -125,7 +125,7 @@ def test_direct_hint_for_inaccessible_challenge_is_404():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         hint_id = gen_hint(app.db, challenge_id=chal_id, cost=0).id
         register_user(app)
         with login_as_user(app) as client:
@@ -138,7 +138,7 @@ def test_challenge_file_for_inaccessible_challenge_is_404():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         gen_file(app.db, location="secret.txt", challenge_id=chal_id)
         register_user(app)
         with login_as_user(app) as client:
@@ -151,7 +151,7 @@ def test_solution_file_for_inaccessible_challenge_is_404():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         solution_id = gen_solution(
             app.db,
             challenge_id=chal_id,
@@ -174,7 +174,7 @@ def test_challenge_subresources_for_inaccessible_challenge_are_404():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         register_user(app)
         gen_solve(app.db, user_id=2, challenge_id=chal_id)
         with login_as_user(app) as client:
@@ -193,7 +193,7 @@ def test_module_audience_link_changes_clear_access_cache():
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
         audience_id = gen_audience(app.db, name="seceng").id
-        chal_id = gen_challenge(app.db, name="x", module_id=module_id).id
+        chal_id = gen_challenge(app.db, name="x", module_ids=[module_id]).id
         register_user(app)
         gen_audience_member(app.db, audience_id=audience_id, user_id=2)
 
@@ -222,7 +222,7 @@ def test_module_audience_link_changes_clear_access_cache():
     destroy_ctfd(app)
 
 
-def test_module_challenge_assignment_clears_challenge_cache():
+def test_module_challenge_link_changes_clear_challenge_cache():
     app = create_ctfd()
     with app.app_context():
         module_id = gen_module(app.db, name="owasp").id
@@ -241,4 +241,38 @@ def test_module_challenge_assignment_clears_challenge_cache():
 
         with login_as_user(app) as client:
             assert chal_id not in _challenge_ids_for(client)
+
+        with login_as_user(app, name="admin") as client:
+            r = client.delete(
+                "/api/v1/modules/{}/challenges/{}".format(module_id, chal_id),
+                json="",
+            )
+            assert r.status_code == 200
+
+        with login_as_user(app) as client:
+            assert chal_id in _challenge_ids_for(client)
+    destroy_ctfd(app)
+
+
+def test_challenge_in_multiple_modules_visible_via_any():
+    app = create_ctfd()
+    with app.app_context():
+        a_id = gen_module(app.db, name="a").id
+        b_id = gen_module(app.db, name="b").id
+        audience_id = gen_audience(app.db, name="seceng").id
+        gen_module_audience_access(app.db, module_id=b_id, audience_id=audience_id)
+        chal_id = gen_challenge(app.db, name="x", module_ids=[a_id, b_id]).id
+
+        register_user(app)
+        gen_audience_member(app.db, audience_id=audience_id, user_id=2)
+        register_user(app, name="other", email="other@examplectf.com")
+
+        with login_as_user(app) as client:
+            assert chal_id in _challenge_ids_for(client)
+            r = client.get("/api/v1/challenges/{}".format(chal_id))
+            assert r.status_code == 200
+        with login_as_user(app, name="other") as client:
+            assert chal_id not in _challenge_ids_for(client)
+            r = client.get("/api/v1/challenges/{}".format(chal_id))
+            assert r.status_code == 404
     destroy_ctfd(app)

@@ -1,4 +1,5 @@
 from flask import abort, render_template, request, url_for
+from sqlalchemy.orm import selectinload
 
 from CTFd.admin import admin
 from CTFd.models import Challenges, Flags, Solves
@@ -22,7 +23,7 @@ def challenges_listing():
             filters.append(getattr(Challenges, field).like("%{}%".format(q)))
 
     query = Challenges.query.filter(*filters).order_by(Challenges.id.asc())
-    challenges = query.all()
+    challenges = query.options(selectinload(Challenges.modules)).all()
     total = query.count()
 
     return render_template(
