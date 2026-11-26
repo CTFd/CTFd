@@ -12,6 +12,7 @@ from CTFd.utils.user import get_current_user, is_admin
 
 EMAIL_REGEX = r"(^[^@\s]+@[^@\s]+\.[^@\s]+$)"
 MAX_URL_LENGTH = 2048
+HEX_COLOR_REGEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 
 def is_safe_url(target):
@@ -94,9 +95,6 @@ def validate_language(language):
         raise ValidationError("Invalid Language")
 
 
-THEME_COLOR_REGEX = re.compile(r"^#[0-9a-fA-F]{6}$")
-
-
-def validate_theme_color(theme_color):
-    """Return True if theme_color is a CSS color value safe to embed in CSS (prevent XSS)."""
-    return bool(THEME_COLOR_REGEX.match(theme_color))
+def validate_hex_color(color):
+    """Return True if color is a 6 digit hex color"""
+    return bool(HEX_COLOR_REGEX.fullmatch(color))
