@@ -12,6 +12,7 @@ from botocore.client import Config
 from flask import current_app, redirect, send_file
 from freezegun import freeze_time
 from werkzeug.utils import safe_join, secure_filename
+import mimetypes
 
 from CTFd.utils import get_app_config
 from CTFd.utils.encoding import hexencode
@@ -190,7 +191,14 @@ class S3Uploader(BaseUploader):
         s3_dst = dst
         if self.s3_prefix:
             s3_dst = self.s3_prefix + dst
-        self.s3.upload_fileobj(file_obj, self.bucket, s3_dst)
+        content_type = (
+            getattr(file_obj, "mimetype", None)
+            or mimetypes.guess_type(dst)[0]
+            or "application/octet-stream"
+        )
+        self.s3.upload_fileobj(
+            file_obj, self.bucket, s3_dst, ExtraArgs={"ContentType": content_type}
+        )
         return dst
 
     def download(self, filename):
